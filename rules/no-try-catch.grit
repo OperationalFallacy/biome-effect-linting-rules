@@ -1,0 +1,18 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains `try { $tryBlock } catch ($err) { $catchBlock }` as $try,
+        $body <: contains `try { $tryBlock } catch { $catchBlock }` as $try,
+        $body <: contains `try { $tryBlock } catch ($err) { $catchBlock } finally { $finallyBlock }` as $try,
+        $body <: contains `try { $tryBlock } catch { $catchBlock } finally { $finallyBlock }` as $try
+    },
+    register_diagnostic(
+        span = $try,
+        message = "Rule: avoid try/catch in Effect files. Why: it bypasses Effect error channels and reintroduces imperative control flow. Fix: model failures in Effect and handle them with typed errors and Effect combinators.",
+        severity = "error"
+    )
+}

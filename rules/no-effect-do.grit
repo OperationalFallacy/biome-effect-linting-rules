@@ -1,0 +1,13 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains `Effect.Do` as $effectDo,
+    register_diagnostic(
+        span = $effectDo,
+        message = "Rule: avoid Effect.Do. Why: it pushes Effect code toward imperative builder choreography. Fix: use one flat pipe-based Effect flow or one direct top-level Effect.gen with direct yields, not nested generators or wrapper helpers.",
+        severity = "error"
+    )
+}

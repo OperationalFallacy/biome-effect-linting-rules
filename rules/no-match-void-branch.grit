@@ -1,0 +1,17 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains `Match.when(true, () => Effect.void)` as $branch,
+        $body <: contains `Match.when(false, () => Effect.void)` as $branch,
+        $body <: contains `Match.orElse(() => Effect.void)` as $branch
+    },
+    register_diagnostic(
+        span = $branch,
+        message = "Rule: avoid void Match branches. Why: they hide guard-style control flow. Fix: remove the no-op branch or select a value and run one Effect pipeline outside the Match.",
+        severity = "error"
+    )
+}

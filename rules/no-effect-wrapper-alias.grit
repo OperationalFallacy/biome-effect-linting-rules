@@ -1,0 +1,116 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains `const $name = pipe($expr, $rest)` as $call where {
+            $expr <: contains `Effect.$fn($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`const x = pipe(Effect..., ...)`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        },
+        $body <: contains `const $name: $type = pipe($expr, $rest)` as $call where {
+            $expr <: contains `Effect.$fn($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`const x = pipe(Effect..., ...)`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        },
+        $body <: contains `const $name = () => pipe($expr, $rest)` as $call where {
+            $expr <: contains `Effect.$fn($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`const x = () => pipe(Effect..., ...)`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        },
+        $body <: contains `const $name = ($params) => pipe($expr, $rest)` as $call where {
+            $expr <: contains `Effect.$fn($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`const x = (...) => pipe(Effect..., ...)`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        },
+        $body <: contains `const $name: $type = () => pipe($expr, $rest)` as $call where {
+            $expr <: contains `Effect.$fn($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`const x = () => pipe(Effect..., ...)`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        },
+        $body <: contains `const $name: $type = ($params) => pipe($expr, $rest)` as $call where {
+            $expr <: contains `Effect.$fn($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`const x: T = (...) => pipe(Effect..., ...)`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        },
+        $body <: contains `const $name = () => Effect.$fn($args)` as $call where {
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`const x = () => Effect...`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        },
+        $body <: contains `const $name = ($params) => Effect.$fn($args)` as $call where {
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`const x = (...) => Effect...`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        },
+        $body <: contains `const $name: $type = () => Effect.$fn($args)` as $call where {
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`const x = () => Effect...`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        }
+        ,
+        $body <: contains `const $name: $type = ($params) => Effect.$fn($args)` as $call where {
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`const x: T = (...) => Effect...`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        },
+        $body <: contains `function $name($params) { return pipe($expr, $rest) }` as $call where {
+            $expr <: contains `Effect.$fn($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`function x(...) { return pipe(Effect..., ...) }`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        },
+        $body <: contains `function $name($params): $type { return pipe($expr, $rest) }` as $call where {
+            $expr <: contains `Effect.$fn($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`function x(...): T { return pipe(Effect..., ...) }`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        },
+        $body <: contains `function $name($params) { return Effect.$fn($args) }` as $call where {
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`function x(...) { return Effect... }`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        },
+        $body <: contains `function $name($params): $type { return Effect.$fn($args) }` as $call where {
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect wrapper aliases (`function x(...): T { return Effect... }`). Why: it creates wrapper choreography and bloats consts. Fix: inline the pipeline at the call site or define a real domain function that returns data, not an Effect wrapper.",
+                severity = "error"
+            )
+        }
+    }
+}

@@ -1,0 +1,26 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains `function*`,
+        $body <: contains `const $name = yield* $runtime.pipe(`,
+        $body <: contains `Effect.provide($layer)` as $provide where {
+            $provide <: not contains `,`
+        }
+    },
+    or {
+        $body <: contains `function*`,
+        $body <: contains `return yield* $runtime.pipe(`,
+        $body <: contains `Effect.provide($layer)` as $provide where {
+            $provide <: not contains `,`
+        }
+    },
+    register_diagnostic(
+        span = $provide,
+        message = "Rule: do not inline runtime provisioning inside local helper Effect code. Why: `yield* SomeRuntime.pipe(Effect.provide(SomeRuntimeLive))` and equivalent inline provide chains hide dependency assembly instead of owning it at an Effect.Service boundary or one exported Effect boundary. Fix: declare the live dependency on the owning service or provide it once at the exported boundary, then `yield*` the runtime or service directly inside the body.",
+        severity = "error"
+    )
+}

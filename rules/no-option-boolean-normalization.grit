@@ -1,0 +1,16 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains `Option.match($input, { onSome: ($value) => $value === true, onNone: () => false })` as $call,
+        $body <: contains `Option.match($input, { onSome: ($value: $type) => $value === true, onNone: () => false })` as $call
+    },
+    register_diagnostic(
+        span = $call,
+        message = "Rule: avoid repeated Option boolean normalization (`onSome: value === true, onNone: false`). Why: it scatters coercion rules across services. Fix: normalize once at schema boundary and read booleans directly.",
+        severity = "error"
+    )
+}

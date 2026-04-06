@@ -1,0 +1,13 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains `return null` as $ret,
+    register_diagnostic(
+        span = $ret,
+        message = "Rule: avoid returning null. Why: null is a sentinel that forces defensive guards. Fix: use Option.none for absence or Effect.fail for errors.",
+        severity = "error"
+    )
+}

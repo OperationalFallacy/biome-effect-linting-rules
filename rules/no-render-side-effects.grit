@@ -1,0 +1,20 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains `Match.value($cond).pipe($args);` as $call where {
+        or {
+            $args <: contains `Match.when($_, () => $effect)` as $branch,
+            $args <: contains `Match.when($_, () => void $effect)` as $branch,
+            $args <: contains `Match.orElse(() => $effect)` as $branch,
+            $args <: contains `Match.orElse(() => void $effect)` as $branch
+        },
+    register_diagnostic(
+        span = $call,
+        message = "Rule: avoid Match.value(...).pipe(...) as a statement. Why: it runs side effects during render. Fix: move the side effect into an Effect runtime action or event handler, and keep Match as a pure expression.",
+        severity = "error"
+    )
+}
+}

@@ -1,0 +1,13 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains `Effect.bind($name, $step)` as $effectBind,
+    register_diagnostic(
+        span = $effectBind,
+        message = "Rule: avoid Effect.bind. Why: it hides sequencing inside builder-style accumulation. Fix: use one flat pipe-based Effect flow or one direct top-level Effect.gen with direct yields, not nested generators or wrapper helpers.",
+        severity = "error"
+    )
+}

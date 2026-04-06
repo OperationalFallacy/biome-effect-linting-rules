@@ -1,0 +1,37 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains bubble `Effect.$outer($first)` as $outerCall where {
+        or {
+            $first <: `Effect.$inner($innerOnly)` where {
+                $innerOnly <: `Effect.$deep($_)`
+            },
+            $first <: `Effect.$inner($innerFirst, $innerSecond)` where {
+                $innerFirst <: `Effect.$deep($_)`
+            }
+        },
+        register_diagnostic(
+            span = $outerCall,
+            message = "Rule: avoid deeply nested Effect calls (Effect.xx(Effect.yy(Effect.zz(...)))). Why: they hide sequencing and spread flow. Fix: build values first, then run one flat Effect pipeline.",
+            severity = "error"
+        )
+    },
+    $body <: contains bubble `Effect.$outer($first, $second)` as $outerCall where {
+        or {
+            $first <: `Effect.$inner($innerOnly)` where {
+                $innerOnly <: `Effect.$deep($_)`
+            },
+            $first <: `Effect.$inner($innerFirst, $innerSecond)` where {
+                $innerFirst <: `Effect.$deep($_)`
+            }
+        },
+        register_diagnostic(
+            span = $outerCall,
+            message = "Rule: avoid deeply nested Effect calls (Effect.xx(Effect.yy(Effect.zz(...)))). Why: they hide sequencing and spread flow. Fix: build values first, then run one flat Effect pipeline.",
+            severity = "error"
+        )
+    }
+}

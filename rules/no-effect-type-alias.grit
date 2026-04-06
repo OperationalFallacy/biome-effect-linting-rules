@@ -1,0 +1,15 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains `type $name = $value` where {
+        $value <: contains `Effect.Effect` as $effect,
+    register_diagnostic(
+        span = $effect,
+        message = "Rule: avoid Effect.Effect type aliases. Why: they hide the service surface and make types opaque. Fix: keep Effect types on service methods or inline at the call site.",
+        severity = "error"
+    )
+}
+}

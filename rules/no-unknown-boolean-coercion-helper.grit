@@ -1,0 +1,14 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains `typeof $value === "boolean"` as $call,
+    $body <: contains `Match.orElse(() => null)`,
+    register_diagnostic(
+        span = $call,
+        message = "Rule: avoid local unknown-to-boolean coercion helpers in services. Why: runtime coercion belongs at schema boundary, not in service flow. Fix: decode boolean optionality in schema and read typed booleans in the Effect pipeline.",
+        severity = "error"
+    )
+}

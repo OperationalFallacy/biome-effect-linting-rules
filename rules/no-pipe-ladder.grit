@@ -1,0 +1,31 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains bubble `pipe($args)` where {
+            or {
+                $args <: contains `pipe($_)` as $nested,
+                $args <: contains `$inner.pipe($_)` as $nested
+            },
+            register_diagnostic(
+                span = $nested,
+                message = "Rule: avoid nested pipe() chains. Why: they hide sequencing. Fix: refactor into one flat pipeline with a single decision point.",
+                severity = "error"
+            )
+        },
+        $body <: contains bubble `$target.pipe($args)` where {
+            or {
+                $args <: contains `pipe($_)` as $nested,
+                $args <: contains `$inner.pipe($_)` as $nested
+            },
+            register_diagnostic(
+                span = $nested,
+                message = "Rule: avoid nested pipe() chains. Why: they hide sequencing. Fix: refactor into one flat pipeline with a single decision point.",
+                severity = "error"
+            )
+        }
+    }
+}

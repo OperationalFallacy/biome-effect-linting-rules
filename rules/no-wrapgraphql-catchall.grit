@@ -1,0 +1,37 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains bubble `$target.pipe($ops)` where {
+        $ops <: contains `Effect.catchAll($handler)` as $catch,
+        or {
+            $ops <: contains bubble `wrapGraphqlCall($args)`,
+            $ops <: contains `Effect.flatMap(applyResponse)`,
+            $target <: contains bubble `$inner.pipe($innerOps)` where {
+                $innerOps <: contains bubble `wrapGraphqlCall($args)`
+            },
+            $target <: contains bubble `$inner.pipe($innerOps)` where {
+                $innerOps <: contains `Effect.flatMap(applyResponse)`
+            }
+        },
+        register_diagnostic(
+            span = $catch,
+            message = "Rule: avoid catchAll after wrapGraphqlCall/applyResponse. Why: the envelope already surfaces structured errors. Fix: handle errors in the response mapping instead of catchAll.",
+            severity = "error"
+        )
+    },
+    $body <: contains bubble `pipe($args)` where {
+        $args <: contains `Effect.catchAll($handler)` as $catch,
+        or {
+            $args <: contains bubble `wrapGraphqlCall($callArgs)`,
+            $args <: contains `Effect.flatMap(applyResponse)`
+        },
+        register_diagnostic(
+            span = $catch,
+            message = "Rule: avoid catchAll after wrapGraphqlCall/applyResponse. Why: the envelope already surfaces structured errors. Fix: handle errors in the response mapping instead of catchAll.",
+            severity = "error"
+        )
+    }
+}

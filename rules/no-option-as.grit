@@ -1,0 +1,14 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains bubble `Option.as($value, $result)` as $call where {
+        register_diagnostic(
+            span = $call,
+            message = "Rule: avoid Option.as. Why: it hides selection and encourages placeholder flows. Fix: use Option.map or Option.match and return the value explicitly.",
+            severity = "error"
+        )
+    }
+}

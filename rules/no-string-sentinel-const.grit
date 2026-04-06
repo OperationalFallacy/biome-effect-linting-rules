@@ -1,0 +1,15 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains bubble `const $name = $val` as $sentinel where {
+        $val <: `"$_"`,
+        register_diagnostic(
+            span = $sentinel,
+            message = "Rule: avoid string status constants. Why: they encode control flow and force defensive branching. Fix: use tagged unions, Option/Either, or meaningful domain values instead of string tokens.",
+            severity = "error"
+        )
+    }
+}

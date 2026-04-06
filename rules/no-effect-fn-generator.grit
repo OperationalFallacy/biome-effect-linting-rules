@@ -1,0 +1,16 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains `Effect.fn(function* () { $block })` as $call,
+        $body <: contains `Effect.fn(function* ($params) { $block })` as $call
+    },
+    register_diagnostic(
+        span = $call,
+        message = "Rule: avoid Effect.fn generator wrappers. Why: they hide sequencing and dodge ladder rules. Fix: keep a single flat pipeline or use one Effect.gen.",
+        severity = "error"
+    )
+}

@@ -1,0 +1,13 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains `switch ($discriminant) { $cases }`,
+    register_diagnostic(
+        span = $discriminant,
+        message = "Rule: avoid imperative switch branching. Why: it hides control flow in Effect code and encourages case-by-case sequencing. Fix: use Match.value, Option.match, Either.match, or Effect.if, then run one explicit pipeline.",
+        severity = "error"
+    )
+}

@@ -1,0 +1,35 @@
+file($body) where {
+    or {
+        $body <: contains bubble `Effect.all($steps, $options)` as $call where {
+            $options <: contains `concurrency: 1`,
+            or {
+                $steps <: contains `Ref.set($_, $_)`,
+                $steps <: contains `Atom.set($_, $_)`,
+                $steps <: contains `SubscriptionRef.set($_, $_)`,
+                $steps <: contains `Reactivity.invalidate($_)`,
+                $steps <: contains `Fiber.interrupt($_)`,
+                $steps <: contains `Effect.log$_`
+            },
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect.all for sequential side-effect steps. Why: it hides imperative sequencing in an array. Fix: use one explicit linear pipeline with Effect.andThen/flatMap and reserve Effect.all for real value aggregation.",
+                severity = "error"
+            )
+        },
+        $body <: contains bubble `Effect.all($steps).pipe(Effect.asVoid)` as $call where {
+            or {
+                $steps <: contains `Ref.set($_, $_)`,
+                $steps <: contains `Atom.set($_, $_)`,
+                $steps <: contains `SubscriptionRef.set($_, $_)`,
+                $steps <: contains `Reactivity.invalidate($_)`,
+                $steps <: contains `Fiber.interrupt($_)`,
+                $steps <: contains `Effect.log$_`
+            },
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid Effect.all for sequential side-effect steps. Why: it hides imperative sequencing in an array. Fix: use one explicit linear pipeline with Effect.andThen/flatMap and reserve Effect.all for real value aggregation.",
+                severity = "error"
+            )
+        }
+    }
+}

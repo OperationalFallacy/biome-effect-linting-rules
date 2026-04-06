@@ -1,0 +1,62 @@
+or {
+    `$fn($args)` where {
+        or {
+            $fn <: `useState`,
+            $fn <: `useReducer`,
+            $fn <: `useContext`,
+            $fn <: `useCallback`,
+            $fn <: `useEffect`,
+            $fn <: `useSyncExternalStore`
+        },
+        register_diagnostic(
+            span = $fn,
+            message = "Rule: avoid React state hooks. Why: they bypass the atom runtime and break reactive flow. Fix: use @effect-atom/atom-react instead of useState/useReducer/useContext/useEffect/useCallback/useSyncExternalStore.",
+            severity = "error"
+        )
+    },
+    `$fn<$types>($args)` where {
+        or {
+            $fn <: `useState`,
+            $fn <: `useReducer`,
+            $fn <: `useContext`,
+            $fn <: `useCallback`,
+            $fn <: `useEffect`,
+            $fn <: `useSyncExternalStore`
+        },
+        register_diagnostic(
+            span = $fn,
+            message = "Rule: avoid React state hooks. Why: they bypass the atom runtime and break reactive flow. Fix: use @effect-atom/atom-react instead of useState/useReducer/useContext/useEffect/useCallback/useSyncExternalStore.",
+            severity = "error"
+        )
+    },
+    `$receiver.$fn($args)` where {
+        or {
+            $fn <: `useState`,
+            $fn <: `useReducer`,
+            $fn <: `useContext`,
+            $fn <: `useCallback`,
+            $fn <: `useEffect`,
+            $fn <: `useSyncExternalStore`
+        },
+        register_diagnostic(
+            span = $fn,
+            message = "Rule: avoid React state hooks. Why: they bypass the atom runtime and break reactive flow. Fix: use @effect-atom/atom-react instead of useState/useReducer/useContext/useEffect/useCallback/useSyncExternalStore.",
+            severity = "error"
+        )
+    },
+    `$receiver.$fn<$types>($args)` where {
+        or {
+            $fn <: `useState`,
+            $fn <: `useReducer`,
+            $fn <: `useContext`,
+            $fn <: `useCallback`,
+            $fn <: `useEffect`,
+            $fn <: `useSyncExternalStore`
+        },
+        register_diagnostic(
+            span = $fn,
+            message = "Rule: avoid React state hooks. Why: they bypass the atom runtime and break reactive flow. Fix: use @effect-atom/atom-react instead of useState/useReducer/useContext/useEffect/useCallback/useSyncExternalStore.",
+            severity = "error"
+        )
+    }
+}

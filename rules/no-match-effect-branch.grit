@@ -1,0 +1,107 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains bubble `Match.value($value).pipe($args)` as $matchCall where {
+            or {
+                $args <: contains `Match.when($cond, () => $branch)` where {
+                    $branch <: contains `Effect.$fn($_)`,
+                    or {
+                        $branch <: contains `Effect.flatMap($_)`,
+                        $branch <: contains `Effect.map($_)`,
+                        $branch <: contains `Effect.andThen($_)`,
+                        $branch <: contains `Effect.tap($_)`,
+                        $branch <: contains `Effect.zipRight($_)`,
+                        $branch <: contains `pipe($_)`,
+                        $branch <: contains `Stream.$method($_)`
+                    }
+                },
+                $args <: contains `Match.when($cond, () => { $block })` where {
+                    $block <: contains `Effect.$fn($_)`,
+                    or {
+                        $block <: contains `Effect.flatMap($_)`,
+                        $block <: contains `Effect.map($_)`,
+                        $block <: contains `Effect.andThen($_)`,
+                        $block <: contains `Effect.tap($_)`,
+                        $block <: contains `Effect.zipRight($_)`,
+                        $block <: contains `pipe($_)`,
+                        $block <: contains `Stream.$method($_)`
+                    }
+                },
+                $args <: contains `Match.orElse(() => $branch)` where {
+                    $branch <: contains `Effect.$fn($_)`,
+                    or {
+                        $branch <: contains `Effect.flatMap($_)`,
+                        $branch <: contains `Effect.map($_)`,
+                        $branch <: contains `Effect.andThen($_)`,
+                        $branch <: contains `Effect.tap($_)`,
+                        $branch <: contains `Effect.zipRight($_)`,
+                        $branch <: contains `pipe($_)`,
+                        $branch <: contains `Stream.$method($_)`
+                    }
+                },
+                $args <: contains `Match.orElse(() => { $block })` where {
+                    $block <: contains `Effect.$fn($_)`,
+                    or {
+                        $block <: contains `Effect.flatMap($_)`,
+                        $block <: contains `Effect.map($_)`,
+                        $block <: contains `Effect.andThen($_)`,
+                        $block <: contains `Effect.tap($_)`,
+                        $block <: contains `Effect.zipRight($_)`,
+                        $block <: contains `pipe($_)`,
+                        $block <: contains `Stream.$method($_)`
+                    }
+                },
+                $args <: contains `Match.when($cond, () => void $branch)` where {
+                    $branch <: contains `Effect.$fn($_)`,
+                    or {
+                        $branch <: contains `Effect.flatMap($_)`,
+                        $branch <: contains `Effect.map($_)`,
+                        $branch <: contains `Effect.andThen($_)`,
+                        $branch <: contains `Effect.tap($_)`,
+                        $branch <: contains `Effect.zipRight($_)`,
+                        $branch <: contains `pipe($_)`,
+                        $branch <: contains `Stream.$method($_)`
+                    }
+                },
+                $args <: contains `Match.orElse(() => void $branch)` where {
+                    $branch <: contains `Effect.$fn($_)`,
+                    or {
+                        $branch <: contains `Effect.flatMap($_)`,
+                        $branch <: contains `Effect.map($_)`,
+                        $branch <: contains `Effect.andThen($_)`,
+                        $branch <: contains `Effect.tap($_)`,
+                        $branch <: contains `Effect.zipRight($_)`,
+                        $branch <: contains `pipe($_)`,
+                        $branch <: contains `Stream.$method($_)`
+                    }
+                }
+            },
+            register_diagnostic(
+                span = $matchCall,
+                message = "Rule: avoid multi-step sequencing inside Match branches. Why: it hides control flow. Fix: select a value in Match, then run one Effect pipeline outside. Avoid data-encoded conditionals (Option.toArray/forEach) that only rewrap the branch.",
+                severity = "error"
+            )
+        },
+        $body <: contains bubble `Option.match($value, { $cases })` as $call where {
+            $cases <: contains `Effect.$fn($_)`,
+            or {
+                $cases <: contains `Effect.flatMap($_)`,
+                $cases <: contains `Effect.map($_)`,
+                $cases <: contains `Effect.andThen($_)`,
+                $cases <: contains `Effect.tap($_)`,
+                $cases <: contains `Effect.zipRight($_)`,
+                $cases <: contains `pipe($_)`,
+                $cases <: contains `Stream.$method($_)`
+            },
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid multi-step sequencing inside Option.match branches. Why: it hides control flow. Prefer selecting a value in Option.match, then run one Effect pipeline outside. Leaf-level flows with local bindings may keep Option.match but should stay linear.",
+                severity = "info"
+            )
+        },
+    }
+}

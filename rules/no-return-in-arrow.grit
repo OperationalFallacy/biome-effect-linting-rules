@@ -1,0 +1,29 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains bubble `$callee($args)` where {
+        $callee <: not `S.filter`,
+        $callee <: not `Schema.filter`,
+        or {
+            $args <: contains `($params) => { $block }` where {
+                $block <: contains `return $value` as $ret
+            },
+            $args <: contains `($params): $return => { $block }` where {
+                $block <: contains `return $value` as $ret
+            },
+            $args <: contains `$param => { $block }` where {
+                $block <: contains `return $value` as $ret
+            }
+        },
+        not $args <: contains bubble `S.filter($fn, $_)` where { $fn <: contains $ret },
+        not $args <: contains bubble `Schema.filter($fn, $_)` where { $fn <: contains $ret },
+        register_diagnostic(
+            span = $ret,
+            message = "Rule: avoid block-bodied arrow callbacks with returns. Why: they hide local control flow. Fix: use expression-only callbacks and move the logic into a single pipeline (pipe/Match/Option/A.map).",
+            severity = "info"
+        )
+    }
+}

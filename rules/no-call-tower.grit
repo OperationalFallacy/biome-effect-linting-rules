@@ -1,0 +1,28 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains bubble `Effect.$outer($first)` as $call where {
+            $first <: `Effect.$inner($innerArgs)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid nested Effect call towers (Effect.fn(Effect.fn(...))). Why: it hides sequencing. Fix: build the inner Effect first, then use pipe/Effect.flatMap/Effect.andThen for a single flat pipeline.",
+                severity = "error"
+            )
+        },
+        $body <: contains bubble `Effect.$outer($first, $second)` as $call where {
+            or {
+                $first <: `Effect.$inner($innerArgs)`,
+                $second <: `Effect.$inner($innerArgs)`
+            },
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid nested Effect call towers (Effect.fn(Effect.fn(...))). Why: it hides sequencing. Fix: build the inner Effect first, then use pipe/Effect.flatMap/Effect.andThen for a single flat pipeline.",
+                severity = "error"
+            )
+        }
+    }
+}

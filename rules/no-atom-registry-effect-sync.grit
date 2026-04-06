@@ -1,0 +1,48 @@
+// Flags Effect.sync wrappers around atomRegistry/Atom operations; use Atom conversions directly.
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains bubble `Effect.sync($fn)` where {
+            or {
+                $fn <: contains `atomRegistry.$method($args)` as $atomCall,
+                $fn <: contains `Atom.$method($args)` as $atomCall,
+                $fn <: contains `Atom.$method<$types>($args)` as $atomCall
+            },
+            or {
+                $method <: `get`,
+                $method <: `set`,
+                $method <: `update`,
+                $method <: `modify`,
+                $method <: `refresh`
+            },
+            register_diagnostic(
+                span = $atomCall,
+                message = "Rule: do not wrap Atom/atomRegistry ops in Effect.sync. Why: it hides side effects and breaks atom flow. Fix: call Atom.get/Atom.set/Atom.update/Atom.modify/Atom.refresh directly.",
+                severity = "error"
+            )
+        },
+        $body <: contains bubble `Effect.sync<$types>($fn)` where {
+            or {
+                $fn <: contains `atomRegistry.$method($args)` as $atomCall,
+                $fn <: contains `Atom.$method($args)` as $atomCall,
+                $fn <: contains `Atom.$method<$types>($args)` as $atomCall
+            },
+            or {
+                $method <: `get`,
+                $method <: `set`,
+                $method <: `update`,
+                $method <: `modify`,
+                $method <: `refresh`
+            },
+            register_diagnostic(
+                span = $atomCall,
+                message = "Rule: do not wrap Atom/atomRegistry ops in Effect.sync. Why: it hides side effects and breaks atom flow. Fix: call Atom.get/Atom.set/Atom.update/Atom.modify/Atom.refresh directly.",
+                severity = "error"
+            )
+        }
+    }
+}

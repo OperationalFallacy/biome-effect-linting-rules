@@ -1,0 +1,46 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains `{$props}` where {
+            $props <: contains `$key: Match.value($_).pipe($_)` as $branch
+        },
+        $body <: contains `{$props}` where {
+            $props <: contains `$key: Option.match($_, $_)` as $branch
+        },
+        $body <: contains `{$props}` where {
+            $props <: contains `$key: Either.match($_, $_)` as $branch
+        },
+        $body <: contains `(($param) => ({ $props }))($arg)` as $branch where {
+            or {
+                $arg <: contains `Match.value($_).pipe($_)`,
+                $arg <: contains `Option.match($_, $_)`,
+                $arg <: contains `Either.match($_, $_)`
+            }
+        },
+        $body <: contains `(($param) => { $block })($arg)` as $branch where {
+            $block <: contains `return { $props }`,
+            or {
+                $arg <: contains `Match.value($_).pipe($_)`,
+                $arg <: contains `Option.match($_, $_)`,
+                $arg <: contains `Either.match($_, $_)`
+            }
+        },
+        $body <: contains `(function($param) { $block })($arg)` as $branch where {
+            $block <: contains `return { $props }`,
+            or {
+                $arg <: contains `Match.value($_).pipe($_)`,
+                $arg <: contains `Option.match($_, $_)`,
+                $arg <: contains `Either.match($_, $_)`
+            }
+        }
+    },
+    register_diagnostic(
+        span = $branch,
+        message = "Rule: avoid Match/Option/Either inside object literals. Why: it hides the decision and invites workaround scaffolding. Fix: compute the value first (context), then build the object from named values with one flat decision.",
+        severity = "error"
+    )
+}

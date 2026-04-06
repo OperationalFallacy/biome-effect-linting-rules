@@ -1,0 +1,9 @@
+file($body) where {
+    $body <: contains bubble `Effect.as($value)` as $call where {
+        register_diagnostic(
+            span = $call,
+            message = "Rule: avoid Effect.as. Why: it hides sequencing and turns effects into placeholders. Fix: use Effect.map for value mapping or Effect.asVoid after explicit pipeline steps.",
+            severity = "error"
+        )
+    }
+}

@@ -1,0 +1,19 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains `Effect.sync($fn)` as $call,
+        $body <: contains `Effect.sync<$types>($fn)` as $call
+    },
+    $fn <: `() => $expr`,
+    $expr <: `$callee($args)` as $sideEffect,
+    not $expr <: `console.$method($_)`,
+    register_diagnostic(
+        span = $call,
+        message = "Rule: avoid Effect.sync around side effects. Why: it hides intent. Fix: use Effect.log* or an explicit pipeline step for the side effect.",
+        severity = "warning"
+    )
+}

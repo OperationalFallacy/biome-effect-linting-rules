@@ -1,0 +1,51 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains bubble `Effect.$outer(Effect.$inner($innerOnly))` as $outerCall where {
+            register_diagnostic(
+                span = $outerCall,
+                message = "Rule: avoid Effect calls nested as arguments (Effect.xx(Effect.yy(...))). Why: it hides sequencing. Fix: build the inner Effect first, then use pipe/Effect.flatMap/Effect.andThen to keep a single flat pipeline.",
+                severity = "error"
+            )
+        },
+        $body <: contains bubble `Effect.$outer(Effect.$inner($innerFirst, $innerSecond))` as $outerCall where {
+            register_diagnostic(
+                span = $outerCall,
+                message = "Rule: avoid Effect calls nested as arguments (Effect.xx(Effect.yy(...))). Why: it hides sequencing. Fix: build the inner Effect first, then use pipe/Effect.flatMap/Effect.andThen to keep a single flat pipeline.",
+                severity = "error"
+            )
+        },
+        $body <: contains bubble `Effect.$outer(Effect.$inner($innerOnly), $second)` as $outerCall where {
+            register_diagnostic(
+                span = $outerCall,
+                message = "Rule: avoid Effect calls nested as arguments (Effect.xx(Effect.yy(...))). Why: it hides sequencing. Fix: build the inner Effect first, then use pipe/Effect.flatMap/Effect.andThen to keep a single flat pipeline.",
+                severity = "error"
+            )
+        },
+        $body <: contains bubble `Effect.$outer(Effect.$inner($innerFirst, $innerSecond), $second)` as $outerCall where {
+            register_diagnostic(
+                span = $outerCall,
+                message = "Rule: avoid Effect calls nested as arguments (Effect.xx(Effect.yy(...))). Why: it hides sequencing. Fix: build the inner Effect first, then use pipe/Effect.flatMap/Effect.andThen to keep a single flat pipeline.",
+                severity = "error"
+            )
+        },
+        $body <: contains bubble `Effect.$outer($first, Effect.$inner($innerOnly))` as $outerCall where {
+            register_diagnostic(
+                span = $outerCall,
+                message = "Rule: avoid Effect calls nested as arguments (Effect.xx(Effect.yy(...))). Why: it hides sequencing. Fix: build the inner Effect first, then use pipe/Effect.flatMap/Effect.andThen to keep a single flat pipeline.",
+                severity = "error"
+            )
+        },
+        $body <: contains bubble `Effect.$outer($first, Effect.$inner($innerFirst, $innerSecond))` as $outerCall where {
+            register_diagnostic(
+                span = $outerCall,
+                message = "Rule: avoid Effect calls nested as arguments (Effect.xx(Effect.yy(...))). Why: it hides sequencing. Fix: build the inner Effect first, then use pipe/Effect.flatMap/Effect.andThen to keep a single flat pipeline.",
+                severity = "error"
+            )
+        }
+    }
+}

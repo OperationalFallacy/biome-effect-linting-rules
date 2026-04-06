@@ -1,0 +1,15 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains bubble `Effect.gen(function* () { $outer })` where {
+        $outer <: contains `Effect.gen($_)` as $nested,
+        register_diagnostic(
+            span = $nested,
+            message = "Rule: avoid nested Effect.gen. Why: nested generators hide sequencing. Fix: flatten to a single Effect.gen per method or a single flat pipeline.",
+            severity = "error"
+        )
+    }
+}

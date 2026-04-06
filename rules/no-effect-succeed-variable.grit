@@ -1,0 +1,18 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains bubble `Effect.succeed($var)` as $lift where {
+        $var <: not `{$_}`,
+        $var <: not `[$_]`,
+        $var <: not `$_($_)`,
+        $var <: not `$_ ? $_ : $_`,
+        register_diagnostic(
+            span = $lift,
+            message = "Rule: avoid Effect.succeed(variable) as a branch placeholder. Why: it hides a decision and turns data into pseudo-control flow. Fix: select a plain value (Option/Match) and then run one Effect pipeline after the decision; if you already read the state, return it as a value. Avoid Option.toArray/forEach hacks that just re-encode the branch.",
+            severity = "warning"
+        )
+    }
+}

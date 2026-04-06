@@ -1,0 +1,22 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    $body <: contains bubble `($fn)($args)` as $call where {
+        or {
+            $fn <: `($params) => $expr`,
+            $fn <: `($params) => { $block }`,
+            $fn <: `$param => $expr`,
+            $fn <: `$param => { $block }`,
+            $fn <: `function ($params) { $block }`,
+            $fn <: `function $name($params) { $block }`
+        },
+        register_diagnostic(
+            span = $call,
+            message = "Rule: avoid immediate invocation of inline functions. Why: it hides decisions and sequencing. Fix: bind a named context with const and keep one Match/Option decision in a flat pipeline.",
+            severity = "error"
+        )
+    }
+}

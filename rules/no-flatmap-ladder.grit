@@ -1,0 +1,57 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains `const $name = Effect.flatMap($args)` as $call where {
+            $args <: contains `Effect.flatMap($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid nested Effect.flatMap. Why: it hides sequencing and pushes laddered control flow. Fix: build context once (Effect.all/Effect.map) and run a single flatMap.",
+                severity = "warning"
+            )
+        },
+        $body <: contains `const $name: $type = Effect.flatMap($args)` as $call where {
+            $args <: contains `Effect.flatMap($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid nested Effect.flatMap. Why: it hides sequencing and pushes laddered control flow. Fix: build context once (Effect.all/Effect.map) and run a single flatMap.",
+                severity = "warning"
+            )
+        },
+        $body <: contains `return Effect.flatMap($args)` as $call where {
+            $args <: contains `Effect.flatMap($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid nested Effect.flatMap. Why: it hides sequencing and pushes laddered control flow. Fix: build context once (Effect.all/Effect.map) and run a single flatMap.",
+                severity = "warning"
+            )
+        },
+        $body <: contains `const $name = Effect.flatten($outer)` as $call where {
+            $outer <: contains `Effect.map($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid map+flatten ladders. Why: they hide sequencing. Fix: build context once (Effect.all/Effect.map) and run a single flatMap.",
+                severity = "warning"
+            )
+        },
+        $body <: contains `const $name: $type = Effect.flatten($outer)` as $call where {
+            $outer <: contains `Effect.map($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid map+flatten ladders. Why: they hide sequencing. Fix: build context once (Effect.all/Effect.map) and run a single flatMap.",
+                severity = "warning"
+            )
+        },
+        $body <: contains `return Effect.flatten($outer)` as $call where {
+            $outer <: contains `Effect.map($_)`,
+            register_diagnostic(
+                span = $call,
+                message = "Rule: avoid map+flatten ladders. Why: they hide sequencing. Fix: build context once (Effect.all/Effect.map) and run a single flatMap.",
+                severity = "warning"
+            )
+        }
+    }
+}

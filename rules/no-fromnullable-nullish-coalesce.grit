@@ -1,0 +1,16 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains `Option.fromNullable($value ?? null)` as $call,
+        $body <: contains `Option.fromNullable($value ?? undefined)` as $call
+    },
+    register_diagnostic(
+        span = $call,
+        message = "Rule: avoid nullish re-wrap inside Option.fromNullable. Why: `x ?? null` and `x ?? undefined` add noise and hide source shape. Fix: pass the source directly to Option.fromNullable.",
+        severity = "error"
+    )
+}

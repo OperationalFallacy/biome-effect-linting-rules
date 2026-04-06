@@ -1,0 +1,16 @@
+file($body) where {
+  or {
+    $body <: contains `"effect"`,
+    $body <: contains bubble `import "effect/$module"`,
+    $body <: contains `"@effect-atom/atom-react"`
+  },
+  or {
+    $body <: contains `Effect.Effect<$channels>` as $match,
+    $body <: contains `Layer.Layer<$channels>` as $match
+  },
+  register_diagnostic(
+    span = $match,
+    message = "Rule: avoid manual Effect channel tuples (`Effect.Effect<...>` / `Layer.Layer<...>`). Why: channels compose through the Effect pipeline and services; hand-written tuples desync from the real flow. Fix: drop the generic and let the return type infer from the Effect/Layer you return, or expose a service method that returns the effect directly.",
+    severity = "error"
+  )
+}

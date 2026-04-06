@@ -1,0 +1,16 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`,
+        $body <: contains `"@effect-atom/atom-react"`
+    },
+    or {
+        $body <: contains `Effect.async($args)` as $async,
+        $body <: contains `Effect.async<$types>($args)` as $async
+    },
+    register_diagnostic(
+        span = $async,
+        message = "Rule: avoid Effect.async. Why: callback-style wiring hides lifecycle and escapes declarative flow. Fix: use Stream or structured Effect lifecycles (acquire/use/release).",
+        severity = "error"
+    )
+}
