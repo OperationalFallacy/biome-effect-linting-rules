@@ -99,6 +99,7 @@ if (releaseWorkflow) {
       name: "Install Specific Yarn Version",
       run: `corepack enable && yarn set version ${yarnVersion}`,
     }),
+    JsonPatch.add("/jobs/release_npm/steps/4/env/NPM_TRUSTED_PUBLISHER", "true"),
   );
 }
 
