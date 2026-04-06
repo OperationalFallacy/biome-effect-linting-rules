@@ -88,10 +88,13 @@ const releaseWorkflow = project.github?.tryFindWorkflow("release");
 
 if (releaseWorkflow) {
   releaseWorkflow.file?.patch(
+    JsonPatch.add("/jobs/release/steps/2/with/package-manager-cache", false),
     JsonPatch.add("/jobs/release/steps/3", {
       name: "Install Specific Yarn Version",
       run: `corepack enable && yarn set version ${yarnVersion}`,
     }),
+    JsonPatch.add("/jobs/release_github/steps/0/with/package-manager-cache", false),
+    JsonPatch.add("/jobs/release_npm/steps/0/with/package-manager-cache", false),
     JsonPatch.add("/jobs/release_npm/steps/2", {
       name: "Install Specific Yarn Version",
       run: `corepack enable && yarn set version ${yarnVersion}`,
@@ -104,7 +107,7 @@ if (project.github) {
     (workflow) => workflow.name === "build",
   );
   const upgradeWorkflow = project.github.workflows.find(
-    (workflow) => workflow.name === "upgrade-main",
+    (workflow) => workflow.name === `upgrade-${project.defaultReleaseBranch}`,
   );
 
   const corepackStep = {
@@ -113,6 +116,9 @@ if (project.github) {
   };
 
   if (buildWorkflow) {
+    buildWorkflow.file?.patch(
+      JsonPatch.add("/jobs/build/steps/2/with/package-manager-cache", false),
+    );
     const buildJob = buildWorkflow.getJob("build");
     if (buildJob && "steps" in buildJob) {
       const buildSteps = buildJob.steps as unknown as () => JobStep[];
@@ -134,5 +140,13 @@ if (project.github) {
     }
   }
 }
+
+const generatedUpgradeWorkflow = project.github?.workflows.find(
+  (workflow) => workflow.name === `upgrade-${project.defaultReleaseBranch}`,
+);
+
+generatedUpgradeWorkflow?.file?.patch(
+  JsonPatch.add("/jobs/upgrade/steps/1/with/package-manager-cache", false),
+);
 
 project.synth();
