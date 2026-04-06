@@ -32,6 +32,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 24.11.1
+          package-manager-cache: false
       - name: Install Specific Yarn Version
         run: corepack enable && yarn set version 4.6.0
       - name: Install dependencies
@@ -74,6 +75,7 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24.11.1
+          package-manager-cache: false
       - name: Download build artifacts
         uses: actions/download-artifact@v5
         with:
@@ -98,6 +100,7 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24.11.1
+          package-manager-cache: false
       - name: Download build artifacts
         uses: actions/download-artifact@v5
         with:
