@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { javascript, JsonPatch, ReleasableCommits } from "projen";
 import { JobStep } from "projen/lib/github/workflows-model";
 import { YarnNodeLinker } from "projen/lib/javascript";
@@ -74,6 +75,8 @@ project.package.addField("exports", {
   "./package.json": "./package.json",
 });
 
+project.gitignore.exclude("/dist/");
+
 project.addTask("pack:dry-run", {
   exec: "npm pack --dry-run",
 });
@@ -89,15 +92,16 @@ const releaseWorkflow = project.github?.tryFindWorkflow("release");
 if (releaseWorkflow) {
   releaseWorkflow.file?.patch(
     JsonPatch.add("/jobs/release/steps/2/with/package-manager-cache", false),
-    JsonPatch.add("/jobs/release/steps/3", {
+    JsonPatch.add("/jobs/release/steps/2", {
       name: "Install Specific Yarn Version",
-      run: `corepack enable && yarn set version ${yarnVersion}`,
+      run: `corepack enable && corepack prepare yarn@${yarnVersion} --activate`,
     }),
+    JsonPatch.add("/jobs/release/steps/3/with/package-manager-cache", false),
     JsonPatch.add("/jobs/release_github/steps/0/with/package-manager-cache", false),
     JsonPatch.add("/jobs/release_npm/steps/0/with/package-manager-cache", false),
     JsonPatch.add("/jobs/release_npm/steps/2", {
       name: "Install Specific Yarn Version",
-      run: `corepack enable && yarn set version ${yarnVersion}`,
+      run: `corepack enable && corepack prepare yarn@${yarnVersion} --activate`,
     }),
     JsonPatch.add("/jobs/release_npm/steps/4/env/NPM_TRUSTED_PUBLISHER", "true"),
   );
@@ -113,7 +117,14 @@ if (project.github) {
 
   const corepackStep = {
     name: "Install Specific Yarn Version",
-    run: `corepack enable && yarn set version ${yarnVersion}`,
+    run: `corepack enable && corepack prepare yarn@${yarnVersion} --activate`,
+  };
+
+  const getJobSteps = (job: { steps?: unknown }): JobStep[] => {
+    const rawSteps = job.steps;
+    return typeof rawSteps === "function"
+      ? (rawSteps as () => JobStep[])()
+      : ((rawSteps as JobStep[]) ?? []);
   };
 
   if (buildWorkflow) {
@@ -122,10 +133,10 @@ if (project.github) {
     );
     const buildJob = buildWorkflow.getJob("build");
     if (buildJob && "steps" in buildJob) {
-      const buildSteps = buildJob.steps as unknown as () => JobStep[];
+      const buildSteps = getJobSteps(buildJob);
       buildWorkflow.updateJob("build", {
         ...buildJob,
-        steps: [corepackStep, ...buildSteps()],
+        steps: [buildSteps[0], corepackStep, ...buildSteps.slice(1)],
       });
     }
   }
@@ -133,21 +144,44 @@ if (project.github) {
   if (upgradeWorkflow) {
     const upgradeJob = upgradeWorkflow.getJob("upgrade");
     if (upgradeJob && "steps" in upgradeJob) {
-      const upgradeSteps = upgradeJob.steps as unknown as JobStep[];
+      const upgradeSteps = getJobSteps(upgradeJob);
       upgradeWorkflow.updateJob("upgrade", {
         ...upgradeJob,
-        steps: [corepackStep, ...upgradeSteps],
+        steps: [upgradeSteps[0], corepackStep, ...upgradeSteps.slice(1)],
       });
     }
   }
 }
 
-const generatedUpgradeWorkflow = project.github?.workflows.find(
-  (workflow) => workflow.name === `upgrade-${project.defaultReleaseBranch}`,
-);
-
-generatedUpgradeWorkflow?.file?.patch(
-  JsonPatch.add("/jobs/upgrade/steps/1/with/package-manager-cache", false),
-);
-
 project.synth();
+
+const upgradeWorkflowPath = ".github/workflows/upgrade-master.yml";
+const upgradeWorkflowFile = fs.readFileSync(upgradeWorkflowPath, "utf8");
+
+const rewrittenUpgradeWorkflow = upgradeWorkflowFile.replace(
+  `      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: master
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24.11.1`,
+  `      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: master
+      - name: Install Specific Yarn Version
+        run: corepack enable && corepack prepare yarn@${yarnVersion} --activate
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24.11.1
+          package-manager-cache: false`,
+);
+
+if (rewrittenUpgradeWorkflow !== upgradeWorkflowFile) {
+  fs.chmodSync(upgradeWorkflowPath, 0o644);
+  fs.writeFileSync(upgradeWorkflowPath, rewrittenUpgradeWorkflow);
+  fs.chmodSync(upgradeWorkflowPath, 0o444);
+}

@@ -28,13 +28,13 @@ jobs:
         run: |-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Install Specific Yarn Version
+        run: corepack enable && corepack prepare yarn@4.6.0 --activate
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: 24.11.1
           package-manager-cache: false
-      - name: Install Specific Yarn Version
-        run: corepack enable && yarn set version 4.6.0
       - name: Install dependencies
         run: yarn install --immutable
       - name: release
@@ -107,7 +107,7 @@ jobs:
           name: build-artifact
           path: dist
       - name: Install Specific Yarn Version
-        run: corepack enable && yarn set version 4.6.0
+        run: corepack enable && corepack prepare yarn@4.6.0 --activate
       - name: Restore build artifact permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
