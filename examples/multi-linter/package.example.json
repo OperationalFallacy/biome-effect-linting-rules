@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "scripts": {
+    "lint:biome": "biome lint .",
+    "lint:oxlint": "oxlint .",
+    "lint:lintcn": "lintcn lint",
+    "lint": "npm run lint:biome && npm run lint:oxlint && npm run lint:lintcn"
+  }
+}

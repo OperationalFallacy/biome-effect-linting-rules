@@ -49,6 +49,23 @@ If your repository has local rules, add them on top of the package in `biome.jso
 }
 ```
 
+## Use with Oxlint and lintcn
+
+Biome stays the source of truth for the full rule pack. This fork also starts shipping alternate implementations for projects that use Oxlint or lintcn instead of Biome.
+
+- Biome: canonical Grit rules in `rules/*.grit`
+- Oxlint: JS plugin export at `@catenarycloud/linteffect/oxlint-plugin`
+- lintcn: source pack in [`.lintcn/linteffect`](./.lintcn/linteffect)
+
+The alternate implementations are now target-specific instead of assumed symmetric:
+
+- Oxlint currently covers all 48 Biome rule names.
+- lintcn currently covers all 48 Biome rule names.
+- There are no remaining lintcn-only rules.
+- There are no remaining Biome-only rules.
+
+See [`docs/compatibility.md`](./docs/compatibility.md) for usage and current coverage, and [`examples/multi-linter`](./examples/multi-linter) for config examples.
+
 ## Tooling advisory
 
 Couple this rule pack with `@effect/tsgo`, `@typescript/native-preview`, and the `@effect/language-service` TypeScript language-service plugin in `tsconfig.json`.
@@ -152,10 +169,44 @@ Repeated callback scaffolding makes pipelines noisier and easier to bloat with l
 ## Repository layout
 
 - `biome.jsonc`: package root config entrypoint
+- `compat/ported-rules.mjs`: source of truth for alternate implementations and per-target coverage
+- `oxlint/*`: Oxlint plugin and recommended config export
+- `oxlint/plugin.test.mjs`: Oxlint rule-by-rule coverage harness
+- `oxlint/test-cases.mjs`: Oxlint valid/invalid fixtures for every translated rule
+- `.lintcn/linteffect/*`: lintcn source pack for the currently translated rules
 - `rules/*.grit`: shipped Biome Grit rules
 - `examples/biome.effect.jsonc`: package usage example
+- `examples/multi-linter/*`: side-by-side Biome, Oxlint, and lintcn example config
+- `docs/compatibility.md`: multi-linter integration guidance
 - `docs/rule-guidance.md`: rule authoring guidance
 - `scripts/refresh-biome-grammars.ts`: refresh step for Biome grammar references
+
+## lintcn rule testing
+
+For local lintcn rule development in this repository:
+
+```bash
+yarn lintcn:bootstrap
+yarn lintcn:test
+yarn lintcn:test:update-snaps
+```
+
+- `lintcn:bootstrap` prepares `.lintcn/.tsgolint`, `go.mod`, and `go.work` so `go test` can run inside the vendored lintcn workspace.
+- `lintcn:test` runs the Go `rule_tester` suite in `.lintcn/linteffect`.
+- `lintcn:test:update-snaps` refreshes expected diagnostics after an intentional rule change.
+
+The generator keeps `.lintcn/linteffect/*_test.go` intact, so the lintcn pack can be regenerated without wiping the test harness.
+The `rule_tester` suite now covers every lintcn-translated rule with at least one valid and one invalid case.
+
+## Oxlint plugin testing
+
+For local Oxlint parity work in this repository:
+
+```bash
+yarn oxlint:test
+```
+
+The Node test harness runs one valid and one invalid fixture for every translated Oxlint rule and asserts that [`compat/ported-rules.mjs`](./compat/ported-rules.mjs) and the Oxlint fixture set stay in lockstep.
 
 ## Usage model
 

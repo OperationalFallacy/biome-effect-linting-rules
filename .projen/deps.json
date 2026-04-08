@@ -11,6 +11,16 @@
       "type": "build"
     },
     {
+      "name": "lintcn",
+      "version": "0.7.1",
+      "type": "build"
+    },
+    {
+      "name": "oxlint",
+      "version": "1.59.0",
+      "type": "build"
+    },
+    {
       "name": "projen",
       "type": "build"
     },

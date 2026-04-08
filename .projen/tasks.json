@@ -118,6 +118,38 @@
         }
       ]
     },
+    "lintcn:bootstrap": {
+      "name": "lintcn:bootstrap",
+      "steps": [
+        {
+          "exec": "tsx scripts/bootstrap-lintcn-tests.ts"
+        }
+      ]
+    },
+    "lintcn:test": {
+      "name": "lintcn:test",
+      "steps": [
+        {
+          "exec": "tsx scripts/bootstrap-lintcn-tests.ts && cd .lintcn && go test -v ./..."
+        }
+      ]
+    },
+    "lintcn:test:update-snaps": {
+      "name": "lintcn:test:update-snaps",
+      "steps": [
+        {
+          "exec": "tsx scripts/bootstrap-lintcn-tests.ts && cd .lintcn && UPDATE_SNAPS=true go test -count=1 -v ./..."
+        }
+      ]
+    },
+    "oxlint:test": {
+      "name": "oxlint:test",
+      "steps": [
+        {
+          "exec": "node --test oxlint/plugin.test.mjs"
+        }
+      ]
+    },
     "pack:dry-run": {
       "name": "pack:dry-run",
       "steps": [
@@ -184,7 +216,15 @@
     },
     "test": {
       "name": "test",
-      "description": "Run tests"
+      "description": "Run tests",
+      "steps": [
+        {
+          "exec": "npx projen lintcn:test"
+        },
+        {
+          "exec": "npx projen oxlint:test"
+        }
+      ]
     },
     "unbump": {
       "name": "unbump",
@@ -218,7 +258,7 @@
           "exec": "yarn install"
         },
         {
-          "exec": "yarn up commit-and-tag-version constructs projen tsx typescript"
+          "exec": "yarn up commit-and-tag-version constructs lintcn oxlint projen tsx typescript"
         },
         {
           "exec": "npx projen"

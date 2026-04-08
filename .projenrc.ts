@@ -12,7 +12,13 @@ const project = new javascript.NodeProject({
   defaultReleaseBranch: "master",
   description:
     "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
-  devDeps: ["projen@^0.98.34", "tsx@^4.20.6", "typescript@^5.9.3"],
+  devDeps: [
+    "lintcn@0.7.1",
+    "oxlint@1.59.0",
+    "projen@^0.98.34",
+    "tsx@^4.20.6",
+    "typescript@^5.9.3",
+  ],
   entrypoint: "",
   github: true,
   jest: false,
@@ -53,6 +59,9 @@ const project = new javascript.NodeProject({
 
 project.package.addField("files", [
   "biome.jsonc",
+  "compat",
+  "oxlint/plugin.mjs",
+  "oxlint/recommended.mjs",
   "rules/*.grit",
   "examples",
   "docs",
@@ -72,6 +81,8 @@ project.package.addField("repository", {
 project.package.addField("exports", {
   ".": "./biome.jsonc",
   "./recommended": "./biome.jsonc",
+  "./oxlint-plugin": "./oxlint/plugin.mjs",
+  "./oxlint-recommended": "./oxlint/recommended.mjs",
   "./package.json": "./package.json",
 });
 
@@ -84,6 +95,25 @@ project.addTask("pack:dry-run", {
 project.addTask("refresh:biome-grammars", {
   exec: "tsx scripts/refresh-biome-grammars.ts",
 });
+
+project.addTask("lintcn:bootstrap", {
+  exec: "tsx scripts/bootstrap-lintcn-tests.ts",
+});
+
+project.addTask("lintcn:test", {
+  exec: "tsx scripts/bootstrap-lintcn-tests.ts && cd .lintcn && go test -v ./...",
+});
+
+project.addTask("lintcn:test:update-snaps", {
+  exec: "tsx scripts/bootstrap-lintcn-tests.ts && cd .lintcn && UPDATE_SNAPS=true go test -count=1 -v ./...",
+});
+
+project.addTask("oxlint:test", {
+  exec: "node --test oxlint/plugin.test.mjs",
+});
+
+project.testTask.exec("npx projen lintcn:test");
+project.testTask.exec("npx projen oxlint:test");
 
 project.defaultTask?.reset("tsx .projenrc.ts");
 
