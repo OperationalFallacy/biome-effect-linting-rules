@@ -34,6 +34,18 @@ The package publishes the full rule set plus three smaller presets. `core` conta
 
 This split keeps preset composition in the package. Repositories extend one published entrypoint instead of assembling rule groups manually.
 
+## CLI
+
+The package also ships a zero-setup CLI for repo-local lint runs. It writes a temporary Biome config with absolute paths to the packaged Grit rules, then runs the bundled Biome binary against the requested files or directories.
+
+```bash
+npx @catenarycloud/linteffect check src/file.ts
+npx @catenarycloud/linteffect rewrite src/file.ts --preset=core
+npx @catenarycloud/linteffect check src/messages --preset=core
+```
+
+`check` runs `biome lint`. `rewrite` runs `biome lint --write`. `--preset` selects one published preset. The CLI keeps the surface small and runs the packaged rule set for the chosen preset without local Biome configuration.
+
 ## Integrate into `biome.jsonc`
 
 Extend `@catenarycloud/linteffect` to load the complete published rule set.

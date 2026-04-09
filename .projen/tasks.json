@@ -162,7 +162,35 @@
       "name": "release",
       "description": "Prepare a release from \"master\" branch",
       "env": {
-        "RELEASE": "true"
+        "RELEASE": "true",
+        "MAJOR": "0"
+      },
+      "steps": [
+        {
+          "exec": "rm -fr dist"
+        },
+        {
+          "spawn": "bump"
+        },
+        {
+          "spawn": "build"
+        },
+        {
+          "spawn": "unbump"
+        },
+        {
+          "exec": "git diff --ignore-space-at-eol --exit-code"
+        }
+      ]
+    },
+    "release:feat/cli-demo-runner": {
+      "name": "release:feat/cli-demo-runner",
+      "description": "Prepare a release from \"feat/cli-demo-runner\" branch",
+      "env": {
+        "RELEASE": "true",
+        "MAJOR": "0",
+        "PRERELEASE": "dev",
+        "RELEASE_TAG_PREFIX": "dev-v"
       },
       "steps": [
         {
@@ -218,7 +246,7 @@
           "exec": "yarn install"
         },
         {
-          "exec": "yarn up commit-and-tag-version constructs projen tsx typescript"
+          "exec": "yarn up commit-and-tag-version constructs projen tsx typescript @biomejs/biome"
         },
         {
           "exec": "npx projen"

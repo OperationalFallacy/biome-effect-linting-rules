@@ -6,6 +6,7 @@ import { ReleaseTrigger } from "projen/lib/release";
 
 const yarnVersion = "4.6.0";
 const upgradeSchedule = "0 0 * * 1,4";
+const prereleaseBranch = "feat/cli-demo-runner";
 
 const project = new javascript.NodeProject({
   authorName: "Roman Naumenko",
@@ -13,6 +14,7 @@ const project = new javascript.NodeProject({
   defaultReleaseBranch: "master",
   description:
     "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
+  deps: ["@biomejs/biome@^2.2.4"],
   devDeps: ["projen@^0.98.34", "tsx@^4.20.6", "typescript@^5.9.3"],
   entrypoint: "",
   github: true,
@@ -28,13 +30,23 @@ const project = new javascript.NodeProject({
   ],
   license: "MIT",
   licensed: true,
+  majorVersion: 0,
   name: "lintEffect",
   npmAccess: javascript.NpmAccess.PUBLIC,
+  npmDistTag: "latest",
   packageManager: javascript.NodePackageManager.YARN_BERRY,
   packageName: "@catenarycloud/linteffect",
   prettier: false,
   releaseToNpm: true,
   release: true,
+  releaseBranches: {
+    [prereleaseBranch]: {
+      majorVersion: 0,
+      npmDistTag: "dev",
+      prerelease: "dev",
+      tagPrefix: "dev-v",
+    },
+  },
   releaseTrigger: ReleaseTrigger.continuous(),
   releasableCommits: ReleasableCommits.featuresAndFixes(),
   repository: "https://github.com/OperationalFallacy/biome-effect-linting-rules.git",
@@ -54,6 +66,7 @@ project.release?.publisher?.publishToNpm({
 
 project.package.addField("files", [
   "biome.jsonc",
+  "bin",
   "rules/*.grit",
   "configs",
   "examples",
@@ -61,6 +74,8 @@ project.package.addField("files", [
   "README.md",
   "LICENSE",
 ]);
+
+project.package.addField("bin", "./bin/linteffect.mjs");
 
 project.package.addField("publishConfig", {
   access: "public",
@@ -94,32 +109,15 @@ project.addTask("refresh:biome-grammars", {
 
 project.defaultTask?.reset("tsx .projenrc.ts");
 
-const releaseWorkflow = project.github?.tryFindWorkflow("release");
-
-if (releaseWorkflow) {
-  releaseWorkflow.file?.patch(
-    JsonPatch.add("/jobs/release/steps/2/with/package-manager-cache", false),
-    JsonPatch.add("/jobs/release/steps/2", {
-      name: "Install Specific Yarn Version",
-      run: `corepack enable && corepack prepare yarn@${yarnVersion} --activate`,
-    }),
-    JsonPatch.add("/jobs/release/steps/3/with/package-manager-cache", false),
-    JsonPatch.add("/jobs/release_github/steps/0/with/package-manager-cache", false),
-    JsonPatch.add("/jobs/release_npm/steps/0/with/package-manager-cache", false),
-    JsonPatch.add("/jobs/release_npm/steps/2", {
-      name: "Install Specific Yarn Version",
-      run: `corepack enable && corepack prepare yarn@${yarnVersion} --activate`,
-    }),
-    JsonPatch.add("/jobs/release_npm/steps/4/env/NPM_TRUSTED_PUBLISHER", "true"),
-  );
-}
-
 if (project.github) {
   const buildWorkflow = project.github.workflows.find(
     (workflow) => workflow.name === "build",
   );
-  const upgradeWorkflow = project.github.workflows.find(
-    (workflow) => workflow.name === `upgrade-${project.defaultReleaseBranch}`,
+  const releaseWorkflows = project.github.workflows.filter(
+    (workflow) => workflow.name === "release" || workflow.name.startsWith("release-"),
+  );
+  const upgradeWorkflows = project.github.workflows.filter(
+    (workflow) => workflow.name.startsWith("upgrade-"),
   );
 
   const corepackStep = {
@@ -148,7 +146,19 @@ if (project.github) {
     }
   }
 
-  if (upgradeWorkflow) {
+  for (const releaseWorkflow of releaseWorkflows) {
+    releaseWorkflow.file?.patch(
+      JsonPatch.add("/jobs/release/steps/2/with/package-manager-cache", false),
+      JsonPatch.add("/jobs/release/steps/2", corepackStep),
+      JsonPatch.add("/jobs/release/steps/3/with/package-manager-cache", false),
+      JsonPatch.add("/jobs/release_github/steps/0/with/package-manager-cache", false),
+      JsonPatch.add("/jobs/release_npm/steps/0/with/package-manager-cache", false),
+      JsonPatch.add("/jobs/release_npm/steps/2", corepackStep),
+      JsonPatch.add("/jobs/release_npm/steps/4/env/NPM_TRUSTED_PUBLISHER", "true"),
+    );
+  }
+
+  for (const upgradeWorkflow of upgradeWorkflows) {
     const upgradeJob = upgradeWorkflow.getJob("upgrade");
     if (upgradeJob && "steps" in upgradeJob) {
       const upgradeSteps = getJobSteps(upgradeJob);

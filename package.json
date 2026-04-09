@@ -5,6 +5,7 @@
     "type": "git",
     "url": "https://github.com/OperationalFallacy/biome-effect-linting-rules.git"
   },
+  "bin": "./bin/linteffect.mjs",
   "scripts": {
     "build": "npx projen build",
     "bump": "npx projen bump",
@@ -19,6 +20,7 @@
     "pre-compile": "npx projen pre-compile",
     "refresh:biome-grammars": "npx projen refresh:biome-grammars",
     "release": "npx projen release",
+    "release:feat/cli-demo-runner": "npx projen release:feat/cli-demo-runner",
     "test": "npx projen test",
     "unbump": "npx projen unbump",
     "upgrade": "npx projen upgrade",
@@ -35,6 +37,9 @@
     "projen": "^0.98.34",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@biomejs/biome": "^2.2.4"
   },
   "keywords": [
     "agent",
@@ -53,6 +58,7 @@
   "packageManager": "yarn@4.6.0",
   "files": [
     "biome.jsonc",
+    "bin",
     "rules/*.grit",
     "configs",
     "examples",
