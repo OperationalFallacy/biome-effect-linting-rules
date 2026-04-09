@@ -5,6 +5,7 @@ import { YarnNodeLinker } from "projen/lib/javascript";
 import { ReleaseTrigger } from "projen/lib/release";
 
 const yarnVersion = "4.6.0";
+const upgradeSchedule = "0 0 * * 1,4";
 
 const project = new javascript.NodeProject({
   authorName: "Roman Naumenko",
@@ -29,13 +30,9 @@ const project = new javascript.NodeProject({
   licensed: true,
   name: "lintEffect",
   npmAccess: javascript.NpmAccess.PUBLIC,
-  npmPublishOptions: {
-    trustedPublishing: true,
-  },
   packageManager: javascript.NodePackageManager.YARN_BERRY,
   packageName: "@catenarycloud/linteffect",
   prettier: false,
-  projenrcTs: true,
   releaseToNpm: true,
   release: true,
   releaseTrigger: ReleaseTrigger.continuous(),
@@ -51,9 +48,14 @@ const project = new javascript.NodeProject({
   },
 });
 
+project.release?.publisher?.publishToNpm({
+  trustedPublishing: true,
+});
+
 project.package.addField("files", [
   "biome.jsonc",
   "rules/*.grit",
+  "configs",
   "examples",
   "docs",
   "README.md",
@@ -70,12 +72,17 @@ project.package.addField("repository", {
 });
 
 project.package.addField("exports", {
-  ".": "./biome.jsonc",
-  "./recommended": "./biome.jsonc",
+  ".": "./configs/full.jsonc",
+  "./recommended": "./configs/full.jsonc",
+  "./core": "./configs/core.jsonc",
+  "./web": "./configs/web.jsonc",
+  "./ts-type": "./configs/ts-type.jsonc",
+  "./full": "./configs/full.jsonc",
   "./package.json": "./package.json",
 });
 
 project.gitignore.exclude("/dist/");
+project.gitignore.exclude("/refs/");
 
 project.addTask("pack:dry-run", {
   exec: "npm pack --dry-run",
@@ -158,7 +165,12 @@ project.synth();
 const upgradeWorkflowPath = ".github/workflows/upgrade-master.yml";
 const upgradeWorkflowFile = fs.readFileSync(upgradeWorkflowPath, "utf8");
 
-const rewrittenUpgradeWorkflow = upgradeWorkflowFile.replace(
+const rewrittenUpgradeWorkflow = upgradeWorkflowFile
+  .replace(
+    `    - cron: 0 0 * * *`,
+    `    - cron: ${upgradeSchedule}`,
+  )
+  .replace(
   `      - name: Checkout
         uses: actions/checkout@v5
         with:
@@ -178,7 +190,7 @@ const rewrittenUpgradeWorkflow = upgradeWorkflowFile.replace(
         with:
           node-version: 24.11.1
           package-manager-cache: false`,
-);
+  );
 
 if (rewrittenUpgradeWorkflow !== upgradeWorkflowFile) {
   fs.chmodSync(upgradeWorkflowPath, 0o644);

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "plugins": [
+    "./node_modules/@catenarycloud/linteffect/rules/no-effect-type-alias.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-model-overlay-cast.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-unknown-boolean-coercion-helper.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-fromnullable-nullish-coalesce.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-option-boolean-normalization.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-string-sentinel-return.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-string-sentinel-const.grit"
+  ]
+}
