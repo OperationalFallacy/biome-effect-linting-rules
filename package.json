@@ -20,7 +20,6 @@
     "pre-compile": "npx projen pre-compile",
     "refresh:biome-grammars": "npx projen refresh:biome-grammars",
     "release": "npx projen release",
-    "release:prerelease-cli-demo-runner": "npx projen release:prerelease-cli-demo-runner",
     "test": "npx projen test",
     "unbump": "npx projen unbump",
     "upgrade": "npx projen upgrade",

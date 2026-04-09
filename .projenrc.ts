@@ -6,7 +6,6 @@ import { ReleaseTrigger } from "projen/lib/release";
 
 const yarnVersion = "4.6.0";
 const upgradeSchedule = "0 0 * * 1,4";
-const prereleaseBranch = "prerelease-cli-demo-runner";
 
 const project = new javascript.NodeProject({
   authorName: "Roman Naumenko",
@@ -39,14 +38,6 @@ const project = new javascript.NodeProject({
   prettier: false,
   releaseToNpm: true,
   release: true,
-  releaseBranches: {
-    [prereleaseBranch]: {
-      majorVersion: 0,
-      npmDistTag: "dev",
-      prerelease: "dev",
-      tagPrefix: "dev-v",
-    },
-  },
   releaseTrigger: ReleaseTrigger.continuous(),
   releasableCommits: ReleasableCommits.featuresAndFixes(),
   repository: "https://github.com/OperationalFallacy/biome-effect-linting-rules.git",
@@ -113,8 +104,8 @@ if (project.github) {
   const buildWorkflow = project.github.workflows.find(
     (workflow) => workflow.name === "build",
   );
-  const releaseWorkflows = project.github.workflows.filter(
-    (workflow) => workflow.name === "release" || workflow.name.startsWith("release-"),
+  const releaseWorkflow = project.github.workflows.find(
+    (workflow) => workflow.name === "release",
   );
   const upgradeWorkflows = project.github.workflows.filter(
     (workflow) => workflow.name.startsWith("upgrade-"),
@@ -146,7 +137,7 @@ if (project.github) {
     }
   }
 
-  for (const releaseWorkflow of releaseWorkflows) {
+  if (releaseWorkflow) {
     releaseWorkflow.file?.patch(
       JsonPatch.add("/jobs/release/steps/2/with/package-manager-cache", false),
       JsonPatch.add("/jobs/release/steps/2", corepackStep),
@@ -206,4 +197,46 @@ if (rewrittenUpgradeWorkflow !== upgradeWorkflowFile) {
   fs.chmodSync(upgradeWorkflowPath, 0o644);
   fs.writeFileSync(upgradeWorkflowPath, rewrittenUpgradeWorkflow);
   fs.chmodSync(upgradeWorkflowPath, 0o444);
+}
+
+const releaseWorkflowPath = ".github/workflows/release.yml";
+const releaseWorkflowFile = fs.readFileSync(releaseWorkflowPath, "utf8");
+
+const rewrittenReleaseWorkflow = releaseWorkflowFile
+  .replace(
+    `  workflow_dispatch: {}`,
+    `  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: prerelease identifier, for example dev or beta
+        required: false
+        default: ""
+        type: string
+      npm_dist_tag:
+        description: npm dist-tag to publish under for manual runs
+        required: false
+        default: latest
+        type: string`,
+  )
+  .replace(
+    `      - name: release
+        run: npx projen release`,
+    `      - name: release
+        env:
+          PRERELEASE: \${{ github.event_name == 'workflow_dispatch' && inputs.prerelease || '' }}
+        run: npx projen release`,
+  )
+  .replace(
+    `    if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha`,
+    `    if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha && (github.event_name != 'workflow_dispatch' || inputs.prerelease == '')`,
+  )
+  .replace(
+    `          NPM_DIST_TAG: latest`,
+    `          NPM_DIST_TAG: \${{ github.event_name == 'workflow_dispatch' && inputs.npm_dist_tag || 'latest' }}`,
+  );
+
+if (rewrittenReleaseWorkflow !== releaseWorkflowFile) {
+  fs.chmodSync(releaseWorkflowPath, 0o644);
+  fs.writeFileSync(releaseWorkflowPath, rewrittenReleaseWorkflow);
+  fs.chmodSync(releaseWorkflowPath, 0o444);
 }
