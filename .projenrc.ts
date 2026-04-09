@@ -6,7 +6,7 @@ import { ReleaseTrigger } from "projen/lib/release";
 
 const yarnVersion = "4.6.0";
 const upgradeSchedule = "0 0 * * 1,4";
-const prereleaseBranch = "feat/cli-demo-runner";
+const prereleaseBranch = "prerelease-cli-demo-runner";
 
 const project = new javascript.NodeProject({
   authorName: "Roman Naumenko",

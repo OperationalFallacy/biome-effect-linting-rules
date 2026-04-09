@@ -183,9 +183,9 @@
         }
       ]
     },
-    "release:feat/cli-demo-runner": {
-      "name": "release:feat/cli-demo-runner",
-      "description": "Prepare a release from \"feat/cli-demo-runner\" branch",
+    "release:prerelease-cli-demo-runner": {
+      "name": "release:prerelease-cli-demo-runner",
+      "description": "Prepare a release from \"prerelease-cli-demo-runner\" branch",
       "env": {
         "RELEASE": "true",
         "MAJOR": "0",
