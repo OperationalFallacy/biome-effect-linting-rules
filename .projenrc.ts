@@ -83,7 +83,6 @@ project.package.addField("exports", {
   "./core": "./configs/core.jsonc",
   "./web": "./configs/web.jsonc",
   "./ts-type": "./configs/ts-type.jsonc",
-  "./full": "./configs/full.jsonc",
   "./package.json": "./package.json",
 });
 

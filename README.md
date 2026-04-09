@@ -40,11 +40,16 @@ The package also ships a zero-setup CLI for repo-local lint runs. It writes a te
 
 ```bash
 npx @catenarycloud/linteffect check src/file.ts
-npx @catenarycloud/linteffect rewrite src/file.ts --preset=core
 npx @catenarycloud/linteffect check src/messages --preset=core
 ```
 
-`check` runs `biome lint`. `rewrite` runs `biome lint --write`. `--preset` selects one published preset. The CLI keeps the surface small and runs the packaged rule set for the chosen preset without local Biome configuration.
+`check` runs `biome lint`. `--preset` selects one published preset. The CLI keeps the surface small and runs the packaged rule set for the chosen preset without local Biome configuration.
+
+Use the CLI to lint an existing Effect codebase without installing the rule pack into that repository. Example:
+
+```bash
+npx -y @catenarycloud/linteffect@dev check packages/discord-bot/src/NoEmbed.ts --preset=core
+```
 
 ## Integrate into `biome.jsonc`
 
@@ -77,14 +82,6 @@ Extend `@catenarycloud/linteffect/ts-type` to load the type-modeling rules for c
 ```jsonc
 {
   "extends": ["@catenarycloud/linteffect/ts-type"]
-}
-```
-
-Extend `@catenarycloud/linteffect/full` to use the explicit full-preset alias instead of the package root.
-
-```jsonc
-{
-  "extends": ["@catenarycloud/linteffect/full"]
 }
 ```
 
