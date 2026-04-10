@@ -22,11 +22,9 @@ const helpText = `lintEffect CLI
 
 Usage:
   npx @catenarycloud/linteffect check <path...> [--preset=<name>]
-  npx @catenarycloud/linteffect rewrite <path...> [--preset=<name>]
 
 Commands:
   check        Run Biome lint with the shipped lintEffect rules.
-  rewrite      Run Biome lint --write with the shipped lintEffect rules.
 
 Options:
   --preset=<name>   One of: full, core, web, ts-type. Default: full
@@ -49,8 +47,8 @@ function parseArgs(argv) {
     return { help: true };
   }
 
-  if (command !== "check" && command !== "rewrite") {
-    fail(`Unknown command "${command}". Use "check" or "rewrite".`);
+  if (command !== "check") {
+    fail(`Unknown command "${command}". Use "check".`);
   }
 
   const parsed = {
@@ -148,10 +146,6 @@ async function run() {
   const configPath = path.join(tempDir, "biome.json");
   const biomeBin = resolveBiomeBin();
   const biomeCommand = ["lint"];
-
-  if (parsed.command === "rewrite") {
-    biomeCommand.push("--write");
-  }
 
   biomeCommand.push(`--config-path=${configPath}`);
   biomeCommand.push(...parsed.targets);

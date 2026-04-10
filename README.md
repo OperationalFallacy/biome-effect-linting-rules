@@ -30,7 +30,7 @@ pnpm add -D @biomejs/biome @catenarycloud/linteffect
 
 If you use Yarn Berry, set `nodeLinker: node-modules`. Biome does not currently resolve Grit plugin paths from package `extends` correctly through Plug'n'Play.
 
-The package publishes the full rule set plus three smaller presets. `core` contains the general Effect composition and control-flow rules. `web` contains the frontend and React rules. `ts-type` contains the type-modeling rules for casts, assertions, sentinel values, and wrapper-heavy shapes. The package root and `full` both export the full rule set.
+The package publishes the full rule set plus three smaller presets. `core` contains the general Effect composition and control-flow rules. `web` contains the frontend and React rules. `ts-type` contains the type-modeling rules for casts, assertions, sentinel values, and wrapper-heavy shapes. The package root exports the full rule set.
 
 This split keeps preset composition in the package. Repositories extend one published entrypoint instead of assembling rule groups manually.
 
