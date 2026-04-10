@@ -13,6 +13,7 @@ const project = new javascript.NodeProject({
   defaultReleaseBranch: "master",
   description:
     "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
+  deps: ["@biomejs/biome@^2.2.4"],
   devDeps: ["projen@^0.98.34", "tsx@^4.20.6", "typescript@^5.9.3"],
   entrypoint: "",
   github: true,
@@ -28,8 +29,10 @@ const project = new javascript.NodeProject({
   ],
   license: "MIT",
   licensed: true,
+  majorVersion: 0,
   name: "lintEffect",
   npmAccess: javascript.NpmAccess.PUBLIC,
+  npmDistTag: "latest",
   packageManager: javascript.NodePackageManager.YARN_BERRY,
   packageName: "@catenarycloud/linteffect",
   prettier: false,
@@ -54,6 +57,7 @@ project.release?.publisher?.publishToNpm({
 
 project.package.addField("files", [
   "biome.jsonc",
+  "bin",
   "rules/*.grit",
   "configs",
   "examples",
@@ -61,6 +65,8 @@ project.package.addField("files", [
   "README.md",
   "LICENSE",
 ]);
+
+project.package.addField("bin", "./bin/linteffect.mjs");
 
 project.package.addField("publishConfig", {
   access: "public",
@@ -77,7 +83,6 @@ project.package.addField("exports", {
   "./core": "./configs/core.jsonc",
   "./web": "./configs/web.jsonc",
   "./ts-type": "./configs/ts-type.jsonc",
-  "./full": "./configs/full.jsonc",
   "./package.json": "./package.json",
 });
 
@@ -94,32 +99,15 @@ project.addTask("refresh:biome-grammars", {
 
 project.defaultTask?.reset("tsx .projenrc.ts");
 
-const releaseWorkflow = project.github?.tryFindWorkflow("release");
-
-if (releaseWorkflow) {
-  releaseWorkflow.file?.patch(
-    JsonPatch.add("/jobs/release/steps/2/with/package-manager-cache", false),
-    JsonPatch.add("/jobs/release/steps/2", {
-      name: "Install Specific Yarn Version",
-      run: `corepack enable && corepack prepare yarn@${yarnVersion} --activate`,
-    }),
-    JsonPatch.add("/jobs/release/steps/3/with/package-manager-cache", false),
-    JsonPatch.add("/jobs/release_github/steps/0/with/package-manager-cache", false),
-    JsonPatch.add("/jobs/release_npm/steps/0/with/package-manager-cache", false),
-    JsonPatch.add("/jobs/release_npm/steps/2", {
-      name: "Install Specific Yarn Version",
-      run: `corepack enable && corepack prepare yarn@${yarnVersion} --activate`,
-    }),
-    JsonPatch.add("/jobs/release_npm/steps/4/env/NPM_TRUSTED_PUBLISHER", "true"),
-  );
-}
-
 if (project.github) {
   const buildWorkflow = project.github.workflows.find(
     (workflow) => workflow.name === "build",
   );
-  const upgradeWorkflow = project.github.workflows.find(
-    (workflow) => workflow.name === `upgrade-${project.defaultReleaseBranch}`,
+  const releaseWorkflow = project.github.workflows.find(
+    (workflow) => workflow.name === "release",
+  );
+  const upgradeWorkflows = project.github.workflows.filter(
+    (workflow) => workflow.name.startsWith("upgrade-"),
   );
 
   const corepackStep = {
@@ -148,7 +136,19 @@ if (project.github) {
     }
   }
 
-  if (upgradeWorkflow) {
+  if (releaseWorkflow) {
+    releaseWorkflow.file?.patch(
+      JsonPatch.add("/jobs/release/steps/2/with/package-manager-cache", false),
+      JsonPatch.add("/jobs/release/steps/2", corepackStep),
+      JsonPatch.add("/jobs/release/steps/3/with/package-manager-cache", false),
+      JsonPatch.add("/jobs/release_github/steps/0/with/package-manager-cache", false),
+      JsonPatch.add("/jobs/release_npm/steps/0/with/package-manager-cache", false),
+      JsonPatch.add("/jobs/release_npm/steps/2", corepackStep),
+      JsonPatch.add("/jobs/release_npm/steps/4/env/NPM_TRUSTED_PUBLISHER", "true"),
+    );
+  }
+
+  for (const upgradeWorkflow of upgradeWorkflows) {
     const upgradeJob = upgradeWorkflow.getJob("upgrade");
     if (upgradeJob && "steps" in upgradeJob) {
       const upgradeSteps = getJobSteps(upgradeJob);
@@ -196,4 +196,46 @@ if (rewrittenUpgradeWorkflow !== upgradeWorkflowFile) {
   fs.chmodSync(upgradeWorkflowPath, 0o644);
   fs.writeFileSync(upgradeWorkflowPath, rewrittenUpgradeWorkflow);
   fs.chmodSync(upgradeWorkflowPath, 0o444);
+}
+
+const releaseWorkflowPath = ".github/workflows/release.yml";
+const releaseWorkflowFile = fs.readFileSync(releaseWorkflowPath, "utf8");
+
+const rewrittenReleaseWorkflow = releaseWorkflowFile
+  .replace(
+    `  workflow_dispatch: {}`,
+    `  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: prerelease identifier, for example dev or beta
+        required: false
+        default: ""
+        type: string
+      npm_dist_tag:
+        description: npm dist-tag to publish under for manual runs
+        required: false
+        default: latest
+        type: string`,
+  )
+  .replace(
+    `      - name: release
+        run: npx projen release`,
+    `      - name: release
+        env:
+          PRERELEASE: \${{ github.event_name == 'workflow_dispatch' && inputs.prerelease || '' }}
+        run: npx projen release`,
+  )
+  .replace(
+    `    if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha`,
+    `    if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha && (github.event_name != 'workflow_dispatch' || inputs.prerelease == '')`,
+  )
+  .replace(
+    `          NPM_DIST_TAG: latest`,
+    `          NPM_DIST_TAG: \${{ github.event_name == 'workflow_dispatch' && inputs.npm_dist_tag || 'latest' }}`,
+  );
+
+if (rewrittenReleaseWorkflow !== releaseWorkflowFile) {
+  fs.chmodSync(releaseWorkflowPath, 0o644);
+  fs.writeFileSync(releaseWorkflowPath, rewrittenReleaseWorkflow);
+  fs.chmodSync(releaseWorkflowPath, 0o444);
 }

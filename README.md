@@ -30,9 +30,26 @@ pnpm add -D @biomejs/biome @catenarycloud/linteffect
 
 If you use Yarn Berry, set `nodeLinker: node-modules`. Biome does not currently resolve Grit plugin paths from package `extends` correctly through Plug'n'Play.
 
-The package publishes the full rule set plus three smaller presets. `core` contains the general Effect composition and control-flow rules. `web` contains the frontend and React rules. `ts-type` contains the type-modeling rules for casts, assertions, sentinel values, and wrapper-heavy shapes. The package root and `full` both export the full rule set.
+The package publishes the full rule set plus three smaller presets. `core` contains the general Effect composition and control-flow rules. `web` contains the frontend and React rules. `ts-type` contains the type-modeling rules for casts, assertions, sentinel values, and wrapper-heavy shapes. The package root exports the full rule set.
 
 This split keeps preset composition in the package. Repositories extend one published entrypoint instead of assembling rule groups manually.
+
+## CLI
+
+The package also ships a zero-setup CLI for repo-local lint runs. It writes a temporary Biome config with absolute paths to the packaged Grit rules, then runs the bundled Biome binary against the requested files or directories.
+
+```bash
+npx @catenarycloud/linteffect check src/file.ts
+npx @catenarycloud/linteffect check src/messages --preset=core
+```
+
+`check` runs `biome lint`. `--preset` selects one published preset. The CLI keeps the surface small and runs the packaged rule set for the chosen preset without local Biome configuration.
+
+Use the CLI to lint an existing Effect codebase without installing the rule pack into that repository. Example:
+
+```bash
+npx -y @catenarycloud/linteffect@dev check packages/discord-bot/src/NoEmbed.ts --preset=core
+```
 
 ## Integrate into `biome.jsonc`
 
@@ -65,14 +82,6 @@ Extend `@catenarycloud/linteffect/ts-type` to load the type-modeling rules for c
 ```jsonc
 {
   "extends": ["@catenarycloud/linteffect/ts-type"]
-}
-```
-
-Extend `@catenarycloud/linteffect/full` to use the explicit full-preset alias instead of the package root.
-
-```jsonc
-{
-  "extends": ["@catenarycloud/linteffect/full"]
 }
 ```
 

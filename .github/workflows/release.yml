@@ -5,7 +5,18 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: prerelease identifier, for example dev or beta
+        required: false
+        default: ""
+        type: string
+      npm_dist_tag:
+        description: npm dist-tag to publish under for manual runs
+        required: false
+        default: latest
+        type: string
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
@@ -38,6 +49,8 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
       - name: release
+        env:
+          PRERELEASE: ${{ github.event_name == 'workflow_dispatch' && inputs.prerelease || '' }}
         run: npx projen release
       - name: Check if version has already been tagged
         id: check_tag_exists
@@ -70,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
+    if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha && (github.event_name != 'workflow_dispatch' || inputs.prerelease == '')
     steps:
       - uses: actions/setup-node@v5
         with:
@@ -113,6 +126,6 @@ jobs:
         continue-on-error: true
       - name: Release
         env:
-          NPM_DIST_TAG: latest
+          NPM_DIST_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.npm_dist_tag || 'latest' }}
           NPM_TRUSTED_PUBLISHER: "true"
         run: npx -p publib@latest publib-npm
