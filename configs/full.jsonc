@@ -36,6 +36,7 @@
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-all-step-sequencing.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-orElse-ladder.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-render-side-effects.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-naked-object-state-update.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-return-in-callback.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-wrapgraphql-catchall.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-model-overlay-cast.grit",

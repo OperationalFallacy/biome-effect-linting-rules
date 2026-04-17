@@ -21,13 +21,18 @@ const presetFiles = {
 const helpText = `lintEffect CLI
 
 Usage:
-  npx @catenarycloud/linteffect check <path...> [--preset=<name>]
+  npx @catenarycloud/linteffect check <path...> [--preset=<name>] [--guide|--guide-on-linting]
+  npx @catenarycloud/linteffect guide [--print]
 
 Commands:
   check        Run Biome lint with the shipped lintEffect rules.
+  guide        Print the packaged linting guide path or file content.
 
 Options:
   --preset=<name>   One of: full, core, web, ts-type. Default: full
+  --guide           Print linting guide content before lint (check command only).
+  --guide-on-linting  Print linting guide content only when lint emits diagnostics (check command only).
+  --print           With 'guide', print file content instead of path.
   --help            Print this help text.
 `;
 
@@ -47,14 +52,16 @@ function parseArgs(argv) {
     return { help: true };
   }
 
-  if (command !== "check") {
-    fail(`Unknown command "${command}". Use "check".`);
+  if (command !== "check" && command !== "guide") {
+    fail(`Unknown command "${command}". Use "check" or "guide".`);
   }
 
   const parsed = {
     command,
     preset: "full",
     targets: [],
+    printGuide: false,
+    showGuide: "off",
   };
 
   // Parse only the CLI contract here. Everything else stays a direct Biome flag passthrough.
@@ -65,7 +72,25 @@ function parseArgs(argv) {
       return { help: true };
     }
 
+    if (command === "guide" && arg === "--print") {
+      parsed.printGuide = true;
+      continue;
+    }
+
+    if (command === "check" && arg === "--guide") {
+      parsed.showGuide = "always";
+      continue;
+    }
+
+    if (command === "check" && arg === "--guide-on-linting") {
+      parsed.showGuide = "on-error";
+      continue;
+    }
+
     if (arg === "--preset") {
+      if (command !== "check") {
+        fail("--preset is only supported with the 'check' command.");
+      }
       const value = rest[index + 1];
       if (!value) {
         fail("Missing value after --preset.");
@@ -76,15 +101,30 @@ function parseArgs(argv) {
     }
 
     if (arg.startsWith("--preset=")) {
+      if (command !== "check") {
+        fail("--preset is only supported with the 'check' command.");
+      }
       parsed.preset = arg.slice("--preset=".length);
       continue;
     }
 
     if (arg.startsWith("-")) {
-      fail(`Unknown option "${arg}". Only --preset and --help are supported.`);
+      if (command === "guide") {
+        fail(`Unknown option "${arg}". Only --print and --help are supported with 'guide'.`);
+      }
+      fail(
+        `Unknown option "${arg}". Only --preset, --guide, --guide-on-linting, and --help are supported with 'check'.`,
+      );
     }
 
     parsed.targets.push(arg);
+  }
+
+  if (parsed.command === "guide") {
+    if (parsed.targets.length > 0) {
+      fail("The 'guide' command does not accept positional targets.");
+    }
+    return parsed;
   }
 
   if (!(parsed.preset in presetFiles)) {
@@ -133,11 +173,31 @@ function resolveBiomeBin() {
   return path.resolve(path.dirname(biomePackagePath), biomeBinRelative);
 }
 
+function resolveLintingGuidePath() {
+  return path.join(packageRoot, "docs", "linting.md");
+}
+
+async function printLintingGuideContent() {
+  const guidePath = resolveLintingGuidePath();
+  const guide = await readFile(guidePath, "utf8");
+  process.stdout.write(`${guide}\n`);
+}
+
 async function run() {
   const parsed = parseArgs(process.argv.slice(2));
 
   if (parsed.help) {
     printHelp();
+    return;
+  }
+
+  if (parsed.command === "guide") {
+    const guidePath = resolveLintingGuidePath();
+    if (parsed.printGuide) {
+      process.stdout.write(await readFile(guidePath, "utf8"));
+      return;
+    }
+    process.stdout.write(`${guidePath}\n`);
     return;
   }
 
@@ -151,6 +211,10 @@ async function run() {
   biomeCommand.push(...parsed.targets);
 
   try {
+    if (parsed.showGuide === "always") {
+      await printLintingGuideContent();
+    }
+
     await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`);
 
     const exitCode = await new Promise((resolve, reject) => {
@@ -169,6 +233,10 @@ async function run() {
         resolve(code ?? 1);
       });
     });
+
+    if (parsed.showGuide === "on-error" && exitCode !== 0) {
+      await printLintingGuideContent();
+    }
 
     process.exit(exitCode);
   } finally {
