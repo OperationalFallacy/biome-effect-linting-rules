@@ -41,9 +41,11 @@ The package also ships a zero-setup CLI for repo-local lint runs. It writes a te
 ```bash
 npx @catenarycloud/linteffect check src/file.ts
 npx @catenarycloud/linteffect check src/messages --preset=core
+npx @catenarycloud/linteffect check src/messages --preset=core --guide-on-linting
+npx @catenarycloud/linteffect guide
 ```
 
-`check` runs `biome lint`. `--preset` selects one published preset. The CLI keeps the surface small and runs the packaged rule set for the chosen preset without local Biome configuration.
+`check` runs `biome lint`. `--preset` selects one published preset. `--guide` prints guidance content before lint (check only), and `--guide-on-linting` prints guidance only when diagnostics fail (check only). `guide` prints the packaged agent guidance path, and `guide --print` prints the guidance content. The CLI keeps the surface small and runs the packaged rule set for the chosen preset without local Biome configuration.
 
 Use the CLI to lint an existing Effect codebase without installing the rule pack into that repository. Example:
 
@@ -83,6 +85,21 @@ Extend `@catenarycloud/linteffect/ts-type` to load the type-modeling rules for c
 {
   "extends": ["@catenarycloud/linteffect/ts-type"]
 }
+```
+
+## Agent guide workflow
+
+The package ships lint guidance in distribution (`docs/linting.md`). In install-path workflows (`biome lint` with `extends`), the agent will not load that file automatically. Instruct the agent to use the linting guide, so it can do better job fixing errors.
+
+Guide entrypoints:
+
+```bash
+npx @catenarycloud/linteffect guide
+npx @catenarycloud/linteffect guide --print
+```
+
+```bash
+node -p "require.resolve('@catenarycloud/linteffect/agent-guide')"
 ```
 
 ## Add repository-local rules

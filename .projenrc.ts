@@ -14,7 +14,12 @@ const project = new javascript.NodeProject({
   description:
     "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
   deps: ["@biomejs/biome@^2.2.4"],
-  devDeps: ["projen@^0.98.34", "tsx@^4.20.6", "typescript@^5.9.3"],
+  devDeps: [
+    "projen@^0.98.34",
+    "tsx@^4.20.6",
+    "typescript@^5.9.3",
+    "vitest@^4.1.1",
+  ],
   entrypoint: "",
   github: true,
   jest: false,
@@ -83,6 +88,7 @@ project.package.addField("exports", {
   "./core": "./configs/core.jsonc",
   "./web": "./configs/web.jsonc",
   "./ts-type": "./configs/ts-type.jsonc",
+  "./agent-guide": "./docs/linting.md",
   "./package.json": "./package.json",
 });
 
@@ -96,6 +102,8 @@ project.addTask("pack:dry-run", {
 project.addTask("refresh:biome-grammars", {
   exec: "tsx scripts/refresh-biome-grammars.ts",
 });
+
+project.testTask.reset("vitest run tests/rules/no-naked-object-state-update.test.ts");
 
 project.defaultTask?.reset("tsx .projenrc.ts");
 

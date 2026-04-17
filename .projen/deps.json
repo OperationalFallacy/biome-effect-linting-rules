@@ -25,6 +25,11 @@
       "type": "build"
     },
     {
+      "name": "vitest",
+      "version": "^4.1.1",
+      "type": "build"
+    },
+    {
       "name": "@biomejs/biome",
       "version": "^2.2.4",
       "type": "runtime"

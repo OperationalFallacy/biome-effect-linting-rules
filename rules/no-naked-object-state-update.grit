@@ -1,0 +1,42 @@
+file($body) where {
+    or {
+        $body <: contains `"effect"`,
+        $body <: contains bubble `import "effect/$module"`
+    },
+    or {
+        $body <: contains `Ref.update($ref, ($state) => ({ $props }))` as $violation where {
+            $props <: contains `...$_`
+        },
+        $body <: contains `Ref.update($ref, ($state) => { $block })` as $violation where {
+            $block <: contains `return { $props }`,
+            $props <: contains `...$_`
+        },
+        $body <: contains `Ref.modify($ref, ($state) => ({ $props }))` as $violation where {
+            $props <: contains `...$_`
+        },
+        $body <: contains `Ref.modify($ref, ($state) => { $block })` as $violation where {
+            $block <: contains `return { $props }`,
+            $props <: contains `...$_`
+        },
+        $body <: contains `Object.fromEntries($_)` as $violation where {
+            or {
+                $body <: contains `Ref.update($_, $_)`,
+                $body <: contains `Ref.modify($_, $_)`
+            },
+            $body <: contains `Object.entries($_)`
+        },
+        $body <: contains `Object.assign({}, $_, $_)` as $violation where {
+            or {
+                $body <: contains `Ref.update($_, $_)`,
+                $body <: contains `Ref.modify($_, $_)`
+            }
+        },
+        $body <: contains `JSON.stringify($_)` as $violation,
+        $body <: contains `JSON.parse($_)` as $violation
+    },
+    register_diagnostic(
+        span = $violation,
+        message = "Rule: avoid naked JS state patching/rebuild and raw JSON shortcuts in Effect transitions. Why: spread/Object.assign/fromEntries and inline JSON parse/stringify hide state intent and bypass explicit model contracts. Fix: use `effect/Record` combinators (`Record.set` / `Record.modify` / `Record.remove`) inside `Struct.evolve`, rebuild with schema constructors (`Schema.make` or field `.make`), and keep serialization at boundaries with schema encode/decode flows. Use `linting.md` guidance when available.",
+        severity = "error"
+    )
+}

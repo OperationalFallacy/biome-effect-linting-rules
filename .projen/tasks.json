@@ -185,7 +185,12 @@
     },
     "test": {
       "name": "test",
-      "description": "Run tests"
+      "description": "Run tests",
+      "steps": [
+        {
+          "exec": "vitest run tests/rules/no-naked-object-state-update.test.ts"
+        }
+      ]
     },
     "unbump": {
       "name": "unbump",
@@ -219,7 +224,7 @@
           "exec": "yarn install"
         },
         {
-          "exec": "yarn up commit-and-tag-version constructs projen tsx typescript @biomejs/biome"
+          "exec": "yarn up commit-and-tag-version constructs projen tsx typescript vitest @biomejs/biome"
         },
         {
           "exec": "npx projen"
