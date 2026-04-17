@@ -4,6 +4,7 @@
     "./node_modules/@catenarycloud/linteffect/rules/no-react-state.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-render-side-effects.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-atom-registry-effect-sync.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-inline-runtime-provide.grit"
+    "./node_modules/@catenarycloud/linteffect/rules/no-inline-runtime-provide.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-naked-object-state-update.grit"
   ]
 }
