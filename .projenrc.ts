@@ -103,7 +103,9 @@ project.addTask("refresh:biome-grammars", {
   exec: "tsx scripts/refresh-biome-grammars.ts",
 });
 
-project.testTask.reset("vitest run tests/rules/no-naked-object-state-update.test.ts");
+project.testTask.reset(
+  "vitest run tests/rules/no-naked-object-state-update.test.ts tests/rules/no-switch-statement.test.ts",
+);
 
 project.defaultTask?.reset("tsx .projenrc.ts");
 

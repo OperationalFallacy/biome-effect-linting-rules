@@ -188,7 +188,7 @@
       "description": "Run tests",
       "steps": [
         {
-          "exec": "vitest run tests/rules/no-naked-object-state-update.test.ts"
+          "exec": "vitest run tests/rules/no-naked-object-state-update.test.ts tests/rules/no-switch-statement.test.ts"
         }
       ]
     },
