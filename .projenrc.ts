@@ -305,7 +305,7 @@ rewrittenReleaseWorkflow = rewrittenReleaseWorkflow
       - name: Publish
         env:
           NPM_CONFIG_PROVENANCE: "true"
-        run: npm publish dist/*.tgz --tag dev --access public
+        run: npm publish ./dist/*.tgz --tag dev --access public
   release:`,
   )
   .replace(
