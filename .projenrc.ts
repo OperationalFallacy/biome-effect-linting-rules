@@ -13,7 +13,7 @@ const project = new javascript.NodeProject({
   defaultReleaseBranch: "master",
   description:
     "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
-  deps: ["@biomejs/biome@^2.2.4"],
+  deps: ["@biomejs/biome@^2.4.15"],
   devDeps: [
     "projen@^0.98.34",
     "tsx@^4.20.6",
@@ -43,7 +43,7 @@ const project = new javascript.NodeProject({
   prettier: false,
   releaseToNpm: true,
   release: true,
-  releaseTrigger: ReleaseTrigger.continuous(),
+  releaseTrigger: ReleaseTrigger.workflowDispatch(),
   releasableCommits: ReleasableCommits.featuresAndFixes(),
   repository: "https://github.com/OperationalFallacy/biome-effect-linting-rules.git",
   workflowNodeVersion: "24.11.1",
@@ -103,9 +103,7 @@ project.addTask("refresh:biome-grammars", {
   exec: "tsx scripts/refresh-biome-grammars.ts",
 });
 
-project.testTask.reset(
-  "vitest run tests/rules/no-naked-object-state-update.test.ts tests/rules/no-switch-statement.test.ts",
-);
+project.testTask.reset("vitest run tests/rules");
 
 project.defaultTask?.reset("tsx .projenrc.ts");
 
@@ -134,7 +132,32 @@ if (project.github) {
 
   if (buildWorkflow) {
     buildWorkflow.file?.patch(
+      JsonPatch.add("/on/workflow_dispatch/inputs", {
+        repository: {
+          description: "Repository to check out, for example owner/repo",
+          required: false,
+          type: "string",
+        },
+        ref: {
+          description: "Branch, tag, or SHA to check out",
+          required: false,
+          type: "string",
+        },
+      }),
+      JsonPatch.replace("/jobs/build/permissions/contents", "read"),
+      JsonPatch.replace(
+        "/jobs/build/steps/0/with/ref",
+        "${{ github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name) || github.event.pull_request.head.ref }}",
+      ),
+      JsonPatch.replace(
+        "/jobs/build/steps/0/with/repository",
+        "${{ github.event_name == 'workflow_dispatch' && (inputs.repository || github.repository) || github.event.pull_request.head.repo.full_name }}",
+      ),
       JsonPatch.add("/jobs/build/steps/2/with/package-manager-cache", false),
+      JsonPatch.replace(
+        "/jobs/self-mutation/if",
+        "always() && github.event_name == 'pull_request' && needs.build.outputs.self_mutation_happened && github.event.pull_request.head.repo.full_name == github.repository",
+      ),
     );
     const buildJob = buildWorkflow.getJob("build");
     if (buildJob && "steps" in buildJob) {
@@ -211,7 +234,7 @@ if (rewrittenUpgradeWorkflow !== upgradeWorkflowFile) {
 const releaseWorkflowPath = ".github/workflows/release.yml";
 const releaseWorkflowFile = fs.readFileSync(releaseWorkflowPath, "utf8");
 
-const rewrittenReleaseWorkflow = releaseWorkflowFile
+let rewrittenReleaseWorkflow = releaseWorkflowFile
   .replace(
     `  workflow_dispatch: {}`,
     `  workflow_dispatch:
@@ -242,6 +265,80 @@ const rewrittenReleaseWorkflow = releaseWorkflowFile
   .replace(
     `          NPM_DIST_TAG: latest`,
     `          NPM_DIST_TAG: \${{ github.event_name == 'workflow_dispatch' && inputs.npm_dist_tag || 'latest' }}`,
+  );
+
+rewrittenReleaseWorkflow = rewrittenReleaseWorkflow
+  .replace(
+    `jobs:
+  release:`,
+    `jobs:
+  dev_release:
+    name: Publish npm dev build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    if: github.event_name == 'workflow_dispatch' && inputs.prerelease == 'dev'
+    env:
+      CI: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Install Specific Yarn Version
+        run: corepack enable && corepack prepare yarn@${yarnVersion} --activate
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24.11.1
+          package-manager-cache: false
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Set next dev version
+        run: |-
+          node <<'NODE'
+          const { execFileSync } = require("node:child_process");
+          const fs = require("node:fs");
+
+          const packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
+          const distTags = JSON.parse(
+            execFileSync("npm", ["view", packageJson.name, "dist-tags", "--json"], {
+              encoding: "utf8",
+            }),
+          );
+          const latest = distTags.latest ?? "0.0.0";
+          const stableBase = latest.split("-")[0];
+          const [major, minor, patch] = stableBase.split(".").map(Number);
+
+          if (![major, minor, patch].every(Number.isInteger)) {
+            throw new Error(\`Cannot derive next dev version from npm latest dist-tag: \${latest}\`);
+          }
+
+          const runNumber = process.env.GITHUB_RUN_NUMBER;
+          const runAttempt = process.env.GITHUB_RUN_ATTEMPT ?? "1";
+          const devVersion = \`\${major}.\${minor}.\${patch + 1}-dev.\${runNumber}.\${runAttempt}\`;
+
+          packageJson.version = devVersion;
+          fs.writeFileSync("package.json", JSON.stringify(packageJson, null, 2) + "\\n");
+          fs.appendFileSync(process.env.GITHUB_ENV, \`DEV_VERSION=\${devVersion}\\n\`);
+          NODE
+      - name: Test
+        run: yarn test
+      - name: Prepare package output
+        run: mkdir -p dist
+      - name: Pack
+        run: npm pack --pack-destination dist
+      - name: Publish
+        env:
+          NPM_CONFIG_PROVENANCE: "true"
+        run: npm publish ./dist/*.tgz --tag dev --access public
+  release:`,
+  )
+  .replace(
+    `  release:
+    runs-on: ubuntu-latest`,
+    `  release:
+    if: github.event_name != 'workflow_dispatch' || inputs.prerelease != 'dev'
+    runs-on: ubuntu-latest`,
   );
 
 if (rewrittenReleaseWorkflow !== releaseWorkflowFile) {

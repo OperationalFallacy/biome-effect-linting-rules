@@ -1,0 +1,53 @@
+file($body) where {
+    or {
+        $body <: contains `"@effect-atom/atom-react"`,
+        $body <: contains `Atom.family($...)`
+    },
+    or {
+        $body <: contains `Atom.family($...)` as $familyCall where {
+            $familyCall <: contains `get($atom)` as $read,
+            $read <: or {
+                r".*CollectionAtom\).*",
+                r".*ListAtom\).*",
+                r".*Visible.*Atom\).*",
+                r".*ResultsAtom\).*",
+                r".*ReadStateAtom\).*"
+            },
+            register_diagnostic(
+                span = $atom,
+                message = "Keyed projection atom reads collection atom. This rule is structural: it treats Atom.family members as keyed row/item projections when they read collection/list/aggregate atom names. If this family is truly a row/item projection, read a keyed source/index atom such as SourceAtom, ByKeyAtom, or IndexAtom instead of the collection/list atom that enumerates the family. If this is intentionally a route/list-scoped family, rename or restructure it so row/item families stay separate from list projections.",
+                severity = "error"
+            )
+        },
+        $body <: contains `Atom.family($...)` as $familyCall where {
+            $familyCall <: contains `get.get($atom)` as $read,
+            $read <: or {
+                r".*CollectionAtom\).*",
+                r".*ListAtom\).*",
+                r".*Visible.*Atom\).*",
+                r".*ResultsAtom\).*",
+                r".*ReadStateAtom\).*"
+            },
+            register_diagnostic(
+                span = $atom,
+                message = "Keyed projection atom reads collection atom. This rule is structural: it treats Atom.family members as keyed row/item projections when they read collection/list/aggregate atom names. If this family is truly a row/item projection, read a keyed source/index atom such as SourceAtom, ByKeyAtom, or IndexAtom instead of the collection/list atom that enumerates the family. If this is intentionally a route/list-scoped family, rename or restructure it so row/item families stay separate from list projections.",
+                severity = "error"
+            )
+        },
+        $body <: contains `Atom.family($...)` as $familyCall where {
+            $familyCall <: contains `Atom.get($atom)` as $read,
+            $read <: or {
+                r".*CollectionAtom\).*",
+                r".*ListAtom\).*",
+                r".*Visible.*Atom\).*",
+                r".*ResultsAtom\).*",
+                r".*ReadStateAtom\).*"
+            },
+            register_diagnostic(
+                span = $atom,
+                message = "Keyed projection atom reads collection atom. This rule is structural: it treats Atom.family members as keyed row/item projections when they read collection/list/aggregate atom names. If this family is truly a row/item projection, read a keyed source/index atom such as SourceAtom, ByKeyAtom, or IndexAtom instead of the collection/list atom that enumerates the family. If this is intentionally a route/list-scoped family, rename or restructure it so row/item families stay separate from list projections.",
+                severity = "error"
+            )
+        }
+    }
+}
