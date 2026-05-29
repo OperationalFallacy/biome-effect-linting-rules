@@ -5,7 +5,7 @@ file($body) where {
         $body <: contains `"@effect-atom/atom-react"`
     },
     $body <: contains `const $castName = $value as $type` as $call,
-    $type <: not `const`,
+    $call <: not `const $_ = $_ as const`,
     register_diagnostic(
         span = $call,
         message = "Rule: avoid `as` assertions on decoded model flow. Why: assertions hide schema drift and allow untyped overlays. Fix: decode with the correct schema type and read fields directly.",
