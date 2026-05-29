@@ -2,31 +2,33 @@
 
 name: release
 on:
-  workflow_dispatch:
-    inputs:
-      prerelease:
-        description: prerelease identifier, for example dev or beta
-        required: false
-        default: ""
-        type: string
-      npm_dist_tag:
-        description: npm dist-tag to publish under for manual runs
-        required: false
-        default: latest
-        type: string
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
+  push:
+    branches:
+      - master
+  workflow_dispatch: {}
 jobs:
-  dev_release:
-    name: Publish npm dev build
+  release_please:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+  publish_npm:
+    needs: release_please
+    runs-on: ubuntu-latest
+    permissions:
       contents: read
-    if: github.event_name == 'workflow_dispatch' && inputs.prerelease == 'dev'
+      id-token: write
     env:
       CI: "true"
+    if: ${{ needs.release_please.outputs.release_created == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -39,150 +41,9 @@ jobs:
           package-manager-cache: false
       - name: Install dependencies
         run: yarn install --immutable
-      - name: Set next dev version
-        run: |-
-          node <<'NODE'
-          const { execFileSync } = require("node:child_process");
-          const fs = require("node:fs");
-
-          const packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
-          const distTags = JSON.parse(
-            execFileSync("npm", ["view", packageJson.name, "dist-tags", "--json"], {
-              encoding: "utf8",
-            }),
-          );
-          const latest = distTags.latest ?? "0.0.0";
-          const stableBase = latest.split("-")[0];
-          const [major, minor, patch] = stableBase.split(".").map(Number);
-
-          if (![major, minor, patch].every(Number.isInteger)) {
-            throw new Error(`Cannot derive next dev version from npm latest dist-tag: ${latest}`);
-          }
-
-          const runNumber = process.env.GITHUB_RUN_NUMBER;
-          const runAttempt = process.env.GITHUB_RUN_ATTEMPT ?? "1";
-          const devVersion = `${major}.${minor}.${patch + 1}-dev.${runNumber}.${runAttempt}`;
-
-          packageJson.version = devVersion;
-          fs.writeFileSync("package.json", JSON.stringify(packageJson, null, 2) + "\n");
-          fs.appendFileSync(process.env.GITHUB_ENV, `DEV_VERSION=${devVersion}\n`);
-          NODE
       - name: Test
         run: yarn test
-      - name: Prepare package output
-        run: mkdir -p dist
-      - name: Pack
-        run: npm pack --pack-destination dist
       - name: Publish
         env:
           NPM_CONFIG_PROVENANCE: "true"
-        run: npm publish ./dist/*.tgz --tag dev --access public
-  release:
-    if: github.event_name != 'workflow_dispatch' || inputs.prerelease != 'dev'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    outputs:
-      latest_commit: ${{ steps.git_remote.outputs.latest_commit }}
-      tag_exists: ${{ steps.check_tag_exists.outputs.exists }}
-    env:
-      CI: "true"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-      - name: Set git identity
-        run: |-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      - name: Install Specific Yarn Version
-        run: corepack enable && corepack prepare yarn@4.6.0 --activate
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 24.11.1
-          package-manager-cache: false
-      - name: Install dependencies
-        run: yarn install --immutable
-      - name: release
-        env:
-          PRERELEASE: ${{ github.event_name == 'workflow_dispatch' && inputs.prerelease || '' }}
-        run: npx projen release
-      - name: Check if version has already been tagged
-        id: check_tag_exists
-        run: |-
-          TAG=$(cat dist/releasetag.txt)
-          ([ ! -z "$TAG" ] && git ls-remote -q --exit-code --tags origin $TAG && (echo "exists=true" >> $GITHUB_OUTPUT)) || (echo "exists=false" >> $GITHUB_OUTPUT)
-          cat $GITHUB_OUTPUT
-      - name: Check for new commits
-        id: git_remote
-        run: |-
-          echo "latest_commit=$(git ls-remote origin -h ${{ github.ref }} | cut -f1)" >> $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
-        shell: bash
-      - name: Backup artifact permissions
-        if: ${{ steps.git_remote.outputs.latest_commit == github.sha }}
-        run: cd dist && getfacl -R . > permissions-backup.acl
-        continue-on-error: true
-      - name: Upload artifact
-        if: ${{ steps.git_remote.outputs.latest_commit == github.sha }}
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: build-artifact
-          path: dist
-          overwrite: true
-  release_github:
-    name: Publish to GitHub Releases
-    needs:
-      - release
-      - release_npm
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha && (github.event_name != 'workflow_dispatch' || inputs.prerelease == '')
-    steps:
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 24.11.1
-          package-manager-cache: false
-      - name: Download build artifacts
-        uses: actions/download-artifact@v5
-        with:
-          name: build-artifact
-          path: dist
-      - name: Restore build artifact permissions
-        run: cd dist && setfacl --restore=permissions-backup.acl
-        continue-on-error: true
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: errout=$(mktemp); gh release create $(cat dist/releasetag.txt) -R $GITHUB_REPOSITORY -F dist/changelog.md -t $(cat dist/releasetag.txt) --target $GITHUB_SHA 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q "Release.tag_name already exists" $errout; then cat $errout; exit $exitcode; fi
-  release_npm:
-    name: Publish to npm
-    needs: release
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
-    steps:
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 24.11.1
-          package-manager-cache: false
-      - name: Download build artifacts
-        uses: actions/download-artifact@v5
-        with:
-          name: build-artifact
-          path: dist
-      - name: Install Specific Yarn Version
-        run: corepack enable && corepack prepare yarn@4.6.0 --activate
-      - name: Restore build artifact permissions
-        run: cd dist && setfacl --restore=permissions-backup.acl
-        continue-on-error: true
-      - name: Release
-        env:
-          NPM_DIST_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.npm_dist_tag || 'latest' }}
-          NPM_TRUSTED_PUBLISHER: "true"
-        run: npx -p publib@latest publib-npm
+        run: npm publish --access public
