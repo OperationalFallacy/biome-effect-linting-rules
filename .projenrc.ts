@@ -132,7 +132,32 @@ if (project.github) {
 
   if (buildWorkflow) {
     buildWorkflow.file?.patch(
+      JsonPatch.add("/on/workflow_dispatch/inputs", {
+        repository: {
+          description: "Repository to check out, for example owner/repo",
+          required: false,
+          type: "string",
+        },
+        ref: {
+          description: "Branch, tag, or SHA to check out",
+          required: false,
+          type: "string",
+        },
+      }),
+      JsonPatch.replace("/jobs/build/permissions/contents", "read"),
+      JsonPatch.replace(
+        "/jobs/build/steps/0/with/ref",
+        "${{ github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name) || github.event.pull_request.head.ref }}",
+      ),
+      JsonPatch.replace(
+        "/jobs/build/steps/0/with/repository",
+        "${{ github.event_name == 'workflow_dispatch' && (inputs.repository || github.repository) || github.event.pull_request.head.repo.full_name }}",
+      ),
       JsonPatch.add("/jobs/build/steps/2/with/package-manager-cache", false),
+      JsonPatch.replace(
+        "/jobs/self-mutation/if",
+        "always() && github.event_name == 'pull_request' && needs.build.outputs.self_mutation_happened && github.event.pull_request.head.repo.full_name == github.repository",
+      ),
     );
     const buildJob = buildWorkflow.getJob("build");
     if (buildJob && "steps" in buildJob) {
