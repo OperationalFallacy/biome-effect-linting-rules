@@ -43,7 +43,7 @@ const project = new javascript.NodeProject({
   prettier: false,
   releaseToNpm: true,
   release: true,
-  releaseTrigger: ReleaseTrigger.continuous(),
+  releaseTrigger: ReleaseTrigger.workflowDispatch(),
   releasableCommits: ReleasableCommits.featuresAndFixes(),
   repository: "https://github.com/OperationalFallacy/biome-effect-linting-rules.git",
   workflowNodeVersion: "24.11.1",
