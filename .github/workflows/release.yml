@@ -20,7 +20,6 @@ jobs:
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
-          token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
   publish_npm:
     needs: release_please
     runs-on: ubuntu-latest
