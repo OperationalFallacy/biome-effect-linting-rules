@@ -20,6 +20,7 @@
     "./node_modules/@catenarycloud/linteffect/rules/no-iife-wrapper.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-return-in-arrow.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-atom-registry-effect-sync.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-family-collection-read.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-never.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-type-alias.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-async.grit",

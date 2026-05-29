@@ -31,7 +31,7 @@
     },
     {
       "name": "@biomejs/biome",
-      "version": "^2.2.4",
+      "version": "^2.4.15",
       "type": "runtime"
     }
   ],
