@@ -298,7 +298,7 @@ jobs:
       id-token: write
     env:
       CI: "true"
-    if: \${{ needs.release_please_dev.outputs.release_created == 'true' }}
+    if: github.ref_name == 'dev'
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -313,10 +313,21 @@ jobs:
         run: yarn install --immutable
       - name: Test
         run: yarn test
-      - name: Publish dev
+      - name: Publish dev if missing
         env:
           NPM_CONFIG_PROVENANCE: "true"
-        run: npm publish --tag dev --access public
+        run: |-
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          case "$PACKAGE_VERSION" in
+            *-dev*) ;;
+            *) echo "Skipping non-dev version $PACKAGE_VERSION"; exit 0 ;;
+          esac
+          if npm view "$PACKAGE_NAME@$PACKAGE_VERSION" version >/dev/null 2>&1; then
+            echo "$PACKAGE_NAME@$PACKAGE_VERSION is already published"
+            exit 0
+          fi
+          npm publish --tag dev --access public
 `;
 
 fs.chmodSync(releaseWorkflowPath, 0o644);
