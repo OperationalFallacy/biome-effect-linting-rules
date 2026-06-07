@@ -287,7 +287,7 @@ const devReleasePleaseConfig = {
       "include-component-in-tag": false,
       "package-name": "@catenarycloud/linteffect",
       prerelease: true,
-      "prerelease-type": "dev",
+      "prerelease-type": "dev.0",
       "release-type": "node",
       versioning: "prerelease",
     },
