@@ -8,7 +8,8 @@
       "package-name": "@catenarycloud/linteffect",
       "prerelease": true,
       "prerelease-type": "dev",
-      "release-type": "node"
+      "release-type": "node",
+      "versioning": "prerelease"
     }
   }
 }

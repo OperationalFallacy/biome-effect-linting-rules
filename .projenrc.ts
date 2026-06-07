@@ -289,6 +289,7 @@ const devReleasePleaseConfig = {
       prerelease: true,
       "prerelease-type": "dev",
       "release-type": "node",
+      versioning: "prerelease",
     },
   },
 };
