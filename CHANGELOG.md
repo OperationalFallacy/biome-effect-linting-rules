@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7-dev.0](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.6...v0.0.7-dev.0) (2026-06-07)
+
+
+### Features
+
+* add defragmentation guardrail rules ([78173a5](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/78173a56b8eaeb50d9eaac81c5e35b7f59101740))
+
 ## [0.0.6](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.5...v0.0.6) (2026-05-29)
 
 
