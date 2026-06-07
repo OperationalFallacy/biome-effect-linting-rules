@@ -31,6 +31,8 @@
     "./node_modules/@catenarycloud/linteffect/rules/warn-effect-sync-wrapper.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-side-effect-wrapper.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-all-step-sequencing.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-effect-step-const-staging.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-fragmented-const-assembly.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-orElse-ladder.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-return-in-callback.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-try-catch.grit",

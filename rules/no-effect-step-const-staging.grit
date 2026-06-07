@@ -1,0 +1,18 @@
+language js(typescript, jsx)
+
+JsVariableStatement() as $statement where {
+    or {
+        $statement <: contains `const $name = Effect.$method($args);`,
+        $statement <: contains `const $name = pipe($args);` where {
+            $statement <: contains `Effect.$method($effectArgs)`
+        },
+        $statement <: contains `const $name = $source.pipe($steps);` where {
+            $statement <: contains `Effect.$method($effectArgs)`
+        }
+    },
+    register_diagnostic(
+        span = $statement,
+        message = "Rule: avoid Effect-step const staging. Why this is wrong: this const stores an intermediate Effect step, then later code has to chase names to reconstruct validation, decision, control flow, and the final Effect. Safe remediation: do not move the step into another helper or wrapper. Inline the step into one visible Effect pipeline at the operation that performs the work; use pipe/flatMap/andThen/tap to keep sequencing continuous. Bind a local only for a final domain-shaped value with an explicit domain type, not for staged Effect inputs.",
+        severity = "error"
+    )
+}

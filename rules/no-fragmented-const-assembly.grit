@@ -1,0 +1,27 @@
+language js(typescript, jsx)
+
+JsVariableStatement() as $statement where {
+    $statement <: contains `($params) => $expr`,
+    not $statement <: contains `S.Struct($schemaArgs)`,
+    not $statement <: contains `S.Literal($schemaArgs)`,
+    not $statement <: contains `S.Union($schemaArgs)`,
+    not $statement <: contains `S.Number.pipe($schemaArgs)`,
+    not $statement <: contains `Schema.Struct($schemaArgs)`,
+    not $statement <: contains `Schema.Literal($schemaArgs)`,
+    not $statement <: contains `Schema.Union($schemaArgs)`,
+    not $statement <: contains `Schema.Number.pipe($schemaArgs)`,
+    not $statement <: contains `Data.taggedEnum($args)`,
+    not $statement <: contains `Data.taggedEnum<$type>()`,
+    or {
+        $statement <: contains `({ $props })`,
+        $statement <: contains `$receiver.pipe($steps)`,
+        $statement <: contains `$constructor({ $props })`,
+        $statement <: contains `$namespace.$method($args)`,
+        $statement <: r"Match[.]value|Option[.]match|Either[.]match|[$]match|[.]pipe[(]"
+    },
+    register_diagnostic(
+        span = $statement,
+        message = "Rule: avoid fragmented const assembly chains. Why this is wrong: this const function pre-assembles an object/branch/pipeline fragment outside the operation that uses it, so the reader must chase staged pieces to understand the contract. Safe remediation: do not create another wrapper. Move this assembly back into the service/API operation that emits it, keep validation -> decision -> object/Effect construction in one visible block, bind only the final domain-shaped value with an explicit return/domain type, then return/use that value. Only keep a helper if it is a stable domain constructor used by multiple operations and its signature names the domain contract.", 
+        severity = "error"
+    )
+}
