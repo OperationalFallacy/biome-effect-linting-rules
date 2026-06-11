@@ -8,15 +8,15 @@ type FailureKind = Data.TaggedEnum<{
 // assembly fragments, so this const is intentionally allowed.
 const FailureKind = Data.taggedEnum<FailureKind>();
 
-// Derailment: a standalone field fragment is later pulled into an object
-// builder const. The contract shape is no longer local to the operation that
-// emits it.
-const errorFieldName = "errorMessage";
-
-// Derailment: this module-level const function assembles its return object from
-// the named fragment above. Keep the field choice in the same local operation
-// block, or promote a real typed domain constructor.
-const apiErrorObject = (error: { readonly message: string }) => ({
-  field: errorFieldName,
+// Derailment: this helper returns a partial object fragment rather than the
+// final API error contract.
+const apiErrorFields = (error: { readonly message: string }) => ({
   message: error.message,
+});
+
+// Derailment: the exported object builder assembles the final contract by
+// spreading a helper-produced fragment.
+const apiErrorObject = (error: { readonly message: string }) => ({
+  errorType: "BoundaryFailure",
+  ...apiErrorFields(error),
 });

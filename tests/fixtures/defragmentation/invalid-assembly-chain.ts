@@ -8,15 +8,10 @@ type FailureKind = Data.TaggedEnum<{
 // assembly fragments, so this const is intentionally allowed.
 const FailureKind = Data.taggedEnum<FailureKind>();
 
-// Derailment level 1: a loose named fragment is extracted before there is a
-// meaningful domain value.
-const errorFieldName = "errorMessage";
-
-// Derailment level 2: this helper const assembles a partial object from the
-// loose fragment above. It is not a standalone domain concept; it is a staged
-// piece of the final API error shape.
+// Derailment level 1: this helper const assembles a partial object. It is not a
+// standalone domain concept; it is a staged piece of the final API error shape.
 const apiErrorFields = (message: string) => ({
-  [errorFieldName]: message,
+  errorMessage: message,
 });
 
 // Derailment: the exported object builder now assembles the final contract from
