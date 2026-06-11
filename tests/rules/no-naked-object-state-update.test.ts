@@ -71,6 +71,13 @@ describe("no-naked-object-state-update", () => {
     );
   });
 
+  it("It allows Object.fromEntries context index rebuilding outside Ref transitions", () => {
+    const result = lintWithRule(
+      path.join(fixtureRoot, "valid-operation-index-from-context.ts"),
+    );
+    expect(result.status).toBe(0);
+  });
+
   it("It catches Object.assign patch style in state transitions", () => {
     const result = lintWithRule(path.join(fixtureRoot, "invalid-object-assign.ts"));
     expect(result.status).toBe(1);
