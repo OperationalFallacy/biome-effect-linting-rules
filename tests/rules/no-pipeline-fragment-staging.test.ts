@@ -21,7 +21,7 @@ function resolveBiomeBin() {
 function lintWithRule(fixtureFile: string) {
   const tempDir = mkdtempSync(path.join(tmpdir(), "linteffect-rule-test-"));
   const configPath = path.join(tempDir, "biome.json");
-  const rulePath = path.join(repoRoot, "rules", "no-fragmented-const-assembly.grit");
+  const rulePath = path.join(repoRoot, "rules", "no-pipeline-fragment-staging.grit");
 
   writeFileSync(configPath, `${JSON.stringify({ plugins: [rulePath] }, null, 2)}\n`, "utf8");
 
@@ -48,54 +48,31 @@ function lintWithRule(fixtureFile: string) {
   }
 }
 
-const diagnosticMessage = "Rule: avoid fragmented const assembly chains.";
+const diagnosticMessage = "Rule: avoid pipeline fragment staging.";
 
-describe("no-fragmented-const-assembly", () => {
-  it("It catches direct const fragments used inside const function object assembly", () => {
+describe("no-pipeline-fragment-staging", () => {
+  it("It catches local pipeline fragments consumed by returned pipelines", () => {
     const result = lintWithRule(
-      path.join(fixtureRoot, "invalid-direct-const-fragment.ts"),
+      path.join(fixtureRoot, "invalid-pipeline-fragment-return.ts"),
     );
 
     expect(result.status).toBe(1);
     expect(result.output).toContain(diagnosticMessage);
   });
 
-  it("It catches second-level const assembly chains", () => {
-    const result = lintWithRule(path.join(fixtureRoot, "invalid-assembly-chain.ts"));
-
-    expect(result.status).toBe(1);
-    expect(result.output).toContain(diagnosticMessage);
-  });
-
-  it("It catches helper fragments spread into constructor payloads", () => {
+  it("It allows final domain values before continuous returned pipelines", () => {
     const result = lintWithRule(
-      path.join(fixtureRoot, "invalid-constructor-fragment.ts"),
-    );
-
-    expect(result.status).toBe(1);
-    expect(result.output).toContain(diagnosticMessage);
-  });
-
-  it("It allows Data tagged enum declarations and explicit final object contracts", () => {
-    const result = lintWithRule(path.join(fixtureRoot, "valid-const-assembly.ts"));
-
-    expect(result.status).toBe(0);
-  });
-
-  it("It allows React presentation tables, hook key derivation, and local JSX render helpers", () => {
-    const result = lintWithRule(
-      path.join(fixtureRoot, "valid-react-presentation-composition.tsx"),
+      path.join(fixtureRoot, "valid-pipeline-final-domain-value.ts"),
     );
 
     expect(result.status).toBe(0);
   });
 
-  it("It allows atom projection helpers and stable service error adapters", () => {
+  it("It allows nested render callback composition inside result matching", () => {
     const result = lintWithRule(
-      path.join(fixtureRoot, "valid-atom-projection-and-error-adapters.ts"),
+      path.join(fixtureRoot, "valid-nested-render-callback-composition.tsx"),
     );
 
     expect(result.status).toBe(0);
   });
-
 });
