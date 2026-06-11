@@ -9,7 +9,6 @@
     "./node_modules/@catenarycloud/linteffect/rules/no-pipe-ladder.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-flatmap-ladder.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-ladder.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-effect-call-in-effect-arg.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-nested-effect-call.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-as.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-wrapper-alias.grit",
