@@ -1,89 +1,32 @@
-file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+language js(typescript, jsx)
+
+or {
+    `Effect.as($first, $second)` as $call where {
+        or {
+            $first <: contains `setState($_)`,
+            $first <: contains `Atom.set($_)`,
+            $first <: contains `invalidate($_)`,
+            $first <: contains `Effect.log$_`,
+            $first <: contains `console.$method($_)`
+        },
+        register_diagnostic(
+            span = $call,
+            message = "Rule: avoid Effect.as for side effects. Why: it hides side effects and turns them into placeholders. Fix: use explicit pipeline steps that return real values with Effect.flatMap, Effect.andThen, or Effect.tap.",
+            severity = "error"
+        )
     },
-    or {
-        $body <: contains bubble `Effect.as($first, $second)` as $call where {
+    `Effect.zipRight($first, $second)` as $call where {
+        or {
             $first <: contains `setState($_)`,
-            register_diagnostic(
-                span = $call,
-                message = "Rule: avoid Effect.as for side effects. Why: it hides side effects and turns them into placeholders. Fix: use explicit pipeline steps that return real values (Effect.flatMap/andThen/tap).",
-                severity = "error"
-            )
-        },
-        $body <: contains bubble `Effect.as($first, $second)` as $call where {
             $first <: contains `Atom.set($_)`,
-            register_diagnostic(
-                span = $call,
-                message = "Rule: avoid Effect.as for side effects. Why: it hides side effects and turns them into placeholders. Fix: use explicit pipeline steps that return real values (Effect.flatMap/andThen/tap).",
-                severity = "error"
-            )
-        },
-        $body <: contains bubble `Effect.as($first, $second)` as $call where {
             $first <: contains `invalidate($_)`,
-            register_diagnostic(
-                span = $call,
-                message = "Rule: avoid Effect.as for side effects. Why: it hides side effects and turns them into placeholders. Fix: use explicit pipeline steps that return real values (Effect.flatMap/andThen/tap).",
-                severity = "error"
-            )
-        },
-        $body <: contains bubble `Effect.as($first, $second)` as $call where {
             $first <: contains `Effect.log$_`,
-            register_diagnostic(
-                span = $call,
-                message = "Rule: avoid Effect.as for side effects. Why: it hides side effects and turns them into placeholders. Fix: use explicit pipeline steps that return real values (Effect.flatMap/andThen/tap).",
-                severity = "error"
-            )
+            $first <: contains `console.$method($_)`
         },
-        $body <: contains bubble `Effect.as($first, $second)` as $call where {
-            $first <: contains `console.$method($_)`,
-            register_diagnostic(
-                span = $call,
-                message = "Rule: avoid Effect.as for side effects. Why: it hides side effects and turns them into placeholders. Fix: use explicit pipeline steps that return real values (Effect.flatMap/andThen/tap).",
-                severity = "error"
-            )
-        },
-        $body <: contains bubble `Effect.zipRight($first, $second)` as $call where {
-            $first <: contains `setState($_)`,
-            register_diagnostic(
-                span = $call,
-                message = "Rule: avoid Effect.zipRight for side effects. Why: it hides side effects and discards values. Fix: use explicit pipeline steps that return real values (Effect.flatMap/andThen/tap).",
-                severity = "error"
-            )
-        },
-        $body <: contains bubble `Effect.zipRight($first, $second)` as $call where {
-            $first <: contains `Atom.set($_)`,
-            register_diagnostic(
-                span = $call,
-                message = "Rule: avoid Effect.zipRight for side effects. Why: it hides side effects and discards values. Fix: use explicit pipeline steps that return real values (Effect.flatMap/andThen/tap).",
-                severity = "error"
-            )
-        },
-        $body <: contains bubble `Effect.zipRight($first, $second)` as $call where {
-            $first <: contains `invalidate($_)`,
-            register_diagnostic(
-                span = $call,
-                message = "Rule: avoid Effect.zipRight for side effects. Why: it hides side effects and discards values. Fix: use explicit pipeline steps that return real values (Effect.flatMap/andThen/tap).",
-                severity = "error"
-            )
-        },
-        $body <: contains bubble `Effect.zipRight($first, $second)` as $call where {
-            $first <: contains `Effect.log$_`,
-            register_diagnostic(
-                span = $call,
-                message = "Rule: avoid Effect.zipRight for side effects. Why: it hides side effects and discards values. Fix: use explicit pipeline steps that return real values (Effect.flatMap/andThen/tap).",
-                severity = "error"
-            )
-        },
-        $body <: contains bubble `Effect.zipRight($first, $second)` as $call where {
-            $first <: contains `console.$method($_)`,
-            register_diagnostic(
-                span = $call,
-                message = "Rule: avoid Effect.zipRight for side effects. Why: it hides side effects and discards values. Fix: use explicit pipeline steps that return real values (Effect.flatMap/andThen/tap).",
-                severity = "error"
-            )
-        }
+        register_diagnostic(
+            span = $call,
+            message = "Rule: avoid Effect.zipRight for side effects. Why: it hides side effects and discards values. Fix: use explicit pipeline steps that return real values with Effect.flatMap, Effect.andThen, or Effect.tap.",
+            severity = "error"
+        )
     }
 }
