@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.7-dev.1](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.7-dev.0...v0.0.7-dev.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* allow context index rebuilds outside Ref transitions ([4dc3934](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/4dc39341130a202813062c602484b6f6d28fb00e))
+* delete nested Effect argument rule ([ff8f1ac](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/ff8f1aca13dfe1f41b08af90fcca773578f6c7d9))
+* increment dev prerelease suffixes ([55f4df8](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/55f4df87eb9d0693d10d274f37f97d4225864414))
+* increment dev prerelease suffixes ([7a2d048](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/7a2d048d043d209d8a31f90f2dcf38e9b12eaf24))
+* remove nested Effect argument rule from presets ([db41a18](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/db41a18353e66467cb4992d537a2fd2b5bfe5b9b))
+* remove noisy nested Effect argument rule from presets ([5f0fbc0](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/5f0fbc0b8406cd2101510d3176d90157edc3fd3a))
+
 ## [0.0.7-dev.0](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.6...v0.0.7-dev.0) (2026-06-07)
 
 
