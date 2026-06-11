@@ -1,99 +1,24 @@
-file($body) where {
+language js(typescript, jsx)
+
+or {
+    `const $name = Effect.$outer($first)` as $outerCall,
+    `const $name: $type = Effect.$outer($first)` as $outerCall,
+    `const $name = Effect.$outer($first, $second)` as $outerCall,
+    `const $name: $type = Effect.$outer($first, $second)` as $outerCall,
+    `return Effect.$outer($first)` as $outerCall,
+    `return Effect.$outer($first, $second)` as $outerCall
+} where {
     or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
-    },
-    or {
-        $body <: contains `const $name = Effect.$outer($first)` as $outerCall where {
-            or {
-                $first <: `Effect.$inner($innerOnly)` where {
-                    $innerOnly <: `Effect.$deep($_)`
-                },
-                $first <: `Effect.$inner($innerFirst, $innerSecond)` where {
-                    $innerFirst <: `Effect.$deep($_)`
-                }
-            },
-            register_diagnostic(
-                span = $outerCall,
-                message = "Rule: avoid nested Effect combinators. Why: they hide sequencing and create laddered control flow. Fix: build context once (Effect.all/Effect.map) and then run a single flat pipeline.",
-                severity = "error"
-            )
+        $first <: `Effect.$inner($innerOnly)` where {
+            $innerOnly <: `Effect.$deep($_)`
         },
-        $body <: contains `const $name: $type = Effect.$outer($first)` as $outerCall where {
-            or {
-                $first <: `Effect.$inner($innerOnly)` where {
-                    $innerOnly <: `Effect.$deep($_)`
-                },
-                $first <: `Effect.$inner($innerFirst, $innerSecond)` where {
-                    $innerFirst <: `Effect.$deep($_)`
-                }
-            },
-            register_diagnostic(
-                span = $outerCall,
-                message = "Rule: avoid nested Effect combinators. Why: they hide sequencing and create laddered control flow. Fix: build context once (Effect.all/Effect.map) and then run a single flat pipeline.",
-                severity = "error"
-            )
-        },
-        $body <: contains `const $name = Effect.$outer($first, $second)` as $outerCall where {
-            or {
-                $first <: `Effect.$inner($innerOnly)` where {
-                    $innerOnly <: `Effect.$deep($_)`
-                },
-                $first <: `Effect.$inner($innerFirst, $innerSecond)` where {
-                    $innerFirst <: `Effect.$deep($_)`
-                }
-            },
-            register_diagnostic(
-                span = $outerCall,
-                message = "Rule: avoid nested Effect combinators. Why: they hide sequencing and create laddered control flow. Fix: build context once (Effect.all/Effect.map) and then run a single flat pipeline.",
-                severity = "error"
-            )
-        },
-        $body <: contains `const $name: $type = Effect.$outer($first, $second)` as $outerCall where {
-            or {
-                $first <: `Effect.$inner($innerOnly)` where {
-                    $innerOnly <: `Effect.$deep($_)`
-                },
-                $first <: `Effect.$inner($innerFirst, $innerSecond)` where {
-                    $innerFirst <: `Effect.$deep($_)`
-                }
-            },
-            register_diagnostic(
-                span = $outerCall,
-                message = "Rule: avoid nested Effect combinators. Why: they hide sequencing and create laddered control flow. Fix: build context once (Effect.all/Effect.map) and then run a single flat pipeline.",
-                severity = "error"
-            )
-        },
-        $body <: contains `return Effect.$outer($first)` as $outerCall where {
-            or {
-                $first <: `Effect.$inner($innerOnly)` where {
-                    $innerOnly <: `Effect.$deep($_)`
-                },
-                $first <: `Effect.$inner($innerFirst, $innerSecond)` where {
-                    $innerFirst <: `Effect.$deep($_)`
-                }
-            },
-            register_diagnostic(
-                span = $outerCall,
-                message = "Rule: avoid nested Effect combinators. Why: they hide sequencing and create laddered control flow. Fix: build context once (Effect.all/Effect.map) and then run a single flat pipeline.",
-                severity = "error"
-            )
-        },
-        $body <: contains `return Effect.$outer($first, $second)` as $outerCall where {
-            or {
-                $first <: `Effect.$inner($innerOnly)` where {
-                    $innerOnly <: `Effect.$deep($_)`
-                },
-                $first <: `Effect.$inner($innerFirst, $innerSecond)` where {
-                    $innerFirst <: `Effect.$deep($_)`
-                }
-            },
-            register_diagnostic(
-                span = $outerCall,
-                message = "Rule: avoid nested Effect combinators. Why: they hide sequencing and create laddered control flow. Fix: build context once (Effect.all/Effect.map) and then run a single flat pipeline.",
-                severity = "error"
-            )
+        $first <: `Effect.$inner($innerFirst, $innerSecond)` where {
+            $innerFirst <: `Effect.$deep($_)`
         }
-    }
+    },
+    register_diagnostic(
+        span = $outerCall,
+        message = "Rule: avoid nested Effect combinators. Why: they hide sequencing and create laddered control flow. Fix: build context once (Effect.all/Effect.map) and then run a single flat pipeline.",
+        severity = "error"
+    )
 }
