@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.8-dev.0](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.7-dev.3...v0.0.8-dev.0) (2026-07-17)
+
+
+### Bug Fixes
+
+* align the dev prerelease with the pending 0.0.8 release
+
 ## [0.0.7-dev.3](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.7-dev.2...v0.0.7-dev.3) (2026-07-17)
 
 
