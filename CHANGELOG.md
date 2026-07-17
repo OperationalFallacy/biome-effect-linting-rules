@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.0.7](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.6...v0.0.7) (2026-07-17)
+
+
+### Features
+
+* add defragmentation guardrail rules ([78173a5](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/78173a56b8eaeb50d9eaac81c5e35b7f59101740))
+* calibrate defragmentation guardrails ([11786a7](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/11786a771b6bdaff2b34933557570b5a28d1cbad))
+* calibrate defragmentation guardrails ([7a2dec7](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/7a2dec71619d9bb4b2ff699e36d7a592818c11ed))
+
+
+### Bug Fixes
+
+* allow context index rebuilds outside Ref transitions ([4dc3934](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/4dc39341130a202813062c602484b6f6d28fb00e))
+* anchor grit rules for lint performance ([024a481](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/024a4812f985a969840a5e3419c42803abf24d9b))
+* anchor Grit rules for lint performance ([287a33b](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/287a33b017359dd6f1a1b1b84bf66a456be20722))
+* delete nested Effect argument rule ([ff8f1ac](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/ff8f1aca13dfe1f41b08af90fcca773578f6c7d9))
+* increment dev prerelease suffixes ([7a2d048](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/7a2d048d043d209d8a31f90f2dcf38e9b12eaf24))
+* remove nested Effect argument rule from presets ([db41a18](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/db41a18353e66467cb4992d537a2fd2b5bfe5b9b))
+* remove noisy nested Effect argument rule from presets ([5f0fbc0](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/5f0fbc0b8406cd2101510d3176d90157edc3fd3a))
+
 ## [0.0.6](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.5...v0.0.6) (2026-05-29)
 
 
