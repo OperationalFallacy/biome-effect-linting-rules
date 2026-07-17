@@ -54,7 +54,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "0.0.8-dev.0",
+  "version": "0.0.8-dev.1",
   "packageManager": "yarn@4.6.0",
   "files": [
     "biome.jsonc",
