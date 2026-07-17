@@ -1,0 +1,11 @@
+language js(typescript, jsx)
+
+JsFunctionBody(statements = $statements) as $block where {
+    $statements <: contains `const $fragment = pipe($producerArgs)`,
+    $statements <: contains `return pipe($fragment, $...)`,
+    register_diagnostic(
+        span = $block,
+        message = "Rule: avoid pipeline fragment staging. Why this is wrong: this operation stages an intermediate pipeline fragment and then returns another pipeline that consumes it, so the reader must chase names to understand the final flow. Safe remediation: keep the producer and final selection in one visible pipeline, or promote a complete named domain operation.",
+        severity = "error"
+    )
+}

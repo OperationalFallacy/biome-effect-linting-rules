@@ -229,9 +229,13 @@ on:
   push:
     branches:
       - master
+      - dev
   workflow_dispatch: {}
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 jobs:
   release_please:
+    if: github.ref_name == 'master'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -240,10 +244,25 @@ jobs:
       release_created: \${{ steps.release.outputs.release_created }}
     steps:
       - id: release
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v5
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+  release_please_dev:
+    if: github.ref_name == 'dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: \${{ steps.release.outputs.release_created }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v5
+        with:
+          config-file: release-please-config.dev.json
+          manifest-file: .release-please-manifest.json
+          target-branch: dev
   publish_npm:
     needs: release_please
     runs-on: ubuntu-latest
@@ -271,8 +290,68 @@ jobs:
         env:
           NPM_CONFIG_PROVENANCE: "true"
         run: npm publish --access public
+  publish_npm_dev:
+    needs: release_please_dev
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      CI: "true"
+    if: github.ref_name == 'dev'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Install Specific Yarn Version
+        run: corepack enable && corepack prepare yarn@${yarnVersion} --activate
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24.11.1
+          package-manager-cache: false
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Test
+        run: yarn test
+      - name: Publish dev if missing
+        env:
+          NPM_CONFIG_PROVENANCE: "true"
+        run: |-
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          case "$PACKAGE_VERSION" in
+            *-dev*) ;;
+            *) echo "Skipping non-dev version $PACKAGE_VERSION"; exit 0 ;;
+          esac
+          if npm view "$PACKAGE_NAME@$PACKAGE_VERSION" version >/dev/null 2>&1; then
+            echo "$PACKAGE_NAME@$PACKAGE_VERSION is already published"
+            exit 0
+          fi
+          npm publish --tag dev --access public
 `;
 
 fs.chmodSync(releaseWorkflowPath, 0o644);
 fs.writeFileSync(releaseWorkflowPath, releasePleaseWorkflow);
 fs.chmodSync(releaseWorkflowPath, 0o444);
+
+const devReleasePleaseConfigPath = "release-please-config.dev.json";
+const devReleasePleaseConfig = {
+  $schema: "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  packages: {
+    ".": {
+      "bump-patch-for-minor-pre-major": true,
+      "changelog-path": "CHANGELOG.md",
+      "include-component-in-tag": false,
+      "package-name": "@catenarycloud/linteffect",
+      prerelease: true,
+      "prerelease-type": "dev",
+      "release-type": "node",
+      versioning: "prerelease",
+    },
+  },
+};
+
+fs.writeFileSync(
+  devReleasePleaseConfigPath,
+  `${JSON.stringify(devReleasePleaseConfig, null, 2)}\n`,
+);

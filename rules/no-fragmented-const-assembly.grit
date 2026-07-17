@@ -1,0 +1,11 @@
+language js(typescript, jsx)
+
+JsObjectExpression(members = $members) as $assembly where {
+    $members <: contains JsSpread(argument = $argument),
+    $argument <: `$fragment($args)`,
+    register_diagnostic(
+        span = $assembly,
+        message = "Rule: avoid fragmented const assembly chains. Why this is wrong: this object contract is assembled from a helper-produced fragment, so the reader must chase staged pieces to understand the final payload. Safe remediation: keep validation, decision, and final object construction in one visible block, or promote a stable domain constructor whose signature names the complete contract.",
+        severity = "error"
+    )
+}

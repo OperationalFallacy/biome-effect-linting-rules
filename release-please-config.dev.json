@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    ".": {
+      "bump-patch-for-minor-pre-major": true,
+      "changelog-path": "CHANGELOG.md",
+      "include-component-in-tag": false,
+      "package-name": "@catenarycloud/linteffect",
+      "prerelease": true,
+      "prerelease-type": "dev",
+      "release-type": "node",
+      "versioning": "prerelease"
+    }
+  }
+}
