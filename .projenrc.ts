@@ -17,7 +17,7 @@ const project = new javascript.NodeProject({
   defaultReleaseBranch: "master",
   description:
     "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
-  deps: ["@biomejs/biome@^2.4.15"],
+  deps: ["@biomejs/biome@^2.5.4"],
   devDeps: [
     "projen@^0.98.34",
     "tsx@^4.20.6",

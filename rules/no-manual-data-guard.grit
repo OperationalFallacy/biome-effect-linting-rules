@@ -1,0 +1,35 @@
+language js(typescript, jsx)
+
+// Performance: warm full-tree linting adds about 0.05 ms per TypeScript file,
+// typically 5-10% over the same Biome run without this plugin. Rebenchmark
+// before adding more whole-function `within` or `contains` traversals.
+or {
+	TsPredicateReturnType() as $predicate where {
+		$predicate <: within JsArrowFunctionExpression() as $function
+	},
+	TsPredicateReturnType() as $predicate where {
+		$predicate <: within JsFunctionExpression() as $function
+	},
+	TsPredicateReturnType() as $predicate where {
+		$predicate <: within JsFunctionDeclaration() as $function
+	},
+	TsPredicateReturnType() as $predicate where {
+		$predicate <: within JsFunctionExportDefaultDeclaration() as $function
+	},
+	TsPredicateReturnType() as $predicate where {
+		$predicate <: within JsMethodObjectMember() as $function
+	},
+	TsPredicateReturnType() as $predicate where {
+		$predicate <: within JsMethodClassMember() as $function
+	}
+} where {
+	$function <: contains JsFormalParameter() as $parameter,
+	$parameter <: contains JsIdentifierBinding() as $name,
+	$parameter <: contains or {
+		TsUnknownType(),
+		TsAnyType()
+	},
+	$predicate <: contains JsReferenceIdentifier() as $name,
+	$function <: not contains JsInstanceofExpression(),
+	register_diagnostic(span=$predicate, message="Rule: avoid manual data guards. Why: a user-defined predicate can manufacture trusted data from `unknown` or `any` without decoding it. Fix: decode with the canonical Schema; use typed Match patterns after decoding. Nominal class identity checks are allowed.", severity="error")
+}

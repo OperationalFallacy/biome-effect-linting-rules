@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.4/schema.json",
   "plugins": [
     "./node_modules/@catenarycloud/linteffect/rules/no-react-state.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-if-statement.grit",
@@ -34,6 +34,7 @@
     "./node_modules/@catenarycloud/linteffect/rules/warn-effect-sync-wrapper.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-side-effect-wrapper.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-all-step-sequencing.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-manual-data-guard.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-orElse-ladder.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-render-side-effects.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-return-in-callback.grit",

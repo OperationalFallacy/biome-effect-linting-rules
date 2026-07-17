@@ -1,29 +1,55 @@
-file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
-    },
-    $body <: contains bubble `$callee($args)` where {
+language js(typescript, jsx)
+
+or {
+    `$callee(($params) => { $block })` as $call where {
         $callee <: not `S.filter`,
         $callee <: not `Schema.filter`,
-        or {
-            $args <: contains `($params) => { $block }` where {
-                $block <: contains `return $value` as $ret
-            },
-            $args <: contains `($params): $return => { $block }` where {
-                $block <: contains `return $value` as $ret
-            },
-            $args <: contains `$param => { $block }` where {
-                $block <: contains `return $value` as $ret
-            }
-        },
-        not $args <: contains bubble `S.filter($fn, $_)` where { $fn <: contains $ret },
-        not $args <: contains bubble `Schema.filter($fn, $_)` where { $fn <: contains $ret },
-        register_diagnostic(
-            span = $ret,
-            message = "Rule: avoid block-bodied arrow callbacks with returns. Why: they hide local control flow. Fix: use expression-only callbacks and move the logic into a single pipeline (pipe/Match/Option/A.map).",
-            severity = "info"
-        )
+        $block <: contains `return $value` as $ret
+    },
+    `$callee(($params): $return => { $block })` as $call where {
+        $callee <: not `S.filter`,
+        $callee <: not `Schema.filter`,
+        $block <: contains `return $value` as $ret
+    },
+    `$callee($param => { $block })` as $call where {
+        $callee <: not `S.filter`,
+        $callee <: not `Schema.filter`,
+        $block <: contains `return $value` as $ret
+    },
+    `$callee($before, ($params) => { $block })` as $call where {
+        $callee <: not `S.filter`,
+        $callee <: not `Schema.filter`,
+        $block <: contains `return $value` as $ret
+    },
+    `$callee($before, ($params): $return => { $block })` as $call where {
+        $callee <: not `S.filter`,
+        $callee <: not `Schema.filter`,
+        $block <: contains `return $value` as $ret
+    },
+    `$callee($before, $param => { $block })` as $call where {
+        $callee <: not `S.filter`,
+        $callee <: not `Schema.filter`,
+        $block <: contains `return $value` as $ret
+    },
+    `$callee($before, ($params) => { $block }, $after)` as $call where {
+        $callee <: not `S.filter`,
+        $callee <: not `Schema.filter`,
+        $block <: contains `return $value` as $ret
+    },
+    `$callee($before, ($params): $return => { $block }, $after)` as $call where {
+        $callee <: not `S.filter`,
+        $callee <: not `Schema.filter`,
+        $block <: contains `return $value` as $ret
+    },
+    `$callee($before, $param => { $block }, $after)` as $call where {
+        $callee <: not `S.filter`,
+        $callee <: not `Schema.filter`,
+        $block <: contains `return $value` as $ret
     }
+} where {
+    register_diagnostic(
+        span = $ret,
+        message = "Rule: review this block-bodied arrow callback before changing it. Identify its role in the surrounding data or Effect flow, then aim for a result that makes the data, state, and collection choices clearer rather than merely changing the callback shape. For example, when a reducer rebuilds a native `Map` on every step, an Effect `HashMap` update such as `HashMap.set` may express the operation directly. Keep the block when it communicates the design most clearly.",
+        severity = "info"
+    )
 }
