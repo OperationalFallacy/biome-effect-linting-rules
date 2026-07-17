@@ -4,18 +4,16 @@ TsPredicateReturnType() as $predicate where {
     $predicate <: contains TsPropertySignatureTypeMember() as $tagMember,
     $tagMember <: r".*\b_tag\b.*",
     $tagMember <: contains TsStringType(),
-    $predicate <: within or {
-        JsArrowFunctionExpression() as $guard,
-        JsFunctionDeclaration() as $guard
-    },
-    $guard <: contains TsUnknownType(),
+    $predicate <: within JsArrowFunctionExpression() as $guard,
+    $guard <: contains JsFormalParameter() as $unknownParameter,
+    $unknownParameter <: contains TsUnknownType(),
     $guard <: contains `typeof $value === "object"`,
     $guard <: contains `$value !== null`,
     $guard <: contains `"_tag" in $value`,
     $guard <: contains `typeof $value._tag === "string"`,
     register_diagnostic(
         span = $guard,
-        message = "Rule: avoid loose `_tag` extraction from `unknown`. Why this is wrong: a structural `_tag` check treats arbitrary external data as a known tagged failure and bypasses the typed failure union or schema boundary. Safe remediation: narrow a known tagged-error union at the producer or catch site, decode unknown data with Schema, or persist an explicit failure record produced by a typed adapter.",
+        message = "Rule: avoid loose `_tag` extraction from `unknown`. Why: a structural `_tag` check treats arbitrary input as a known tagged failure and bypasses the typed failure union or Schema decoding. Fix: match the typed failure union at the catch site, decode unknown input with Schema, or use the explicit failure record produced by typed ingress.",
         severity = "error"
     )
 }

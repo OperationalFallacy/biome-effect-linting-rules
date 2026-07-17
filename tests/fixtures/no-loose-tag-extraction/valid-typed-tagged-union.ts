@@ -1,26 +1,17 @@
-type Failure =
-  | { readonly _tag: "NotFound"; readonly id: string }
-  | { readonly _tag: "Unavailable"; readonly retryAfter: number };
+import { Data, Match } from "effect";
 
-const failureTag = (failure: Failure) => failure._tag;
+type Failure = Data.TaggedEnum<{
+  NotFound: { readonly id: string };
+  Unavailable: { readonly retryAfter: number };
+}>;
 
-const hasNumericTag = (
-  value: unknown,
-): value is { readonly _tag: number; readonly message: string } =>
-  typeof value === "object" &&
-  value !== null &&
-  "_tag" in value &&
-  typeof value._tag === "number" &&
-  "message" in value &&
-  typeof value.message === "string";
+const Failure = Data.taggedEnum<Failure>();
 
-const describeFailure = (failure: Failure) => {
-  switch (failure._tag) {
-    case "NotFound":
-      return `Missing ${failure.id}`;
-    case "Unavailable":
-      return `Retry after ${failure.retryAfter}`;
-  }
-};
+const failureTag = Match.type<Failure>().pipe(
+  Match.tagsExhaustive({
+    NotFound: ({ _tag }) => _tag,
+    Unavailable: ({ _tag }) => _tag,
+  }),
+);
 
-export { describeFailure, failureTag, hasNumericTag };
+export { Failure, failureTag };

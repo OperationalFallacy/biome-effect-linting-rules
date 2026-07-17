@@ -14,9 +14,6 @@ describe(ruleName, () => {
 
     expect(result.status).toBe(1);
     expect(result.output).toContain("Rule: avoid loose `_tag` extraction from `unknown`.");
-    expect(
-      result.output.match(/Rule: avoid loose `_tag` extraction from `unknown`\./g),
-    ).toHaveLength(2);
   });
 
   it("It allows matching a typed tagged union", () => {

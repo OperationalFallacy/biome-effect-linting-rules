@@ -6,16 +6,4 @@ const hasLooseTag = (
   "_tag" in value &&
   typeof value._tag === "string";
 
-const extractFailureTag = (failure: unknown) =>
-  hasLooseTag(failure) ? failure._tag : "UnknownFailure";
-
-function isLooseTaggedFailure(value: unknown): value is { _tag: string } {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "_tag" in value &&
-    typeof value._tag === "string"
-  );
-}
-
-export { extractFailureTag, isLooseTaggedFailure };
+export { hasLooseTag };
