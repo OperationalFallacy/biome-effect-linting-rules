@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.0.7-dev.3](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.7-dev.2...v0.0.7-dev.3) (2026-07-17)
+
+
+### Features
+
+* calibrate defragmentation guardrails ([11786a7](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/11786a771b6bdaff2b34933557570b5a28d1cbad))
+* detect loose tag extraction from unknown ([d81736d](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/d81736d8899705a49dd16c5a972799a21711f2b8))
+* detect manual data guards over unknown input ([c7b7baf](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/c7b7baf7dc9923d6d1d02da9323c302e84a90081))
+
+
+### Bug Fixes
+
+* align tag rule fixtures with Effect ADTs ([2396cda](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/2396cda722d50348478562c84774fbe251f5c51b))
+* generalize manual data guard detection ([a5935c2](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/a5935c2e17fa08e40b946de348f91d09a24697cf))
+* make arrow return advisory prompt review ([d527248](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/d5272489aa8fe47ae72f3d9fb841847246379093))
+* make arrow return advisory prompt review ([be63059](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/be63059b36c5710ed5c080653007200cd45a4c31))
+
 ## [0.0.7](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.6...v0.0.7) (2026-07-17)
 
 
