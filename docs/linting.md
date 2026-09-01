@@ -18,6 +18,8 @@ Do not collect generated classes in a hand-built object. Export fixed element cl
 
 Field components compose the shared field foundation for root layout, labels, descriptions, validation messages, and input density. A component styling module must not recreate those roles under local `field`, `label`, `description`, or `errorMessage` declarations.
 
+Storybook stories declare meaningful rendered states through typed args and static compound composition. Do not place assertions in `play`, construct story-local state with `useArgs` or `useAtom`, or add inline layout objects around the component. Customer-visible behavior belongs in the representation, service, or route test responsible for that outcome.
+
 Shared React components own their styling imports. Consumers import the component and select declared props; they do not import the matching `.css.ts` module through an application alias or relative path.
 
 ### Rewrite method
