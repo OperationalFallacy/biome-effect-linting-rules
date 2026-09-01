@@ -16,6 +16,16 @@ describe(ruleName, () => {
     expect(result.output).toContain("do not recreate shared field roles");
   });
 
+  it("It catches checkbox-prefixed copies of shared field roles", () => {
+    const result = lintWithRule(
+      ruleName,
+      path.join(fixtures, "invalid-checkbox-field.css.ts"),
+    );
+
+    expect(result.status).toBe(1);
+    expect(result.output).toContain("do not recreate shared field roles");
+  });
+
   it("It allows the shared field foundation contracts", () => {
     const result = lintWithRule(
       ruleName,

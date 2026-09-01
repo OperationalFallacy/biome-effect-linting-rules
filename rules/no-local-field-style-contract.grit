@@ -6,7 +6,10 @@ file($body) where {
         $body <: contains `export const field = style($definition)` as $localFieldPart,
         $body <: contains `export const label = style($definition)` as $localFieldPart,
         $body <: contains `export const description = style($definition)` as $localFieldPart,
-        $body <: contains `export const errorMessage = style($definition)` as $localFieldPart
+        $body <: contains `export const errorMessage = style($definition)` as $localFieldPart,
+        $body <: contains `export const checkboxField = style($definition)` as $localFieldPart,
+        $body <: contains `export const checkboxSupportingText = style($definition)` as $localFieldPart,
+        $body <: contains `export const checkboxValidationMessage = style($definition)` as $localFieldPart
     },
     register_diagnostic(
         span = $localFieldPart,
