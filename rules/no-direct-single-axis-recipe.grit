@@ -1,0 +1,12 @@
+language js(typescript)
+
+`recipe($config)` as $directRecipe where {
+    $config <: contains `variants: { $variantName: $variantValues }`,
+    not $config <: contains `variants: { $firstName: $firstValues, $secondName: $secondValues }`,
+    not $directRecipe <: contains `vars: $assignments`,
+    register_diagnostic(
+        span = $directRecipe,
+        message = "Rule: use styleVariants for one direct visual selection. Why: a one-axis recipe without scoped coordination adds a runtime variant function where the component only selects one complete generated class. Fix: compose the shared base into styleVariants and derive the public prop from keyof typeof classMap. Keep recipe for multiple axes, compound variants, or one choice that coordinates child roles through scoped values.",
+        severity = "error"
+    )
+}

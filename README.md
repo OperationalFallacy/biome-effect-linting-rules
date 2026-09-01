@@ -2,7 +2,7 @@
 
 `lintEffect` is a Biome rule pack for Effect TypeScript. It enforces flat composition, explicit sequencing, readable control flow, and shapes that are easier to remediate mechanically.
 
-The rules target patterns that make Effect code harder to scan and harder to rewrite safely: nested combinator towers, nested `Effect.gen`, sequencing hidden inside collection helpers, callback scaffolding, and wrapper-heavy type patterns. The web preset also protects shared Vanilla Extract contracts by rejecting empty generated classes, class aliases, hand-built class maps, and imports that bypass shared React components. Storybook enforcement rejects inline test, state, and layout harnesses so stories remain declarative rendered states. Diagnostics stay local to the offending declaration or call site so a human or coding agent can rewrite the exact shape without guessing repository conventions.
+The rules target patterns that make Effect code harder to scan and harder to rewrite safely: nested combinator towers, nested `Effect.gen`, sequencing hidden inside collection helpers, callback scaffolding, and wrapper-heavy type patterns. The web preset also protects shared Vanilla Extract contracts by rejecting empty generated classes, class aliases, hand-built class maps, direct one-axis recipes, and imports that bypass shared React components. Storybook enforcement rejects inline test, state, and layout harnesses so stories remain declarative rendered states. Diagnostics stay local to the offending declaration or call site so a human or coding agent can rewrite the exact shape without guessing repository conventions.
 
 For rule authoring guidance, see [`docs/rule-guidance.md`](./docs/rule-guidance.md).
 

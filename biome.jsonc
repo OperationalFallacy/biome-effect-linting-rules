@@ -53,6 +53,7 @@
     "./node_modules/@catenarycloud/linteffect/rules/no-vanilla-extract-class-map.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-shared-element-style-import.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-local-field-style-contract.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-storybook-inline-test-harness.grit"
+    "./node_modules/@catenarycloud/linteffect/rules/no-storybook-inline-test-harness.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-direct-single-axis-recipe.grit"
   ]
 }
