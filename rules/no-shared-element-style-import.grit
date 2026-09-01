@@ -1,0 +1,10 @@
+language js(typescript, jsx)
+
+JsModuleSource() as $styleImport where {
+    $styleImport <: r".*reactAriaElements.*css.*",
+    register_diagnostic(
+        span = $styleImport,
+        message = "Rule: application code cannot import shared-element styling modules. Why: shared components own their generated classes and recipes; importing those values lets consumers rebuild element styling and bypass the public component contract. Fix: import the shared React component and select a declared visual prop. A shared-element implementation may import its matching local ./Name.css module.",
+        severity = "error"
+    )
+}

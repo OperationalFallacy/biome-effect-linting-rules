@@ -1,0 +1,16 @@
+language js(typescript, jsx)
+
+file($body) where {
+    $body <: contains `"@vanilla-extract/css"`,
+    or {
+        $body <: contains `export const field = style($definition)` as $localFieldPart,
+        $body <: contains `export const label = style($definition)` as $localFieldPart,
+        $body <: contains `export const description = style($definition)` as $localFieldPart,
+        $body <: contains `export const errorMessage = style($definition)` as $localFieldPart
+    },
+    register_diagnostic(
+        span = $localFieldPart,
+        message = "Rule: do not recreate shared field roles in a component styling module. Why: local field, label, description, and validation declarations duplicate the form hierarchy and permit control spacing, typography, and feedback states to diverge. Fix: compose the shared field foundation and keep only styling unique to the component.",
+        severity = "error"
+    )
+}

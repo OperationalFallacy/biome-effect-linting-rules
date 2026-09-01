@@ -1,0 +1,17 @@
+language js(typescript, jsx)
+
+file($body) where {
+    $body <: contains `"@vanilla-extract/css"`,
+    or {
+        $body <: contains `const $value = style($definition)`,
+        $body <: contains `export const $value = style($definition)`,
+        $body <: contains `const $value = styleVariants($definition)`,
+        $body <: contains `export const $value = styleVariants($definition)`
+    },
+    $body <: contains `export const $name = $value;` as $exportAlias,
+    register_diagnostic(
+        span = $exportAlias,
+        message = "Rule: do not publish a second name for a Vanilla Extract class. Why: class aliases obscure which declaration owns the styling and permit multiple names to drift around one visual role. Fix: export the generated class or recipe once under the element role used by its component, and compose variants in the Vanilla Extract declaration.",
+        severity = "error"
+    )
+}

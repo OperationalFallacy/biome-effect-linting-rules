@@ -8,6 +8,18 @@ This document defines how to respond to diagnostics from the `lintEffect` rule p
 
 It is written for human maintainers and coding agents that are rewriting code after Biome reports a rule violation.
 
+### Vanilla Extract remediation
+
+An empty `style({})` declaration is unfinished styling, not a naming aid. Remove the declaration and its `className` use when the element needs no class. Otherwise implement the complete declaration with semantic theme values before retaining the export.
+
+A generated class has one exported name. Remove aliases and update the component to use the declaration that owns the element role. Keep private base classes only when `style`, `styleVariants`, or a recipe composes them into a generated result.
+
+Do not collect generated classes in a hand-built object. Export fixed element classes directly. Use `styleVariants` when one visual property selects one class, and use a recipe when coordinated variants change one element. Derive component visual props from the generated variant contract.
+
+Field components compose the shared field foundation for root layout, labels, descriptions, validation messages, and input density. A component styling module must not recreate those roles under local `field`, `label`, `description`, or `errorMessage` declarations.
+
+Shared React components own their styling imports. Consumers import the component and select declared props; they do not import the matching `.css.ts` module through an application alias or relative path.
+
 ### Rewrite method
 
 Start on lint errors with a rewrite of methods into one explicit Effect pipeline.

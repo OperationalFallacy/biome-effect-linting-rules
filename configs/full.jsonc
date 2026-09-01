@@ -51,6 +51,11 @@
     "./node_modules/@catenarycloud/linteffect/rules/no-string-sentinel-return.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-string-sentinel-const.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-manual-effect-channels.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/prevent-dynamic-imports.grit"
+    "./node_modules/@catenarycloud/linteffect/rules/prevent-dynamic-imports.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-empty-vanilla-extract-style.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-vanilla-extract-export-alias.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-vanilla-extract-class-map.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-shared-element-style-import.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/no-local-field-style-contract.grit"
   ]
 }

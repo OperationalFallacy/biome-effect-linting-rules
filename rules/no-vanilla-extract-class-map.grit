@@ -1,0 +1,15 @@
+language js(typescript, jsx)
+
+file($body) where {
+    $body <: contains `"@vanilla-extract/css"`,
+    $body <: contains `export const $name = { $members }` as $classMap,
+    or {
+        $members <: contains JsShorthandPropertyObjectMember(),
+        $members <: contains JsPropertyObjectMember(value = JsIdentifierExpression())
+    },
+    register_diagnostic(
+        span = $classMap,
+        message = "Rule: do not assemble generated classes into an exported object. Why: a hand-built class map adds a second styling contract that can omit, rename, or retain declarations independently of the component. Fix: export each required generated class directly, or use styleVariants or a recipe when the component selects a declared visual variant.",
+        severity = "error"
+    )
+}
