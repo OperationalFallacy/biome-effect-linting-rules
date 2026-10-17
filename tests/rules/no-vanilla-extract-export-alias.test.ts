@@ -13,7 +13,9 @@ describe(ruleName, () => {
     );
 
     expect(result.status).toBe(1);
-    expect(result.output).toContain("Export this generated class under one name");
+    expect(result.diagnostics).toMatchObject([
+      { category: "plugin", severity: "error", location: { start: { line: 5 } } },
+    ]);
   });
 
   it("It catches an exported generated class published again", () => {
@@ -23,7 +25,9 @@ describe(ruleName, () => {
     );
 
     expect(result.status).toBe(1);
-    expect(result.output).toContain("Export this generated class under one name");
+    expect(result.diagnostics).toMatchObject([
+      { category: "plugin", severity: "error", location: { start: { line: 4 } } },
+    ]);
   });
 
   it("It allows direct class exports and unrelated metadata", () => {
@@ -33,5 +37,6 @@ describe(ruleName, () => {
     );
 
     expect(result.status).toBe(0);
+    expect(result.diagnostics).toEqual([]);
   });
 });

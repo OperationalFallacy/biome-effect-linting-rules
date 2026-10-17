@@ -16,21 +16,16 @@ describe(ruleName, () => {
     "It catches native collections with Effect value keys in %s",
     (fixture, count) => {
       const result = lintWithRule(ruleName, path.join(fixtures, fixture));
-      const report = JSON.parse(result.stdout);
-
       expect(result.status).toBe(0);
-      const warnings = report.diagnostics.filter((entry: { message: string }) =>
-        entry.message.startsWith("These keys use Effect value equality"),
-      );
+      const warnings = result.diagnostics;
       expect(warnings).toHaveLength(count);
-      expect(report.diagnostics).toHaveLength(count);
       expect(
         warnings.every(
-          (entry: { severity: string }) => entry.severity === "warning",
+          (entry) => entry.category === "plugin" && entry.severity === "warning",
         ),
       ).toBe(true);
       expect(
-        warnings.every((entry: { location: { path: string } }) =>
+        warnings.every((entry) =>
           entry.location.path.endsWith(fixture),
         ),
       ).toBe(true);
@@ -57,7 +52,7 @@ describe(ruleName, () => {
       const result = lintWithRule(ruleName, path.join(fixtures, fixture));
 
       expect(result.status).toBe(0);
-      expect(JSON.parse(result.stdout).diagnostics).toEqual([]);
+      expect(result.diagnostics).toEqual([]);
     },
   );
 });

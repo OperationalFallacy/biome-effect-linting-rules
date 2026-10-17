@@ -14,6 +14,8 @@ Explain what the rule flags and why it matters, then describe how to fix the cod
 
 Use an error for a required change and a warning or informational diagnostic for a review suggestion. Check the diagnostic's severity and location in tests. Use `It catches ...` for inputs that produce diagnostics and `It allows ...` for valid inputs.
 
+Assert the structured diagnostics from Biome's JSON report: their count, severity, and source location. Valid fixtures should produce an empty diagnostic list. Keep diagnostic wording free to change during documentation edits.
+
 Validate with a minimal Biome config that loads the rule alone. Test real code and a regression that should trigger the rule before adding it to `biome.jsonc` and the relevant presets.
 
 The bundled Grit integration supports syntax matching and diagnostics. Use captures and scoped `contains` checks; its analysis stays within one file.

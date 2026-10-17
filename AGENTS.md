@@ -20,7 +20,7 @@ Read [README.md](README.md) for package usage. For rule changes, read [docs/rule
 | `bin/linteffect.mjs` | CLI argument handling, preset loading, temporary Biome configuration, and guide output. |
 | `tests/rules/*.test.ts` | Vitest tests for rule behavior. |
 | `tests/fixtures/<rule>/` | Valid and invalid TypeScript or TSX inputs. Some related rules share fixtures in `tests/fixtures/defragmentation/`. |
-| `tests/rules/ruleTestHarness.ts` | Shared helper that runs one rule with a temporary Biome configuration and returns its output. Some tests have their own harness. |
+| `tests/rules/ruleTestHarness.ts` | Shared helper that runs one rule with a temporary Biome configuration and returns its exit status and structured diagnostics. |
 | `examples/biome.effect.jsonc` | Example consumer configuration. |
 | `scripts/refresh-biome-grammars.ts` | Updates the grammar references for a selected Biome revision. |
 | `scripts/profile-rules.ts` | Measures preset or individual rule performance against source files. |

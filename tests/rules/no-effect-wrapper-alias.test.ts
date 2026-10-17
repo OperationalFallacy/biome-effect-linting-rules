@@ -12,7 +12,9 @@ describe("no-effect-wrapper-alias", () => {
     );
 
     expect(result.status).toBe(1);
-    expect(result.output).toContain("Inline this Effect alias at its call site");
+    expect(result.diagnostics).toMatchObject([
+      { category: "plugin", severity: "error", location: { start: { line: 11 } } },
+    ]);
   });
 
   it("It allows plain domain functions", () => {
@@ -22,5 +24,6 @@ describe("no-effect-wrapper-alias", () => {
     );
 
     expect(result.status).toBe(0);
+    expect(result.diagnostics).toEqual([]);
   });
 });

@@ -13,7 +13,9 @@ describe(ruleName, () => {
     );
 
     expect(result.status).toBe(1);
-    expect(result.output).toContain("This style declaration is empty.");
+    expect(result.diagnostics).toMatchObject([
+      { category: "plugin", severity: "error", location: { start: { line: 3 } } },
+    ]);
   });
 
   it("It allows declarations with an implemented visual contract", () => {
@@ -23,5 +25,6 @@ describe(ruleName, () => {
     );
 
     expect(result.status).toBe(0);
+    expect(result.diagnostics).toEqual([]);
   });
 });
