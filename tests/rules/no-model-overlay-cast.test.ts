@@ -9,7 +9,7 @@ describe("no-model-overlay-cast", () => {
   it("flags a genuine cast to a named type", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-named-type.ts"));
     expect(result.status).toBe(1);
-    expect(result.output).toContain("avoid `as` assertions on decoded model flow");
+    expect(result.output).toContain("Decode this value with the required Schema");
   });
 
   it("allows `as const` on a tuple literal", () => {

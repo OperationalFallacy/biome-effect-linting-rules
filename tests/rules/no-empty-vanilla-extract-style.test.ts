@@ -13,7 +13,7 @@ describe(ruleName, () => {
     );
 
     expect(result.status).toBe(1);
-    expect(result.output).toContain("remove empty Vanilla Extract declarations");
+    expect(result.output).toContain("This style declaration is empty.");
   });
 
   it("It allows declarations with an implemented visual contract", () => {

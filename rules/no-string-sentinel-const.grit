@@ -4,7 +4,7 @@ language js(typescript, jsx)
     $val <: `"$_"`,
     register_diagnostic(
         span = $sentinel,
-        message = "Rule: avoid string status constants. Why: they encode control flow and force defensive branching. Fix: use tagged unions, Option/Either, or meaningful domain values instead of string tokens.",
+        message = "This rule treats string constants as potential status tokens. A status token makes callers interpret a string to decide what happened. For a status, represent the outcome with a domain value, a tagged union, Option, or Either so callers can handle each case explicitly.",
         severity = "error"
     )
 }

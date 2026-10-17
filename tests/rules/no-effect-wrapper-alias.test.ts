@@ -12,7 +12,7 @@ describe("no-effect-wrapper-alias", () => {
     );
 
     expect(result.status).toBe(1);
-    expect(result.output).toContain("Rule: avoid Effect wrapper aliases");
+    expect(result.output).toContain("Inline this Effect alias at its call site");
   });
 
   it("It allows plain domain functions", () => {

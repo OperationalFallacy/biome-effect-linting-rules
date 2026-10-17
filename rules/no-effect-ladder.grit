@@ -18,7 +18,7 @@ or {
     },
     register_diagnostic(
         span = $outerCall,
-        message = "Rule: avoid nested Effect combinators. Why: they hide sequencing and create laddered control flow. Fix: build context once (Effect.all/Effect.map) and then run a single flat pipeline.",
+        message = "Nested Effect combinators make the reader work through inner calls to reconstruct the execution order. Build shared inputs with Effect.all or Effect.map, then put the dependent steps in execution order in one pipeline.",
         severity = "error"
     )
 }

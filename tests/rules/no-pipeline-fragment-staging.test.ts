@@ -48,7 +48,7 @@ function lintWithRule(fixtureFile: string) {
   }
 }
 
-const diagnosticMessage = "Rule: avoid pipeline fragment staging.";
+const diagnosticMessage = "This operation assigns a pipeline to a local constant, then passes it into the returned pipeline. The reader must follow both expressions to understand the final result. Combine the intermediate pipeline and its final selection, or extract a named function that performs the complete domain operation.";
 
 describe("no-pipeline-fragment-staging", () => {
   it("It catches local pipeline fragments consumed by returned pipelines", () => {

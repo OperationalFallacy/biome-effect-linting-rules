@@ -13,7 +13,7 @@ file($body) where {
     not $expr <: `console.$method($_)`,
     register_diagnostic(
         span = $call,
-        message = "Rule: avoid Effect.sync around side effects. Why: it hides intent. Fix: use Effect.log* or an explicit pipeline step for the side effect.",
+        message = "This Effect.sync wraps a function call. Review what the call does so its role is clear in the operation. Use Effect logging operations for logs, or give this side effect an explicit step in the pipeline.",
         severity = "warning"
     )
 }

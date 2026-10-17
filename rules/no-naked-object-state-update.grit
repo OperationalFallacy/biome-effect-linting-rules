@@ -24,7 +24,7 @@ or {
 } where {
     register_diagnostic(
         span = $violation,
-        message = "Rule: avoid naked JS state patching/rebuild and raw JSON shortcuts in Effect transitions. Why: spread/Object.assign/fromEntries and inline JSON parse/stringify hide state intent and bypass explicit model contracts. Fix: use `effect/Record` combinators (`Record.set` / `Record.modify` / `Record.remove`) inside `Struct.evolve`, rebuild with schema constructors (`Schema.make` or field `.make`), and keep serialization at boundaries with schema encode/decode flows. Use `linting.md` guidance when available.",
+        message = "This rule flags object copies, record rebuilds, and raw JSON operations in state transitions because they can separate field updates from the model's validation and construction rules. Update state with Record.set, Record.modify, or Record.remove inside Struct.evolve. Reconstruct models with their schema constructors, such as Schema.make or a field's make method. Encode and decode serialized data through Schema where it enters or leaves the application. Consult docs/linting.md for the full procedure.",
         severity = "error"
     )
 }

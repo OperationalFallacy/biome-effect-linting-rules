@@ -11,7 +11,7 @@ or {
         },
         register_diagnostic(
             span = $call,
-            message = "Rule: avoid Effect.as for side effects. Why: it hides side effects and turns them into placeholders. Fix: use explicit pipeline steps that return real values with Effect.flatMap, Effect.andThen, or Effect.tap.",
+            message = "This Effect.as combines a side effect with a replacement result, which makes the side effect harder to identify as a step of its own. Replace Effect.as around this side effect with an explicit Effect.andThen, Effect.flatMap, or Effect.tap step, and preserve the result the caller needs.",
             severity = "error"
         )
     },
@@ -25,7 +25,7 @@ or {
         },
         register_diagnostic(
             span = $call,
-            message = "Rule: avoid Effect.zipRight for side effects. Why: it hides side effects and discards values. Fix: use explicit pipeline steps that return real values with Effect.flatMap, Effect.andThen, or Effect.tap.",
+            message = "This Effect.zipRight sequences a side effect and discards its result. This rule requires that work to appear as an explicit pipeline step. Replace Effect.zipRight around this side effect with an explicit Effect.andThen, Effect.flatMap, or Effect.tap step, and preserve the result the caller needs.",
             severity = "error"
         )
     }

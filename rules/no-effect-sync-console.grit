@@ -11,7 +11,7 @@ file($body) where {
     $fn <: contains `console.$method($_)`,
     register_diagnostic(
         span = $call,
-        message = "Rule: avoid console.* inside Effect.sync. Why: it hides side effects. Fix: replace with Effect.log* or remove the console call.",
+        message = "This console call is wrapped in Effect.sync, so it misses the log context and level handling provided by Effect's logging operations. Replace this console call with Effect.log, Effect.logDebug, or another Effect logging operation, or remove it if the log is unnecessary.",
         severity = "error"
     )
 }

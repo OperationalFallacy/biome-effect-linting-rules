@@ -2,7 +2,7 @@ file($body) where {
     $body <: contains bubble `import($module)` as $dynamicImport where {
         register_diagnostic(
             span = $dynamicImport,
-            message = "Rule: avoid dynamic module imports. Why: they hide dependencies and control flow behind deferred module loading, which makes code paths harder to read and verify. Fix: use static module imports so module dependencies stay explicit at the file boundary.",
+            message = "This dynamic import loads a module from inside the operation, so the dependency and its load step are separate from the file's declared imports. This rule requires static imports to make module dependencies easier to inspect. Use a static import so this dependency appears with the file's other imports.",
             severity = "error"
         )
     }

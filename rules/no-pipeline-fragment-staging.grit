@@ -5,7 +5,7 @@ JsFunctionBody(statements = $statements) as $block where {
     $statements <: contains `return pipe($fragment, $...)`,
     register_diagnostic(
         span = $block,
-        message = "Rule: avoid pipeline fragment staging. Why this is wrong: this operation stages an intermediate pipeline fragment and then returns another pipeline that consumes it, so the reader must chase names to understand the final flow. Safe remediation: keep the producer and final selection in one visible pipeline, or promote a complete named domain operation.",
+        message = "This operation assigns a pipeline to a local constant, then passes it into the returned pipeline. The reader must follow both expressions to understand the final result. Combine the intermediate pipeline and its final selection, or extract a named function that performs the complete domain operation.",
         severity = "error"
     )
 }

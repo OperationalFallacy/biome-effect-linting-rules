@@ -3,7 +3,7 @@ language js(typescript, jsx)
 `style({})` as $emptyStyle where {
     register_diagnostic(
         span = $emptyStyle,
-        message = "Rule: remove empty Vanilla Extract declarations. Why: an empty generated class creates a styling placeholder with no visual contract and lets consumers depend on unfinished styling. Fix: remove the declaration and className use, or define the complete token-backed element styling before exposing it.",
+        message = "This style declaration is empty. Its generated class lets consumers depend on a style name before the element's styles are defined. Define the complete styles with the project's design tokens before you export the class, or remove the declaration and its className use.",
         severity = "error"
     )
 }

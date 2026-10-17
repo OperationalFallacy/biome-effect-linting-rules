@@ -5,7 +5,7 @@ JsObjectExpression(members = $members) as $assembly where {
     $argument <: `$fragment($args)`,
     register_diagnostic(
         span = $assembly,
-        message = "Rule: avoid fragmented const assembly chains. Why this is wrong: this object contract is assembled from a helper-produced fragment, so the reader must chase staged pieces to understand the final payload. Safe remediation: keep validation, decision, and final object construction in one visible block, or promote a stable domain constructor whose signature names the complete contract.",
+        message = "This object spreads fields returned by a helper, so the reader must inspect another function to understand the final payload. Construct the complete object alongside its validation and selection, or use a stable domain constructor whose signature describes the complete object.",
         severity = "error"
     )
 }

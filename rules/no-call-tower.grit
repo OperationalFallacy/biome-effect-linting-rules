@@ -13,7 +13,7 @@ or {
 } where {
     register_diagnostic(
         span = $call,
-        message = "Rule: avoid nested Effect call towers (Effect.fn(Effect.fn(...))). Why: it hides sequencing. Fix: build the inner Effect first, then use pipe/Effect.flatMap/Effect.andThen for a single flat pipeline.",
+        message = "This Effect call takes another Effect call as an argument, so the execution order is harder to read from the expression. Construct the inner Effect first, then express the sequence in one pipeline with pipe, Effect.flatMap, or Effect.andThen.",
         severity = "error"
     )
 }

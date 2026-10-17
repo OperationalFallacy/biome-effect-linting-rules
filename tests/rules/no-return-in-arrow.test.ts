@@ -4,7 +4,7 @@ import { fixtureRoot, lintWithRule } from "./ruleTestHarness";
 
 const fixtures = fixtureRoot("no-return-in-arrow");
 const diagnostic =
-  "Rule: review this block-bodied arrow callback before changing it. Identify its role in the surrounding data or Effect flow, then aim for a result that makes the data, state, and collection choices clearer rather than merely changing the callback shape. For example, when a reducer rebuilds a native `Map` on every step, an Effect `HashMap` update such as `HashMap.set` may express the operation directly. Keep the block when it communicates the design most clearly.";
+  "This rule asks you to review a callback with an explicit return. Read its role in the operation and check whether the data, state, or collection choices can be clearer. For example, a reducer that copies a native Map on every step may be clearer as an Effect HashMap update with HashMap.set. Use an expression for a single result, and keep the block when local bindings or several steps explain the operation better.";
 
 describe("no-return-in-arrow", () => {
   it("It catches block-bodied arrow callbacks with returns", () => {

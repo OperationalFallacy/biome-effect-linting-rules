@@ -25,7 +25,7 @@ or {
 } where {
     register_diagnostic(
         span = $call,
-        message = "Rule: avoid Effect.all for sequential side-effect steps. Why: it hides imperative sequencing in an array. Fix: use one explicit linear pipeline with Effect.andThen/flatMap and reserve Effect.all for real value aggregation.",
+        message = "This Effect.all uses an array to describe consecutive side effects, which makes their execution order depend on the collection options. Sequence these side effects with Effect.andThen or Effect.flatMap. Use Effect.all when the operation collects results.",
         severity = "error"
     )
 }

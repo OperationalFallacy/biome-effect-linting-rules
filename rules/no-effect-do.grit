@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains `Effect.Do` as $effectDo,
     register_diagnostic(
         span = $effectDo,
-        message = "Rule: avoid Effect.Do. Why: it pushes Effect code toward imperative builder choreography. Fix: use one flat pipe-based Effect flow or one direct top-level Effect.gen with direct yields, not nested generators or wrapper helpers.",
+        message = "This rule flags Effect.Do builders because the reader must follow the accumulated fields to understand each step's inputs. Replace this Effect.Do builder with a pipeline or one Effect.gen, and keep the steps in execution order.",
         severity = "error"
     )
 }

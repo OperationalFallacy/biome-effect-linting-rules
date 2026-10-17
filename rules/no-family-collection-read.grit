@@ -15,7 +15,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atom,
-                message = "Keyed projection atom reads collection atom. This rule is structural: it treats Atom.family members as keyed row/item projections when they read collection/list/aggregate atom names. If this family is truly a row/item projection, read a keyed source/index atom such as SourceAtom, ByKeyAtom, or IndexAtom instead of the collection/list atom that enumerates the family. If this is intentionally a route/list-scoped family, rename or restructure it so row/item families stay separate from list projections.",
+                message = "This Atom.family member reads a collection atom. The rule uses atom names to identify a possible row or item projection that depends on the collection it belongs to. For a row or item projection, read a keyed source such as SourceAtom, ByKeyAtom, or IndexAtom. If the family intentionally represents a route or list, rename or restructure it so its role is clear and separate from row or item projections.",
                 severity = "error"
             )
         },
@@ -30,7 +30,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atom,
-                message = "Keyed projection atom reads collection atom. This rule is structural: it treats Atom.family members as keyed row/item projections when they read collection/list/aggregate atom names. If this family is truly a row/item projection, read a keyed source/index atom such as SourceAtom, ByKeyAtom, or IndexAtom instead of the collection/list atom that enumerates the family. If this is intentionally a route/list-scoped family, rename or restructure it so row/item families stay separate from list projections.",
+                message = "This Atom.family member reads a collection atom. The rule uses atom names to identify a possible row or item projection that depends on the collection it belongs to. For a row or item projection, read a keyed source such as SourceAtom, ByKeyAtom, or IndexAtom. If the family intentionally represents a route or list, rename or restructure it so its role is clear and separate from row or item projections.",
                 severity = "error"
             )
         },
@@ -45,7 +45,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atom,
-                message = "Keyed projection atom reads collection atom. This rule is structural: it treats Atom.family members as keyed row/item projections when they read collection/list/aggregate atom names. If this family is truly a row/item projection, read a keyed source/index atom such as SourceAtom, ByKeyAtom, or IndexAtom instead of the collection/list atom that enumerates the family. If this is intentionally a route/list-scoped family, rename or restructure it so row/item families stay separate from list projections.",
+                message = "This Atom.family member reads a collection atom. The rule uses atom names to identify a possible row or item projection that depends on the collection it belongs to. For a row or item projection, read a keyed source such as SourceAtom, ByKeyAtom, or IndexAtom. If the family intentionally represents a route or list, rename or restructure it so its role is clear and separate from row or item projections.",
                 severity = "error"
             )
         }

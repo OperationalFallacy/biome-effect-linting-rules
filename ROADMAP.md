@@ -1,45 +1,19 @@
 # Roadmap
 
-## Package shape
+## Current package
 
-Keep one npm package first.
+One npm package contains the Biome rules, presets, and CLI. The package root and `/recommended` export the full preset. Smaller presets are available at `/core`, `/web`, and `/ts-type`.
 
-Expose multiple preset configs from the same package:
-- `@catenarycloud/linteffect/core`
-- `@catenarycloud/linteffect/web`
-- `@catenarycloud/linteffect/ts-type`
-- `@catenarycloud/linteffect/full`
+The CLI can check existing code with a temporary configuration and print the guide. It reports diagnostics. Users or their coding agents make the changes.
 
-Ship `core` as the default preset. Keep `web` and `ts-type` opt-in.
+## Preset choices
 
-Reason:
-- simpler adoption
-- one release flow
-- one docs surface
-- lower maintenance
+Consider making `core` the default for trial runs so an existing project starts with fewer rules. The current CLI default is `full`. A `/full` package export could make that preset's name explicit alongside the smaller presets.
 
-Split into multiple packages only if preset-specific dependencies, release cadence, or package size become a real problem.
+Keep the presets in one package while they share dependencies and a release schedule. Separate packages may become useful if their dependencies, release schedules, or sizes diverge.
 
-## CLI
+## Automatic rewrites
 
-Build a zero-install CLI on top of the same rule engine:
-- `npx @catenarycloud/linteffect check file.ts`
-- `npx @catenarycloud/linteffect rewrite file.ts`
-- `npx @catenarycloud/linteffect rewrite src --rule no-nested-effect-gen`
-- `npx @catenarycloud/linteffect rewrite src --preset core`
+Explore automatic rewrites for rules with a deterministic, behavior-preserving fix. A future `rewrite` command could accept a file or directory and select a rule or preset. This needs valid and invalid examples that establish when a rewrite is safe.
 
-The CLI should bundle runtime, parser, and rules so users can try rewrites without installing Biome or wiring plugin config first.
-
-The intended workflow is ephemeral repo-local analysis:
-- point the CLI at one file or a small path
-- run packaged Biome and packaged rules through a temp config
-- return diagnostics or apply deterministic rewrites
-- let an agent iterate by re-running the same command after edits
-
-This can live as a separate subpackage on top of the same shared rule engine. The pack stays the integration product. The CLI subpackage becomes the zero-setup trial and agent entry point.
-
-## Product split
-
-Use one codebase for two entry points:
-- Biome pack for team enforcement and repo integration
-- CLI for trial, migration, and one-off rewrites
+Keep the CLI in the same package while it uses the same Biome runtime and rules. A separate CLI package remains an option if it develops different dependencies or release requirements.

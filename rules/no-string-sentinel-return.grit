@@ -3,7 +3,7 @@ language js(typescript, jsx)
 `Effect.succeed("$_")` as $sentinel where {
     register_diagnostic(
         span = $sentinel,
-        message = "Rule: avoid returning string tokens. Why: it encodes control flow and forces defensive branching. Fix: return domain values (Option/Either/tagged unions) or real Effect results instead.",
+        message = "This rule flags string results from Effect.succeed because status tokens make callers interpret strings to decide what happened. Return a domain value, Option, Either, or a tagged union so the result describes the outcome and callers can handle each case explicitly.",
         severity = "error"
     )
 }

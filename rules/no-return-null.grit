@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains `return null` as $ret,
     register_diagnostic(
         span = $ret,
-        message = "Rule: avoid returning null. Why: null is a sentinel that forces defensive guards. Fix: use Option.none for absence or Effect.fail for errors.",
+        message = "This rule flags null returns because callers must check for absence before they can use the value. Return Option.none for an absent value or Effect.fail for an error.",
         severity = "error"
     )
 }

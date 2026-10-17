@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains `Effect.bind($name, $step)` as $effectBind,
     register_diagnostic(
         span = $effectBind,
-        message = "Rule: avoid Effect.bind. Why: it hides sequencing inside builder-style accumulation. Fix: use one flat pipe-based Effect flow or one direct top-level Effect.gen with direct yields, not nested generators or wrapper helpers.",
+        message = "Effect.bind accumulates named fields as the operation proceeds, so the reader must track that object to understand each step's inputs. This rule requires a pipeline or one Effect.gen with direct yields. Supply each step's inputs from the preceding work and keep the sequence in the same operation.",
         severity = "error"
     )
 }

@@ -21,7 +21,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atomCall,
-                message = "Rule: do not wrap Atom/atomRegistry ops in Effect.sync. Why: it hides side effects and breaks atom flow. Fix: call Atom.get/Atom.set/Atom.update/Atom.modify/Atom.refresh directly.",
+                message = "This Effect.sync wraps an Atom or atomRegistry operation in another callback. This rule keeps atom reads and updates explicit through the atom API. Call the appropriate get, set, update, modify, or refresh operation directly and remove the Effect.sync wrapper.",
                 severity = "error"
             )
         },
@@ -40,7 +40,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atomCall,
-                message = "Rule: do not wrap Atom/atomRegistry ops in Effect.sync. Why: it hides side effects and breaks atom flow. Fix: call Atom.get/Atom.set/Atom.update/Atom.modify/Atom.refresh directly.",
+                message = "This Effect.sync wraps an Atom or atomRegistry operation in another callback. This rule keeps atom reads and updates explicit through the atom API. Call the appropriate get, set, update, modify, or refresh operation directly and remove the Effect.sync wrapper.",
                 severity = "error"
             )
         }

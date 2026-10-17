@@ -48,7 +48,7 @@ function lintWithRule(fixtureFile: string) {
   }
 }
 
-const diagnosticMessage = "Rule: avoid fragmented const assembly chains.";
+const diagnosticMessage = "This object spreads fields returned by a helper, so the reader must inspect another function to understand the final payload. Construct the complete object alongside its validation and selection, or use a stable domain constructor whose signature describes the complete object.";
 
 describe("no-fragmented-const-assembly", () => {
   it("It catches direct const fragments used inside const function object assembly", () => {

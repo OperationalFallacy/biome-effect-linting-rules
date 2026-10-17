@@ -18,7 +18,7 @@ file($body) where {
         },
         register_diagnostic(
             span = $catch,
-            message = "Rule: avoid catchAll after wrapGraphqlCall/applyResponse. Why: the envelope already surfaces structured errors. Fix: handle errors in the response mapping instead of catchAll.",
+            message = "This catchAll follows wrapGraphqlCall or applyResponse, whose response handling already exposes structured GraphQL errors. A general recovery handler here can obscure that error information. Handle these errors in the response mapping so each structured outcome retains its meaning.",
             severity = "error"
         )
     },
@@ -30,7 +30,7 @@ file($body) where {
         },
         register_diagnostic(
             span = $catch,
-            message = "Rule: avoid catchAll after wrapGraphqlCall/applyResponse. Why: the envelope already surfaces structured errors. Fix: handle errors in the response mapping instead of catchAll.",
+            message = "This catchAll follows wrapGraphqlCall or applyResponse, whose response handling already exposes structured GraphQL errors. A general recovery handler here can obscure that error information. Handle these errors in the response mapping so each structured outcome retains its meaning.",
             severity = "error"
         )
     }

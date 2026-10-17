@@ -11,6 +11,11 @@
       "type": "build"
     },
     {
+      "name": "effect",
+      "version": "^3.21.2",
+      "type": "build"
+    },
+    {
       "name": "projen",
       "type": "build"
     },

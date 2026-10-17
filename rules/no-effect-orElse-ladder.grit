@@ -9,7 +9,7 @@ language js(typescript, jsx)
     },
     register_diagnostic(
         span = $call,
-        message = "Rule: avoid Effect.orElse around sequencing chains. Why: it hides error handling and splits the flow. Fix: move error handling to a single terminal decision after the pipeline.",
+        message = "Effect.orElse wraps a chain of Effect steps, which separates the recovery code from the sequence it handles. Put the steps in one pipeline and handle the error at its end so the operation and its recovery appear together.",
         severity = "error"
     )
 }

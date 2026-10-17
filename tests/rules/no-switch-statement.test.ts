@@ -4,7 +4,7 @@ import { fixtureRoot, lintWithRule } from "./ruleTestHarness";
 
 const fixtures = fixtureRoot("no-switch-statement");
 const ruleName = "no-switch-statement";
-const diagnosticMessage = "Rule: avoid imperative switch branching.";
+const diagnosticMessage = "This rule flags switch statements in Effect code because separate case bodies can split one operation into several sequences. Express these cases with Match.value, Option.match, Either.match, or Effect.if, then continue the Effect pipeline.";
 
 describe("no-switch-statement", () => {
   it("It catches switch statements in files that import from 'effect'", () => {

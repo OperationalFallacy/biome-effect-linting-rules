@@ -31,5 +31,5 @@ or {
 	},
 	$predicate <: contains JsReferenceIdentifier() as $name,
 	$function <: not contains JsInstanceofExpression(),
-	register_diagnostic(span=$predicate, message="Rule: avoid manual data guards. Why: a user-defined predicate can manufacture trusted data from `unknown` or `any` without decoding it. Fix: decode with the canonical Schema; use typed Match patterns after decoding. Nominal class identity checks are allowed.", severity="error")
+	register_diagnostic(span=$predicate, message="This predicate asks TypeScript to trust a type for unknown or any input based on hand-written checks. Schema decoding validates the value against the model before the service uses it. Decode unknown data with Schema, then use typed Match patterns on the decoded value. Nominal class identity checks remain valid.", severity="error")
 }

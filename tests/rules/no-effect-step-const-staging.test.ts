@@ -48,7 +48,7 @@ function lintWithRule(fixtureFile: string) {
   }
 }
 
-const diagnosticMessage = "Rule: avoid Effect-step const staging.";
+const diagnosticMessage = "This constant stores an intermediate Effect step, so the reader must follow separate names to reconstruct the validation, decision, and final operation. Inline this intermediate Effect step into the operation's pipeline, with flatMap, andThen, or tap as needed. Extract a function when it performs a complete domain operation and gives that operation a clear result type. Local constants remain useful for final domain values with explicit types.";
 
 describe("no-effect-step-const-staging", () => {
   it("It catches Effect steps staged in local consts", () => {

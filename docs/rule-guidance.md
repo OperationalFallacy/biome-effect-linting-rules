@@ -1,28 +1,48 @@
-# Biome Grit rule guidance
+# Write a lint rule
 
-Scope: Each rule must target one concrete anti-pattern in Effect usage and emit one diagnostic with a single actionable message.
+## Development
 
-Grammar references:
+The rules are in `rules/*.grit`. The presets in `configs/*.jsonc` and the root `biome.jsonc` list the rules Biome loads. Edit [`.projenrc.ts`](../.projenrc.ts) to change the package metadata and Projen tasks.
 
-`rules/js.ungram` and `rules/gritql.ungram` are contributor-only reference files copied from the Biome source repository. They help when you need the current node names and grammar shapes while authoring or updating rules. They are not required by Biome to execute the published rules, and they are not part of the npm runtime contract.
+Use `yarn test` to run the tests. Use `yarn build` to regenerate the project files, run the tests, and create the npm archive.
 
-Refresh those files with:
+## Match and test the rule
 
-`yarn refresh:biome-grammars --ref <biome-git-ref>`
+Target one concrete pattern. Put the diagnostic on the expression that needs attention. Limit the match to the relevant call or pipeline, and test that nearby valid code stays clear.
 
-Use an explicit Biome tag or commit when aligning a contribution to a specific upstream version.
+Explain what the rule flags and why it matters, then describe how to fix the code. Use complete sentences and keep the conditions, examples, and exceptions that affect the rewrite. Follow the [unslop guide](unslop.md) for natural wording. Distinguish package conventions from errors in the underlying library.
 
-Match strategy: 
+Use an error for a required change and a warning or informational diagnostic for a review suggestion. Check the diagnostic's severity and location in tests. Use `It catches ...` for inputs that produce diagnostics and `It allows ...` for valid inputs.
 
-Anchor the diagnostic span on the prohibited operator. 
+Validate with a minimal Biome config that loads the rule alone. Test real code and a regression that should trigger the rule before adding it to `biome.jsonc` and the relevant presets.
 
-Constrain by context using `contains` on the same pipe chain or explicit call site, not broad file-wide matches.
-Diagnostic message: Include context that tells the agent what not to do and the idiomatic Effect approach to use instead, phrased to steer toward terse declarative flows rather than imperative wrappers or re-wrapping.
+The bundled Grit integration supports syntax matching and diagnostics. Use captures and scoped `contains` checks; its analysis stays within one file.
 
-Grit limitations: 
+Consult `rules/js.ungram` and `rules/gritql.ungram` for node names. Refresh these authoring references with:
 
-Avoid unsupported features such as rewrites, suppressions, and multi-file matches. Prefer simple captures plus `contains` checks when variadic or nested bindings fail.
+```bash
+yarn refresh:biome-grammars --ref <biome-tag-or-commit>
+```
 
-Validation: test new rules directly with the Biome CLI using a minimal config that loads only the new rule and lint the single file named by the user.
+The published package includes `.grit` rules and excludes these grammar references.
 
-Activation: add the rule to main config, `biome.jsonc`.
+## Configure individual rules
+
+Add a rule from your repository to `plugins` alongside the preset you use:
+
+```jsonc
+{
+  "extends": ["@catenarycloud/linteffect"],
+  "plugins": ["./biome-plugins/my-project-specific-rule.grit"]
+}
+```
+
+To select packaged rules individually, replace the package's `extends` entry with a `plugins` list:
+
+```jsonc
+{
+  "plugins": [
+    "./node_modules/@catenarycloud/linteffect/rules/no-effect-ladder.grit"
+  ]
+}
+```

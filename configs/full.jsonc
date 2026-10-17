@@ -18,6 +18,7 @@
     "./node_modules/@catenarycloud/linteffect/rules/no-branch-in-object.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-iife-wrapper.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-return-in-arrow.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/warn-native-collections.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-atom-registry-effect-sync.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-family-collection-read.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-never.grit",
@@ -53,11 +54,6 @@
     "./node_modules/@catenarycloud/linteffect/rules/no-manual-effect-channels.grit",
     "./node_modules/@catenarycloud/linteffect/rules/prevent-dynamic-imports.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-empty-vanilla-extract-style.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-vanilla-extract-export-alias.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-vanilla-extract-class-map.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-shared-element-style-import.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-local-field-style-contract.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-storybook-inline-test-harness.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-direct-single-axis-recipe.grit"
+    "./node_modules/@catenarycloud/linteffect/rules/no-vanilla-extract-export-alias.grit"
   ]
 }

@@ -4,7 +4,7 @@ import { fixtureRoot, lintWithRule } from "./ruleTestHarness";
 
 const fixtures = fixtureRoot("no-manual-data-guard");
 const ruleName = "no-manual-data-guard";
-const diagnostic = "Rule: avoid manual data guards.";
+const diagnostic = "Decode unknown data with Schema";
 
 describe(ruleName, () => {
   it("It catches structural manual data guards", () => {
@@ -15,7 +15,7 @@ describe(ruleName, () => {
 
     expect(result.status).toBe(1);
     expect(result.output).toContain(diagnostic);
-    expect(result.output.match(/Rule: avoid manual data guards\./g)).toHaveLength(2);
+    expect(result.output.match(/Decode unknown data with Schema/g)).toHaveLength(2);
   });
 
   it("It catches primitive refinement of unknown data", () => {
@@ -26,7 +26,7 @@ describe(ruleName, () => {
 
     expect(result.status).toBe(1);
     expect(result.output).toContain(diagnostic);
-    expect(result.output.match(/Rule: avoid manual data guards\./g)).toHaveLength(1);
+    expect(result.output.match(/Decode unknown data with Schema/g)).toHaveLength(1);
   });
 
   it("It allows Schema decoding and Match discrimination", () => {

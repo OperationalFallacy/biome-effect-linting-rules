@@ -12,8 +12,8 @@ describe("no-effect-side-effect-wrapper", () => {
     );
 
     expect(result.status).toBe(1);
-    expect(result.output).toContain("Rule: avoid Effect.as for side effects.");
-    expect(result.output).toContain("Rule: avoid Effect.zipRight for side effects.");
+    expect(result.output).toContain("Replace Effect.as around this side effect");
+    expect(result.output).toContain("Replace Effect.zipRight around this side effect");
   });
 
   it("It allows named Effect sequencing without guessing side effects from variable names", () => {

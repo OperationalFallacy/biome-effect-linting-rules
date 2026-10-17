@@ -10,7 +10,7 @@ describe("no-naked-object-state-update", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-spread.ts"));
     expect(result.status).toBe(1);
     expect(result.output).toContain(
-      "Rule: avoid naked JS state patching/rebuild and raw JSON shortcuts in Effect transitions.",
+      "Update state with Record.set, Record.modify, or Record.remove inside Struct.evolve.",
     );
   });
 
@@ -18,7 +18,7 @@ describe("no-naked-object-state-update", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-from-entries.ts"));
     expect(result.status).toBe(1);
     expect(result.output).toContain(
-      "Rule: avoid naked JS state patching/rebuild and raw JSON shortcuts in Effect transitions.",
+      "Update state with Record.set, Record.modify, or Record.remove inside Struct.evolve.",
     );
   });
 
@@ -34,7 +34,7 @@ describe("no-naked-object-state-update", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-object-assign.ts"));
     expect(result.status).toBe(1);
     expect(result.output).toContain(
-      "Rule: avoid naked JS state patching/rebuild and raw JSON shortcuts in Effect transitions.",
+      "Update state with Record.set, Record.modify, or Record.remove inside Struct.evolve.",
     );
   });
 
@@ -42,7 +42,7 @@ describe("no-naked-object-state-update", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-json-transition.ts"));
     expect(result.status).toBe(1);
     expect(result.output).toContain(
-      "Rule: avoid naked JS state patching/rebuild and raw JSON shortcuts in Effect transitions.",
+      "Update state with Record.set, Record.modify, or Record.remove inside Struct.evolve.",
     );
   });
 

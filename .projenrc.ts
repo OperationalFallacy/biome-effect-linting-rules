@@ -19,6 +19,7 @@ const project = new javascript.NodeProject({
     "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
   deps: ["@biomejs/biome@^2.5.4"],
   devDeps: [
+    "effect@^3.21.2",
     "projen@^0.98.34",
     "tsx@^4.20.6",
     "typescript@^5.9.3",

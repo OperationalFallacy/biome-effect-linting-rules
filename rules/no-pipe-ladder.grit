@@ -10,7 +10,7 @@ or {
     },
     register_diagnostic(
         span = $nested,
-        message = "Rule: avoid nested pipe() chains. Why: they hide sequencing. Fix: refactor into one flat pipeline with a single decision point.",
+        message = "These nested pipe calls split the sequence across several expressions. Combine them into one pipeline so the reader can follow the steps in execution order, with the decision in one place.",
         severity = "error"
     )
 }

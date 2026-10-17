@@ -9,7 +9,7 @@ or {
         $args <: contains `Effect.flatMap($_)`,
         register_diagnostic(
             span = $call,
-            message = "Rule: avoid nested Effect.flatMap. Why: it hides sequencing and pushes laddered control flow. Fix: build context once (Effect.all/Effect.map) and run a single flatMap.",
+            message = "These nested Effect.flatMap calls spread one operation across several callback bodies. Build shared inputs with Effect.all or Effect.map, then combine the dependent steps into one pipeline.",
             severity = "warning"
         )
     },
@@ -21,7 +21,7 @@ or {
         $outer <: contains `Effect.map($_)`,
         register_diagnostic(
             span = $call,
-            message = "Rule: avoid map+flatten ladders. Why: they hide sequencing. Fix: build context once (Effect.all/Effect.map) and run a single flatMap.",
+            message = "Effect.map followed by Effect.flatten uses two operations to produce and then flatten an Effect. Replace Effect.map followed by Effect.flatten with Effect.flatMap, which expresses both steps in one call.",
             severity = "warning"
         )
     }

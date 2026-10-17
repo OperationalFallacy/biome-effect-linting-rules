@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains `$cond ? $then : $else` as $ternary,
     register_diagnostic(
         span = $cond,
-        message = "Rule: avoid ternary expressions. Why: they hide control flow inside expressions. Fix: use Option.match/Either.match/Match.value or data combinators, then run one Effect pipeline.",
+        message = "This rule flags ternary expressions to make value selection a distinct step in the operation. Select this value with Match.value, Option.match, or Either.match, then continue the Effect pipeline.",
         severity = "error"
     )
 }

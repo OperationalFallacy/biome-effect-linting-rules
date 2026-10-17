@@ -13,7 +13,7 @@ describe(ruleName, () => {
     );
 
     expect(result.status).toBe(1);
-    expect(result.output).toContain("do not publish a second name");
+    expect(result.output).toContain("Export this generated class under one name");
   });
 
   it("It catches an exported generated class published again", () => {
@@ -23,7 +23,7 @@ describe(ruleName, () => {
     );
 
     expect(result.status).toBe(1);
-    expect(result.output).toContain("do not publish a second name");
+    expect(result.output).toContain("Export this generated class under one name");
   });
 
   it("It allows direct class exports and unrelated metadata", () => {
