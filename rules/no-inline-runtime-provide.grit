@@ -20,7 +20,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $provide,
-        message = "Rule: do not inline runtime provisioning inside local helper Effect code. Why: `yield* SomeRuntime.pipe(Effect.provide(SomeRuntimeLive))` and equivalent inline provide chains hide dependency assembly instead of owning it at an Effect.Service boundary or one exported Effect boundary. Fix: declare the live dependency on the owning service or provide it once at the exported boundary, then `yield*` the runtime or service directly inside the body.",
+        message = "Assemble dependencies on the service or exported operation instead of inside the method. A local runtime.pipe with Effect.provide mixes dependency setup with the method's work. Declare the live dependency on Effect.Service or provide it once on the exported operation. Yield the configured runtime or service directly in the body.",
         severity = "error"
     )
 }

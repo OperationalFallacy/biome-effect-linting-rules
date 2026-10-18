@@ -49,7 +49,7 @@ or {
 } where {
     register_diagnostic(
         span = $ret,
-        message = "Rule: review this block-bodied arrow callback before changing it. Identify its role in the surrounding data or Effect flow, then aim for a result that makes the data, state, and collection choices clearer rather than merely changing the callback shape. For example, when a reducer rebuilds a native `Map` on every step, an Effect `HashMap` update such as `HashMap.set` may express the operation directly. Keep the block when it communicates the design most clearly.",
+        message = "Use expression callbacks for single transformations. An explicit return adds unnecessary structure around a single result. Review collection operations as part of the rewrite, including the use of HashMap.set instead of repeated native Map copies. Retain blocks for useful local bindings and multiple steps. Preserve those steps rather than moving them into a wrapper to remove the return.",
         severity = "info"
     )
 }

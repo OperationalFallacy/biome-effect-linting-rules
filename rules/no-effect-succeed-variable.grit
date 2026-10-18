@@ -11,7 +11,7 @@ file($body) where {
         $var <: not `$_ ? $_ : $_`,
         register_diagnostic(
             span = $lift,
-            message = "Rule: avoid Effect.succeed(variable) as a branch placeholder. Why: it hides a decision and turns data into pseudo-control flow. Fix: select a plain value (Option/Match) and then run one Effect pipeline after the decision; if you already read the state, return it as a value. Avoid Option.toArray/forEach hacks that just re-encode the branch.",
+            message = "Select branch values before lifting them into Effect. Wrapping an existing value in Effect.succeed mixes value selection with the operation's Effect steps. Make the decision with Match or Option, then continue in one Effect pipeline. Return previously read state directly from value-only branches. Keep skip decisions explicit instead of disguising them as Option.toArray followed by collection traversal.",
             severity = "warning"
         )
     }

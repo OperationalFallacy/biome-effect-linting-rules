@@ -9,7 +9,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $nested,
-        message = "Rule: avoid nested IIFEs. Why: they hide sequencing and push wrapper hacks. Fix: bind a named context with const and keep one flat pipeline with a single Match/Option decision.",
+        message = "Replace nested immediately invoked functions with local values and one pipeline. The nested function bodies make the operation's execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue the operation after that decision.",
         severity = "error"
     )
 }

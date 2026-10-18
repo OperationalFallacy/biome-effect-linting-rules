@@ -15,7 +15,7 @@ file($body) where {
         },
         register_diagnostic(
             span = $outerCall,
-            message = "Rule: avoid deeply nested Effect calls (Effect.xx(Effect.yy(Effect.zz(...)))). Why: they hide sequencing and spread flow. Fix: build values first, then run one flat Effect pipeline.",
+            message = "Put nested Effect calls into one pipeline in execution order. Several levels of nesting make the reader reconstruct the sequence from the inside out. Compute the required inputs first, then connect the dependent Effect steps in the same pipeline.",
             severity = "error"
         )
     },
@@ -30,7 +30,7 @@ file($body) where {
         },
         register_diagnostic(
             span = $outerCall,
-            message = "Rule: avoid deeply nested Effect calls (Effect.xx(Effect.yy(Effect.zz(...)))). Why: they hide sequencing and spread flow. Fix: build values first, then run one flat Effect pipeline.",
+            message = "Put nested Effect calls into one pipeline in execution order. Several levels of nesting make the reader reconstruct the sequence from the inside out. Compute the required inputs first, then connect the dependent Effect steps in the same pipeline.",
             severity = "error"
         )
     }

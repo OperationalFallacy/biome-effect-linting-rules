@@ -36,7 +36,7 @@ or {
 } where {
     register_diagnostic(
         span = $branch,
-        message = "Rule: avoid Match/Option/Either inside object literals. Why: it hides the decision and invites workaround scaffolding. Fix: compute the value first (context), then build the object from named values with one flat decision.",
+        message = "Select values before constructing the object. Match, Option, or Either decisions inside field definitions mix value selection with the result's structure. Compute the decision once, then construct the object from named values. An immediately invoked function around the construction leaves the same problem in place.",
         severity = "error"
     )
 }

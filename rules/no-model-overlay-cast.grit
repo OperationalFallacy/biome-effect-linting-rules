@@ -8,7 +8,7 @@ file($body) where {
     $call <: not `const $_ = $_ as const`,
     register_diagnostic(
         span = $call,
-        message = "Rule: avoid `as` assertions on decoded model flow. Why: assertions hide schema drift and allow untyped overlays. Fix: decode with the correct schema type and read fields directly.",
+        message = "Decode the value with the required Schema instead of asserting its model type with as. The assertion asks TypeScript to trust a shape without validating the value against the schema. Read the fields from the decoded result and preserve validation failures.",
         severity = "error"
     )
 }

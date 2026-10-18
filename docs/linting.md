@@ -1,99 +1,124 @@
-### Linting Discipline
+# Fix lint diagnostics
 
-Linting enforces declarative control flow and blocks drift toward imperative or wrapper-heavy Effect code. The goal is readable code with one explicit flow. Do not make changes to appeas linter.
+Read the operation around a diagnostic before editing it. Preserve its result, error handling, and resource cleanup. These rules express package conventions; some diagnostics ask for review of otherwise valid code.
 
-### Scope
+## Plan the rewrite
 
-This document defines how to respond to diagnostics from the `lintEffect` rule pack.
+Read the repository's development guide and the relevant service contracts before you change the code. Use those contracts, established patterns, and the diagnostic's explanation to decide how the operation should work. A useful fix makes the operation easier to understand and preserves its behavior.
 
-It is written for human maintainers and coding agents that are rewriting code after Biome reports a rule violation.
+Work on one method at a time. Gather its inputs, make the decision explicit, and keep dependent steps in execution order. If the method covers several domain operations, split it into named service methods with clear responsibilities and result types. Each extracted method should perform a complete operation that its callers can understand from its contract.
 
-### Rewrite method
+Repeated warnings in a large method are a reason to review the method's structure. Moving the same steps into wrappers or changing syntax until lint accepts the code can leave the underlying problem intact. Choose the structure first, complete the rewrite, then use lint to check it.
 
-Start on lint errors with a rewrite of methods into one explicit Effect pipeline.
+## Composition and state
 
-Do it like this: build context once, select one decision model, and keep that decision visible in the main flow. Do not hide branching inside callback arguments, object literals, nested helper wrappers, or control-flow scaffolding that exists only to satisfy the checker.
+Keep related Effect steps in execution order in a pipeline or one `Effect.gen`. Sequence dependent effects with `Effect.flatMap` or `Effect.andThen`, and use `Effect.all` to collect results.
 
-Fix one method at a time and keep adjacent behavior unchanged.
+Use `Match.value`, `Option.match`, `Either.match`, or `Effect.if` for decisions, then continue the operation in one pipeline. Compute selected values before you construct an object from them. Keep callback blocks when local bindings or multiple steps improve readability.
 
-### Non-compliant patterns
+Decode external data with Schema and use the decoded values in services. Define optional boolean defaults in the schema so each service reads the same meaning. Put the required validation in that decoder so its result is ready for the operation. Express absence with `Option`, failures with typed errors, and status choices with tagged unions.
 
-Do not add helper wrappers whose only purpose is to return Effects.
+Use `Record` operations inside `Struct.evolve` for state updates, and schema constructors to reconstruct models. Encode and decode data when reading or writing serialized values.
 
-Do not hide sequencing through nested `pipe` ladders, flatMap towers, or generator nesting.
+The web preset uses atoms for React state and subscriptions. Keep canonical state changes in Effect services, with atoms responsible for reads and commands. An atom action that reads state, copies it with object spread, and writes it back spreads a state transition across separate calls. Give that transition a service operation with an explicit result.
 
-Do not implement control flow with `switch` or `case`. Use `Match.value`, `Option.match`, `Either.match`, or `Effect.if` so the decision stays explicit inside one Effect pipeline.
+Keyed row atoms read keyed sources; list projections read collections. Provide dependencies on services or exported operations and reuse that runtime for their work.
 
-Do not add post-decode guards or fallback defaults unless the domain actually requires them.
+## Related fields
 
-Do not encode sequential side effects through `Effect.all(..., { concurrency: 1 })`.
+When fields are valid only in particular combinations, describe each allowed combination as a complete schema member. Derive that schema from the authoritative facts and use its decoder wherever a caller needs to validate a candidate.
 
-Do not introduce workaround combinators, placeholder abstractions, or type wrappers that hide intent instead of improving the code shape.
+For example, suppose a document supports PDF and an image supports PNG:
 
-### Required lint workflow
+```ts
+import { Schema } from "effect";
 
-Use the smallest working directory that contains all files you are changing.
+const SupportedFile = Schema.Union(
+  Schema.Struct({
+    kind: Schema.Literal("document"),
+    format: Schema.Literal("pdf"),
+  }),
+  Schema.Struct({
+    kind: Schema.Literal("image"),
+    format: Schema.Literal("png"),
+  }),
+);
 
-Run one summary pass for that directory to establish the baseline:
+const decodeSupportedFile = Schema.decodeUnknown(SupportedFile);
+```
 
-`npx @biomejs/biome lint <working-dir> --reporter=summary`
+This schema accepts the two recorded combinations. Separate unions for `kind` and `format` would also admit an image with PDF or a document with PNG. The relation between the fields is part of the contract.
 
-During remediation, run file-level lint only for the files you edit:
+For a larger set of facts, generate one schema member for each allowed combination. The facts can come from a generator, a persisted decision, or a named domain type. Call the decoder with the candidate. The resulting Effect either returns a validated value or fails with a schema parse error.
 
-`npx @biomejs/biome lint <file>`
+Keep the relation's definition in one place so consumers use the same decoder. If the operation also classifies a domain outcome, expose that classification through a documented service method that returns the domain type. Keep that domain decision explicit in the service's public contract.
 
-Rerun dir summary lint only after the touched files are clean or when you need a final status check.
+## Collection keys
 
-If the summary output includes unrelated files, reduce the scope to a smaller directory and continue with file-level checks.
+Use `HashMap` or `HashSet` when a newly constructed, equal key must find an existing entry. Native `Map` and `Set` compare objects by reference and suit deliberate instance identity or scalar keys.
 
-Run lint from the package or repository root that owns the Biome configuration for the files you are editing.
+The warning checks explicit key types from local `Data.Class` declarations and `ReturnType` of local arrow functions returning `Data.struct`, `Data.tuple`, or `Data.array`. It supports renamed `Data` imports and namespace imports from `effect/Data`. It checks key definitions in the same file. Inferred keys and imported definitions remain outside its coverage.
 
-### Compile checks
+## Vanilla Extract
 
-Run compile checks during and after file-level lint remediation because structural rewrites can introduce TypeScript regressions.
+For an empty style declaration, add the required styling or remove the declaration and its `className` use. Export each generated class under one name and update consumers to use it. Compose private base classes through `style`, `styleVariants`, or recipes.
 
-Treat compile as a completion gate for the edited files. Lint remediation is complete when file-level Biome is clean and the project compiler reports no relevant problems in the touched files.
+## Verify changes
 
-Use the repository's project-mode compile command. Do not substitute ad hoc single-file `tsc` invocations for the normal compile gate unless the repository explicitly documents that workflow.
+### Check the assigned files
 
-If the repository has separate compile boundaries for different packages or apps, run the compile command that matches the code you changed.
+Choose the lint scope from the task. For a file fix or feature change, check the edited files with the repository's Biome configuration:
 
-### Declaration-surface checks
+```bash
+npx @biomejs/biome lint <file>
+```
 
-When TypeScript reports declaration diagnostics such as `TS4023` or `TS4020`, treat them as exported type-surface problems.
+Use the repository's lint task when it provides the same scope. In a monorepo, check which configuration applies to each workspace and run the command where it loads that configuration and its plugins.
 
-Do not patch declaration problems with wrappers, fallback helpers, or broad rewrites.
+For a directory cleanup or an assigned directory status check, run a summary for that directory:
 
-Keep `Effect` and `Layer` assembly values local. Export stable boundary entry points such as services, layers, facades, or explicitly typed constructors instead of deep inferred intermediate values.
+```bash
+npx @biomejs/biome lint <directory> --reporter=summary
+```
 
-If an exported constructor is required, bind its contract at the domain boundary instead of exporting deep inferred channel shapes.
+Resolve the assigned files' diagnostics before another summary pass. Record unrelated diagnostics separately and keep the checks focused on the assigned files. Run formatting and import checks according to the repository's source-edit procedure.
 
-Use the normal project compile command for verification. Do not rely on single-file declaration checks that bypass project compiler settings and produce misleading diagnostics.
+For Markdown-only changes, review the document and its links. Skip Biome when it excludes those files.
 
-If scoped verification is needed, run the normal project compile command and then filter the output by file path and diagnostic code.
+### Check types and behavior
 
-### Type signature inspection
+Run the repository's project typecheck after the rewrite. Use the project's compiler settings so tests, dependencies, and declaration output receive the checks expected by that workspace. A compiler command with individual source-file arguments can bypass those settings and produce misleading errors.
 
-When lint remediation or layer wiring requires an exact `Effect` or `Layer` type, use a repository-local inspection tool if one exists.
+Use the repository's test policy to choose the relevant behavior checks. Finish when the edited files satisfy lint and project typechecks and the relevant tests confirm the operation's behavior. Report unrelated project failures separately, with enough detail to distinguish them from the edited files.
 
-The tool should print the fully rendered type for a top-level variable or export under the repository's normal TypeScript configuration. If the repository does not provide such a tool, inspect the type through the project compiler or the editor language service instead of guessing.
+### Resolve exported declaration errors
 
-### Plugin policy
+For `TS4023` or `TS4020`, inspect the exported type. These errors mean TypeScript cannot name a type needed by an exported declaration.
 
-Rules should enforce clarity, not force linter workaround choreography.
+Keep intermediate Effect and Layer assembly values local. Export stable services, layers, or constructors whose result types consumers can name. If a constructor needs an explicit contract, give it the domain result type, for example `Effect.succeed<Contract>(value)`.
 
-Use error severity for imperative control flow and hidden sequencing. Use warning severity for non-blocking shape guidance.
+Run the workspace's project typecheck with its declaration settings and inspect the affected files' diagnostics. Use the repository's clean-build procedure if stale compiler artifacts interfere. Preserve package metadata and other files that consumers need to resolve shared imports.
 
-Rule messages explain why the pattern is wrong or subotimal and what shape the rewrite take.
+## Inspect Effect types and services
 
-If a rule cannot match the same violation reliably, simplify it or remove it.
+Use the editor language service or the repository's type inspection tool when you need the exact result, error, or dependency types of an Effect or Layer. For a large file, inspect its services, exported values, and local helpers before the rewrite. A source outline can show that structure; the TypeScript language service supplies the inferred types.
 
-### Completion
+If the project has `@effect/language-service` installed, its CLI can report Effect diagnostics for a selected file:
 
-Finish with one summary pass for the chosen working directory, then run the required compile checks.
+```bash
+npx --no-install effect-language-service diagnostics --file <absolute-file-path> --format text --severity error,warning
+```
 
-Completion criteria:
+Run these commands from the workspace with that dependency. Use `overview` to inspect the file's exported services, errors, and layers:
 
-- Touched files are free of Biome errors.
-- Touched files have no related TypeScript diagnostics from the required project compile check.
-- Changed methods read as one explicit flow with no defensive wrappers or lint-appeasement workarounds.
+```bash
+npx --no-install effect-language-service overview --file <absolute-file-path> --max-symbol-depth 1
+```
+
+Use `layerinfo` to inspect what an exported layer provides and requires:
+
+```bash
+npx --no-install effect-language-service layerinfo --file <absolute-file-path> --name <exported-layer-name>
+```
+
+These commands help explain Effect diagnostics and layer composition. Complete the Biome and project typechecks as well.

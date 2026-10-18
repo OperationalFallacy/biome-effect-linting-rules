@@ -1,0 +1,52 @@
+language js(typescript, jsx)
+
+JsNewExpression() as $collection where {
+    $collection <: within JsModule() as $body,
+    or {
+        $body <: contains JsImportNamedClause(source = `"effect"`, named_specifiers = $imports) where {
+            or {
+                $imports <: contains JsShorthandNamedImportSpecifier(local_name = $data) where {
+                    $data <: `Data`
+                },
+                $imports <: contains JsNamedImportSpecifier(name = $imported, local_name = $data) where {
+                    $imported <: r"Data"
+                }
+            }
+        },
+        $body <: contains JsImportNamespaceClause(source = `"effect/Data"`, namespace_specifier = $namespace) where {
+            $namespace <: JsNamespaceImportSpecifier(local_name = $data)
+        }
+    },
+    $body <: not contains JsFormalParameter(binding = $data),
+    $body <: not contains JsVariableDeclarator(id = $data),
+    or {
+        $collection <: `new Map<$key, $value>($args)` where {
+            $body <: not contains JsIdentifierBinding() as $binding where { $binding <: r"Map" }
+        },
+        $collection <: `new Set<$key>($args)` where {
+            $body <: not contains JsIdentifierBinding() as $binding where { $binding <: r"Set" }
+        },
+        $collection <: `new globalThis.Map<$key, $value>($args)` where {
+            $body <: not contains JsIdentifierBinding() as $binding where { $binding <: r"globalThis" }
+        },
+        $collection <: `new globalThis.Set<$key>($args)` where {
+            $body <: not contains JsIdentifierBinding() as $binding where { $binding <: r"globalThis" }
+        }
+    },
+    or {
+        $key <: TsReferenceType(name = `ReturnType`, type_arguments = $keyArgs) where {
+            $keyArgs <: contains TsTypeofType(expression_name = $factory),
+            $body <: contains `const $factory = $fn`,
+            $fn <: JsArrowFunctionExpression(body = $result),
+            $result <: or { `$data.struct($fields)`, `$data.tuple($...)`, `$data.array($items)` }
+        },
+        $body <: contains JsClassDeclaration(id = $key, extends_clause = $extends) where {
+            $extends <: contains `$data.Class`
+        }
+    },
+    register_diagnostic(
+        span = $collection,
+        message = "Use HashMap or HashSet for keys that require Effect value equality. Native Map and Set compare object keys by reference, so a newly constructed key with equal fields misses the existing entry. These key types support Effect value equality. Keep native collections for deliberate instance identity, with each object instance treated as a distinct key.",
+        severity = "warn"
+    )
+}

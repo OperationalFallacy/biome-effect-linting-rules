@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains `Effect.never` as $never,
     register_diagnostic(
         span = $never,
-        message = "Rule: avoid Effect.never. Why: it hides lifecycle and leaks resources. Fix: use Stream or explicit acquire/release lifecycles with clear teardown.",
+        message = "Give this long-lived operation an explicit lifetime and cleanup. Effect.never waits for interruption and leaves termination to cancellation elsewhere. Use Stream or acquire/release to express the operation's lifetime and resource release together.",
         severity = "error"
     )
 }

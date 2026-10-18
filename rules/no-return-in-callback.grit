@@ -8,7 +8,7 @@ or {
     $block <: contains `return $value` as $ret,
     register_diagnostic(
         span = $ret,
-        message = "Rule: avoid returns inside inline callbacks. Why: they hide control flow. Prefer expression-only callbacks, but leaf-level Effect branches with local bindings may use returns when needed.",
+        message = "Use an expression callback for a single transformation. A function body and explicit return add unnecessary structure around one result. Retain blocks and explicit returns for short Effect branches with useful local bindings. Preserve those bindings rather than hiding them in a wrapper.",
         severity = "info"
     )
 }

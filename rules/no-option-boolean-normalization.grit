@@ -10,7 +10,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $call,
-        message = "Rule: avoid repeated Option boolean normalization (`onSome: value === true, onNone: false`). Why: it scatters coercion rules across services. Fix: normalize once at schema boundary and read booleans directly.",
+        message = "Define this boolean's default in its Schema instead of normalizing it with Option.match in service logic. Repeated local conversions spread the default policy across services. Decode the input once and use the resulting boolean. Preserve the existing mapping of Some(true) to true, Some(false) to false, and None to false.",
         severity = "error"
     )
 }

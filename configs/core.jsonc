@@ -17,6 +17,7 @@
     "./node_modules/@catenarycloud/linteffect/rules/no-branch-in-object.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-iife-wrapper.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-return-in-arrow.grit",
+    "./node_modules/@catenarycloud/linteffect/rules/warn-native-collections.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-never.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-async.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-fn-generator.grit",

@@ -224,7 +224,7 @@
           "exec": "yarn install"
         },
         {
-          "exec": "yarn up commit-and-tag-version constructs projen tsx typescript vitest @biomejs/biome"
+          "exec": "yarn up commit-and-tag-version constructs effect projen tsx typescript vitest @biomejs/biome"
         },
         {
           "exec": "npx projen"

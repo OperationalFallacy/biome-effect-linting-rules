@@ -8,7 +8,7 @@ file($body) where {
     $body <: contains `Match.orElse(() => null)`,
     register_diagnostic(
         span = $call,
-        message = "Rule: avoid local unknown-to-boolean coercion helpers in services. Why: runtime coercion belongs at schema boundary, not in service flow. Fix: decode boolean optionality in schema and read typed booleans in the Effect pipeline.",
+        message = "Decode boolean input with Schema before using it in service logic. Local type checks spread coercion and optionality policy across operations. Define the boolean's optionality in the schema, decode the input once, and read the typed result in the Effect pipeline. Preserve the input's accepted values and absence semantics.",
         severity = "error"
     )
 }
