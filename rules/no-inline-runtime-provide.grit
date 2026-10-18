@@ -20,7 +20,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $provide,
-        message = "This Effect.provide supplies a runtime's dependencies inside the local operation, which makes the reader inspect the body to find how the service is assembled. Declare the live dependency on the owning Effect.Service, or provide it once on the exported operation. Then yield the runtime or service directly inside the body.",
+        message = "Assemble dependencies on the service or exported operation instead of inside the method. A local runtime.pipe with Effect.provide mixes dependency setup with the method's work. Declare the live dependency on Effect.Service or provide it once on the exported operation. Yield the configured runtime or service directly in the body.",
         severity = "error"
     )
 }

@@ -8,7 +8,7 @@ file($body) where {
     $body <: contains `Match.orElse(() => null)`,
     register_diagnostic(
         span = $call,
-        message = "This code checks an unknown value's boolean type inside the service. Repeated local checks can give the same input different meanings across operations. Decode unknown input with a boolean schema, including its optionality, then read the typed boolean in the service.",
+        message = "Decode boolean input with Schema before using it in service logic. Local type checks spread coercion and optionality policy across operations. Define the boolean's optionality in the schema, decode the input once, and read the typed result in the Effect pipeline. Preserve the input's accepted values and absence semantics.",
         severity = "error"
     )
 }

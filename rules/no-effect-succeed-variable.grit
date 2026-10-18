@@ -11,7 +11,7 @@ file($body) where {
         $var <: not `$_ ? $_ : $_`,
         register_diagnostic(
             span = $lift,
-            message = "This rule asks you to review Effect.succeed around an existing value because it can turn a simple branch result into another Effect step. Select the branch result with Match or Option, then pass that value into the Effect pipeline. Return state that has already been read as a value. Keep the decision explicit; Option.toArray followed by forEach would express the same branch indirectly.",
+            message = "Select branch values before lifting them into Effect. Wrapping an existing value in Effect.succeed mixes value selection with the operation's Effect steps. Make the decision with Match or Option, then continue in one Effect pipeline. Return previously read state directly from value-only branches. Keep skip decisions explicit instead of disguising them as Option.toArray followed by collection traversal.",
             severity = "warning"
         )
     }

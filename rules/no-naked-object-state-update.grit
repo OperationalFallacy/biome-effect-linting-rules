@@ -24,7 +24,7 @@ or {
 } where {
     register_diagnostic(
         span = $violation,
-        message = "This rule flags object copies, record rebuilds, and raw JSON operations in state transitions because they can separate field updates from the model's validation and construction rules. Update state with Record.set, Record.modify, or Record.remove inside Struct.evolve. Reconstruct models with their schema constructors, such as Schema.make or a field's make method. Encode and decode serialized data through Schema where it enters or leaves the application. Consult docs/linting.md for the full procedure.",
+        message = "Update state through its model and field operations instead of raw object copies or record rebuilds. Raw copies separate field changes from the model's construction and validation rules. Use Record.set, Record.modify, or Record.remove inside Struct.evolve, and reconstruct models with their schema constructors, such as Schema.make or a field's make method. Use Schema encoding and decoding for serialized data instead of raw JSON calls. Follow docs/linting.md for the full procedure.",
         severity = "error"
     )
 }

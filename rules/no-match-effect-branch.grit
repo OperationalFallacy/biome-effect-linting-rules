@@ -78,7 +78,7 @@ or {
         },
         register_diagnostic(
             span = $matchCall,
-            message = "This Match branch contains several Effect steps, so one operation's execution order is split across the case bodies. Select a value with Match, then sequence the Effect steps after it. Keep the decision in Match; Option.toArray followed by forEach would move the same branch into a collection operation.",
+            message = "Move multi-step Effect sequences out of Match branches. Separate case bodies make the operation's execution order harder to follow. Select the required value with Match, then sequence dependent work in one Effect pipeline. Keep skip decisions explicit. Do not disguise a branch as Option.toArray followed by collection traversal.",
             severity = "error"
         )
     },
@@ -95,7 +95,7 @@ or {
         },
         register_diagnostic(
             span = $call,
-            message = "This Option.match branch contains several Effect steps. Review whether a value decision followed by one pipeline would make the sequence easier to follow. Select a value with Option.match, then sequence the Effect steps after it. A short branch with local bindings can remain when it makes the operation clearer.",
+            message = "Separate value selection from multi-step Effect work in Option.match. Branch-local sequences make the operation's execution order harder to follow. Select the value first, then continue in one Effect pipeline. Short, linear branches with useful local bindings remain valid.",
             severity = "info"
         )
     }

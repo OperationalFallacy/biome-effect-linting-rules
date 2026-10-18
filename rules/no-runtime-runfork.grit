@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains `Runtime.runFork($args)` as $runFork,
     register_diagnostic(
         span = $runFork,
-        message = "Runtime.runFork starts a fiber whose lifetime must be managed by the caller. This rule requires background work to have an explicit owner for cancellation and cleanup. Use forkScoped, Stream, or the application runtime to give this work a managed lifetime.",
+        message = "Give background work a managed lifetime instead of starting it with Runtime.runFork. Runtime.runFork leaves cancellation and cleanup to the caller. Use forkScoped, Stream, or the application runtime to tie the work to a defined lifetime and preserve resource cleanup.",
         severity = "error"
     )
 }

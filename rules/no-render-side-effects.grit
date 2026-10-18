@@ -13,7 +13,7 @@ file($body) where {
         },
     register_diagnostic(
         span = $call,
-        message = "This Match call is used as a statement, so its branch callbacks run when the statement executes. In a render function, those callbacks can cause side effects during render. Return the Match result as an expression and run side effects through an Effect runtime action or event handler.",
+        message = "Return the Match result as an expression and move updates or other work out of render. A Match used as a statement runs its selected callback immediately. In a render function, that work runs during render. Keep render expressions pure and perform the work through an Effect runtime action or event handler.",
         severity = "error"
     )
 }

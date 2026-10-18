@@ -11,7 +11,7 @@ file($body) where {
     $body <: contains `export const $name = $value;` as $exportAlias,
     register_diagnostic(
         span = $exportAlias,
-        message = "This alias exposes a second name for the same generated class, so consumers can use different names for one element's styles. Export this generated class under one name that describes its role and update its consumers to use that name. Define any variants in the Vanilla Extract declaration.",
+        message = "Export the generated class under one name that describes its role. A second exported name lets consumers refer to the same styles through different names. Remove the alias and update consumers to use the chosen name. Define variants in the Vanilla Extract declaration.",
         severity = "error"
     )
 }

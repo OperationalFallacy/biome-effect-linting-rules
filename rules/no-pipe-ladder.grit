@@ -10,7 +10,7 @@ or {
     },
     register_diagnostic(
         span = $nested,
-        message = "These nested pipe calls split the sequence across several expressions. Combine them into one pipeline so the reader can follow the steps in execution order, with the decision in one place.",
+        message = "Combine nested pipe calls into one pipeline. Splitting the sequence across nested expressions makes the operation's execution order harder to follow. Keep the steps in order and make the value decision once.",
         severity = "error"
     )
 }

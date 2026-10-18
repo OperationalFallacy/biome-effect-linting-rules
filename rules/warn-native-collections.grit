@@ -46,7 +46,7 @@ JsNewExpression() as $collection where {
     },
     register_diagnostic(
         span = $collection,
-        message = "These keys use Effect value equality. Native Map and Set compare object keys by reference, so a new object with equal fields is treated as a different key. Use HashMap or HashSet when a new, equal key must find the same entry. Keep native collections when each object instance must remain a distinct key.",
+        message = "Use HashMap or HashSet for keys that require Effect value equality. Native Map and Set compare object keys by reference, so a newly constructed key with equal fields misses the existing entry. These key types support Effect value equality. Keep native collections for deliberate instance identity, with each object instance treated as a distinct key.",
         severity = "warn"
     )
 }

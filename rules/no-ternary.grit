@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains `$cond ? $then : $else` as $ternary,
     register_diagnostic(
         span = $cond,
-        message = "This rule flags ternary expressions to make value selection a distinct step in the operation. Select this value with Match.value, Option.match, or Either.match, then continue the Effect pipeline.",
+        message = "Replace the ternary with an explicit value-selection step. Embedding the decision in another expression mixes selection with the surrounding operation. Select the value with Match.value, Option.match, or Either.match, then continue the Effect pipeline. Preserve the condition and both outcomes.",
         severity = "error"
     )
 }

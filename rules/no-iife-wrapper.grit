@@ -15,7 +15,7 @@ file($body) where {
         },
         register_diagnostic(
             span = $call,
-            message = "This inline function is called immediately, which adds another function body to read before the operation becomes clear. Assign its intermediate values to local constants, select the result with Match or Option, and continue in one pipeline.",
+            message = "Remove the immediately invoked function and express its work directly in the operation. The extra function body makes the decision and execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue in one pipeline.",
             severity = "error"
         )
     }

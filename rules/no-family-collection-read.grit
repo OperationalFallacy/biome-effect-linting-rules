@@ -15,7 +15,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atom,
-                message = "This Atom.family member reads a collection atom. The rule uses atom names to identify a possible row or item projection that depends on the collection it belongs to. For a row or item projection, read a keyed source such as SourceAtom, ByKeyAtom, or IndexAtom. If the family intentionally represents a route or list, rename or restructure it so its role is clear and separate from row or item projections.",
+                message = "Read keyed sources from row or item atoms instead of reading the containing collection. The collection dependency couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name; renaming a collection to hide an item dependency does not fix the dependency.",
                 severity = "error"
             )
         },
@@ -30,7 +30,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atom,
-                message = "This Atom.family member reads a collection atom. The rule uses atom names to identify a possible row or item projection that depends on the collection it belongs to. For a row or item projection, read a keyed source such as SourceAtom, ByKeyAtom, or IndexAtom. If the family intentionally represents a route or list, rename or restructure it so its role is clear and separate from row or item projections.",
+                message = "Read keyed sources from row or item atoms instead of reading the containing collection. The collection dependency couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name; renaming a collection to hide an item dependency does not fix the dependency.",
                 severity = "error"
             )
         },
@@ -45,7 +45,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atom,
-                message = "This Atom.family member reads a collection atom. The rule uses atom names to identify a possible row or item projection that depends on the collection it belongs to. For a row or item projection, read a keyed source such as SourceAtom, ByKeyAtom, or IndexAtom. If the family intentionally represents a route or list, rename or restructure it so its role is clear and separate from row or item projections.",
+                message = "Read keyed sources from row or item atoms instead of reading the containing collection. The collection dependency couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name; renaming a collection to hide an item dependency does not fix the dependency.",
                 severity = "error"
             )
         }

@@ -5,7 +5,7 @@ JsFunctionBody(statements = $statements) as $block where {
     $statements <: contains `return pipe($fragment, $...)`,
     register_diagnostic(
         span = $block,
-        message = "This operation assigns a pipeline to a local constant, then passes it into the returned pipeline. The reader must follow both expressions to understand the final result. Combine the intermediate pipeline and its final selection, or extract a named function that performs the complete domain operation.",
+        message = "Combine the local pipeline fragment with the returned pipeline. Splitting production and final selection across declarations makes the reader reconstruct the operation. Keep the steps together in execution order. Extracted functions must perform complete domain operations with clear result contracts. Moving the same fragment into a helper preserves the fragmentation.",
         severity = "error"
     )
 }

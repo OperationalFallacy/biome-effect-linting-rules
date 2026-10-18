@@ -25,7 +25,7 @@ or {
 } where {
     register_diagnostic(
         span = $call,
-        message = "This Effect.all uses an array to describe consecutive side effects, which makes their execution order depend on the collection options. Sequence these side effects with Effect.andThen or Effect.flatMap. Use Effect.all when the operation collects results.",
+        message = "Sequence these Effect operations with Effect.andThen or Effect.flatMap. Using Effect.all for consecutive steps makes their order depend on collection options. Keep the steps in execution order in one pipeline and preserve their failure behavior. Reserve Effect.all for collecting results.",
         severity = "error"
     )
 }

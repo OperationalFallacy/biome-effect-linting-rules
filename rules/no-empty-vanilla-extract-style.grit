@@ -3,7 +3,7 @@ language js(typescript, jsx)
 `style({})` as $emptyStyle where {
     register_diagnostic(
         span = $emptyStyle,
-        message = "This style declaration is empty. Its generated class lets consumers depend on a style name before the element's styles are defined. Define the complete styles with the project's design tokens before you export the class, or remove the declaration and its className use.",
+        message = "Define the element's styles or remove the empty style declaration and its className use. An empty generated class lets consumers depend on a style name before its styling exists. Use the project's design tokens and complete the style definition before exporting the class.",
         severity = "error"
     )
 }

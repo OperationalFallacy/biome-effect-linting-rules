@@ -6,7 +6,7 @@ or {
 } where {
     register_diagnostic(
         span = $match,
-        message = "This rule flags explicit Effect or Layer type arguments because the declared result, error, and dependency types can drift from the composed operation. Let TypeScript infer those types from the Effect or Layer you return, or expose a service method that returns the operation directly.",
+        message = "Let TypeScript infer the Effect or Layer type from the composed operation. Manually repeating result, error, and dependency types creates a separate contract to maintain as the flow changes. Remove the explicit Effect.Effect or Layer.Layer annotation and return the operation directly. Expose a service method for a named domain contract.",
         severity = "error"
     )
 }

@@ -49,7 +49,7 @@ or {
 } where {
     register_diagnostic(
         span = $ret,
-        message = "This rule asks you to review a callback with an explicit return. Read its role in the operation and check whether the data, state, or collection choices can be clearer. For example, a reducer that copies a native Map on every step may be clearer as an Effect HashMap update with HashMap.set. Use an expression for a single result, and keep the block when local bindings or several steps explain the operation better.",
+        message = "Use expression callbacks for single transformations. An explicit return adds unnecessary structure around a single result. Review collection operations as part of the rewrite, including the use of HashMap.set instead of repeated native Map copies. Retain blocks for useful local bindings and multiple steps. Preserve those steps rather than moving them into a wrapper to remove the return.",
         severity = "info"
     )
 }

@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains bubble `Option.as($value, $result)` as $call where {
         register_diagnostic(
             span = $call,
-            message = "Option.as replaces the value inside Some with a supplied result. This rule requires the value selection to appear in a callback. Use Option.map or Option.match to return the selected value.",
+            message = "Replace Option.as with Option.map or Option.match. This rule requires value selection to appear in a callback so the result choice is explicit. Return the selected value from the callback and preserve the Option's absence behavior.",
             severity = "error"
         )
     }

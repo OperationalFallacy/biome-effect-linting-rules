@@ -12,7 +12,7 @@ JsVariableStatement() as $statement where {
     },
     register_diagnostic(
         span = $statement,
-        message = "This constant stores an intermediate Effect step, so the reader must follow separate names to reconstruct the validation, decision, and final operation. Inline this intermediate Effect step into the operation's pipeline, with flatMap, andThen, or tap as needed. Extract a function when it performs a complete domain operation and gives that operation a clear result type. Local constants remain useful for final domain values with explicit types.",
+        message = "Inline intermediate Effect steps into the operation's pipeline. Staging them in separate constants makes the reader reconstruct validation, decisions, and dependent work across declarations. Use flatMap, andThen, or tap to connect the steps. Extracted functions must perform complete domain operations with clear result types. Keep local constants for final domain values with explicit types.",
         severity = "error"
     )
 }

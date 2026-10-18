@@ -8,7 +8,7 @@ file($body) where {
         $value <: contains `Effect.Effect` as $effect,
     register_diagnostic(
         span = $effect,
-        message = "This alias puts an operation's Effect type behind another name, so the reader must find the alias to inspect the operation's result, errors, and dependencies. Put the Effect type on the service method or function signature so those types appear with the operation.",
+        message = "Put the Effect type directly on the service method or function signature instead of a separate alias. The alias requires another lookup to inspect the operation's result, errors, and dependencies. Keep that contract beside the operation, or inline the type at its use.",
         severity = "error"
     )
 }

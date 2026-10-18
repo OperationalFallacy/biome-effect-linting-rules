@@ -4,7 +4,7 @@ language js(typescript, jsx)
     $val <: `"$_"`,
     register_diagnostic(
         span = $sentinel,
-        message = "This rule treats string constants as potential status tokens. A status token makes callers interpret a string to decide what happened. For a status, represent the outcome with a domain value, a tagged union, Option, or Either so callers can handle each case explicitly.",
+        message = "Represent status choices with domain values instead of string tokens. String statuses make callers interpret text to determine the outcome. Use a domain result, tagged union, Option, or Either for status choices. This rule flags string constants as potential status tokens. Ordinary text constants are outside the status convention. Resolve the status representation rather than renaming or moving the token.",
         severity = "error"
     )
 }

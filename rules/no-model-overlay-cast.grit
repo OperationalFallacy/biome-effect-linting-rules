@@ -8,7 +8,7 @@ file($body) where {
     $call <: not `const $_ = $_ as const`,
     register_diagnostic(
         span = $call,
-        message = "This type assertion tells TypeScript to trust a model shape, which can conceal a mismatch between the value and its schema. Decode this value with the required Schema and read the decoded fields.",
+        message = "Decode the value with the required Schema instead of asserting its model type with as. The assertion asks TypeScript to trust a shape without validating the value against the schema. Read the fields from the decoded result and preserve validation failures.",
         severity = "error"
     )
 }

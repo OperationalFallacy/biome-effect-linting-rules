@@ -8,7 +8,7 @@ file($body) where {
         $outer <: contains `Effect.gen($_)` as $nested,
         register_diagnostic(
             span = $nested,
-            message = "This Effect.gen contains another generator, so the reader must move between generator bodies to follow one operation. Combine these generators into one Effect.gen, or express the steps in one pipeline.",
+            message = "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together and preserve dependencies, failure handling, and cleanup.",
             severity = "error"
         )
     }

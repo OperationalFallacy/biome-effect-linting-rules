@@ -2,7 +2,7 @@ file($body) where {
     $body <: contains bubble `import($module)` as $dynamicImport where {
         register_diagnostic(
             span = $dynamicImport,
-            message = "This dynamic import loads a module from inside the operation, so the dependency and its load step are separate from the file's declared imports. This rule requires static imports to make module dependencies easier to inspect. Use a static import so this dependency appears with the file's other imports.",
+            message = "Replace the dynamic import with a static import. Loading the module inside the operation separates the dependency from the file's declared imports and adds a load step to the execution path. Declare the dependency with the file's other imports and update its uses.",
             severity = "error"
         )
     }

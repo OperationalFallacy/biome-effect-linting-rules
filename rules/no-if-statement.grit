@@ -10,7 +10,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $cond,
-        message = "This rule flags if statements in Effect code to keep the decision and the steps that follow it in one expression. Select the result with Match.value, Option.match, Either.match, or Effect.if, then continue the Effect pipeline.",
+        message = "Replace the if statement with an explicit decision in the Effect flow. Separate branch bodies split the operation's sequence. Select the result with Match.value, Option.match, Either.match, or Effect.if, then continue in one pipeline. Preserve the original conditions and branch behavior.",
         severity = "error"
     )
 }

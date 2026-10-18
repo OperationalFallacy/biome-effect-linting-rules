@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains `Effect.Do` as $effectDo,
     register_diagnostic(
         span = $effectDo,
-        message = "This rule flags Effect.Do builders because the reader must follow the accumulated fields to understand each step's inputs. Replace this Effect.Do builder with a pipeline or one Effect.gen, and keep the steps in execution order.",
+        message = "Replace the Effect.Do builder with a pipeline or one Effect.gen. The builder accumulates fields across steps, making the reader track that object to understand the operation. Keep the steps in execution order and pass each result to the work that uses it.",
         severity = "error"
     )
 }

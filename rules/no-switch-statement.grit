@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains JsSwitchStatement() as $switch,
     register_diagnostic(
         span = $switch,
-        message = "This rule flags switch statements in Effect code because separate case bodies can split one operation into several sequences. Express these cases with Match.value, Option.match, Either.match, or Effect.if, then continue the Effect pipeline.",
+        message = "Replace the switch statement with Match.value, Option.match, Either.match, or Effect.if. Separate case bodies split the operation into branch-local sequences. Select the result first, then continue in one Effect pipeline. Preserve every case and its behavior.",
         severity = "error"
     )
 }

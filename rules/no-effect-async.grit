@@ -10,7 +10,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $async,
-        message = "This rule flags Effect.async to make resource setup, use, and cleanup explicit in the operation. Callback registration can separate those responsibilities across several functions. Use Stream for a sequence of events, or an acquire/use/release operation for a resource with a defined lifetime.",
+        message = "Replace Effect.async with a managed callback integration. Callback registration requires cancellation and cleanup to remain connected to setup. Use Stream for event sequences or an acquire/use/release operation for a resource. Keep registration, interruption handling, and cleanup in that managed lifetime.",
         severity = "error"
     )
 }
