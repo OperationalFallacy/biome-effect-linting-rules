@@ -72,6 +72,7 @@ project.package.addField("files", [
   "configs",
   "examples",
   "docs",
+  "!docs/*-ticket.md",
   "README.md",
   "LICENSE",
 ]);
@@ -100,6 +101,7 @@ project.package.addField("exports", {
 });
 
 project.gitignore.exclude("/dist/");
+project.gitignore.exclude("/docs/*-ticket.md");
 project.gitignore.exclude("/refs/");
 
 project.addTask("pack:dry-run", {
