@@ -8,7 +8,7 @@ file($body) where {
         $value <: contains `Effect.Effect` as $effect,
     register_diagnostic(
         span = $effect,
-        message = "Rule: avoid Effect.Effect type aliases. Why: they hide the service surface and make types opaque. Fix: keep Effect types on service methods or inline at the call site.",
+        message = "Put the Effect type directly on the service method or function signature instead of a separate alias. The alias requires another lookup to inspect the operation's result, errors, and dependencies. Keep that contract beside the operation, or inline the type at its use.",
         severity = "error"
     )
 }

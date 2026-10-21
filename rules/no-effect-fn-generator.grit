@@ -10,7 +10,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $call,
-        message = "Rule: avoid Effect.fn generator wrappers. Why: they hide sequencing and dodge ladder rules. Fix: keep a single flat pipeline or use one Effect.gen.",
+        message = "Replace the Effect.fn generator wrapper with one pipeline or one Effect.gen. The wrapper adds another function body to inspect for the operation's steps. Keep the steps together and preserve their inputs, execution order, and result.",
         severity = "error"
     )
 }

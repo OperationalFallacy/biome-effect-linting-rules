@@ -4,7 +4,6 @@ import { fixtureRoot, lintWithRule } from "./ruleTestHarness";
 
 const fixtures = fixtureRoot("no-manual-data-guard");
 const ruleName = "no-manual-data-guard";
-const diagnostic = "Rule: avoid manual data guards.";
 
 describe(ruleName, () => {
   it("It catches structural manual data guards", () => {
@@ -14,8 +13,10 @@ describe(ruleName, () => {
     );
 
     expect(result.status).toBe(1);
-    expect(result.output).toContain(diagnostic);
-    expect(result.output.match(/Rule: avoid manual data guards\./g)).toHaveLength(2);
+    expect(result.diagnostics).toMatchObject([
+      { category: "plugin", severity: "error", location: { start: { line: 10 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 14 } } },
+    ]);
   });
 
   it("It catches primitive refinement of unknown data", () => {
@@ -25,8 +26,9 @@ describe(ruleName, () => {
     );
 
     expect(result.status).toBe(1);
-    expect(result.output).toContain(diagnostic);
-    expect(result.output.match(/Rule: avoid manual data guards\./g)).toHaveLength(1);
+    expect(result.diagnostics).toMatchObject([
+      { category: "plugin", severity: "error", location: { start: { line: 6 } } },
+    ]);
   });
 
   it("It allows Schema decoding and Match discrimination", () => {
@@ -36,6 +38,7 @@ describe(ruleName, () => {
     );
 
     expect(result.status).toBe(0);
+    expect(result.diagnostics).toEqual([]);
   });
 
   it("It allows typed narrowing and nominal identity checks", () => {
@@ -45,5 +48,6 @@ describe(ruleName, () => {
     );
 
     expect(result.status).toBe(0);
+    expect(result.diagnostics).toEqual([]);
   });
 });

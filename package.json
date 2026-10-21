@@ -33,6 +33,7 @@
   "devDependencies": {
     "commit-and-tag-version": "^12",
     "constructs": "^10.0.0",
+    "effect": "^3.21.2",
     "projen": "^0.98.34",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
@@ -63,6 +64,7 @@
     "configs",
     "examples",
     "docs",
+    "!docs/*-ticket.md",
     "README.md",
     "LICENSE"
   ],

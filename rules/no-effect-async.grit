@@ -10,7 +10,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $async,
-        message = "Rule: avoid Effect.async. Why: callback-style wiring hides lifecycle and escapes declarative flow. Fix: use Stream or structured Effect lifecycles (acquire/use/release).",
+        message = "Replace Effect.async with a managed callback integration. Callback registration requires cancellation and cleanup to remain connected to setup. Use Stream for event sequences or an acquire/use/release operation for a resource. Keep registration, interruption handling, and cleanup in that managed lifetime.",
         severity = "error"
     )
 }

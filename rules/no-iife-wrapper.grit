@@ -15,7 +15,7 @@ file($body) where {
         },
         register_diagnostic(
             span = $call,
-            message = "Rule: avoid immediate invocation of inline functions. Why: it hides decisions and sequencing. Fix: bind a named context with const and keep one Match/Option decision in a flat pipeline.",
+            message = "Remove the immediately invoked function and express its work directly in the operation. The extra function body makes the decision and execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue in one pipeline.",
             severity = "error"
         )
     }

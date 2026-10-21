@@ -15,11 +15,23 @@ export const repoRoot = path.resolve(
 export const fixtureRoot = (fixtureName: string) =>
   path.join(repoRoot, "tests", "fixtures", fixtureName);
 
+type Diagnostic = {
+  category: string;
+  severity: string;
+  location: {
+    path: string;
+    start: { line: number; column: number };
+    end: { line: number; column: number };
+  };
+};
+
 function resolveBiomeBin() {
   const biomePackagePath = require.resolve("@biomejs/biome/package.json");
   const biomePackage = require(biomePackagePath);
   const biomeBinRelative =
-    typeof biomePackage.bin === "string" ? biomePackage.bin : biomePackage.bin.biome;
+    typeof biomePackage.bin === "string"
+      ? biomePackage.bin
+      : biomePackage.bin.biome;
   return path.resolve(path.dirname(biomePackagePath), biomeBinRelative);
 }
 
@@ -28,7 +40,11 @@ export function lintWithRule(ruleName: string, fixtureFile: string) {
   const configPath = path.join(tempDir, "biome.json");
   const rulePath = path.join(repoRoot, "rules", `${ruleName}.grit`);
 
-  writeFileSync(configPath, `${JSON.stringify({ plugins: [rulePath] }, null, 2)}\n`, "utf8");
+  writeFileSync(
+    configPath,
+    `${JSON.stringify({ plugins: [rulePath], linter: { rules: { recommended: false } } }, null, 2)}\n`,
+    "utf8",
+  );
 
   try {
     const result = spawnSync(
@@ -44,10 +60,13 @@ export function lintWithRule(ruleName: string, fixtureFile: string) {
       { cwd: repoRoot, encoding: "utf8" },
     );
 
-    return {
-      status: result.status ?? 1,
-      output: `${result.stdout ?? ""}${result.stderr ?? ""}`,
-    };
+    if (result.error) throw result.error;
+    if (result.status === null || !result.stdout) {
+      throw new Error(result.stderr || "Biome did not produce a diagnostic report.");
+    }
+
+    const report: { diagnostics: Diagnostic[] } = JSON.parse(result.stdout);
+    return { status: result.status, diagnostics: report.diagnostics };
   } finally {
     rmSync(tempDir, { force: true, recursive: true });
   }

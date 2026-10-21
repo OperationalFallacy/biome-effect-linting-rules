@@ -15,7 +15,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atom,
-                message = "Keyed projection atom reads collection atom. This rule is structural: it treats Atom.family members as keyed row/item projections when they read collection/list/aggregate atom names. If this family is truly a row/item projection, read a keyed source/index atom such as SourceAtom, ByKeyAtom, or IndexAtom instead of the collection/list atom that enumerates the family. If this is intentionally a route/list-scoped family, rename or restructure it so row/item families stay separate from list projections.",
+                message = "Read keyed sources from row or item atoms instead of reading the containing collection. The collection dependency couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name; renaming a collection to hide an item dependency does not fix the dependency.",
                 severity = "error"
             )
         },
@@ -30,7 +30,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atom,
-                message = "Keyed projection atom reads collection atom. This rule is structural: it treats Atom.family members as keyed row/item projections when they read collection/list/aggregate atom names. If this family is truly a row/item projection, read a keyed source/index atom such as SourceAtom, ByKeyAtom, or IndexAtom instead of the collection/list atom that enumerates the family. If this is intentionally a route/list-scoped family, rename or restructure it so row/item families stay separate from list projections.",
+                message = "Read keyed sources from row or item atoms instead of reading the containing collection. The collection dependency couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name; renaming a collection to hide an item dependency does not fix the dependency.",
                 severity = "error"
             )
         },
@@ -45,7 +45,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atom,
-                message = "Keyed projection atom reads collection atom. This rule is structural: it treats Atom.family members as keyed row/item projections when they read collection/list/aggregate atom names. If this family is truly a row/item projection, read a keyed source/index atom such as SourceAtom, ByKeyAtom, or IndexAtom instead of the collection/list atom that enumerates the family. If this is intentionally a route/list-scoped family, rename or restructure it so row/item families stay separate from list projections.",
+                message = "Read keyed sources from row or item atoms instead of reading the containing collection. The collection dependency couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name; renaming a collection to hide an item dependency does not fix the dependency.",
                 severity = "error"
             )
         }

@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains JsSwitchStatement() as $switch,
     register_diagnostic(
         span = $switch,
-        message = "Rule: avoid imperative switch branching. Why: it hides control flow in Effect code and encourages case-by-case sequencing. Fix: use Match.value, Option.match, Either.match, or Effect.if, then run one explicit pipeline.",
+        message = "Replace the switch statement with Match.value, Option.match, Either.match, or Effect.if. Separate case bodies split the operation into branch-local sequences. Select the result first, then continue in one Effect pipeline. Preserve every case and its behavior.",
         severity = "error"
     )
 }

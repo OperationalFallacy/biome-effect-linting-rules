@@ -64,7 +64,7 @@ function parseArgs(argv) {
     showGuide: "off",
   };
 
-  // Parse only the CLI contract here. Everything else stays a direct Biome flag passthrough.
+  // Accept the supported CLI options and reject unknown flags before running Biome.
   for (let index = 0; index < rest.length; index += 1) {
     const arg = rest[index];
 

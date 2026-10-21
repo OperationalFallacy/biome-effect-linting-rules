@@ -1,20 +1,66 @@
 # lintEffect
 
-`lintEffect` is a Biome rule pack for Effect TypeScript. It enforces flat composition, explicit sequencing, readable control flow, and shapes that are easier to remediate mechanically.
+`lintEffect` is a collection of Biome lint rules for TypeScript projects that use Effect v3. The rules drastically reduce code slop and improve code quality and readability.
 
-The rules target patterns that make Effect code harder to scan and harder to rewrite safely: nested combinator towers, nested `Effect.gen`, sequencing hidden inside collection helpers, callback scaffolding, and wrapper-heavy type patterns. Diagnostics stay local to the offending call site so a human or coding agent can rewrite the exact shape without guessing repository conventions.
+> I developed and maintain these rules for [tradedal.com](https://tradedal.com), an options trading app. I use them to keep the code declarative and reduce unnecessary boilerplate.
+>
+> Roman Naumenko, author and maintainer
 
-For rule authoring guidance, see [`docs/rule-guidance.md`](./docs/rule-guidance.md).
+The rules identify anti-patterns such as nested `Effect.gen` blocks and sequential side effects written with `Effect.all`. Each diagnostic explains the pattern and suggests how to rewrite the code.
 
-## Example
+A migration to Effect v4 is planned for when Tradedal upgrades. The rules encourage declarative code and reduce boilerplate, so some may also be useful in Effect v4 projects.
 
-The animation below shows the rules applied to a file from Effect's Discord bot through Codex. The final result required steering, but the rewrite made code scans and message routing read as typed transforms and made fetch, keep, and drop behavior easier to follow.
+You can use the full rule set or choose a smaller preset. Start with a smaller preset on an existing project.
 
-Source file: https://github.com/Effect-TS/discord-bot/blob/main/packages/discord/src/Messages.ts
+For example, this code uses nested Effect calls to fetch a user and read their profile:
 
-![messages refactor demo](./media/messagesRefactor.gif)
+```ts
+const loadUser = Effect.map(
+  Effect.flatMap(getUserId, (userId) => fetchUser(userId)),
+  (user) => user.profile
+);
+```
 
-## Install
+In a pipeline, the calls appear in the order they run:
+
+```ts
+const loadUser = getUserId.pipe(
+  Effect.flatMap((userId) => fetchUser(userId)),
+  Effect.map((user) => user.profile)
+);
+```
+
+In this demo, Codex uses the rules to refactor [Messages.ts from the Effect Discord bot](https://github.com/Effect-TS/discord-bot/blob/main/packages/discord/src/Messages.ts).
+
+![Messages refactor demo](./media/messagesRefactor.gif)
+
+## Try it on existing code
+
+You can check your code with `npx` without changes to your project's dependencies or configuration. Run this command from your project directory:
+
+```bash
+npx @catenarycloud/linteffect check src --preset=core
+```
+
+The command checks `src` with the core preset and leaves your source files unchanged. It runs Biome with the selected preset in a temporary configuration, independently of your project's Biome settings.
+
+Choose `core`, `web`, `ts-type`, or `full` with `--preset`. The [preset table](#presets) describes each group. If you omit `--preset`, the command uses `full`.
+
+The package includes a [linting guide](./docs/linting.md) for agents to fix lint errors and check the result. Add `--guide` to include its text in the command output, before the diagnostics:
+
+```bash
+npx @catenarycloud/linteffect check src --preset=core --guide
+```
+
+If an agent runs this command, it can read the guide along with the lint results.
+
+Use `--help` for the command options. To try a prerelease, use `@catenarycloud/linteffect@dev` in the command.
+
+## Add it to your project
+
+### Install and configure
+
+Install Biome and the rules with your project's package manager:
 
 ```bash
 npm install -D @biomejs/biome @catenarycloud/linteffect
@@ -28,42 +74,7 @@ yarn add -D @biomejs/biome @catenarycloud/linteffect
 pnpm add -D @biomejs/biome @catenarycloud/linteffect
 ```
 
-If you use Yarn Berry, set `nodeLinker: node-modules`. Biome does not currently resolve Grit plugin paths from package `extends` correctly through Plug'n'Play.
-
-The package publishes the full rule set plus three smaller presets. `core` contains the general Effect composition and control-flow rules. `web` contains the frontend and React rules. `ts-type` contains the type-modeling rules for casts, assertions, sentinel values, and wrapper-heavy shapes. The package root exports the full rule set.
-
-This split keeps preset composition in the package. Repositories extend one published entrypoint instead of assembling rule groups manually.
-
-## CLI
-
-The package also ships a zero-setup CLI for repo-local lint runs. It writes a temporary Biome config with absolute paths to the packaged Grit rules, then runs the bundled Biome binary against the requested files or directories.
-
-```bash
-npx @catenarycloud/linteffect check src/file.ts
-npx @catenarycloud/linteffect check src/messages --preset=core
-npx @catenarycloud/linteffect check src/messages --preset=core --guide-on-linting
-npx @catenarycloud/linteffect guide
-```
-
-`check` runs `biome lint`. `--preset` selects one published preset. `--guide` prints guidance content before lint (check only), and `--guide-on-linting` prints guidance only when diagnostics fail (check only). `guide` prints the packaged agent guidance path, and `guide --print` prints the guidance content. The CLI keeps the surface small and runs the packaged rule set for the chosen preset without local Biome configuration.
-
-Use the CLI to lint an existing Effect codebase without installing the rule pack into that repository. Example:
-
-```bash
-npx -y @catenarycloud/linteffect@dev check packages/discord-bot/src/NoEmbed.ts --preset=core
-```
-
-## Integrate into `biome.jsonc`
-
-Extend `@catenarycloud/linteffect` to load the complete published rule set.
-
-```jsonc
-{
-  "extends": ["@catenarycloud/linteffect"]
-}
-```
-
-Extend `@catenarycloud/linteffect/core` to load the rules that flatten pipelines, expose sequencing, and keep core Effect control flow readable.
+Create a `biome.json` or `biome.jsonc` with the core preset in `extends`. If you already have either file, add the preset to its `extends` array and keep the rest of your configuration:
 
 ```jsonc
 {
@@ -71,186 +82,50 @@ Extend `@catenarycloud/linteffect/core` to load the rules that flatten pipelines
 }
 ```
 
-Extend `@catenarycloud/linteffect/web` to load the frontend and React rules.
+With Yarn Berry, set `nodeLinker: node-modules` so Biome can find the rules in `node_modules`.
 
-```jsonc
-{
-  "extends": ["@catenarycloud/linteffect/web"]
-}
-```
+### Run your project checks
 
-Extend `@catenarycloud/linteffect/ts-type` to load the type-modeling rules for casts, assertions, sentinel values, and wrapper-heavy shapes.
-
-```jsonc
-{
-  "extends": ["@catenarycloud/linteffect/ts-type"]
-}
-```
-
-## Agent guide workflow
-
-The package ships lint guidance in distribution (`docs/linting.md`). In install-path workflows (`biome lint` with `extends`), the agent will not load that file automatically. Instruct the agent to use the linting guide, so it can do better job fixing errors.
-
-Guide entrypoints:
+After you save the configuration, run Biome from the project directory:
 
 ```bash
-npx @catenarycloud/linteffect guide
-npx @catenarycloud/linteffect guide --print
+npx biome lint src
 ```
 
-```bash
-node -p "require.resolve('@catenarycloud/linteffect/agent-guide')"
-```
+Biome now reads the preset as part of your project configuration. Your scripts and CI checks will also use these rules when they run Biome with this configuration.
 
-## Add repository-local rules
+### Presets
 
-If the repository has local rules, layer them on top of the package preset in `biome.jsonc`.
+To change presets, replace the package path in `extends` with one from this table. For a trial run, pass the preset name to the CLI, such as `--preset=core`.
 
-```jsonc
-{
-  "extends": ["@catenarycloud/linteffect"],
-  "plugins": [
-    "./biome-plugins/my-project-specific-rule.grit"
-  ]
-}
-```
+| Package path | Rules included |
+| --- | --- |
+| `@catenarycloud/linteffect` | The full preset, also available as `@catenarycloud/linteffect/recommended` |
+| `@catenarycloud/linteffect/core` | Effect composition, control flow, and sequencing |
+| `@catenarycloud/linteffect/web` | React hooks, atom access, state updates, and Vanilla Extract styles |
+| `@catenarycloud/linteffect/ts-type` | Type assertions, data guards, optional values, and string statuses |
 
-## Tooling advisory
+### Lint findings
 
-Use this rule pack with `@effect/tsgo`, `@typescript/native-preview`, and the `@effect/language-service` TypeScript language-service plugin in `tsconfig.json`.
+Each diagnostic message suggests a rewrite.
 
-Biome enforces code-shape constraints. Tsgo provides fast compile feedback. The Effect language service provides editor and project-mode diagnostics. Together they keep remediation loops fast enough for active development and agent-guided rewrites.
+The [guide](./docs/linting.md) explains the diagnostics and how to fix the code. Ask agents to read it before they make changes. Provide the guide separately when the agent uses your project's Biome setup.
 
-[Effect Language Service](https://github.com/Effect-TS/language-service)
+## Develop and contribute
 
-In the Tradedal.com codebase, a Biome lint over the backend Effect surface processes hundreds of TypeScript files and tens of thousands of lines in about 5 seconds on a Mac Mini M2. That keeps lint feedback in the same general feedback class as project-mode `tsgo` diagnostics. Agents usually lint a smaller file set, so feedback is faster.
+Clone this repository and install its development dependencies with `yarn install`. Run `yarn test` to check the rules and `yarn build` to regenerate project files, run the tests, and create the npm archive.
 
-## How diagnostics help agents
+The rules are in `rules/*.grit`, and the files in `configs/` list the rules for each preset. The project uses Projen. Edit [`.projenrc.ts`](./.projenrc.ts) to change package metadata or build tasks.
 
-Each rule emits one focused diagnostic at the offending call site. The message states the rejected shape, why that shape is harmful, and which Effect shape the rewrite should move toward.
+The [rule development guide](./docs/rule-guidance.md) explains how to write a rule, test it against valid and invalid code, and add it to a preset. Follow [docs/unslop.md](./docs/unslop.md) for documentation and diagnostic messages.
 
-That makes the remediation loop narrow. An agent can lint one file, inspect one message, rewrite one method, and rerun Biome without inferring the repository's preferred architecture from surrounding code.
+## Forks and similar projects
 
-These rules are opinionated. Start with a smaller preset or a few specific rules when applying them to an existing codebase. For better agent rewrites, include the lint guidance in [docs/linting.md](./docs/linting.md) in the agent's lint task.
+This project has been adapted for other linters through community forks:
 
-## Examples
+- [OXC Effect](https://github.com/shekohex/oxc-effect-linting-rules) by shekohex adapts the rules for Oxlint and ESLint. It targets Effect v4.
 
-### Nested Effect ladder to flat pipeline
+Effect also provides tools to check Effect code:
 
-```ts
-const loadUser = Effect.map(
-  Effect.flatMap(getUserId, (userId) => fetchUser(userId)),
-  (user) => user.profile
-);
-```
-
-```ts
-const loadUser = getUserId.pipe(
-  Effect.flatMap((userId) => fetchUser(userId)),
-  Effect.map((user) => user.profile)
-);
-```
-
-The rewrite moves `getUserId` to the pipeline source, keeps the fetch step in `Effect.flatMap`, and keeps the projection in `Effect.map`. Data flow reads in execution order instead of through nested wrappers.
-
-### Nested `Effect.gen` to one generator
-
-```ts
-const saveTrade = Effect.gen(function* () {
-  const user = yield* getUser;
-  return yield* Effect.gen(function* () {
-    const trade = yield* createTrade(user.id);
-    return yield* persistTrade(trade);
-  });
-});
-```
-
-```ts
-const saveTrade = Effect.gen(function* () {
-  const user = yield* getUser;
-  const trade = yield* createTrade(user.id);
-  return yield* persistTrade(trade);
-});
-```
-
-The rewrite removes hidden sequencing and keeps one method responsible for one visible flow.
-
-### Sequential side effects hidden in `Effect.all`
-
-```ts
-const refresh = Effect.all(
-  [
-    Ref.set(statusRef, "loading"),
-    Effect.logDebug("refresh:start"),
-    Reactivity.invalidate(queryKey),
-  ],
-  { concurrency: 1 }
-).pipe(Effect.asVoid);
-```
-
-```ts
-const refresh = Ref.set(statusRef, "loading").pipe(
-  Effect.andThen(Effect.logDebug("refresh:start")),
-  Effect.andThen(Reactivity.invalidate(queryKey))
-);
-```
-
-The rewrite makes sequencing explicit instead of encoding it indirectly through an array plus `concurrency: 1`.
-
-### Block-bodied callback to expression callback
-
-```ts
-const normalized = Option.map(value, (current) => {
-  return current.trim();
-});
-```
-
-```ts
-const normalized = Option.map(value, (current) => current.trim());
-```
-
-The rewrite removes callback scaffolding that adds noise without changing control flow.
-
-## Repository layout
-
-- `biome.jsonc`: package root config entrypoint
-- `configs/*.jsonc`: published presets
-- `docs/linting.md`: lint remediation guidance for humans and coding agents
-- `rules/*.grit`: shipped Biome Grit rules
-- `examples/biome.effect.jsonc`: package usage example
-- `docs/rule-guidance.md`: rule authoring guidance
-- `scripts/refresh-biome-grammars.ts`: refresh step for Biome grammar references
-
-## Usage model
-
-Install `@catenarycloud/linteffect`, extend one published preset in `biome.jsonc`, and add repository-local overrides only where needed. That keeps upgrades, provenance, and version pinning under npm instead of local vendoring.
-
-## Direct rule paths
-
-Direct plugin paths also work when you want a custom subset instead of a preset.
-
-```jsonc
-{
-  "plugins": [
-    "./node_modules/@catenarycloud/linteffect/rules/no-effect-ladder.grit"
-  ]
-}
-```
-
-The package resolves to installed `node_modules/@catenarycloud/linteffect/rules/*.grit` paths because current Biome package-based `extends` resolution does not load Grit plugins relative to the package config file.
-
-## Grammar references
-
-The repository keeps `rules/js.ungram` and `rules/gritql.ungram` only for rule authoring and rule updates.
-
-Refresh them with:
-
-```bash
-yarn refresh:biome-grammars --ref <biome-git-ref>
-```
-
-Use an explicit Biome tag or commit when aligning the package to a specific upstream Biome version.
-
-## Publishing
-
-This repository is Projen-managed. [`.projenrc.ts`](./.projenrc.ts) owns the npm package identity, published files, preset exports, and release automation for `@catenarycloud/linteffect`. The published package excludes the `.ungram` grammar references.
+- [Effect Language Service](https://github.com/Effect-TS/language-service) adds Effect diagnostics, quick fixes, and refactors to your editor. It checks for problems such as missing service requirements and Effects that are never executed.
+- [Effect tsgo](https://github.com/Effect-TS/tsgo) brings those tools to the native TypeScript compiler for TypeScript 7 and newer. It also supports type-aware Effect rules in Oxlint, with an [Oxlint setup guide](https://github.com/Effect-TS/tsgo/blob/main/docs/README.md).

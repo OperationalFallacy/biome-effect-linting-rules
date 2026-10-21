@@ -78,7 +78,7 @@ or {
         },
         register_diagnostic(
             span = $matchCall,
-            message = "Rule: avoid multi-step sequencing inside Match branches. Why: it hides control flow. Fix: select a value in Match, then run one Effect pipeline outside. Avoid data-encoded conditionals (Option.toArray/forEach) that only rewrap the branch.",
+            message = "Move multi-step Effect sequences out of Match branches. Separate case bodies make the operation's execution order harder to follow. Select the required value with Match, then sequence dependent work in one Effect pipeline. Keep skip decisions explicit. Do not disguise a branch as Option.toArray followed by collection traversal.",
             severity = "error"
         )
     },
@@ -95,7 +95,7 @@ or {
         },
         register_diagnostic(
             span = $call,
-            message = "Rule: avoid multi-step sequencing inside Option.match branches. Why: it hides control flow. Prefer selecting a value in Option.match, then run one Effect pipeline outside. Leaf-level flows with local bindings may keep Option.match but should stay linear.",
+            message = "Separate value selection from multi-step Effect work in Option.match. Branch-local sequences make the operation's execution order harder to follow. Select the value first, then continue in one Effect pipeline. Short, linear branches with useful local bindings remain valid.",
             severity = "info"
         )
     }

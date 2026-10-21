@@ -12,8 +12,11 @@ describe("no-effect-side-effect-wrapper", () => {
     );
 
     expect(result.status).toBe(1);
-    expect(result.output).toContain("Rule: avoid Effect.as for side effects.");
-    expect(result.output).toContain("Rule: avoid Effect.zipRight for side effects.");
+    expect(result.diagnostics).toMatchObject([
+      { category: "plugin", severity: "error", location: { start: { line: 7 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 14 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 19 } } },
+    ]);
   });
 
   it("It allows named Effect sequencing without guessing side effects from variable names", () => {
@@ -23,5 +26,6 @@ describe("no-effect-side-effect-wrapper", () => {
     );
 
     expect(result.status).toBe(0);
+    expect(result.diagnostics).toEqual([]);
   });
 });

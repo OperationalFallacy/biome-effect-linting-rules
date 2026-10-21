@@ -10,7 +10,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $call,
-        message = "Rule: avoid nullish re-wrap inside Option.fromNullable. Why: `x ?? null` and `x ?? undefined` add noise and hide source shape. Fix: pass the source directly to Option.fromNullable.",
+        message = "Remove the nullish fallback passed to Option.fromNullable. The function already converts both null and undefined to None, so the fallback repeats its absence handling. Pass the nullable source directly.",
         severity = "error"
     )
 }

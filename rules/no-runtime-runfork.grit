@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains `Runtime.runFork($args)` as $runFork,
     register_diagnostic(
         span = $runFork,
-        message = "Rule: avoid Runtime.runFork. Why: it escapes structured concurrency. Fix: use forkScoped, Stream, or runtime-provided layers instead.",
+        message = "Give background work a managed lifetime instead of starting it with Runtime.runFork. Runtime.runFork leaves cancellation and cleanup to the caller. Use forkScoped, Stream, or the application runtime to tie the work to a defined lifetime and preserve resource cleanup.",
         severity = "error"
     )
 }

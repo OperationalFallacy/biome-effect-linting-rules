@@ -8,7 +8,7 @@ or {
 } where {
     register_diagnostic(
         span = $try,
-        message = "Rule: avoid try/catch in Effect files. Why: it bypasses Effect error channels and reintroduces imperative control flow. Fix: model failures in Effect and handle them with typed errors and Effect combinators.",
+        message = "Represent recoverable failures in the Effect error type instead of a try/catch block. Thrown-exception handling separates those failures from the operation's typed errors. Handle them through Effect error combinators in the pipeline and preserve the original recovery behavior. Keep resource cleanup attached to the operation.",
         severity = "error"
     )
 }

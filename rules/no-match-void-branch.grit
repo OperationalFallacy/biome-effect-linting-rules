@@ -11,7 +11,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $branch,
-        message = "Rule: avoid void Match branches. Why: they hide guard-style control flow. Fix: remove the no-op branch or select a value and run one Effect pipeline outside the Match.",
+        message = "Separate value selection from skipped Effect work. Returning Effect.void from a Match branch mixes the decision with an empty operation. Select the required value with Match and perform the Effect work afterward. Remove redundant empty branches and preserve the original skip behavior.",
         severity = "error"
     )
 }
