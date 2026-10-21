@@ -46,5 +46,6 @@ jspm_packages/
 !/.github/workflows/upgrade-master.yml
 !/.github/pull_request_template.md
 /dist/
+/docs/*-ticket.md
 /refs/
 !/.projenrc.js

@@ -64,6 +64,7 @@
     "configs",
     "examples",
     "docs",
+    "!docs/*-ticket.md",
     "README.md",
     "LICENSE"
   ],

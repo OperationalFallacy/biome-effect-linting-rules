@@ -1,18 +1,31 @@
 language js(typescript, jsx)
 
-JsVariableStatement() as $statement where {
+or {
+    `const $name = $value;` as $statement,
+    `const $name: $type = $value;` as $statement
+} where {
+    // Match this initializer, not declarations nested inside a factory or callback.
     or {
-        $statement <: contains `const $name = Effect.$method($args);`,
-        $statement <: contains `const $name = pipe($args);` where {
-            $statement <: contains `Effect.$method($effectArgs)`
+        $value <: `Effect.$method($args)`,
+        $value <: `pipe($args)` where {
+            $value <: contains `Effect.$method($effectArgs)`
         },
-        $statement <: contains `const $name = $source.pipe($steps);` where {
-            $statement <: contains `Effect.$method($effectArgs)`
+        $value <: `$source.pipe($steps)` where {
+            $value <: contains `Effect.$method($effectArgs)`
         }
     },
+    // Only the nearest lexical scope's direct API return establishes membership.
+    $statement <: not within JsFunctionBody(statements = $statements) where {
+        $statements <: [..., $statement, ...],
+        $statements <: [..., `return { $members }`, ...],
+        $members <: [..., or {
+            JsShorthandPropertyObjectMember(name = $name),
+            JsPropertyObjectMember(value = $name)
+        }, ...]
+    } until or { JsFunctionBody(), JsBlockStatement() },
     register_diagnostic(
         span = $statement,
-        message = "Inline intermediate Effect steps into the operation's pipeline. Staging them in separate constants makes the reader reconstruct validation, decisions, and dependent work across declarations. Use flatMap, andThen, or tap to connect the steps. Extracted functions must perform complete domain operations with clear result types. Keep local constants for final domain values with explicit types.",
+        message = "Inline intermediate Effect steps into the operation's pipeline. Staging them in separate constants makes the reader reconstruct validation, decisions, and dependent work across declarations. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API, including reusable Effect values and Effect.fn or Effect.fnUntraced functions. Local constants for final domain values with explicit types remain valid.",
         severity = "error"
     )
 }

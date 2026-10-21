@@ -14,6 +14,12 @@ Repeated warnings in a large method are a reason to review the method's structur
 
 Keep related Effect steps in execution order in a pipeline or one `Effect.gen`. Sequence dependent effects with `Effect.flatMap` or `Effect.andThen`, and use `Effect.all` to collect results.
 
+Define complete service operations before returning the service API, for example `return { readCount, resetCount }`. Reusable Effect values, pipelines, and functions built with `Effect.fn` or `Effect.fnUntraced` are valid API members. Keep their inferred result, error, and dependency types. Inline intermediate Effect constants inside each operation so its sequence stays together. Returning an operation through the API does not exempt the intermediate steps in its implementation.
+
+The `no-effect-step-const-staging` rule recognizes declarations exposed as direct members of an object returned by the same function. It supports shorthand members and explicit property names. Returns in nested functions, nested objects, and separate blocks do not establish that relationship. Keep intermediate fragments inside their operation rather than adding them to the service API to suppress a diagnostic.
+
+See the [service operation examples](service-effect-operations.md) for allowed API members and intermediate steps that still require changes.
+
 Use `Match.value`, `Option.match`, `Either.match`, or `Effect.if` for decisions, then continue the operation in one pipeline. Compute selected values before you construct an object from them. Keep callback blocks when local bindings or multiple steps improve readability.
 
 Decode external data with Schema and use the decoded values in services. Define optional boolean defaults in the schema so each service reads the same meaning. Put the required validation in that decoder so its result is ready for the operation. Express absence with `Option`, failures with typed errors, and status choices with tagged unions.
