@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.0.9](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.8...v0.0.9) (2026-10-21)
+
+
+### Features
+
+* improve rule diagnostics and add collection and style checks ([e5d7017](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/e5d7017bc2ccbd3f1908cf4a2898981de5f6b592))
+* warn on Effect value keys and improve lint guidance ([c705b6e](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/c705b6e0a813f16c6ee0d88e1a8c4806ec235d7f))
+
+
+### Bug Fixes
+
+* allow complete service operations in staging rule ([ea092d6](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/ea092d62781c8ae85b379d0a506761ee2585a973)), closes [#38](https://github.com/OperationalFallacy/biome-effect-linting-rules/issues/38)
+
 ## [0.0.8](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.7...v0.0.8) (2026-07-17)
 
 
