@@ -47,7 +47,7 @@ JsNewExpression() as $collection where {
     },
     register_diagnostic(
         span = $collection,
-        message = "Use HashMap or HashSet for keys that require structural equality. Effect v4 compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's existing entry. Keep native collections for deliberate instance identity, including values created with Equal.byReference.",
+        message = "Use HashMap or HashSet for keys that require structural equality. Effect v4 compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior.",
         severity = "warn"
     )
 }

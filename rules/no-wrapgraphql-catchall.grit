@@ -18,7 +18,7 @@ file($body) where {
         },
         register_diagnostic(
             span = $catch,
-            message = "Handle GraphQL errors in the response mapping instead of adding Effect.catch after wrapGraphqlCall or applyResponse. Those operations already expose structured GraphQL errors. General recovery here hides the distinction between those outcomes. Preserve each error's information and meaning in the response mapping.",
+            message = "Handle GraphQL errors in the response mapper. wrapGraphqlCall and applyResponse already expose structured GraphQL errors. An additional Effect.catch hides the distinction between those outcomes. Preserve each error's information and meaning in the response mapper.",
             severity = "error"
         )
     },
@@ -30,7 +30,7 @@ file($body) where {
         },
         register_diagnostic(
             span = $catch,
-            message = "Handle GraphQL errors in the response mapping instead of adding Effect.catch after wrapGraphqlCall or applyResponse. Those operations already expose structured GraphQL errors. General recovery here hides the distinction between those outcomes. Preserve each error's information and meaning in the response mapping.",
+            message = "Handle GraphQL errors in the response mapper. wrapGraphqlCall and applyResponse already expose structured GraphQL errors. An additional Effect.catch hides the distinction between those outcomes. Preserve each error's information and meaning in the response mapper.",
             severity = "error"
         )
     }

@@ -27,7 +27,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $provide,
-        message = "Assemble service dependencies with Layer.provide on the service's layer or exported operation. Rebuilding the runtime inside a method mixes dependency setup with the method's work. Define acquisition with Context.Service.make, construct its layer with Layer.effect, and yield dependencies directly in the operation. Keep the application runner's final Effect.provide at application assembly.",
+        message = "Assemble service dependencies with Layer.provide on the service's layer or exported operation. A method that rebuilds the runtime combines dependency setup with domain work. Define acquisition with Context.Service.make, construct its layer with Layer.effect, and yield dependencies directly in the operation. Keep the application runner's final Effect.provide at application assembly.",
         severity = "error"
     )
 }

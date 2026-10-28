@@ -26,12 +26,12 @@ Usage:
 
 Commands:
   check        Run Biome lint with the shipped lintEffect rules.
-  guide        Print the packaged linting guide path or file content.
+  guide        Print the packaged lint guide path or file content.
 
 Options:
   --preset=<name>   One of: full, core, web, ts-type. Default: full
-  --guide           Print linting guide content before lint (check command only).
-  --guide-on-linting  Print linting guide content only when lint emits diagnostics (check command only).
+  --guide           Print lint guide content before lint (check command only).
+  --guide-on-linting  Print lint guide content only when lint emits diagnostics (check command only).
   --print           With 'guide', print file content instead of path.
   --help            Print this help text.
 `;
@@ -64,7 +64,7 @@ function parseArgs(argv) {
     showGuide: "off",
   };
 
-  // Accept the supported CLI options and reject unknown flags before running Biome.
+  // Accept the supported CLI options and reject unknown flags before Biome runs.
   for (let index = 0; index < rest.length; index += 1) {
     const arg = rest[index];
 

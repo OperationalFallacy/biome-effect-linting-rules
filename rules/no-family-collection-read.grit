@@ -15,7 +15,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atom,
-                message = "Read keyed sources from row or item atoms instead of reading the containing collection. The collection dependency couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name; renaming a collection to hide an item dependency does not fix the dependency.",
+                message = "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact.",
                 severity = "error"
             )
         },
@@ -30,7 +30,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atom,
-                message = "Read keyed sources from row or item atoms instead of reading the containing collection. The collection dependency couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name; renaming a collection to hide an item dependency does not fix the dependency.",
+                message = "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact.",
                 severity = "error"
             )
         },
@@ -45,7 +45,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atom,
-                message = "Read keyed sources from row or item atoms instead of reading the containing collection. The collection dependency couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name; renaming a collection to hide an item dependency does not fix the dependency.",
+                message = "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact.",
                 severity = "error"
             )
         }

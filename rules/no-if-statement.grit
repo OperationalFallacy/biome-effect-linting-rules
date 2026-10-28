@@ -18,7 +18,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $cond,
-        message = "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support local branching with ordinary JavaScript control flow.",
+        message = "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow.",
         severity = "error"
     )
 }

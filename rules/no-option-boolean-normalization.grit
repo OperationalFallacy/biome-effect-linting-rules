@@ -10,7 +10,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $call,
-        message = "Define this boolean's default in its Schema instead of normalizing it with Option.match in service logic. Repeated local conversions spread the default policy across services. Decode the input once and use the resulting boolean. Preserve the existing mapping of Some(true) to true, Some(false) to false, and None to false.",
+        message = "Define this boolean's default in its Schema. Repeated Option.match conversions inside services spread the default policy across operations. Decode the input once and use the decoded boolean. Keep Some(true) as true, Some(false) as false, and None as false.",
         severity = "error"
     )
 }

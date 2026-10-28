@@ -21,7 +21,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atomCall,
-                message = "Call atom operations through the atom API instead of wrapping them in Effect.sync. The wrapper adds a callback around an existing read or update and obscures the atom operation. Use get, set, update, modify, or refresh directly and preserve the operation's timing and result.",
+                message = "Call atom operations directly through the atom API. Effect.sync adds a callback around the read or update and obscures the atom operation. Use get, set, update, modify, or refresh directly. Keep the read or update at the same point in the operation and preserve its result.",
                 severity = "error"
             )
         },
@@ -40,7 +40,7 @@ file($body) where {
             },
             register_diagnostic(
                 span = $atomCall,
-                message = "Call atom operations through the atom API instead of wrapping them in Effect.sync. The wrapper adds a callback around an existing read or update and obscures the atom operation. Use get, set, update, modify, or refresh directly and preserve the operation's timing and result.",
+                message = "Call atom operations directly through the atom API. Effect.sync adds a callback around the read or update and obscures the atom operation. Use get, set, update, modify, or refresh directly. Keep the read or update at the same point in the operation and preserve its result.",
                 severity = "error"
             )
         }

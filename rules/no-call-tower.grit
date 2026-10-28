@@ -20,7 +20,7 @@ or {
     },
     register_diagnostic(
         span = $call,
-        message = "Replace nested Effect calls with a pipeline in execution order. Passing one Effect call directly into another makes the reader work through nested arguments to follow the sequence. Start the pipeline with the inner Effect and apply the subsequent steps with pipe, Effect.flatMap, or Effect.andThen.",
+        message = "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply the subsequent steps with pipe, Effect.flatMap, or Effect.andThen.",
         severity = "error"
     )
 }

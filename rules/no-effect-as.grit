@@ -2,7 +2,7 @@ file($body) where {
     $body <: contains bubble `Effect.as($value)` as $call where {
         register_diagnostic(
             span = $call,
-            message = "Use Effect.map to produce the result instead of Effect.as. This rule requires result selection to appear in a callback so the pipeline shows how the final value is produced. Use Effect.asVoid to discard the result. Preserve the preceding work and its execution order.",
+            message = "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order.",
             severity = "error"
         )
     }

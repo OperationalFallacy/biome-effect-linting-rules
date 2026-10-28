@@ -13,7 +13,7 @@ file($body) where {
     not $expr <: `console.$method($_)`,
     register_diagnostic(
         span = $call,
-        message = "Make the wrapped operation explicit in the Effect pipeline. A generic Effect.sync callback hides the call's role in the surrounding work. Use Effect logging operations for logs and give updates or other operations a clear pipeline step. Preserve deferred execution and failure behavior during the rewrite.",
+        message = "Make the wrapped operation explicit in the Effect pipeline. A generic Effect.sync callback hides the call's role among the other steps. Use Effect log functions for logs and give updates or other operations a clear pipeline step. Preserve deferred execution and failure behavior through the rewrite.",
         severity = "warning"
     )
 }

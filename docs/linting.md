@@ -1,6 +1,6 @@
 # Fix lint diagnostics
 
-Read the operation around a diagnostic before editing it. Preserve its result, error handling, and resource cleanup. These rules express package conventions; some diagnostics ask for review of otherwise valid code.
+Read the operation around a diagnostic before you edit it. Preserve its result, error propagation and recovery, and resource cleanup. These rules express package conventions; some diagnostics ask for review of otherwise valid code.
 
 ## Plan the rewrite
 
@@ -8,23 +8,23 @@ Read the repository's development guide and the relevant service contracts befor
 
 Work on one method at a time. Gather its inputs, make the decision explicit, and keep dependent steps in execution order. If the method covers several domain operations, split it into named service methods with clear responsibilities and result types. Each extracted method should perform a complete operation that its callers can understand from its contract.
 
-Repeated warnings in a large method are a reason to review the method's structure. Moving the same steps into wrappers or changing syntax until lint accepts the code can leave the underlying problem intact. Choose the structure first, complete the rewrite, then use lint to check it.
+Repeated diagnostics in a large method call for a review of its structure. A wrapper around the same steps leaves the original problem intact. The same applies to syntax changes whose sole purpose is to satisfy lint. Choose the structure first, complete the rewrite, then use lint to check it.
 
 ## Composition and state
 
 Keep related Effect steps in execution order in a pipeline or one `Effect.gen`. Sequence dependent effects with `Effect.flatMap` or `Effect.andThen`, and use `Effect.all` to collect results.
 
-Define complete service operations before returning the service API, for example `return { readCount, resetCount }`. Reusable Effect values, pipelines, and functions built with `Effect.fn` or `Effect.fnUntraced` are valid API members. Keep their inferred result, error, and dependency types. Inline intermediate Effect constants inside each operation so its sequence stays together. Returning an operation through the API does not exempt the intermediate steps in its implementation.
+Define complete service operations, then return them through the service API, for example `return { readCount, resetCount }`. Reusable Effect values, pipelines, and functions built with `Effect.fn` or `Effect.fnUntraced` are valid API members. Keep their inferred result, error, and dependency types. Inline intermediate Effect constants inside each operation so its sequence stays together. The rule still checks intermediate steps inside each API operation.
 
-The `no-effect-step-const-staging` rule recognizes declarations exposed as direct members of an object returned by the same function. It supports shorthand members and explicit property names. Returns in nested functions, nested objects, and separate blocks do not establish that relationship. Keep intermediate fragments inside their operation rather than adding them to the service API to suppress a diagnostic.
+The `no-effect-step-const-staging` rule recognizes declarations exposed as direct members of an object returned by the same function. It supports shorthand members and explicit property names. Returns in nested functions, nested objects, and separate blocks do not establish that relationship. Keep intermediate fragments inside their operation. The service API must expose complete operations; extra API members must serve a purpose beyond suppression of a diagnostic.
 
 See the [service operation examples](service-effect-operations.md) for allowed API members and intermediate steps that still require changes.
 
 Use `Match.value`, `Option.match`, `Either.match`, or `Effect.if` for decisions, then continue the operation in one pipeline. Compute selected values before you construct an object from them. Keep callback blocks when local bindings or multiple steps improve readability.
 
-Decode external data with Schema and use the decoded values in services. Define optional boolean defaults in the schema so each service reads the same meaning. Put the required validation in that decoder so its result is ready for the operation. Express absence with `Option`, failures with typed errors, and status choices with tagged unions.
+Decode external data with Schema and use the decoded values in services. Define optional boolean defaults in the schema so each service applies the same policy. Put the required validation in that decoder so its result is ready for the operation. Express absence with `Option`, failures with typed errors, and status choices with tagged unions.
 
-Use `Record` operations inside `Struct.evolve` for state updates, and schema constructors to reconstruct models. Encode and decode data when reading or writing serialized values.
+Use `Record` operations inside `Struct.evolve` for state updates, and schema constructors to reconstruct models. Use Schema to decode serialized input and encode output.
 
 The web preset uses atoms for React state and subscriptions. Keep canonical state changes in Effect services, with atoms responsible for reads and commands. An atom action that reads state, copies it with object spread, and writes it back spreads a state transition across separate calls. Give that transition a service operation with an explicit result.
 
@@ -55,19 +55,19 @@ const decodeSupportedFile = Schema.decodeUnknown(SupportedFile);
 
 This schema accepts the two recorded combinations. Separate unions for `kind` and `format` would also admit an image with PDF or a document with PNG. The relation between the fields is part of the contract.
 
-For a larger set of facts, generate one schema member for each allowed combination. The facts can come from a generator, a persisted decision, or a named domain type. Call the decoder with the candidate. The resulting Effect either returns a validated value or fails with a schema parse error.
+For a larger set of facts, generate one schema member for each allowed combination. The facts can come from a generator, a persisted decision, or a named domain type. Call the decoder with the candidate. The decoder's Effect either returns a validated value or fails with a schema parse error.
 
 Keep the relation's definition in one place so consumers use the same decoder. If the operation also classifies a domain outcome, expose that classification through a documented service method that returns the domain type. Keep that domain decision explicit in the service's public contract.
 
 ## Collection keys
 
-Use `HashMap` or `HashSet` when a newly constructed, equal key must find an existing entry. Native `Map` and `Set` compare objects by reference and suit deliberate instance identity or scalar keys.
+Use `HashMap` or `HashSet` for lookups that must find a stored entry through a newly constructed, equal key. Native `Map` and `Set` compare objects by reference and suit deliberate instance identity or scalar keys.
 
-The warning checks explicit key types from local `Data.Class` declarations and `ReturnType` of local arrow functions returning `Data.struct`, `Data.tuple`, or `Data.array`. It supports renamed `Data` imports and namespace imports from `effect/Data`. It checks key definitions in the same file. Inferred keys and imported definitions remain outside its coverage.
+The warning checks explicit key types from local `Data.Class` declarations and `ReturnType` of local arrow functions that return `Data.struct`, `Data.tuple`, or `Data.array`. It supports renamed `Data` imports and namespace imports from `effect/Data`. It checks key definitions in the same file. Inferred keys and imported definitions remain outside its coverage.
 
 ## Vanilla Extract
 
-For an empty style declaration, add the required styling or remove the declaration and its `className` use. Export each generated class under one name and update consumers to use it. Compose private base classes through `style`, `styleVariants`, or recipes.
+For an empty style declaration, add the required styles or remove the declaration and its `className` use. Export each generated class under one name and update consumers to use it. Compose private base classes through `style`, `styleVariants`, or recipes.
 
 ## Verify changes
 
@@ -87,13 +87,13 @@ For a directory cleanup or an assigned directory status check, run a summary for
 npx @biomejs/biome lint <directory> --reporter=summary
 ```
 
-Resolve the assigned files' diagnostics before another summary pass. Record unrelated diagnostics separately and keep the checks focused on the assigned files. Run formatting and import checks according to the repository's source-edit procedure.
+Resolve the assigned files' diagnostics before another summary pass. Record unrelated diagnostics separately and keep the checks focused on the assigned files. Follow the repository's source-edit procedure for the formatter and import checks.
 
 For Markdown-only changes, review the document and its links. Skip Biome when it excludes those files.
 
 ### Check types and behavior
 
-Run the repository's project typecheck after the rewrite. Use the project's compiler settings so tests, dependencies, and declaration output receive the checks expected by that workspace. A compiler command with individual source-file arguments can bypass those settings and produce misleading errors.
+Run the repository's project typecheck after the rewrite. Use the project's compiler configuration so it checks the workspace's tests, dependencies, and declaration output. A compiler command with individual source-file arguments can bypass that configuration and report errors unrelated to the workspace's checks.
 
 Use the repository's test policy to choose the relevant behavior checks. Finish when the edited files satisfy lint and project typechecks and the relevant tests confirm the operation's behavior. Report unrelated project failures separately, with enough detail to distinguish them from the edited files.
 
@@ -103,7 +103,7 @@ For `TS4023` or `TS4020`, inspect the exported type. These errors mean TypeScrip
 
 Keep intermediate Effect and Layer assembly values local. Export stable services, layers, or constructors whose result types consumers can name. If a constructor needs an explicit contract, give it the domain result type, for example `Effect.succeed<Contract>(value)`.
 
-Run the workspace's project typecheck with its declaration settings and inspect the affected files' diagnostics. Use the repository's clean-build procedure if stale compiler artifacts interfere. Preserve package metadata and other files that consumers need to resolve shared imports.
+Run the workspace's project typecheck with its declaration configuration and inspect the affected files' diagnostics. Use the repository's clean-build procedure if stale compiler artifacts interfere. Preserve package metadata and other files that consumers need to resolve shared imports.
 
 ## Inspect Effect types and services
 

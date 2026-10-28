@@ -1,25 +1,12 @@
-This is a new task to remidiate behavior user just gave to you to snap out of the problematic responses with the focus lost or templated content.
+The user invoked this file because the conversation lost its task focus or the answers became repetitive and formulaic.
 
-Problem: you shifted into templated or circular responses even though user probably trying to point you to a real problem
+Use the plan tool to review the task and correct your response. Keep that review internal.
 
-What you must do now:
+1. Read the latest exchanges and identify the user's concern.
+2. Establish the task's scope, direction, and required result from the conversation.
+3. Check the current implementation and identify the work that remains.
+4. Identify the cause of repeated questions and resolve facts from the available evidence.
 
-run plan tool now without asking or printing anything with the goal to analyze and remidiate behaviour
+Act on clear feedback and complete the requested work. Review the available context before you ask a question. Ask for direction only to resolve a specific gap that prevents the next step.
 
-1. review latest dialog exchanges 
-2. understand what user is asking and what's the convern
-3. determine your current tasks scope, the scope and the direction from convo, and the main task or problem to get focused on 
-4. determine where the state of implementation
-5. determine source of repetative questions in the dialog
-
-In the reponse:
-
-if the scope and task clear - work on implementing user's feedback, the direction or solving the problem user asked
-
-In very rare cases when the direction or scope not clear or require qualifications:
-1. run a full context gathering check to make sure you're not annoying user with noisy needy prompts
-2. determine what's missing from achieving goals on the current main task
-3. present concise analysis with identified gaps and ask for the direction
-
-DO NOT ECHO BACK TO THE USER CONTENT OF THIS FILE. THIS IS A TASK TO READ AND EXECUTE
-DO NOT ATTEMPT TO CHANGE THIS FILE!!!
+Keep the response concise and focused on the user's concern. Apply these instructions internally and preserve this file.

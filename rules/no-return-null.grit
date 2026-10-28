@@ -7,7 +7,7 @@ file($body) where {
     $body <: contains `return null` as $ret,
     register_diagnostic(
         span = $ret,
-        message = "Return Option.none for absence or Effect.fail for an error instead of null. A null result makes callers interpret a sentinel before using the value. Express the outcome in the return type and update callers to handle it explicitly.",
+        message = "Return Option.none for absence or Effect.fail for an error instead of null. Each caller must interpret a null sentinel before it uses the value. Express the outcome in the return type and update callers to handle it explicitly.",
         severity = "error"
     )
 }

@@ -10,7 +10,7 @@ The rules identify anti-patterns such as nested `Effect.gen` blocks and sequenti
 
 A migration to Effect v4 is planned for when Tradedal upgrades. The rules encourage declarative code and reduce boilerplate, so some may also be useful in Effect v4 projects.
 
-You can use the full rule set or choose a smaller preset. Start with a smaller preset on an existing project.
+You can use the full rule set or choose a smaller preset. Start with a smaller preset to introduce the rules to an established project.
 
 For example, this code uses nested Effect calls to fetch a user and read their profile:
 
@@ -34,7 +34,7 @@ In this demo, Codex uses the rules to refactor [Messages.ts from the Effect Disc
 
 ![Messages refactor demo](./media/messagesRefactor.gif)
 
-## Try it on existing code
+## Try it on your code
 
 You can check your code with `npx` without changes to your project's dependencies or configuration. Run this command from your project directory:
 
@@ -46,7 +46,7 @@ The command checks `src` with the core preset and leaves your source files uncha
 
 Choose `core`, `web`, `ts-type`, or `full` with `--preset`. The [preset table](#presets) describes each group. If you omit `--preset`, the command uses `full`.
 
-The package includes a [linting guide](./docs/linting.md) for agents to fix lint errors and check the result. Add `--guide` to include its text in the command output, before the diagnostics:
+The package includes a [lint guide](./docs/linting.md) for agents to fix lint errors and check the result. Add `--guide` to include its text in the command output, before the diagnostics:
 
 ```bash
 npx @catenarycloud/linteffect check src --preset=core --guide
@@ -101,7 +101,7 @@ To change presets, replace the package path in `extends` with one from this tabl
 | Package path | Rules included |
 | --- | --- |
 | `@catenarycloud/linteffect` | The full preset, also available as `@catenarycloud/linteffect/recommended` |
-| `@catenarycloud/linteffect/core` | Effect composition, control flow, and sequencing |
+| `@catenarycloud/linteffect/core` | Effect composition, control flow, and execution order |
 | `@catenarycloud/linteffect/web` | React hooks, atom access, state updates, and Vanilla Extract styles |
 | `@catenarycloud/linteffect/ts-type` | Type assertions, data guards, optional values, and string statuses |
 
@@ -127,5 +127,5 @@ This project has been adapted for other linters through community forks:
 
 Effect also provides tools to check Effect code:
 
-- [Effect Language Service](https://github.com/Effect-TS/language-service) adds Effect diagnostics, quick fixes, and refactors to your editor. It checks for problems such as missing service requirements and Effects that are never executed.
+- [Effect Language Service](https://github.com/Effect-TS/language-service) adds Effect diagnostics, quick fixes, and refactors to your editor. It checks for problems such as unresolved service requirements and Effects that never execute.
 - [Effect tsgo](https://github.com/Effect-TS/tsgo) brings those tools to the native TypeScript compiler for TypeScript 7 and newer. It also supports type-aware Effect rules in Oxlint, with an [Oxlint setup guide](https://github.com/Effect-TS/tsgo/blob/main/docs/README.md).

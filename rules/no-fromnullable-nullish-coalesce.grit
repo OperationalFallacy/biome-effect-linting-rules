@@ -10,7 +10,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $call,
-        message = "Remove the nullish fallback passed to Option.fromNullishOr. The function already converts both null and undefined to None, so the fallback repeats its absence handling. Pass the nullable source directly.",
+        message = "Remove the nullish fallback passed to Option.fromNullishOr. The function already converts both null and undefined to None. The fallback duplicates that conversion. Pass the nullable source directly.",
         severity = "error"
     )
 }

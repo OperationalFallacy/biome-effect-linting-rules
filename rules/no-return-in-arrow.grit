@@ -53,7 +53,7 @@ or {
     },
     register_diagnostic(
         span = $ret,
-        message = "Use expression callbacks for single transformations. An explicit return adds unnecessary structure around a single result. Review collection operations as part of the rewrite, including the use of HashMap.set instead of repeated native Map copies. Retain blocks for useful local bindings and multiple steps. Preserve those steps rather than moving them into a wrapper to remove the return.",
+        message = "Use expression callbacks for single transformations. An explicit return adds unnecessary structure around a single result. Review the collection operations. HashMap.set offers an alternative to repeated native Map copies. Retain blocks for useful local bindings and multiple steps. Keep those steps visible in the callback. A wrapper that hides them only changes the syntax.",
         severity = "info"
     )
 }

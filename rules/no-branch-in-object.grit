@@ -36,7 +36,7 @@ or {
 } where {
     register_diagnostic(
         span = $branch,
-        message = "Select values before constructing the object. Match, Option, or Result decisions inside field definitions mix value selection with the result's structure. Compute the decision once, then construct the object from named values. An immediately invoked function around the construction leaves the same problem in place.",
+        message = "Select field values, then construct the object. Match, Option, or Result decisions inside field definitions mix value selection with the result's structure. Compute the decision once, then construct the object from named values. An immediately invoked function around the construction leaves the same problem in place.",
         severity = "error"
     )
 }

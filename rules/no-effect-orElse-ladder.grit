@@ -9,7 +9,7 @@ language js(typescript, jsx)
     },
     register_diagnostic(
         span = $call,
-        message = "Put the Effect sequence and its recovery in one pipeline. Effect.catch around a nested chain makes the reader inspect the inner operation to determine which failures it handles. Sequence the work first and place recovery at the end, preserving the failures it covers and the result it returns.",
+        message = "Put the Effect sequence and its recovery in one pipeline. Effect.catch around a nested chain makes the reader inspect the inner operation to determine which failures it handles. Sequence the work first and place recovery at the end. Preserve the failures that recovery covers and the result it returns.",
         severity = "error"
     )
 }

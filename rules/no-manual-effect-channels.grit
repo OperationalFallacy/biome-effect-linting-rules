@@ -6,7 +6,7 @@ or {
 } where {
     register_diagnostic(
         span = $match,
-        message = "Let TypeScript infer the Effect or Layer type from the composed operation. Manually repeating result, error, and dependency types creates a separate contract to maintain as the flow changes. Remove the explicit Effect.Effect or Layer.Layer annotation and return the operation directly. Expose a service method for a named domain contract.",
+        message = "Let TypeScript infer the Effect or Layer type from the composed operation. Manual result, error, and dependency annotations duplicate a contract that the operation already defines. Remove the explicit Effect.Effect or Layer.Layer annotation and return the operation directly. Expose a service method for a named domain contract.",
         severity = "error"
     )
 }

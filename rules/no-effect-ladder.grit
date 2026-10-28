@@ -18,7 +18,7 @@ or {
     },
     register_diagnostic(
         span = $outerCall,
-        message = "Flatten nested Effect combinators into one pipeline. The nested calls require reading from the inside out to reconstruct execution order. Build shared inputs once with Effect.all or Effect.map, then sequence the dependent steps in the pipeline. Preserve dependencies between steps and the operation's failure behavior.",
+        message = "Put nested Effect combinators in one pipeline. The reader must work from the inner call outward to reconstruct execution order. Build shared inputs once with Effect.all or Effect.map, then sequence the dependent steps in the pipeline. Preserve dependencies between steps and the operation's failure behavior.",
         severity = "error"
     )
 }
