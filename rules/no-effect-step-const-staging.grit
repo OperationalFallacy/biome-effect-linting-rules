@@ -14,6 +14,11 @@ or {
             $value <: contains `Effect.$method($effectArgs)`
         }
     },
+    $value <: not or {
+        `Effect.fn($args)`,
+        `Effect.fnUntraced($args)`,
+        `Effect.fnUntracedEager($args)`
+    },
     // Only the nearest lexical scope's direct API return establishes membership.
     $statement <: not within JsFunctionBody(statements = $statements) where {
         $statements <: [..., $statement, ...],
@@ -25,7 +30,7 @@ or {
     } until or { JsFunctionBody(), JsBlockStatement() },
     register_diagnostic(
         span = $statement,
-        message = "Inline intermediate Effect steps into the operation's pipeline. Staging them in separate constants makes the reader reconstruct validation, decisions, and dependent work across declarations. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API, including reusable Effect values and Effect.fn or Effect.fnUntraced functions. Local constants for final domain values with explicit types remain valid.",
+        message = "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
         severity = "error"
     )
 }

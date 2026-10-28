@@ -1,30 +1,10 @@
-import { Ref, Struct } from "effect";
-import * as EffectRecord from "effect/Record";
+import { Record, Ref, Schema, Struct } from "effect";
 
-declare const stateRef: Ref.Ref<{
-  readonly subscriptions: Readonly<Record<string, unknown>>;
-}>;
-declare const id: string;
-declare const startFrame: number;
-declare const stopFrame: number;
-declare const SocketStateSchema: {
-  readonly fields: {
-    readonly subscriptions: {
-      readonly make: (value: unknown) => unknown;
-    };
-  };
-};
+const Shelf = Schema.Struct({ books: Schema.Record(Schema.String, Schema.Number) });
+declare const shelf: Ref.Ref<typeof Shelf.Type>;
+declare const isbn: string;
 
-export const validDeclarativeRecordSet = Ref.update(
-  stateRef,
-  Struct.evolve({
-    subscriptions: (subscriptions: Record<string, unknown>) =>
-      SocketStateSchema.fields.subscriptions.make(
-        EffectRecord.set(subscriptions, id, {
-          state: "subscribed",
-          startFrame,
-          stopFrame,
-        }),
-      ),
-  }),
+export const addBook = Ref.update(
+  shelf,
+  Struct.evolve({ books: (books) => Shelf.fields.books.make(Record.set(books, isbn, 1)) }),
 );

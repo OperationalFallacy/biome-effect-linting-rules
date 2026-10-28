@@ -1,8 +1,6 @@
 file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
     $body <: contains `Match.value($cond).pipe($args);` as $call where {
         or {
@@ -13,7 +11,7 @@ file($body) where {
         },
     register_diagnostic(
         span = $call,
-        message = "Return the Match result as an expression and move updates or other work out of render. A Match used as a statement runs its selected callback immediately. In a render function, that work runs during render. Keep render expressions pure and perform the work through an Effect runtime action or event handler.",
+        message = "Return the Match result as an expression and move updates or other work out of render. A Match used as a statement runs its selected callback immediately. A render function executes that callback as part of render. Keep render expressions pure and perform the work through an Effect runtime action or event handler.",
         severity = "error"
     )
 }

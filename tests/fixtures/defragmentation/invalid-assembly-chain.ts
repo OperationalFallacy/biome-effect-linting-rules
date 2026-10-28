@@ -19,5 +19,5 @@ const apiErrorFields = (message: string) => ({
 // chain instead of seeing the API error contract in one operation-local block.
 export const apiErrorObject = (error: { readonly message: string }) => ({
   ...apiErrorFields(error.message),
-  stackTrace: Option.fromNullable(error.message).pipe(Option.map((value) => [value])),
+  stackTrace: Option.fromNullishOr(error.message).pipe(Option.map((value) => [value])),
 });

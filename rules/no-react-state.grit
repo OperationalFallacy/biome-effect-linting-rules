@@ -10,7 +10,7 @@ or {
         },
         register_diagnostic(
             span = $fn,
-            message = "Use @effect-atom/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
+            message = "Use @effect/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
             severity = "error"
         )
     },
@@ -25,7 +25,7 @@ or {
         },
         register_diagnostic(
             span = $fn,
-            message = "Use @effect-atom/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
+            message = "Use @effect/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
             severity = "error"
         )
     },
@@ -40,7 +40,7 @@ or {
         },
         register_diagnostic(
             span = $fn,
-            message = "Use @effect-atom/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
+            message = "Use @effect/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
             severity = "error"
         )
     },
@@ -55,7 +55,7 @@ or {
         },
         register_diagnostic(
             span = $fn,
-            message = "Use @effect-atom/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
+            message = "Use @effect/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
             severity = "error"
         )
     }

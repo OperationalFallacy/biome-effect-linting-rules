@@ -11,12 +11,12 @@ export const invalidAsWrapper = Effect.as(
   "ready",
 );
 
-export const invalidZipRightWrapper = Effect.zipRight(
-  invalidate(["quotes"]),
+export const invalidAndThenWrapper = Effect.andThen(
+  invalidate(["books"]),
   nextStep,
 );
 
-export const invalidNestedSetStateWrapper = Effect.zipRight(
+export const invalidNestedSetStateWrapper = Effect.andThen(
   Effect.sync(() => {
     setState({ ready: true });
   }),

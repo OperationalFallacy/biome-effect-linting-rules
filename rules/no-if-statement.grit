@@ -1,16 +1,22 @@
 file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
     or {
         $body <: contains `if ($cond) { $_ }`,
         $body <: contains `if ($cond) $_`
     },
+    $cond <: not within or {
+        `Effect.gen($ownerArgs)`,
+        `Effect.fn($ownerArgs)`,
+        `Effect.fn($ownerName)($ownerBody)`,
+        `Effect.fnUntraced($ownerArgs)`,
+        `Effect.fnUntracedEager($ownerArgs)`,
+        `Effect.suspend($ownerArgs)`
+    },
     register_diagnostic(
         span = $cond,
-        message = "Replace the if statement with an explicit decision in the Effect flow. Separate branch bodies split the operation's sequence. Select the result with Match.value, Option.match, Either.match, or Effect.if, then continue in one pipeline. Preserve the original conditions and branch behavior.",
+        message = "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow.",
         severity = "error"
     )
 }

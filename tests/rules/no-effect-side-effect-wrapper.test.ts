@@ -5,7 +5,7 @@ import { fixtureRoot, lintWithRule } from "./ruleTestHarness";
 const fixtures = fixtureRoot("no-effect-side-effect-wrapper");
 
 describe("no-effect-side-effect-wrapper", () => {
-  it("It catches direct Effect.as and Effect.zipRight wrappers around obvious side effects", () => {
+  it("It catches direct Effect.as and Effect.andThen wrappers around obvious side effects", () => {
     const result = lintWithRule(
       "no-effect-side-effect-wrapper",
       path.join(fixtures, "invalid-direct-side-effect-wrapper.ts"),

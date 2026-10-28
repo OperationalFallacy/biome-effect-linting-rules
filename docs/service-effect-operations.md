@@ -31,7 +31,7 @@ The returned members are complete operations. Both `Effect.fn` and `Effect.fnUnt
 
 ## Intermediate steps still require changes
 
-Returning an operation through the API does not exempt the steps inside its implementation.
+The rule still checks the steps inside each API operation.
 
 ```ts
 import { Effect, Ref } from "effect";
@@ -48,10 +48,10 @@ export function makeCounterApi(counter: Ref.Ref<number>) {
 }
 ```
 
-The rule reports `snapshot`. Inline that intermediate pipeline into the operation. The first example shows the resulting `readCount` implementation.
+The rule reports `snapshot`. Inline that intermediate pipeline into the operation. Use the `readCount` implementation from the first example.
 
 ## Scope of the exception
 
-The declaration and the direct object return must belong to the same function body. Returns inside nested functions and references inside nested objects do not exempt the declaration. Matching names in another scope do not establish API membership.
+The declaration and the direct object return must belong to the same function body. Returns inside nested functions and references inside nested objects do not exempt the declaration. Names that match in another scope do not establish API membership.
 
-Keep intermediate steps inside their operation. Adding fragments to the public API solely to suppress the diagnostic changes the contract without fixing the fragmented implementation.
+Keep intermediate steps inside their operation. Extra API members alter the public contract and leave the fragmented implementation intact. Expose complete operations through the API and fix their intermediate steps in place.

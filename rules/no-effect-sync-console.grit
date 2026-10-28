@@ -1,8 +1,6 @@
 file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
     or {
         $body <: contains `Effect.sync($fn)` as $call,
@@ -11,7 +9,7 @@ file($body) where {
     $fn <: contains `console.$method($_)`,
     register_diagnostic(
         span = $call,
-        message = "Use Effect logging operations instead of console calls inside Effect.sync. Console logging bypasses Effect's log context and levels. Replace the call with Effect.log, Effect.logDebug, or the appropriate Effect logging operation. Remove logs that serve no purpose.",
+        message = "Use Effect.log, Effect.logDebug, or another Effect log function for logs in Effect code. A console call inside Effect.sync bypasses Effect's log context and levels. Choose the Effect log function that matches the required level, or remove a log that serves no purpose.",
         severity = "error"
     )
 }

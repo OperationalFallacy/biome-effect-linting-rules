@@ -1,20 +1,9 @@
 import { Ref } from "effect";
 
-declare const stateRef: Ref.Ref<{
-  readonly subscriptions: Readonly<Record<string, unknown>>;
-}>;
-declare const id: string;
-declare const startFrame: number;
-declare const stopFrame: number;
+declare const shelf: Ref.Ref<{ readonly books: Readonly<Record<string, number>> }>;
+declare const isbn: string;
 
-export const invalidSpreadPatch = Ref.update(stateRef, (state) => ({
+export const addBook = Ref.update(shelf, (state) => ({
   ...state,
-  subscriptions: {
-    ...state.subscriptions,
-    [id]: {
-      state: "subscribed",
-      startFrame,
-      stopFrame,
-    },
-  },
+  books: { ...state.books, [isbn]: 1 },
 }));

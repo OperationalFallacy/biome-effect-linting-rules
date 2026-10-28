@@ -1,4 +1,4 @@
-import { useAtom } from "@effect-atom/atom-react";
+import { useAtom } from "@effect/atom-react";
 
 declare const statusAtom: unknown;
 

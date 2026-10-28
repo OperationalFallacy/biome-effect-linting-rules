@@ -1,14 +1,12 @@
 file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
     $body <: contains `const $castName = $value as $type` as $call,
     $call <: not `const $_ = $_ as const`,
     register_diagnostic(
         span = $call,
-        message = "Decode the value with the required Schema instead of asserting its model type with as. The assertion asks TypeScript to trust a shape without validating the value against the schema. Read the fields from the decoded result and preserve validation failures.",
+        message = "Decode the value with the required Schema instead of a model type assertion through as. The assertion supplies a type without runtime validation against the schema. Read the fields from the decoded result and preserve validation failures.",
         severity = "error"
     )
 }

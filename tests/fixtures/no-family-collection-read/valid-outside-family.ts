@@ -1,12 +1,5 @@
-import { Atom } from "@effect-atom/atom-react";
+import { Atom } from "effect/reactivity";
 
-export const eventHistoryCollectionAtom = Atom.make((get) => ({
-  rows: [],
-  keys: [],
-  nextToken: null,
-}));
+const booksCollectionAtom = Atom.make<readonly string[]>([]);
 
-export const eventHistoryCountAtom = Atom.make((get) => {
-  const collection = get(eventHistoryCollectionAtom);
-  return collection.rows.length;
-});
+export const bookCountAtom = Atom.make((get) => get(booksCollectionAtom).length);

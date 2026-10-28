@@ -33,7 +33,7 @@
   "devDependencies": {
     "commit-and-tag-version": "^12",
     "constructs": "^10.0.0",
-    "effect": "^3.21.2",
+    "effect": "4.0.6",
     "projen": "^0.98.34",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
@@ -55,7 +55,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "0.0.8-dev.2",
+  "version": "0.0.9",
   "packageManager": "yarn@4.6.0",
   "files": [
     "biome.jsonc",

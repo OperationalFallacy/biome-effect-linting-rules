@@ -1,13 +1,11 @@
-import { Atom } from "@effect-atom/atom-react";
+import { Effect } from "effect";
+import { Atom } from "effect/reactivity";
 
-export const searchResultsAtom = Atom.make((get) => ({
-  rows: [],
-  keys: [],
-}));
+const bookResultsAtom = Atom.make<readonly string[]>([]);
 
-export const searchResultRowAtom = Atom.family((key: string) =>
-  Atom.make(() => {
-    const results = Atom.get(searchResultsAtom);
-    return results.rows.find((row) => row.key === key);
-  }),
+export const bookAtom = Atom.family((isbn: string) =>
+  Atom.make(Effect.gen(function* () {
+    const books = yield* Atom.get(bookResultsAtom);
+    return books.find((book) => book === isbn);
+  })),
 );

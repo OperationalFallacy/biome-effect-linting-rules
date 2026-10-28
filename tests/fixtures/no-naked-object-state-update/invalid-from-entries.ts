@@ -1,36 +1,11 @@
 import { Ref, Struct } from "effect";
 
-declare const stateRef: Ref.Ref<{
-  readonly subscriptions: Readonly<Record<string, unknown>>;
-}>;
-declare const id: string;
-declare const startFrame: number;
-declare const stopFrame: number;
-declare const SocketStateSchema: {
-  readonly fields: {
-    readonly subscriptions: {
-      readonly make: (value: unknown) => unknown;
-    };
-  };
-};
+declare const shelf: Ref.Ref<{ readonly books: Readonly<Record<string, number>> }>;
+declare const isbn: string;
 
-export const invalidEntryRebuild = Ref.update(
-  stateRef,
+export const addBook = Ref.update(
+  shelf,
   Struct.evolve({
-    subscriptions: (subscriptions: Record<string, unknown>) =>
-      SocketStateSchema.fields.subscriptions.make(
-        Object.fromEntries(
-          Array.from(Object.entries(subscriptions)).concat([
-            [
-              id,
-              {
-                state: "subscribed",
-                startFrame,
-                stopFrame,
-              },
-            ],
-          ]),
-        ),
-      ),
+    books: (books) => Object.fromEntries([...Object.entries(books), [isbn, 1]]),
   }),
 );

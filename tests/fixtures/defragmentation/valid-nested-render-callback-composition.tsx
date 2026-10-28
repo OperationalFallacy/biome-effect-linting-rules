@@ -1,38 +1,24 @@
-import { Match, Option, Result } from "effect";
+import { Match, Option } from "effect";
+import { AsyncResult } from "effect/reactivity";
 
-type Item = {
-  readonly id: string;
-};
+type Book = { readonly isbn: string };
+type Search = AsyncResult.AsyncResult<{ readonly books: readonly Book[] }, Error>;
 
-type LoadState = Result.Result<
-  {
-    readonly items: readonly Item[];
-    readonly waiting: boolean;
-  },
-  Error
->;
-
-export function ItemPanel(props: { readonly loadState: LoadState; readonly id: string }) {
-  const content = Result.match(props.loadState, {
-    onFailure: () => <div>Unable to load item</div>,
-    onInitial: () => <div>Loading item</div>,
-    onSuccess(success) {
-      const isWaiting = success.waiting;
-      const itemOption = Option.fromNullable(
-        success.items.find((item) => item.id === props.id),
-      );
-      const missingItemView = <div>Item record not found</div>;
-
-      return Option.match(itemOption, {
-        onNone: () =>
-          Match.value(isWaiting).pipe(
-            Match.when(true, () => <div>Loading item</div>),
-            Match.orElse(() => missingItemView),
-          ),
-        onSome: (item) => <div>{item.id}</div>,
+export function BookPanel(props: { readonly search: Search; readonly isbn: string }) {
+  const content = AsyncResult.match(props.search, {
+    onFailure: () => <div>Search failed</div>,
+    onInitial: () => <div>Search pending</div>,
+    onSuccess({ value }) {
+      const book = Option.fromNullishOr(value.books.find((item) => item.isbn === props.isbn));
+      const missing = <div>No matching book</div>;
+      return Option.match(book, {
+        onNone: () => Match.value(value.books.length).pipe(
+          Match.when(0, () => <div>Empty catalog</div>),
+          Match.orElse(() => missing),
+        ),
+        onSome: (item) => <div>{item.isbn}</div>,
       });
     },
   });
-
   return content;
 }

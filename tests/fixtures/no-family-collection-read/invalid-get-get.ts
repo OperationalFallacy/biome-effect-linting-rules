@@ -1,13 +1,7 @@
-import { Atom } from "@effect-atom/atom-react";
+import { Atom } from "effect/reactivity";
 
-export const VisibleEventsAtom = Atom.make((get) => ({
-  rows: [],
-  keys: [],
-}));
+const VisibleBooksAtom = Atom.make<readonly string[]>([]);
 
-export const eventSourceRowAtom = Atom.family((key: string) =>
-  Atom.make((get) => {
-    const VisibleEvents = get.get(VisibleEventsAtom);
-    return VisibleEvents.rows.find((row) => row.key === key);
-  }),
+export const bookAtom = Atom.family((isbn: string) =>
+  Atom.make((get) => get.get(VisibleBooksAtom).find((book) => book === isbn)),
 );

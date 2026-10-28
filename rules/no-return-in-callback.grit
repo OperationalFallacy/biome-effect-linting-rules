@@ -8,7 +8,7 @@ or {
     $block <: contains `return $value` as $ret,
     register_diagnostic(
         span = $ret,
-        message = "Use an expression callback for a single transformation. A function body and explicit return add unnecessary structure around one result. Retain blocks and explicit returns for short Effect branches with useful local bindings. Preserve those bindings rather than hiding them in a wrapper.",
+        message = "Use an expression callback for a single transformation. A function body and explicit return add unnecessary structure around one result. Retain blocks and explicit returns for short Effect branches with useful local bindings. Keep those bindings visible in the callback. A wrapper that hides them only changes the syntax.",
         severity = "info"
     )
 }

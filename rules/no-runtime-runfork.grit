@@ -1,13 +1,21 @@
 file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
-    $body <: contains `Runtime.runFork($args)` as $runFork,
+    or {
+        $body <: contains `Effect.runFork($args)` as $runFork,
+        $body <: contains `Effect.runForkWith($args)` as $runFork
+    },
+    $runFork <: within or {
+        `Effect.gen($ownerArgs)`,
+        `Effect.fn($ownerArgs)`,
+        `Effect.fn($ownerName)($ownerBody)`,
+        `Effect.fnUntraced($ownerArgs)`,
+        `Effect.fnUntracedEager($ownerArgs)`
+    },
     register_diagnostic(
         span = $runFork,
-        message = "Give background work a managed lifetime instead of starting it with Runtime.runFork. Runtime.runFork leaves cancellation and cleanup to the caller. Use forkScoped, Stream, or the application runtime to tie the work to a defined lifetime and preserve resource cleanup.",
+        message = "Use Effect.forkChild or Effect.forkScoped for work started inside an Effect operation. Effect.runFork and Effect.runForkWith start independent runtime fibers and leave cancellation and cleanup to the caller. Keep service work attached to its parent fiber or Scope. Reserve the run functions for application startup and external integrations.",
         severity = "error"
     )
 }

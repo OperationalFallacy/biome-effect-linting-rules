@@ -1,8 +1,6 @@
 file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
     or {
         $body <: contains `Match.when(true, () => Effect.void)` as $branch,
@@ -11,7 +9,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $branch,
-        message = "Separate value selection from skipped Effect work. Returning Effect.void from a Match branch mixes the decision with an empty operation. Select the required value with Match and perform the Effect work afterward. Remove redundant empty branches and preserve the original skip behavior.",
+        message = "Separate value selection from skipped Effect work. An Effect.void branch mixes a decision with an empty operation. Select the required value with Match and perform the Effect work afterward. Remove redundant empty branches and preserve the original skip behavior.",
         severity = "error"
     )
 }

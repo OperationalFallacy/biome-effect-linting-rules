@@ -1,20 +1,16 @@
 import { Match, Schema } from "effect";
 
-// Allowed: one Schema defines and decodes the external representation.
-const ResourceFailureSchema = Schema.TaggedStruct("ResourceFailure", {
-  code: Schema.String,
-  message: Schema.String,
+const MissingBook = Schema.TaggedStruct("MissingBook", {
+  isbn: Schema.String,
+  shelf: Schema.String,
 });
 
-type ResourceFailure = typeof ResourceFailureSchema.Type;
+type MissingBook = typeof MissingBook.Type;
+export const decodeMissingBook = Schema.decodeUnknownEffect(MissingBook);
 
-const decodeResourceFailure = Schema.decodeUnknown(ResourceFailureSchema);
-
-// Allowed: Match discriminates data that already has a decoded domain type.
-const failureCode = (failure: ResourceFailure) =>
+// Match narrows an already decoded domain value.
+export const missingIsbn = (failure: MissingBook) =>
   Match.value(failure).pipe(
-    Match.tag("ResourceFailure", ({ code }) => code),
+    Match.tag("MissingBook", ({ isbn }) => isbn),
     Match.exhaustive,
   );
-
-export { decodeResourceFailure, failureCode };
