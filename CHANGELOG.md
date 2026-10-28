@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.0-dev.0](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.9...v0.1.0-dev.0) (2026-10-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate dev rules to Effect v4
+* finish Effect v4 rules and sanitize public examples
+
+### Features
+
+* finish Effect v4 rules and sanitize public examples ([fede562](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/fede5626b2bf3b2ec914ff7bf5e37e93de3fbb3a))
+* migrate dev rules to Effect v4 ([28c95f0](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/28c95f0145e379f0cdc8cd83d3f90a4b27438bf4))
+
+
+### Miscellaneous Chores
+
+* **dev:** prepare Effect v4 prerelease ([3b5e9aa](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/3b5e9aaa42c3ec78dbd05ee87a4f87fe07a10c2c))
+
 ## [0.0.9](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.8...v0.0.9) (2026-10-21)
 
 
