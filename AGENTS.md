@@ -2,7 +2,7 @@
 
 ## Project
 
-`lintEffect` publishes `@catenarycloud/linteffect`, a collection of Biome Grit rules for Effect v3 TypeScript projects. The package contains rules, preset configurations, and a CLI. Grit files match source syntax and emit diagnostics; the tests run those rules through Biome.
+`lintEffect` publishes `@catenarycloud/linteffect`, a collection of Biome Grit rules for Effect v4 TypeScript projects. The package contains rules, preset configurations, and a CLI. Grit files match source syntax and emit diagnostics; the tests run those rules through Biome.
 
 Read [README.md](README.md) for package usage. For rule changes, read [docs/rule-guidance.md](docs/rule-guidance.md). The packaged [docs/linting.md](docs/linting.md) tells consumers and their agents how to interpret diagnostics and fix their code.
 

@@ -1,23 +1,6 @@
-file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect/atom-react"`
-    },
-    or {
-        $body <: contains `function*`,
-        $body <: contains `const $name = yield* $runtime.pipe(`,
-        $body <: contains `Effect.provide($layer)` as $provide where {
-            $provide <: not contains `,`
-        }
-    },
-    or {
-        $body <: contains `function*`,
-        $body <: contains `return yield* $runtime.pipe(`,
-        $body <: contains `Effect.provide($layer)` as $provide where {
-            $provide <: not contains `,`
-        }
-    },
+language js(typescript, jsx)
+
+JsCallExpression(callee = `Effect.provide`) as $provide where {
     $provide <: within or {
         `Effect.gen($ownerArgs)`,
         `Effect.fn($ownerArgs)`,
@@ -27,7 +10,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $provide,
-        message = "Assemble service dependencies with Layer.provide on the service's layer or exported operation. A method that rebuilds the runtime combines dependency setup with domain work. Define acquisition with Context.Service.make, construct its layer with Layer.effect, and yield dependencies directly in the operation. Keep the application runner's final Effect.provide at application assembly.",
+        message = "Assemble service dependencies with Layer.provide on the service's layer or exported operation. A method that rebuilds its service graph combines dependency setup with domain work. Define acquisition in the service's make Effect, construct its layer with Layer.effect, and yield dependencies directly in the operation. Keep the application runner's final Effect.provide at application assembly.",
         severity = "error"
     )
 }

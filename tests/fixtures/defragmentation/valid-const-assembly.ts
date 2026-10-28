@@ -1,40 +1,27 @@
-import { Data, Schema as S } from "effect";
+import { Data, Schema } from "effect";
 
-type BoundaryFailureCause = Data.TaggedEnum<{
-  Transport: { readonly cause: unknown };
+type Availability = Data.TaggedEnum<{
+  InStock: { readonly copies: number };
+  OnOrder: { readonly expected: string };
 }>;
 
-// Proper usage: ADT constructor declarations are domain declarations, not
-// operation assembly fragments.
-const BoundaryFailureCause = Data.taggedEnum<BoundaryFailureCause>();
+const Availability = Data.taggedEnum<Availability>();
+const BookInput = Schema.Struct({ isbn: Schema.String, title: Schema.String });
 
-// Proper usage: schema declarations define a reusable boundary contract. They
-// are not staged helper pieces for one object assembly.
-const BoundaryInputSchema = S.Struct({
-  id: S.String,
-});
-
-type ApiErrorShape = {
-  readonly errorData: string | undefined;
-  readonly errorMessage: string;
-  readonly errorType: string;
-  readonly stackTrace: ReadonlyArray<string> | undefined;
+type BookLabel = {
+  readonly isbn: string;
+  readonly text: string;
 };
 
-// Proper usage: the helper has an explicit domain return type and binds the
-// final contract-shaped value locally before returning it. It does not assemble
-// the object from unrelated module-level fragments.
-const apiErrorObject = (error: ApiErrorShape): ApiErrorShape => {
-  const apiError: ApiErrorShape = {
-    errorData: error.errorData,
-    errorMessage: error.errorMessage,
-    errorType: error.errorType,
-    stackTrace: error.stackTrace,
+// A complete return contract is not an object fragment.
+const bookLabel = (input: typeof BookInput.Type): BookLabel => {
+  const label: BookLabel = {
+    isbn: input.isbn,
+    text: input.title.trim(),
   };
-
-  return apiError;
+  return label;
 };
 
-export const decodeBoundaryInput = S.decodeUnknown(BoundaryInputSchema);
-export const makeTransportFailure = BoundaryFailureCause.Transport;
-export const mapApiError = apiErrorObject;
+export const decodeBook = Schema.decodeUnknownEffect(BookInput);
+export const inStock = Availability.InStock;
+export const labelBook = bookLabel;

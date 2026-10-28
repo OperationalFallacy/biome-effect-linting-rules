@@ -10,7 +10,7 @@ describe("no-naked-object-state-update", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-spread.ts"));
     expect(result.status).toBe(1);
     expect(result.diagnostics).toMatchObject([
-      { category: "plugin", severity: "error", location: { start: { line: 10 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 6 } } },
     ]);
   });
 
@@ -18,7 +18,7 @@ describe("no-naked-object-state-update", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-from-entries.ts"));
     expect(result.status).toBe(1);
     expect(result.diagnostics).toMatchObject([
-      { category: "plugin", severity: "error", location: { start: { line: 22 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 9 } } },
     ]);
   });
 
@@ -35,8 +35,8 @@ describe("no-naked-object-state-update", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-object-assign.ts"));
     expect(result.status).toBe(1);
     expect(result.diagnostics).toMatchObject([
-      { category: "plugin", severity: "error", location: { start: { line: 11 } } },
-      { category: "plugin", severity: "error", location: { start: { line: 12 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 7 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 8 } } },
     ]);
   });
 
@@ -44,9 +44,9 @@ describe("no-naked-object-state-update", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-json-transition.ts"));
     expect(result.status).toBe(1);
     expect(result.diagnostics).toMatchObject([
-      { category: "plugin", severity: "error", location: { start: { line: 12 } } },
-      { category: "plugin", severity: "error", location: { start: { line: 14 } } },
-      { category: "plugin", severity: "error", location: { start: { line: 14 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 8 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 10 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 10 } } },
     ]);
   });
 

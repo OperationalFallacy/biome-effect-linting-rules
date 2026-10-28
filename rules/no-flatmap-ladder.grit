@@ -10,7 +10,7 @@ or {
         register_diagnostic(
             span = $call,
             message = "Combine nested Effect.flatMap calls into one pipeline. The reader must follow separate callback bodies to understand the dependent steps and their execution order. Build shared inputs once with Effect.all or Effect.map, then pass them through the dependent steps in order.",
-            severity = "warning"
+            severity = "warn"
         )
     },
     or {
@@ -22,7 +22,7 @@ or {
         register_diagnostic(
             span = $call,
             message = "Replace Effect.map followed by Effect.flatten with Effect.flatMap. The map produces an Effect and the flatten joins it. The pair splits one transformation across two calls. Effect.flatMap expresses that transformation directly.",
-            severity = "warning"
+            severity = "warn"
         )
     }
 }

@@ -1,81 +1,41 @@
-import { Option, Result } from "effect";
+import { Option } from "effect";
+import { AsyncResult } from "effect/reactivity";
 
-type TaskState = "PENDING" | "WORKING" | "FAILED";
+type Book = { readonly isbn: string; readonly available: boolean };
+type BookView = { readonly label: string; readonly note: Option.Option<string> };
+declare const selectedBook: AsyncResult.AsyncResult<Book, Error>;
+declare const useReserved: (isbn: string) => boolean;
+declare const useReserve: (isbn: string) => () => void;
 
-type TaskView = {
-  readonly state: TaskState;
-  readonly failureMessage: string | null;
-  readonly id: string;
-};
+const bookViews = {
+  available: () => ({ label: "Available", note: Option.none<string>() }),
+  borrowed: () => ({ label: "Borrowed", note: Option.some("Join the wait list") }),
+} satisfies Record<string, () => BookView>;
 
-type TaskPresentation = {
-  readonly label: string;
-  readonly message: Option.Option<string>;
-};
+const bookView = (book: Book): BookView =>
+  bookViews[book.available ? "available" : "borrowed"]();
 
-type TaskPresenter = (task: TaskView) => TaskPresentation;
-
-declare const pendingResult: Result.Result<Option.Option<TaskView>, Error>;
-declare const readAtom: (key: string) => boolean;
-declare const approveAtom: (key: string) => () => void;
-
-// Proper usage: a small message adapter returns a primitive presentation value.
-const taskFailureMessage = (task: TaskView) =>
-  Option.match(Option.fromNullable(task.failureMessage), {
-    onNone: () => "No failure reason returned.",
-    onSome: (message) => message,
+export function ReserveBook({ fallbackIsbn }: { readonly fallbackIsbn: string }) {
+  const isbn = AsyncResult.match(selectedBook, {
+    onInitial: () => fallbackIsbn,
+    onFailure: () => fallbackIsbn,
+    onSuccess: ({ value }) => value.isbn,
   });
-
-// Proper usage: this table declares the stable UI state mapping in one place.
-const taskPresenters = {
-  PENDING: () => ({
-    label: "Pending",
-    message: Option.some("Waiting for confirmation."),
-  }),
-  WORKING: () => ({
-    label: "Working",
-    message: Option.none<string>(),
-  }),
-  FAILED: (task) => ({
-    label: "Failed",
-    message: Option.some(taskFailureMessage(task)),
-  }),
-} satisfies Record<TaskState, TaskPresenter>;
-
-const taskPresentation = (task: TaskView): TaskPresentation =>
-  taskPresenters[task.state](task);
-
-export function TaskControl({ fallbackId }: { readonly fallbackId: string }) {
-  // Proper usage: React hook order can require a decoded key before later hooks.
-  const taskKey = Result.match(pendingResult, {
-    onFailure: () => fallbackId,
-    onSuccess: (taskOption) =>
-      Option.match(taskOption, {
-        onNone: () => fallbackId,
-        onSome: (task) => task.id,
-      }),
-  });
-  const submitting = readAtom(taskKey);
-  const approve = approveAtom(taskKey);
-
-  // Proper usage: a local render helper keeps conditional JSX readable.
-  const renderApprovalAction = () =>
-    Option.match(Option.some(submitting), {
+  const reserved = useReserved(isbn);
+  const reserve = useReserve(isbn);
+  const renderButton = () =>
+    Option.match(Option.some(reserved), {
       onNone: () => null,
-      onSome: (isSubmitting) => (
-        <button type="button" disabled={isSubmitting} onClick={approve}>
-          Confirm
-        </button>
-      ),
+      onSome: (disabled) => <button type="button" disabled={disabled} onClick={reserve}>Reserve</button>,
     });
-
   return (
     <section>
-      {Option.match(Result.getOrElse(pendingResult, () => Option.none()), {
-        onNone: () => null,
-        onSome: (task) => taskPresentation(task).label,
+      {AsyncResult.match(selectedBook, {
+        onInitial: () => "Select a book",
+        onFailure: () => "Unavailable",
+        onSuccess: ({ value }) => bookView(value).label,
       })}
-      {renderApprovalAction()}
+      {renderButton()}
     </section>
   );
 }

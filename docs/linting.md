@@ -20,13 +20,15 @@ The `no-effect-step-const-staging` rule recognizes declarations exposed as direc
 
 See the [service operation examples](service-effect-operations.md) for allowed API members and intermediate steps that still require changes.
 
-Use `Match.value`, `Option.match`, `Either.match`, or `Effect.if` for decisions, then continue the operation in one pipeline. Compute selected values before you construct an object from them. Keep callback blocks when local bindings or multiple steps improve readability.
+Use ordinary control flow inside `Effect.gen`, `Effect.fn`, or `Effect.fnUntraced` to express decisions in execution order. Use `Match.value`, `Option.match`, or `Result.match` for decisions outside those operations. Compute selected values before you construct an object from them. Keep callback blocks when local bindings or multiple steps improve readability.
 
 Decode external data with Schema and use the decoded values in services. Define optional boolean defaults in the schema so each service applies the same policy. Put the required validation in that decoder so its result is ready for the operation. Express absence with `Option`, failures with typed errors, and status choices with tagged unions.
 
-Use `Record` operations inside `Struct.evolve` for state updates, and schema constructors to reconstruct models. Use Schema to decode serialized input and encode output.
+Use `Record` operations inside `Struct.evolve` for state updates. Reconstruct validated models with their schema constructors, such as `Model.make`. Decode serialized input with `Schema.decodeUnknownEffect` and encode output with `Schema.encodeEffect`. Apply `Schema.fromJsonString` to the model schema for JSON input and output.
 
 The web preset uses atoms for React state and subscriptions. Keep canonical state changes in Effect services, with atoms responsible for reads and commands. An atom action that reads state, copies it with object spread, and writes it back spreads a state transition across separate calls. Give that transition a service operation with an explicit result.
+
+The `Atom` operations `get`, `set`, `update`, `modify`, and `refresh` return Effects. Yield them or compose them directly. Registry instance methods, such as `registry.get` and `registry.set`, execute synchronously. Keep `Effect.sync` around those methods when an Effect must defer their execution.
 
 Keyed row atoms read keyed sources; list projections read collections. Provide dependencies on services or exported operations and reuse that runtime for their work.
 
@@ -39,7 +41,7 @@ For example, suppose a document supports PDF and an image supports PNG:
 ```ts
 import { Schema } from "effect";
 
-const SupportedFile = Schema.Union(
+const SupportedFile = Schema.Union([
   Schema.Struct({
     kind: Schema.Literal("document"),
     format: Schema.Literal("pdf"),
@@ -48,9 +50,9 @@ const SupportedFile = Schema.Union(
     kind: Schema.Literal("image"),
     format: Schema.Literal("png"),
   }),
-);
+]);
 
-const decodeSupportedFile = Schema.decodeUnknown(SupportedFile);
+const decodeSupportedFile = Schema.decodeUnknownEffect(SupportedFile);
 ```
 
 This schema accepts the two recorded combinations. Separate unions for `kind` and `format` would also admit an image with PDF or a document with PNG. The relation between the fields is part of the contract.
@@ -63,7 +65,7 @@ Keep the relation's definition in one place so consumers use the same decoder. I
 
 Use `HashMap` or `HashSet` for lookups that must find a stored entry through a newly constructed, equal key. Native `Map` and `Set` compare objects by reference and suit deliberate instance identity or scalar keys.
 
-The warning checks explicit key types from local `Data.Class` declarations and `ReturnType` of local arrow functions that return `Data.struct`, `Data.tuple`, or `Data.array`. It supports renamed `Data` imports and namespace imports from `effect/Data`. It checks key definitions in the same file. Inferred keys and imported definitions remain outside its coverage.
+Effect compares ordinary objects and arrays structurally through its equality APIs. The warning checks explicit object, tuple, and array key types, local `Data.Class` declarations, and `ReturnType` of local factories that return objects or arrays. It supports renamed `Data` imports and namespace imports from `effect/Data`. It checks key definitions in the same file. Inferred keys and imported definitions remain outside its coverage. Use `Equal.byReference` for values whose identity must distinguish otherwise equal instances.
 
 ## Vanilla Extract
 

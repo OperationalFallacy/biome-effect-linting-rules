@@ -1,10 +1,8 @@
 file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect/atom-react"`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
-    $body <: contains bubble `Option.as($value, $result)` as $call where {
+    $body <: contains bubble JsCallExpression(callee = `Option.as`) as $call where {
         register_diagnostic(
             span = $call,
             message = "Replace Option.as with Option.map or Option.match. This rule requires value selection to appear in a callback so the result choice is explicit. Return the selected value from the callback and preserve the Option's absence behavior.",

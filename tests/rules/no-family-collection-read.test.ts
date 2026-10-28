@@ -10,7 +10,7 @@ describe("no-family-collection-read", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-get.ts"));
     expect(result.status).toBe(1);
     expect(result.diagnostics).toMatchObject([
-      { category: "plugin", severity: "error", location: { start: { line: 13 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 6 } } },
     ]);
   });
 
@@ -18,7 +18,7 @@ describe("no-family-collection-read", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-get-get.ts"));
     expect(result.status).toBe(1);
     expect(result.diagnostics).toMatchObject([
-      { category: "plugin", severity: "error", location: { start: { line: 10 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 6 } } },
     ]);
   });
 
@@ -26,7 +26,7 @@ describe("no-family-collection-read", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-atom-get.ts"));
     expect(result.status).toBe(1);
     expect(result.diagnostics).toMatchObject([
-      { category: "plugin", severity: "error", location: { start: { line: 10 } } },
+      { category: "plugin", severity: "error", location: { start: { line: 8 } } },
     ]);
   });
 

@@ -1,23 +1,16 @@
 language js(typescript, jsx)
 
 or {
-    `const $name = Effect.$outer($first)` as $outerCall,
-    `const $name: $type = Effect.$outer($first)` as $outerCall,
-    `const $name = Effect.$outer($first, $second)` as $outerCall,
-    `const $name: $type = Effect.$outer($first, $second)` as $outerCall,
-    `return Effect.$outer($first)` as $outerCall,
-    `return Effect.$outer($first, $second)` as $outerCall
+    `const $name = $call` as $statement,
+    `const $name: $type = $call` as $statement,
+    `return $call` as $statement
 } where {
-    or {
-        $first <: `Effect.$inner($innerOnly)` where {
-            $innerOnly <: `Effect.$deep($_)`
-        },
-        $first <: `Effect.$inner($innerFirst, $innerSecond)` where {
-            $innerFirst <: `Effect.$deep($_)`
-        }
-    },
+    $call <: JsCallExpression(callee = `Effect.$outer`, arguments = JsCallArguments(args = [$first, ...])),
+    $first <: JsCallExpression(callee = `Effect.$inner`, arguments = JsCallArguments(args = [$deep, ...])),
+    $deep <: JsCallExpression(callee = `Effect.$method`),
+    $outer <: not or { `runPromise`, `runPromiseWith`, `runPromiseExit`, `runPromiseExitWith`, `runSync`, `runSyncWith`, `runSyncExit`, `runSyncExitWith`, `runFork`, `runForkWith` },
     register_diagnostic(
-        span = $outerCall,
+        span = $statement,
         message = "Put nested Effect combinators in one pipeline. The reader must work from the inner call outward to reconstruct execution order. Build shared inputs once with Effect.all or Effect.map, then sequence the dependent steps in the pipeline. Preserve dependencies between steps and the operation's failure behavior.",
         severity = "error"
     )

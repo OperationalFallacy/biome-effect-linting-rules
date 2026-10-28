@@ -1,10 +1,10 @@
 language js(typescript, jsx)
 
 `const $name = $val` as $sentinel where {
-    $val <: `"$_"`,
+    $val <: JsStringLiteralExpression(),
     register_diagnostic(
         span = $sentinel,
-        message = "Represent status choices with domain values instead of string tokens. String statuses make callers interpret text to determine the outcome. Use a domain result, tagged union, Option, or Either for status choices. This rule flags string constants as potential status tokens. Ordinary text constants are outside the status convention. Resolve the status representation at its definition and callers. A new name or location leaves the same token in place.",
+        message = "Represent status choices with domain values instead of string tokens. String statuses make callers interpret text to determine the outcome. Use a domain result, tagged union, Option, or Result for status choices. This rule flags string constants as potential status tokens. Ordinary text constants are outside the status convention. Resolve the status representation at its definition and callers. A new name or location leaves the same token in place.",
         severity = "error"
     )
 }

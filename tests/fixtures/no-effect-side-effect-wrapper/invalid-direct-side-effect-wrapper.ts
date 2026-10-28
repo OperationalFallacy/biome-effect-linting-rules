@@ -11,8 +11,8 @@ export const invalidAsWrapper = Effect.as(
   "ready",
 );
 
-export const invalidZipRightWrapper = Effect.andThen(
-  invalidate(["quotes"]),
+export const invalidAndThenWrapper = Effect.andThen(
+  invalidate(["books"]),
   nextStep,
 );
 

@@ -1,8 +1,6 @@
 file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect/atom-react"`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
     or {
         $body <: contains `Effect.async($args)` as $async,
@@ -10,7 +8,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $async,
-        message = "Replace Effect.async with Effect.callback. Effect v4 renamed the callback constructor. Keep registration inside the callback and return its cleanup Effect to release resources on interruption. Use Stream for a sequence of events and acquire/release for resource lifetimes.",
+        message = "Replace Effect.async with Effect.callback. Effect.callback registers asynchronous work and resumes the operation through a callback. Keep registration inside the callback and return its cleanup Effect to release resources on interruption. Use Stream for a sequence of events and acquire/release for resource lifetimes.",
         severity = "error"
     )
 }

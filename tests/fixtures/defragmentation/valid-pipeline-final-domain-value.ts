@@ -6,21 +6,21 @@ type RouteParts = {
 };
 
 const routeParts = (
-  querySymbol: string | readonly string[] | undefined,
+  querySlug: string | readonly string[] | undefined,
   asPath: string,
 ): RouteParts => ({
   path: asPath.split("?")[0] ?? "",
-  query: querySymbol,
+  query: querySlug,
 });
 
 // Proper usage: the returned pipeline stays continuous and does not consume a
 // locally staged pipeline fragment.
-export const resolveRouteSymbol = (
-  querySymbol: string | readonly string[] | undefined,
+export const resolveBookSlug = (
+  querySlug: string | readonly string[] | undefined,
   asPath: string,
 ): Option.Option<string> =>
   pipe(
-    Option.fromNullable(routeParts(querySymbol, asPath).query),
+    Option.fromNullishOr(routeParts(querySlug, asPath).query),
     Option.filter((value): value is string => typeof value === "string"),
     Option.map((value) => decodeURIComponent(value).toUpperCase()),
   );

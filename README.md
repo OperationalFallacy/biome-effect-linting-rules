@@ -1,14 +1,14 @@
 # lintEffect
 
-`lintEffect` is a collection of Biome lint rules for TypeScript projects that use Effect v3. The rules drastically reduce code slop and improve code quality and readability.
+`lintEffect` is a collection of Biome lint rules for TypeScript projects that use Effect v4. The rules keep related steps together and make each operation's decisions and results explicit.
 
 > I developed and maintain these rules for [tradedal.com](https://tradedal.com), an options trading app. I use them to keep the code declarative and reduce unnecessary boilerplate.
 >
 > Roman Naumenko, author and maintainer
 
-The rules identify anti-patterns such as nested `Effect.gen` blocks and sequential side effects written with `Effect.all`. Each diagnostic explains the pattern and suggests how to rewrite the code.
+The rules identify anti-patterns such as nested `Effect.gen` blocks and consecutive operations written with `Effect.all`. Each diagnostic explains the pattern and suggests how to rewrite the code.
 
-A migration to Effect v4 is planned for when Tradedal upgrades. The rules encourage declarative code and reduce boilerplate, so some may also be useful in Effect v4 projects.
+The rules target Effect 4.0.6. Version 0.0.9 is the final release for Effect v3. Read the [migration notes](docs/effect-v4.md) for the changes.
 
 You can use the full rule set or choose a smaller preset. Start with a smaller preset to introduce the rules to an established project.
 

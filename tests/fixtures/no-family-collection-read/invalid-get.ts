@@ -1,16 +1,7 @@
-import { Atom } from "@effect/atom-react";
+import { Atom } from "effect/reactivity";
 
-export const eventsHistoryCollectionAtom = Atom.make((get) => ({
-  rows: [],
-  keys: [],
-  nextToken: null,
-}));
+const booksCollectionAtom = Atom.make<readonly string[]>([]);
 
-export const eventSourceRowAtom = Atom.family((key: string) =>
-  Atom.make((get) => {
-    // Derailment: this single-row atom reads the whole collection atom to find one row.
-    // Row lookup should read a keyed source or index atom instead.
-    const collection = get(eventsHistoryCollectionAtom);
-    return collection.rows.find((row) => row.key === key);
-  }),
+export const bookAtom = Atom.family((isbn: string) =>
+  Atom.make((get) => get(booksCollectionAtom).find((book) => book === isbn)),
 );

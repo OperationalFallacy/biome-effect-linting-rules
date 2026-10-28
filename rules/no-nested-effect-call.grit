@@ -1,35 +1,13 @@
 file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect/atom-react"`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
-    $body <: contains bubble `Effect.$outer($first)` as $outerCall where {
-        or {
-            $first <: `Effect.$inner($innerOnly)` where {
-                $innerOnly <: `Effect.$deep($_)`
-            },
-            $first <: `Effect.$inner($innerFirst, $innerSecond)` where {
-                $innerFirst <: `Effect.$deep($_)`
-            }
-        },
+    $body <: contains bubble JsCallExpression(callee = `Effect.$outer`, arguments = JsCallArguments(args = [$first, ...])) as $call where {
+        $first <: JsCallExpression(callee = `Effect.$inner`, arguments = JsCallArguments(args = [$deep, ...])),
+        $deep <: JsCallExpression(callee = `Effect.$method`),
+        $outer <: not or { `runPromise`, `runPromiseWith`, `runPromiseExit`, `runPromiseExitWith`, `runSync`, `runSyncWith`, `runSyncExit`, `runSyncExitWith`, `runFork`, `runForkWith` },
         register_diagnostic(
-            span = $outerCall,
-            message = "Put nested Effect calls into one pipeline in execution order. The reader must work from the inner call outward to reconstruct the sequence. Compute the required inputs first, then connect the dependent Effect steps in the same pipeline.",
-            severity = "error"
-        )
-    },
-    $body <: contains bubble `Effect.$outer($first, $second)` as $outerCall where {
-        or {
-            $first <: `Effect.$inner($innerOnly)` where {
-                $innerOnly <: `Effect.$deep($_)`
-            },
-            $first <: `Effect.$inner($innerFirst, $innerSecond)` where {
-                $innerFirst <: `Effect.$deep($_)`
-            }
-        },
-        register_diagnostic(
-            span = $outerCall,
+            span = $call,
             message = "Put nested Effect calls into one pipeline in execution order. The reader must work from the inner call outward to reconstruct the sequence. Compute the required inputs first, then connect the dependent Effect steps in the same pipeline.",
             severity = "error"
         )

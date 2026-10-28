@@ -1,48 +1,23 @@
-// Flags Effect.sync wrappers around atomRegistry/Atom operations; use Atom conversions directly.
-file($body) where {
+language js(typescript, jsx)
+
+or {
+    `Effect.sync($callback)`,
+    `Effect.sync<$types>($callback)`
+} where {
     or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect/atom-react"`
+        $callback <: `() => { $statements }` where {
+            $statements <: [..., `return $operation`, ...]
+        },
+        $callback <: `() => $operation`
     },
     or {
-        $body <: contains bubble `Effect.sync($fn)` where {
-            or {
-                $fn <: contains `atomRegistry.$method($args)` as $atomCall,
-                $fn <: contains `Atom.$method($args)` as $atomCall,
-                $fn <: contains `Atom.$method<$types>($args)` as $atomCall
-            },
-            or {
-                $method <: `get`,
-                $method <: `set`,
-                $method <: `update`,
-                $method <: `modify`,
-                $method <: `refresh`
-            },
-            register_diagnostic(
-                span = $atomCall,
-                message = "Call atom operations directly through the atom API. Effect.sync adds a callback around the read or update and obscures the atom operation. Use get, set, update, modify, or refresh directly. Keep the read or update at the same point in the operation and preserve its result.",
-                severity = "error"
-            )
-        },
-        $body <: contains bubble `Effect.sync<$types>($fn)` where {
-            or {
-                $fn <: contains `atomRegistry.$method($args)` as $atomCall,
-                $fn <: contains `Atom.$method($args)` as $atomCall,
-                $fn <: contains `Atom.$method<$types>($args)` as $atomCall
-            },
-            or {
-                $method <: `get`,
-                $method <: `set`,
-                $method <: `update`,
-                $method <: `modify`,
-                $method <: `refresh`
-            },
-            register_diagnostic(
-                span = $atomCall,
-                message = "Call atom operations directly through the atom API. Effect.sync adds a callback around the read or update and obscures the atom operation. Use get, set, update, modify, or refresh directly. Keep the read or update at the same point in the operation and preserve its result.",
-                severity = "error"
-            )
-        }
-    }
+        $operation <: `Atom.$method($args)` as $atomCall,
+        $operation <: `Atom.$method<$types>($args)` as $atomCall
+    },
+    $method <: or { `get`, `set`, `update`, `modify`, `refresh` },
+    register_diagnostic(
+        span = $atomCall,
+        message = "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set.",
+        severity = "error"
+    )
 }

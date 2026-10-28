@@ -1,110 +1,38 @@
 language js(typescript, jsx)
 
 or {
-    `const $name = pipe($expr, $rest)` as $call where {
-        $expr <: contains `Effect.$fn($_)`,
-        register_diagnostic(
-            span = $call,
-            message = "Inline this Effect pipeline alias at its use. The extra name makes the reader find another declaration to understand the steps. Extracted domain functions must perform complete operations with clear result contracts. A new wrapper around the same pipeline still requires that extra lookup.",
-            severity = "error"
-        )
+    `const $name = $value;` as $statement,
+    `const $name: $type = $value;` as $statement,
+    `function $name($params) { return $value; }` as $statement,
+    `function $name($params): $type { return $value; }` as $statement
+} where {
+    or {
+        $statement <: JsFunctionDeclaration() where {
+            $value <: `Effect.$method($args)`
+        },
+        $value <: `pipe($source, $steps)` where {
+            $source <: `Effect.$method($args)`
+        },
+        $value <: JsArrowFunctionExpression(body = $operation) where {
+            or {
+                $operation <: `Effect.$method($args)`,
+                $operation <: `pipe($source, $steps)` where {
+                    $source <: `Effect.$method($args)`
+                }
+            }
+        }
     },
-    `const $name: $type = pipe($expr, $rest)` as $call where {
-        $expr <: contains `Effect.$fn($_)`,
-        register_diagnostic(
-            span = $call,
-            message = "Inline this Effect pipeline alias at its use. The extra name makes the reader find another declaration to understand the steps. Extracted domain functions must perform complete operations with clear result contracts. A new wrapper around the same pipeline still requires that extra lookup.",
-            severity = "error"
-        )
-    },
-    `const $name = () => pipe($expr, $rest)` as $call where {
-        $expr <: contains `Effect.$fn($_)`,
-        register_diagnostic(
-            span = $call,
-            message = "Inline this Effect pipeline wrapper at its call site. The wrapper makes the reader inspect another function to understand the steps. Extracted domain functions must perform complete operations with clear result contracts. A second wrapper around the same fragment preserves the indirection.",
-            severity = "error"
-        )
-    },
-    `const $name = ($params) => pipe($expr, $rest)` as $call where {
-        $expr <: contains `Effect.$fn($_)`,
-        register_diagnostic(
-            span = $call,
-            message = "Inline this Effect pipeline wrapper at its call site. The wrapper makes the reader inspect another function to understand the steps. Extracted domain functions must perform complete operations with clear result contracts. A second wrapper around the same fragment preserves the indirection.",
-            severity = "error"
-        )
-    },
-    `const $name: $type = () => pipe($expr, $rest)` as $call where {
-        $expr <: contains `Effect.$fn($_)`,
-        register_diagnostic(
-            span = $call,
-            message = "Inline this Effect pipeline wrapper at its call site. The wrapper makes the reader inspect another function to understand the steps. Extracted domain functions must perform complete operations with clear result contracts. A second wrapper around the same fragment preserves the indirection.",
-            severity = "error"
-        )
-    },
-    `const $name: $type = ($params) => pipe($expr, $rest)` as $call where {
-        $expr <: contains `Effect.$fn($_)`,
-        register_diagnostic(
-            span = $call,
-            message = "Inline this Effect pipeline wrapper at its call site. The wrapper makes the reader inspect another function to understand the steps. Extracted domain functions must perform complete operations with clear result contracts. A second wrapper around the same fragment preserves the indirection.",
-            severity = "error"
-        )
-    },
-    `const $name = () => Effect.$fn($args)` as $call where {
-        register_diagnostic(
-            span = $call,
-            message = "Call the Effect operation directly. This wrapper forwards its arguments and adds another function to inspect without a complete domain operation of its own. Give an extracted function a complete domain responsibility and a clear result contract.",
-            severity = "error"
-        )
-    },
-    `const $name = ($params) => Effect.$fn($args)` as $call where {
-        register_diagnostic(
-            span = $call,
-            message = "Call the Effect operation directly. This wrapper forwards its arguments and adds another function to inspect without a complete domain operation of its own. Give an extracted function a complete domain responsibility and a clear result contract.",
-            severity = "error"
-        )
-    },
-    `const $name: $type = () => Effect.$fn($args)` as $call where {
-        register_diagnostic(
-            span = $call,
-            message = "Call the Effect operation directly. This wrapper forwards its arguments and adds another function to inspect without a complete domain operation of its own. Give an extracted function a complete domain responsibility and a clear result contract.",
-            severity = "error"
-        )
-    },
-    `const $name: $type = ($params) => Effect.$fn($args)` as $call where {
-        register_diagnostic(
-            span = $call,
-            message = "Call the Effect operation directly. This wrapper forwards its arguments and adds another function to inspect without a complete domain operation of its own. Give an extracted function a complete domain responsibility and a clear result contract.",
-            severity = "error"
-        )
-    },
-    `function $name($params) { return pipe($expr, $rest) }` as $call where {
-        $expr <: contains `Effect.$fn($_)`,
-        register_diagnostic(
-            span = $call,
-            message = "Inline this Effect pipeline wrapper at its call site. The wrapper makes the reader inspect another function to understand the steps. Extracted domain functions must perform complete operations with clear result contracts. A second wrapper around the same fragment preserves the indirection.",
-            severity = "error"
-        )
-    },
-    `function $name($params): $type { return pipe($expr, $rest) }` as $call where {
-        $expr <: contains `Effect.$fn($_)`,
-        register_diagnostic(
-            span = $call,
-            message = "Inline this Effect pipeline wrapper at its call site. The wrapper makes the reader inspect another function to understand the steps. Extracted domain functions must perform complete operations with clear result contracts. A second wrapper around the same fragment preserves the indirection.",
-            severity = "error"
-        )
-    },
-    `function $name($params) { return Effect.$fn($args) }` as $call where {
-        register_diagnostic(
-            span = $call,
-            message = "Call the Effect operation directly. This wrapper forwards its arguments and adds another function to inspect without a complete domain operation of its own. Give an extracted function a complete domain responsibility and a clear result contract.",
-            severity = "error"
-        )
-    },
-    `function $name($params): $type { return Effect.$fn($args) }` as $call where {
-        register_diagnostic(
-            span = $call,
-            message = "Call the Effect operation directly. This wrapper forwards its arguments and adds another function to inspect without a complete domain operation of its own. Give an extracted function a complete domain responsibility and a clear result contract.",
-            severity = "error"
-        )
-    }
+    $statement <: not within JsFunctionBody(statements = $statements) where {
+        $statements <: [..., $statement, ...],
+        $statements <: [..., `return { $members }`, ...],
+        $members <: [..., or {
+            JsShorthandPropertyObjectMember(name = $name),
+            JsPropertyObjectMember(value = $name)
+        }, ...]
+    } until or { JsFunctionBody(), JsBlockStatement() },
+    register_diagnostic(
+        span = $statement,
+        message = "Inline this intermediate Effect wrapper into its operation. The extra declaration makes the reader inspect another name to understand the steps. Define complete reusable operations with Effect.fn or Effect.fnUntraced, or expose them through the service's returned API. Keep intermediate fragments inside each operation. A new wrapper around the same fragment leaves the extra lookup in place.",
+        severity = "error"
+    )
 }

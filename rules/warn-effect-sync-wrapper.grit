@@ -1,8 +1,6 @@
 file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect/atom-react"`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
     or {
         $body <: contains `Effect.sync($fn)` as $call,
@@ -14,6 +12,6 @@ file($body) where {
     register_diagnostic(
         span = $call,
         message = "Make the wrapped operation explicit in the Effect pipeline. A generic Effect.sync callback hides the call's role among the other steps. Use Effect log functions for logs and give updates or other operations a clear pipeline step. Preserve deferred execution and failure behavior through the rewrite.",
-        severity = "warning"
+        severity = "warn"
     )
 }

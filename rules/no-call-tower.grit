@@ -1,16 +1,7 @@
 language js(typescript, jsx)
 
-or {
-    `Effect.$outer($first)` as $call where {
-        $first <: `Effect.$inner($innerArgs)`
-    },
-    `Effect.$outer($first, $second)` as $call where {
-        or {
-            $first <: `Effect.$inner($innerArgs)`,
-            $second <: `Effect.$inner($innerArgs)`
-        }
-    }
-} where {
+JsCallExpression(callee = `Effect.$outer`, arguments = JsCallArguments(args = $arguments)) as $call where {
+    $arguments <: [..., JsCallExpression(callee = `Effect.$inner`), ...],
     $inner <: not or { `fn`, `fnUntraced`, `fnUntracedEager` },
     $outer <: not or {
         `fn`, `fnUntraced`, `fnUntracedEager`,
