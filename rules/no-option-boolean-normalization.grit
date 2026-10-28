@@ -2,7 +2,7 @@ file($body) where {
     or {
         $body <: contains `"effect"`,
         $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+        $body <: contains `"@effect/atom-react"`
     },
     or {
         $body <: contains `Option.match($input, { onSome: ($value) => $value === true, onNone: () => false })` as $call,

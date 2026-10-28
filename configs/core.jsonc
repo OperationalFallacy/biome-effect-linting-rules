@@ -20,7 +20,6 @@
     "./node_modules/@catenarycloud/linteffect/rules/warn-native-collections.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-never.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-async.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-effect-fn-generator.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-sync-console.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-do.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-bind.grit",

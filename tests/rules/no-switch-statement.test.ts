@@ -25,7 +25,7 @@ describe("no-switch-statement", () => {
     ]);
   });
 
-  it("It catches switch statements in files that import from '@effect-atom/atom-react'", () => {
+  it("It catches switch statements in files that import from '@effect/atom-react'", () => {
     const result = lintWithRule(ruleName, path.join(fixtures, "invalid-switch-atom-react.ts"));
     expect(result.status).toBe(1);
     expect(result.diagnostics).toMatchObject([

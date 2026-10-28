@@ -1,4 +1,4 @@
-import { Atom } from "@effect-atom/atom-react";
+import { Atom } from "@effect/atom-react";
 
 export const eventsHistoryCollectionAtom = Atom.make((get) => ({
   rows: [],

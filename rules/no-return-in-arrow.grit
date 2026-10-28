@@ -47,6 +47,10 @@ or {
         $block <: contains `return $value` as $ret
     }
 } where {
+    $callee <: not or {
+        `Schema.makeFilter`, `Schema.refine`, `Schema.declare`,
+        `S.makeFilter`, `S.refine`, `S.declare`
+    },
     register_diagnostic(
         span = $ret,
         message = "Use expression callbacks for single transformations. An explicit return adds unnecessary structure around a single result. Review collection operations as part of the rewrite, including the use of HashMap.set instead of repeated native Map copies. Retain blocks for useful local bindings and multiple steps. Preserve those steps rather than moving them into a wrapper to remove the return.",

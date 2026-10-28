@@ -4,9 +4,9 @@ declare const loadState: Effect.Effect<readonly string[]>;
 declare const publishState: Effect.Effect<void>;
 declare const invalidateQuotes: Effect.Effect<void>;
 
-export const namedEffectSequence = Effect.zipRight(loadState, invalidateQuotes);
+export const namedEffectSequence = Effect.andThen(loadState, invalidateQuotes);
 
 export const continuousTap = loadState.pipe(
   Effect.tap(() => publishState),
-  Effect.zipRight(invalidateQuotes),
+  Effect.andThen(invalidateQuotes),
 );

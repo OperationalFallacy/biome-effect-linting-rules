@@ -1,4 +1,4 @@
-import { Atom, Result } from "@effect-atom/atom-react";
+import { Atom, Result } from "@effect/atom-react";
 import { Data, Match, Option } from "effect";
 import * as A from "effect/Array";
 

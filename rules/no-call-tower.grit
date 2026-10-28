@@ -11,6 +11,13 @@ or {
         }
     }
 } where {
+    $inner <: not or { `fn`, `fnUntraced`, `fnUntracedEager` },
+    $outer <: not or {
+        `fn`, `fnUntraced`, `fnUntracedEager`,
+        `runSync`, `runSyncWith`, `runSyncExit`, `runSyncExitWith`,
+        `runPromise`, `runPromiseWith`, `runPromiseExit`, `runPromiseExitWith`,
+        `runFork`, `runForkWith`
+    },
     register_diagnostic(
         span = $call,
         message = "Replace nested Effect calls with a pipeline in execution order. Passing one Effect call directly into another makes the reader work through nested arguments to follow the sequence. Start the pipeline with the inner Effect and apply the subsequent steps with pipe, Effect.flatMap, or Effect.andThen.",

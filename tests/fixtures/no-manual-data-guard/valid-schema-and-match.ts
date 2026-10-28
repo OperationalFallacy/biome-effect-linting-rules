@@ -8,7 +8,7 @@ const ResourceFailureSchema = Schema.TaggedStruct("ResourceFailure", {
 
 type ResourceFailure = typeof ResourceFailureSchema.Type;
 
-const decodeResourceFailure = Schema.decodeUnknown(ResourceFailureSchema);
+const decodeResourceFailure = Schema.decodeUnknownEffect(ResourceFailureSchema);
 
 // Allowed: Match discriminates data that already has a decoded domain type.
 const failureCode = (failure: ResourceFailure) =>

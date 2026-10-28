@@ -1,4 +1,4 @@
-import { Atom } from "@effect-atom/atom-react";
+import { Atom } from "@effect/atom-react";
 
 export const searchResultsAtom = Atom.make((get) => ({
   rows: [],

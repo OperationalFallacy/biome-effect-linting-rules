@@ -1,4 +1,4 @@
-// No Effect or @effect-atom/atom-react import — the rule must not apply to
+// No Effect or @effect/atom-react import — the rule must not apply to
 // plain TypeScript files that do not opt into the Effect ecosystem.
 
 export const describe = (kind: "a" | "b" | "c"): string => {

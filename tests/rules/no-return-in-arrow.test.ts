@@ -18,7 +18,7 @@ describe("no-return-in-arrow", () => {
     ]);
   });
 
-  it("It allows Schema.filter predicate returns", () => {
+  it("It allows Schema.makeFilter predicate returns", () => {
     const result = lintWithRule(
       "no-return-in-arrow",
       path.join(fixtures, "valid-schema-filter-return.ts"),

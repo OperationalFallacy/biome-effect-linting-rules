@@ -6,7 +6,7 @@ or {
         `const $name: $type = Effect.flatMap($args)` as $call,
         `return Effect.flatMap($args)` as $call
     } where {
-        $args <: contains `Effect.flatMap($_)`,
+        $args <: contains `Effect.flatMap($_)` until JsFunctionExpression(),
         register_diagnostic(
             span = $call,
             message = "Combine nested Effect.flatMap calls into one pipeline. Spreading dependent steps across callback bodies makes their execution order harder to follow. Build shared inputs once with Effect.all or Effect.map, then pass them through the dependent steps in order.",

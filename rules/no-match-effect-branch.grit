@@ -10,7 +10,7 @@ or {
                     $branch <: contains `Effect.map($_)`,
                     $branch <: contains `Effect.andThen($_)`,
                     $branch <: contains `Effect.tap($_)`,
-                    $branch <: contains `Effect.zipRight($_)`,
+                    $branch <: contains `Effect.andThen($_)`,
                     $branch <: contains `pipe($_)`,
                     $branch <: contains `Stream.$method($_)`
                 }
@@ -22,7 +22,7 @@ or {
                     $block <: contains `Effect.map($_)`,
                     $block <: contains `Effect.andThen($_)`,
                     $block <: contains `Effect.tap($_)`,
-                    $block <: contains `Effect.zipRight($_)`,
+                    $block <: contains `Effect.andThen($_)`,
                     $block <: contains `pipe($_)`,
                     $block <: contains `Stream.$method($_)`
                 }
@@ -34,7 +34,7 @@ or {
                     $branch <: contains `Effect.map($_)`,
                     $branch <: contains `Effect.andThen($_)`,
                     $branch <: contains `Effect.tap($_)`,
-                    $branch <: contains `Effect.zipRight($_)`,
+                    $branch <: contains `Effect.andThen($_)`,
                     $branch <: contains `pipe($_)`,
                     $branch <: contains `Stream.$method($_)`
                 }
@@ -46,7 +46,7 @@ or {
                     $block <: contains `Effect.map($_)`,
                     $block <: contains `Effect.andThen($_)`,
                     $block <: contains `Effect.tap($_)`,
-                    $block <: contains `Effect.zipRight($_)`,
+                    $block <: contains `Effect.andThen($_)`,
                     $block <: contains `pipe($_)`,
                     $block <: contains `Stream.$method($_)`
                 }
@@ -58,7 +58,7 @@ or {
                     $branch <: contains `Effect.map($_)`,
                     $branch <: contains `Effect.andThen($_)`,
                     $branch <: contains `Effect.tap($_)`,
-                    $branch <: contains `Effect.zipRight($_)`,
+                    $branch <: contains `Effect.andThen($_)`,
                     $branch <: contains `pipe($_)`,
                     $branch <: contains `Stream.$method($_)`
                 }
@@ -70,7 +70,7 @@ or {
                     $branch <: contains `Effect.map($_)`,
                     $branch <: contains `Effect.andThen($_)`,
                     $branch <: contains `Effect.tap($_)`,
-                    $branch <: contains `Effect.zipRight($_)`,
+                    $branch <: contains `Effect.andThen($_)`,
                     $branch <: contains `pipe($_)`,
                     $branch <: contains `Stream.$method($_)`
                 }
@@ -89,7 +89,7 @@ or {
             $cases <: contains `Effect.map($_)`,
             $cases <: contains `Effect.andThen($_)`,
             $cases <: contains `Effect.tap($_)`,
-            $cases <: contains `Effect.zipRight($_)`,
+            $cases <: contains `Effect.andThen($_)`,
             $cases <: contains `pipe($_)`,
             $cases <: contains `Stream.$method($_)`
         },

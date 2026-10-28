@@ -71,3 +71,15 @@ export function lintWithRule(ruleName: string, fixtureFile: string) {
     rmSync(tempDir, { force: true, recursive: true });
   }
 }
+
+export function lintSourceWithRule(ruleName: string, source: string) {
+  const directory = mkdtempSync(path.join(tmpdir(), "linteffect-source-test-"));
+  const fixtureFile = path.join(directory, "input.tsx");
+
+  try {
+    writeFileSync(fixtureFile, source, "utf8");
+    return lintWithRule(ruleName, fixtureFile);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}

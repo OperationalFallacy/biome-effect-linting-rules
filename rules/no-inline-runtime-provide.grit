@@ -2,7 +2,7 @@ file($body) where {
     or {
         $body <: contains `"effect"`,
         $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+        $body <: contains `"@effect/atom-react"`
     },
     or {
         $body <: contains `function*`,
@@ -18,9 +18,16 @@ file($body) where {
             $provide <: not contains `,`
         }
     },
+    $provide <: within or {
+        `Effect.gen($ownerArgs)`,
+        `Effect.fn($ownerArgs)`,
+        `Effect.fn($ownerName)($ownerBody)`,
+        `Effect.fnUntraced($ownerArgs)`,
+        `Effect.fnUntracedEager($ownerArgs)`
+    },
     register_diagnostic(
         span = $provide,
-        message = "Assemble dependencies on the service or exported operation instead of inside the method. A local runtime.pipe with Effect.provide mixes dependency setup with the method's work. Declare the live dependency on Effect.Service or provide it once on the exported operation. Yield the configured runtime or service directly in the body.",
+        message = "Assemble service dependencies with Layer.provide on the service's layer or exported operation. Rebuilding the runtime inside a method mixes dependency setup with the method's work. Define acquisition with Context.Service.make, construct its layer with Layer.effect, and yield dependencies directly in the operation. Keep the application runner's final Effect.provide at application assembly.",
         severity = "error"
     )
 }

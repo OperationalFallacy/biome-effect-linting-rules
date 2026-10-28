@@ -1,6 +1,6 @@
 file($body) where {
     or {
-        $body <: contains `"@effect-atom/atom-react"`,
+        $body <: contains `"@effect/atom-react"`,
         $body <: contains `Atom.family($...)`
     },
     or {
