@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.0-dev.2](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.1...v0.1.0-dev.2) (2026-10-29)
+
+
+### Bug Fixes
+
+* avoid repeated module scans in cast and stylesheet matchers ([8a8c9f4](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/8a8c9f472b2b2ea0c25f4dc835e9339757b8034d))
+* calibrate Effect v4 composition matchers and regressions ([656e142](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/656e142b59e99fc3a1693bfd72b6400ad78420c3))
+* calibrate Effect v4 composition matchers with regressions ([361a780](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/361a7802a11b0c60d133ce1de2d8b11a3a11e144))
+
+
+### Performance Improvements
+
+* avoid repeated module scans for unrelated declarations ([62fc99a](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/62fc99a0f68e7983f3980e76c62c86342d84f30c))
+
 ## [0.1.0-dev.1](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.0...v0.1.0-dev.1) (2026-10-29)
 
 
