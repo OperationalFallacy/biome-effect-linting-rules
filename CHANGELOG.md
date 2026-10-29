@@ -2,31 +2,29 @@
 
 ## [0.1.0](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.9...v0.1.0) (2026-10-29)
 
-### Breaking changes
+### Effect v4 support
 
-The rules now target Effect v4. Version 0.0.9 is the final release for Effect v3. Read the [migration guide](docs/effect-v4.md) before upgrading.
-
-The CLI requires Node.js 24 or newer. Preset configurations use the Biome 2.6.3 schema, and the CLI bundles the matching Biome engine.
-
-Remove `no-effect-fn-generator` and `no-wrapgraphql-catchall` from custom plugin lists. Reusable operations can use `Effect.fn` or `Effect.fnUntraced`. GraphQL recovery policy belongs in application-specific rules.
-
-The full preset now includes `no-inline-runtime-provide`. Assemble service dependencies with layers and keep final runtime provision at entry points. The new `no-layer-this-reference` rule enforces the package's convention of explicit class names in static service layer declarations.
+This release updates the lint rules for use with Effect v4. The rules target codebases with strict reliability requirements, such as tradedal.
 
 ### CLI
 
-The CLI uses native Effect commands and runs Biome in the same Node.js process. It loads plugins into an isolated memory filesystem without temporary files or a separate Biome process. The `check` command leaves the project's configuration unchanged and supports the `core`, `web`, `ts-type`, and `full` presets. Use `--guide` to include the consumer guide with diagnostics.
+The CLI requires Node.js 24 or newer. Preset configurations use the Biome 2.6.3 schema, and the CLI bundles the matching Biome engine.
 
-### Composition and service contracts
+The CLI uses native Effect commands and executes Biome through its WASM SDK in the same Node.js process. It loads plugins into an isolated memory filesystem. The `check` command leaves the project's configuration unchanged and supports the `core`, `web`, `ts-type`, and `full` presets.
 
-The rules allow complete service constructors supplied to either form of `Layer.effect` or to `Context.Service` through `make`. They still report intermediate steps inside those constructors and distinguish declarations in different lexical scopes.
+### Rule changes
 
-Nested-call checks accept both forms of `Effect.when`, direct resource acquisition effects, and `Effect.scoped` around generators. Suggested rewrites preserve lazy conditions and resource finalizers. Collection guidance distinguishes independent results from dependent sequential work and preserves per-item failures with result mode.
+The release removes `no-effect-fn-generator` and `no-wrapgraphql-catchall`. The full preset now includes `no-inline-runtime-provide`. The new `no-layer-this-reference` rule reports implicit class references in static service layer declarations.
 
-Branches with `if`, `switch`, or conditional expressions remain valid inside `Effect.gen`, Effect function constructors, and `Effect.suspend`. The package reserves `Effect.tap` for logging and recommends `Effect.flatMap` or `Effect.andThen` for dependent work.
+Staging checks recognize constructor references passed to either form of `Layer.effect` or to `Context.Service` through `make`. Scope regressions cover intermediate local declarations and shadowed names.
+
+The call-tower rule exempts `Effect.when`, `Effect.acquireRelease`, `Effect.acquireUseRelease`, and `Effect.scoped`. It checks nested transformations inside their arguments. The `Effect.all` sequencing rule matches arrays of known side-effect operations and exempts result-mode collections.
+
+Branching checks have exemptions for `Effect.gen`, Effect function constructors, and `Effect.suspend` bodies. Staging and side-effect diagnostics recommend `Effect.flatMap` or `Effect.andThen` for dependent sequencing.
 
 ### Validation and diagnostics
 
-Schema predicate callbacks retain their block bodies and refinement types. Public Effect contracts remain valid in service declarations, interfaces, and type aliases. Atom rules distinguish effectful module operations from synchronous registry calls.
+Callback-return checks exempt `Schema.makeFilter`, `Schema.refine`, and `Schema.declare` predicates. Manual-channel checks have exceptions for service declarations, interfaces, and type aliases. Atom-wrapper checks distinguish v4 module operations from synchronous registry methods.
 
 Fixture snapshots retain complete Biome diagnostics, including severity and source spans. Regression examples cover v4 service construction, conditional work, and scoped resources. The CLI's SDK diagnostics also have native Biome parity checks.
 
