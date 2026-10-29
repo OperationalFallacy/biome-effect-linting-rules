@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst labels = rows.map((row) => row.name);\n\nconst normalized = rows.map((row) => {\n  const name = row.name.trim();\n  return name.toUpperCase();\n});\n\nconst load = Effect.fn(\"load\")(function* () {\n  const profile = yield* readProfile;\n  return profile.name;\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "input": "import { pipe, Schema } from \"effect\";\n\ndeclare const rows: readonly string[];\n\nconst mappedRows = rows.map((row) => {\n  const normalized = row.trim();\n  return normalized.toUpperCase();\n});\n\nconst pipedRows = pipe(rows, (items) =>\n  items.map((item) => {\n    return item.toLowerCase();\n  }),\n);\n\nconst singleResultBlockValue = [1].map((n) => {\n  return n + 1;\n});\n\nconst expressionArrowValue = [1].map((n) => n + 1);\n\nconst nonEmptyString = Schema.String.pipe(\n  Schema.check(\n    Schema.makeFilter((value: string) => {\n      return value.length > 0;\n    }),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "information",
+        "description": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-in-arrow/callback-bodies/invalid.ts"
+          },
+          "span": [
+            260,
+            286
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "information",
+        "description": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-in-arrow/callback-bodies/invalid.ts"
+          },
+          "span": [
+            347,
+            360
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 2,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}
