@@ -1,5 +1,5 @@
 {
-  "input": "import { pipe } from \"effect\";\n\nconst nestedInvocationsValue = ((a) => ((b) => b)(a))(1);\n\nconst valuePipelineValue = pipe(1, (n) => n + 1);\n",
+  "input": "import { pipe } from \"effect\";\n\nconst formatCurrency = (value: number) => `$${value.toFixed(2)}`;\nconst addLabel = (value: string) => `Total: ${value}`;\n\n/**\n * Unnecessarily nests immediately invoked callbacks to pass intermediate\n * values between transformations. Each function adds a scope to the same data flow.\n */\nexport const describeTotal = (price: number, quantity: number) =>\n  ((subtotal: number) =>\n    ((formatted: string) => addLabel(formatted))(formatCurrency(subtotal)))(\n    price * quantity,\n  );\n\n/**\n * Correctly composes transformations in one pipeline.\n */\nexport const describeValue = (value: number) =>\n  pipe(value, formatCurrency, addLabel);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-arrow-ladder/value-composition/invalid.ts"
           },
           "span": [
-            71,
-            84
+            416,
+            486
           ],
           "sourceCode": null
         },

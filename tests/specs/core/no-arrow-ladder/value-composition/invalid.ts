@@ -1,5 +1,20 @@
 import { pipe } from "effect";
 
-const nestedInvocationsValue = ((a) => ((b) => b)(a))(1);
+const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
+const addLabel = (value: string) => `Total: ${value}`;
 
-const valuePipelineValue = pipe(1, (n) => n + 1);
+/**
+ * Unnecessarily nests immediately invoked callbacks to pass intermediate
+ * values between transformations. Each function adds a scope to the same data flow.
+ */
+export const describeTotal = (price: number, quantity: number) =>
+  ((subtotal: number) =>
+    ((formatted: string) => addLabel(formatted))(formatCurrency(subtotal)))(
+    price * quantity,
+  );
+
+/**
+ * Correctly composes transformations in one pipeline.
+ */
+export const describeValue = (value: number) =>
+  pipe(value, formatCurrency, addLabel);

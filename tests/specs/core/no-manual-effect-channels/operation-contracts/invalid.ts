@@ -1,25 +1,9 @@
-import { Effect, Context } from "effect";
+import { Effect, Ref } from "effect";
 
-interface Counter {
-  read(): Effect.Effect<number>;
-}
-function read(): Effect.Effect<number> {
-  return Effect.succeed(1);
-}
-
-{
-  class Counter extends Context.Service<
-    Counter,
-    {
-      readonly read: Effect.Effect<number>;
-      readonly increment: (n: number) => Effect.Effect<number>;
-    }
-  >()("example/Counter") {}
-}
-
-{
-  interface Counter {
-    read(): Effect.Effect<number>;
-    increment(n: number): Effect.Effect<number>;
-  }
+/**
+ * Unnecessarily annotates an implemented operation's Effect return type.
+ * The annotation duplicates channels that TypeScript can infer from the body.
+ */
+export function readCounter(counter: Ref.Ref<number>): Effect.Effect<number> {
+  return Ref.get(counter);
 }

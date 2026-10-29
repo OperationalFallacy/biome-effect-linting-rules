@@ -1,5 +1,5 @@
 {
-  "input": "import { pipe } from \"effect\";\n\nconst total = (price: number, quantity: number) => price * quantity;\nconst describeTotal = (value: number) => pipe(value, formatCurrency, addLabel);\n",
+  "input": "import { pipe } from \"effect\";\n\nconst formatCurrency = (value: number) => `$${value.toFixed(2)}`;\nconst addLabel = (value: string) => `Total: ${value}`;\n\n/**\n * Correctly composes transformations in one pipeline. Intermediate values pass\n * directly between callbacks without nested function invocations.\n */\nexport const describeTotal = (price: number, quantity: number) =>\n  pipe(price * quantity, formatCurrency, addLabel);\nexport const describeValue = (value: number) =>\n  pipe(value, formatCurrency, addLabel);\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

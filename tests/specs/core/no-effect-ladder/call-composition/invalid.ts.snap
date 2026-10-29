@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, pipe } from \"effect\";\n\nconst nestedCombinatorsValue = Effect.map(\n  Effect.map(Effect.succeed(1), (n) => n + 1),\n  (n) => n * 2,\n);\n\nconst orderedStepsValue = Effect.succeed(1).pipe(\n  Effect.map((n) => n + 1),\n  Effect.map((n) => n * 2),\n);\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst LineItem = Schema.Struct({\n  unitPrice: Schema.Number,\n  quantity: Schema.Int,\n});\n\n/**\n * Incorrectly nests Effect combinators around a parser. The reader must work\n * from the innermost call outward to follow the dependent transformations.\n */\nexport const formatTotal = Effect.fn(\"formatTotal\")((text: string) => {\n  return Effect.map(\n    Effect.map(\n      Effect.flatMap(\n        Effect.try(() => JSON.parse(text)),\n        Schema.decodeUnknownEffect(LineItem),\n      ),\n      (item) => item.unitPrice * item.quantity,\n    ),\n    (total) => `$${total.toFixed(2)}`,\n  );\n});\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-effect-ladder/call-composition/invalid.ts"
           },
           "span": [
-            40,
-            147
+            368,
+            622
           ],
           "sourceCode": null
         },

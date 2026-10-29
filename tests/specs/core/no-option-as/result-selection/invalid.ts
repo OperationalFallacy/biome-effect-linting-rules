@@ -1,19 +1,17 @@
 import { Option } from "effect";
 
-{
-  const curriedResult = Option.as(1);
-}
+const name = Option.some("Mira");
 
-{
-  const dataFirstResult = Option.as(option, 1);
-}
+/**
+ * Questionably uses Option.as for result selection. This package favors
+ * explicit result-producing callbacks in composition.
+ */
+export const availability = Option.as(true);
+export const available = Option.as(name, true);
+export const genericAvailability = Option.as<boolean>(true);
+export const presentAvailability = Option.as(Option.some("Mira"), true);
 
-{
-  const genericResult = Option.as<number>(1);
-}
-
-{
-  const nestedOptionResult = Option.as(Option.some(1), 2);
-}
-
-const mappedResult = Option.map(Option.some(1), () => 2);
+/**
+ * Correctly expresses result selection through an Option.map callback.
+ */
+export const mappedAvailability = name.pipe(Option.map(() => true));

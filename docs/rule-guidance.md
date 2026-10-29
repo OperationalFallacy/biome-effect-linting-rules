@@ -18,6 +18,16 @@ Use an error for a required change. Use a warning or informational diagnostic to
 
 Add new test fixtures under `tests/specs/<group>/<rule>/<scenario>/`. The group names a preset in `configs/`. The rule names the production file in `rules/`, without `.grit`. Separate call forms and import conditions into scenario directories. Name fixtures `invalid.ts`, `valid.ts`, or a variant such as `invalid-generic.ts`. The [fixture test README](../tests/specs/README.md) describes the directory layout and test commands.
 
+### Write fixtures as learning examples
+
+Fixtures teach Effect composition through small, self-contained examples. Use `/** ... */` comments to identify correct, incorrect, or questionable usage and explain the programming choice in plain English. Name the construct and the problem directly. For example, "Misuses Effect.all by grouping sequential operations into an array, then enforcing their order with a concurrency limit."
+
+Explain the composition pattern, not each call or an invented application story. Ground claims in the APIs the example uses. Distinguish repository style preferences from invalid Effect APIs. The diagnostic supplies the lint instructions. Write prose without enumerators and follow the [unslop guide](unslop.md).
+
+Pair the invalid and valid examples around the same task. Define their inputs and dependencies, and preserve the result, failure behavior, and side-effect order unless the example addresses a defect in that behavior. State any intended difference. Use generic names and invented data. Keep syntax-only regressions in separate variants.
+
+### Run and review fixtures
+
 `tests/specs.test.ts` creates one test per fixture. `FixtureRepository.discoverFixtures` in `tests/support/fixtureRepository.ts` finds the files and checks that the preset registers each rule. Add a fixture to add a test. Do not create another per-rule test file or list fixture paths in code. The current examples test Effect.bind, Effect.async, Effect.Do, and nested Effect.flatMap calls.
 
 `FixtureRunner.runFixture` loads the fixture and production rule through `FixtureRepository.loadFixture`. It runs only that rule through Biome's SDK. Effect scopes release the WASM workspace and memory filesystem after each fixture, including failed runs. Biome parses the source and executes the rule. The snapshots retain the original SDK diagnostics with their messages and byte spans.
@@ -30,13 +40,15 @@ Run `yarn vitest run tests/specs.test.ts`. After an intentional change to a fixt
 
 The fixture README names the Biome test functions used as references and gives commands to read their source. The composition cases in `tests/composition/` check valid source with the full preset enabled.
 
-Read lint fixtures as source text. Keep them outside the project typecheck and do not import them as executable modules. A fixture may deliberately contain an invalid API or incomplete declarations. It needs no TypeScript suppression comments. Test the rule's response to that source, and keep tests for the package's CLI and WASM runner in `tests/runtime/`.
+The runner reads fixtures as source text. Keep them outside the project typecheck because some migration cases deliberately use obsolete APIs. Ordinary examples must still define their dependencies and use valid APIs. Keep tests for the package's CLI and WASM runner in `tests/runtime/`.
 
 `FixtureRunner` loads the selected rule into Biome's memory filesystem and opens a workspace for that case. The test entry point runs discovery and execution through one Effect service graph.
 
 Validate with a minimal Biome config that loads the rule alone. Test real code and a regression that should trigger the rule before you add it to the relevant presets. Run `yarn projen` after a full-preset registration change to update the local lint configuration.
 
-Biome matches Grit patterns against source syntax within one file. Use captures and scoped `contains` checks.
+Profile rule performance against real source code. Do not generate synthetic performance fixtures or tests. Keep nonpublic source, paths, and measurements out of tracked files.
+
+Biome matches Grit patterns against source syntax within one file. Anchor a matcher on the relevant AST node or API call. Scope `contains` checks to that node rather than scan the whole file.
 
 Consult `rules/js.ungram` and `rules/gritql.ungram` for node names. Refresh these grammar references with:
 

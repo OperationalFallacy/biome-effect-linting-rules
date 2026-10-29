@@ -1,11 +1,17 @@
-import { Effect, pipe } from "effect";
+import { Effect, Schema } from "effect";
 
-const nestedCallsValue = Effect.map(
-  Effect.map(Effect.succeed(1), (n) => n + 1),
-  (n) => n * 2,
-);
+const Profile = Schema.Struct({ displayName: Schema.NonEmptyString });
 
-const callSequenceValue = Effect.succeed(1).pipe(
-  Effect.map((n) => n + 1),
-  Effect.map((n) => n * 2),
+/**
+ * Incorrectly nests Effect.map around another Effect call. The outer syntax
+ * presents the final transformation before the operation that supplies its value.
+ */
+export const displayName = Effect.fn("displayName")((text: string) =>
+  Effect.map(
+    Effect.flatMap(
+      Effect.try(() => JSON.parse(text)),
+      Schema.decodeUnknownEffect(Profile),
+    ),
+    (profile) => profile.displayName,
+  ),
 );

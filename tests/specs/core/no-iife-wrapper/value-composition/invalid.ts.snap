@@ -1,5 +1,5 @@
 {
-  "input": "import { pipe } from \"effect\";\n\nconst wrapped = (() => 1)();\nconst composed = pipe(1, (count) => count + 1);\n",
+  "input": "import { Match } from \"effect\";\n\ntype State = { readonly _tag: \"Ready\"; readonly value: string } | {\n  readonly _tag: \"Pending\";\n};\n\n/**\n * Unnecessarily wraps value selection in an immediately invoked function.\n * The extra function call makes a local expression look like another operation.\n */\nexport const selectLabel = (state: State) =>\n  (() =>\n    Match.value(state).pipe(\n      Match.when({ _tag: \"Ready\" }, (ready) => ready.value),\n      Match.orElse(() => \"Pending\"),\n    ))();\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-iife-wrapper/value-composition/invalid.ts"
           },
           "span": [
-            48,
-            59
+            344,
+            486
           ],
           "sourceCode": null
         },

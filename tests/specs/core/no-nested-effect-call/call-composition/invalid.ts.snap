@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, pipe } from \"effect\";\n\nconst nestedCallsValue = Effect.map(\n  Effect.map(Effect.succeed(1), (n) => n + 1),\n  (n) => n * 2,\n);\n\nconst callSequenceValue = Effect.succeed(1).pipe(\n  Effect.map((n) => n + 1),\n  Effect.map((n) => n * 2),\n);\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst Profile = Schema.Struct({ displayName: Schema.NonEmptyString });\n\n/**\n * Incorrectly nests Effect.map around another Effect call. The outer syntax\n * presents the final transformation before the operation that supplies its value.\n */\nexport const displayName = Effect.fn(\"displayName\")((text: string) =>\n  Effect.map(\n    Effect.flatMap(\n      Effect.try(() => JSON.parse(text)),\n      Schema.decodeUnknownEffect(Profile),\n    ),\n    (profile) => profile.displayName,\n  ),\n);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-nested-effect-call/call-composition/invalid.ts"
           },
           "span": [
-            65,
-            141
+            354,
+            519
           ],
           "sourceCode": null
         },

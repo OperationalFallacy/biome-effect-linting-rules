@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst readName = readUser.pipe(Effect.map((user) => user.name));\nconst complete = saveUser.pipe(Effect.map(() => undefined));\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst task = Schema.decodeUnknownEffect(Schema.NonEmptyString)(\"Mira\");\n\n/**\n * Correctly uses Effect.map for explicit result-producing callbacks.\n * The transformation preserves failures from the preceding effect.\n */\nexport const completion = Effect.map(() => true);\nexport const complete = Effect.map(task, () => true);\nexport const genericCompletion = Effect.map<unknown, boolean>(() => true);\nexport const pipelineCompletion = task.pipe(Effect.map(() => true));\nexport const mappedCompletion = task.pipe(Effect.map(() => true));\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

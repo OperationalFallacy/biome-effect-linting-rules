@@ -38,7 +38,7 @@ Read [README.md](README.md) for package usage. For rule changes, read [docs/rule
 
 ## Common changes
 
-For a rule change, edit its `.grit` file and add fixtures that demonstrate the problem and nearby valid cases. Test the diagnostic's location and severity as well as whether it appears. Explain the matched pattern, its consequence, and the fix in complete sentences. Preserve conditions and exceptions that affect the rewrite.
+For a rule change, edit its `.grit` file and add small, self-contained fixtures. Pair the same task before and after the fix. Define each dependency and preserve the result, failure behavior, and side-effect order. Use generic names and invented data for application feedback. Test the diagnostic's location and severity as well as whether it appears. Explain the pattern and fix in complete sentences.
 
 For a new rule, register it in the appropriate presets and `configs/full.jsonc`, then run `yarn projen` to update `biome.local.jsonc`. Preset plugin paths use `./node_modules/@catenarycloud/linteffect/rules/`. The CLI reads those files from the package and loads their contents into the WASM memory filesystem for trial runs. Check both installed-project use and CLI use after configuration changes.
 
@@ -46,7 +46,7 @@ Edit `.projenrc.ts` for generated package settings, then run `yarn projen`. Revi
 
 ## Local commands
 
-Use the Yarn version declared in `package.json`. Run these commands from the repository root:
+Use the Yarn version declared in `package.json`. Do not use Python for repository work. Profile performance against real source code, never synthetic workloads. Keep nonpublic profiling inputs, paths, and results out of tracked files. Run these commands from the repository root:
 
 | Command | Purpose |
 | --- | --- |
@@ -67,7 +67,7 @@ Use the Yarn version declared in `package.json`. Run these commands from the rep
 
 For rule changes, run the relevant tests and then the full suite. For package or workflow changes, run the build and review its generated files. Documentation changes need a prose and link review; use `git diff --check` to check whitespace.
 
-The installed dev release is locked in `yarn.lock`. Update it with `yarn up @catenarycloud/linteffect@dev`. Compare published and local diagnostics during rule development. Do not suppress findings or change valid code solely to accommodate a published matcher bug.
+The installed dev release is locked in `yarn.lock`. Update it with `yarn up -R @catenarycloud/linteffect` so the dependency keeps its dev tag. Compare published and local diagnostics during rule development. Do not suppress findings or change valid code solely to accommodate a published matcher bug.
 
 `tsconfig.json` configures the Effect Language Service. The compile and typecheck tasks apply its compiler patch before they run TypeScript. The workspace compiler and editor use that configuration. Effect errors fail compilation; warnings and suggestions remain visible. Repair the service composition or implementation that caused a diagnostic. Do not widen Effect channels or add casts to hide it.
 

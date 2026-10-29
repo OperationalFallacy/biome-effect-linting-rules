@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, pipe } from \"effect\";\n\n{\n  const curriedResult = Effect.as(1);\n}\n\n{\n  const dataFirstResult = Effect.as(task, 1);\n}\n\n{\n  const genericResult = Effect.as<number>(1);\n}\n\n{\n  const pipelineResult = Effect.void.pipe(Effect.as(1));\n}\n\nconst mappedResult = Effect.void.pipe(Effect.map(() => 1));\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst task = Schema.decodeUnknownEffect(Schema.NonEmptyString)(\"Mira\");\n\n/**\n * Questionably uses Effect.as for result selection. This package favors\n * explicit result-producing callbacks in composition.\n */\nexport const completion = Effect.as(true);\nexport const complete = Effect.as(task, true);\nexport const genericCompletion = Effect.as<boolean>(true);\nexport const pipelineCompletion = task.pipe(Effect.as(true));\n\n/**\n * Correctly expresses result selection through an Effect.map callback.\n */\nexport const mappedCompletion = task.pipe(Effect.map(() => true));\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-effect-as/result-selection/invalid.ts"
           },
           "span": [
-            66,
-            78
+            277,
+            292
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/core/no-effect-as/result-selection/invalid.ts"
           },
           "span": [
-            111,
-            129
+            318,
+            339
           ],
           "sourceCode": null
         },
@@ -81,8 +81,8 @@
             "file": "/project/core/no-effect-as/result-selection/invalid.ts"
           },
           "span": [
-            160,
-            180
+            374,
+            398
           ],
           "sourceCode": null
         },
@@ -110,8 +110,8 @@
             "file": "/project/core/no-effect-as/result-selection/invalid.ts"
           },
           "span": [
-            229,
-            241
+            444,
+            459
           ],
           "sourceCode": null
         },
