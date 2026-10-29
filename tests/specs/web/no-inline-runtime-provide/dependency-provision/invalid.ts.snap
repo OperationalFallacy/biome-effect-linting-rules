@@ -1,0 +1,331 @@
+{
+  "input": "import { Effect, pipe, Layer } from \"effect\";\n\n{\n  const makeCounter = Effect.gen(function* () {\n    const read = Effect.fn(\"read\")(function* () {\n      return yield* task.pipe(Effect.provide(live));\n    });\n    return { read };\n  });\n}\n\n{\n  const providedGenerator = Effect.gen(function* () {\n    return yield* task.pipe(Effect.provide(layer));\n  });\n}\n\n{\n  const providedNamedFunction = Effect.fn(\"load\")(function* () {\n    return yield* task.pipe(Effect.provide(layer));\n  });\n}\n\n{\n  const providedFunction = Effect.fn(function* () {\n    return yield* task.pipe(Effect.provide(layer));\n  });\n}\n\n{\n  const providedUntracedFunction = Effect.fnUntraced(function* () {\n    return yield* task.pipe(Effect.provide(layer));\n  });\n}\n\n{\n  const providedEagerFunction = Effect.fnUntracedEager(function* () {\n    return yield* task.pipe(Effect.provide(layer));\n  });\n}\n\n{\n  const dataFirstGenerator = Effect.gen(function* () {\n    return yield* Effect.provide(task, layer);\n  });\n}\n\n{\n  const dataFirstNamedFunction = Effect.fn(\"load\")(function* () {\n    return yield* Effect.provide(task, layer);\n  });\n}\n\n{\n  const dataFirstFunction = Effect.fn(function* () {\n    return yield* Effect.provide(task, layer);\n  });\n}\n\n{\n  const dataFirstUntracedFunction = Effect.fnUntraced(function* () {\n    return yield* Effect.provide(task, layer);\n  });\n}\n\n{\n  const dataFirstEagerFunction = Effect.fnUntracedEager(function* () {\n    return yield* Effect.provide(task, layer);\n  });\n}\n\n{\n  const promiseMain = task.pipe(Effect.provide(layer));\n  Effect.runPromise(promiseMain);\n}\n\n{\n  const fiberMain = Effect.provide(task, layer);\n  Effect.runFork(fiberMain);\n}\n\n{\n  const live = Layer.effect(Service, make).pipe(Layer.provide(Dependencies));\n}\n\n{\n  const requestContext = Effect.gen(function* () {\n    return yield* task.pipe(Effect.provideService(Request, request));\n  });\n}\n\n{\n  const providedMain = Effect.gen(function* () {\n    return 1;\n  }).pipe(Effect.provide(layer));\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-inline-runtime-provide/dependency-provision/invalid.ts"
+          },
+          "span": [
+            177,
+            197
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-inline-runtime-provide/dependency-provision/invalid.ts"
+          },
+          "span": [
+            322,
+            343
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-inline-runtime-provide/dependency-provision/invalid.ts"
+          },
+          "span": [
+            450,
+            471
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-inline-runtime-provide/dependency-provision/invalid.ts"
+          },
+          "span": [
+            565,
+            586
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-inline-runtime-provide/dependency-provision/invalid.ts"
+          },
+          "span": [
+            696,
+            717
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-inline-runtime-provide/dependency-provision/invalid.ts"
+          },
+          "span": [
+            829,
+            850
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-inline-runtime-provide/dependency-provision/invalid.ts"
+          },
+          "span": [
+            937,
+            964
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-inline-runtime-provide/dependency-provision/invalid.ts"
+          },
+          "span": [
+            1061,
+            1088
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-inline-runtime-provide/dependency-provision/invalid.ts"
+          },
+          "span": [
+            1172,
+            1199
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-inline-runtime-provide/dependency-provision/invalid.ts"
+          },
+          "span": [
+            1299,
+            1326
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-inline-runtime-provide/dependency-provision/invalid.ts"
+          },
+          "span": [
+            1428,
+            1455
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 11,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

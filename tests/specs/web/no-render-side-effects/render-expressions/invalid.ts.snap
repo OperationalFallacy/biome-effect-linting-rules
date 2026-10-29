@@ -1,0 +1,41 @@
+{
+  "input": "import { Match, pipe } from \"effect\";\n\nMatch.value(1).pipe(\n  Match.when(1, () => console.log(\"render\")),\n  Match.orElse(() => undefined),\n);\n\nconst value = Match.value(1).pipe(\n  Match.when(1, () => \"ready\"),\n  Match.orElse(() => \"waiting\"),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Return the Match result as an expression and move updates or other work out of render. A Match used as a statement runs its selected callback immediately. A render function executes that callback as part of render. Keep render expressions pure and perform the work through an Effect runtime action or event handler.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Return the Match result as an expression and move updates or other work out of render. A Match used as a statement runs its selected callback immediately. A render function executes that callback as part of render. Keep render expressions pure and perform the work through an Effect runtime action or event handler."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-render-side-effects/render-expressions/invalid.ts"
+          },
+          "span": [
+            39,
+            141
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

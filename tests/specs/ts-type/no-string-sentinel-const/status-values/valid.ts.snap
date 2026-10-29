@@ -1,0 +1,11 @@
+{
+  "input": "import { Data } from \"effect\";\n\nconst LoadState = Data.taggedEnum<{\n  Loading: {};\n  Ready: { readonly count: number };\n}>();\nconst state = LoadState.Ready({ count: 3 });\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

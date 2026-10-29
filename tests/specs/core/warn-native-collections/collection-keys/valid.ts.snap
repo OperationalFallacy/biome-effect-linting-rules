@@ -1,0 +1,11 @@
+{
+  "input": "import { HashMap, HashSet } from \"effect\";\n\nconst profiles = HashMap.make([{ id: 1 }, profile]);\nconst selected = HashSet.make({ id: 1 });\nconst labels = new Map<string, string>();\nconst visited = new Set<number>();\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

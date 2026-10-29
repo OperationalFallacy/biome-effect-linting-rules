@@ -1,0 +1,11 @@
+{
+  "input": "import { Match } from \"effect\";\n\nconst label = Match.value(isReady).pipe(\n  Match.when(true, () => \"Ready\"),\n  Match.orElse(() => \"Loading\"),\n);\nconst view = { label, count };\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

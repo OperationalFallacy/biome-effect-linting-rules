@@ -17,10 +17,12 @@ Read [README.md](README.md) for package usage. For rule changes, read [docs/rule
 | `configs/ts-type.jsonc` | Type assertions, data guards, optional values, and status rules. |
 | `configs/full.jsonc` | Full preset, exported through the package root and `/recommended`. |
 | `biome.jsonc` | Additional packaged configuration with a plugin list. Keep its registrations consistent with the relevant presets when rules change. |
-| `bin/linteffect.mjs` | Parses CLI arguments, loads presets, creates temporary Biome configurations, and prints the guide. |
-| `tests/rules/*.test.ts` | Vitest tests for rule behavior. |
-| `tests/fixtures/<rule>/` | Valid and invalid TypeScript or TSX inputs. Some related rules share fixtures in `tests/fixtures/defragmentation/`. |
-| `tests/rules/ruleTestHarness.ts` | Shared helper that runs one rule with a temporary Biome configuration and returns its exit status and structured diagnostics. |
+| `bin/linteffect.mjs`, `src/cli.ts` | Node entry point and native Effect CLI commands, preset loading, and file checks. |
+| `src/biome.ts` | Shared Effect service for scoped WASM workspaces and plugin diagnostics. |
+| `tests/specs.test.ts`, `tests/specs/` | One test per source fixture. The test reads the group and rule from its directory path and saves a snapshot beside the fixture. |
+| `tests/support/` | Effect services for fixture path parsing, discovery, loading, and execution. |
+| `tests/composition.test.ts`, `tests/composition/` | Valid source checked with every full-preset rule enabled. |
+| `tests/runtime/` | CLI behavior, WASM resource cleanup, and diagnostic parity with native Biome. |
 | `examples/biome.effect.jsonc` | Example consumer configuration. |
 | `scripts/refresh-biome-grammars.ts` | Updates the grammar references for a selected Biome revision. |
 | `scripts/profile-rules.ts` | Measures preset or individual rule performance against source files. |
@@ -35,7 +37,7 @@ Read [README.md](README.md) for package usage. For rule changes, read [docs/rule
 
 For a rule change, edit its `.grit` file and add fixtures that demonstrate the problem and nearby valid cases. Test the diagnostic's location and severity as well as whether it appears. Explain the matched pattern, its consequence, and the fix in complete sentences. Preserve conditions and exceptions that affect the rewrite.
 
-For a new rule, register it in the appropriate presets and the root `biome.jsonc`. Preset plugin paths use `./node_modules/@catenarycloud/linteffect/rules/`. The CLI converts those paths to absolute package paths for trial runs. Check both installed-project use and CLI use after configuration changes.
+For a new rule, register it in the appropriate presets and the root `biome.jsonc`. Preset plugin paths use `./node_modules/@catenarycloud/linteffect/rules/`. The CLI reads those files from the package and loads their contents into the WASM memory filesystem for trial runs. Check both installed-project use and CLI use after configuration changes.
 
 Edit `.projenrc.ts` for generated package settings, then run `yarn projen`. Review the generated diff before you stage it. `package.json`, `.projen/`, and generated workflow files receive their settings from this source. Release Please manages release version and changelog updates.
 
@@ -46,8 +48,9 @@ Use the Yarn version declared in `package.json`. Run these commands from the rep
 | Command | Purpose |
 | --- | --- |
 | `yarn install --immutable` | Install dependencies from the lockfile. |
-| `yarn test` | Run the rule test suite. |
-| `yarn vitest run tests/rules/<rule>.test.ts` | Run tests for a specific rule. |
+| `yarn test` | Run the rule and runtime tests, then the project typecheck. |
+| `yarn typecheck` | Check project code and tests with `tsconfig.json`, also used by editors. |
+| `yarn vitest run tests/specs.test.ts` | Run all fixtures in `tests/specs/`. |
 | `yarn projen` | Regenerate project files from `.projenrc.ts`. |
 | `yarn build` | Regenerate project files, run tests, and create the npm archive under `dist/js/`. |
 | `yarn pack:dry-run` | Inspect the npm package contents. |

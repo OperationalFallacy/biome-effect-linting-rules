@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst observe = Effect.acquireRelease(openSubscription, closeSubscription).pipe(\n  Effect.flatMap((subscription) => subscription.read),\n  Effect.scoped,\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

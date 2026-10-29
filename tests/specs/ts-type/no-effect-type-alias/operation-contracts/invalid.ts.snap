@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\ntype Load = Effect.Effect<number>;\n\nfunction load(): Effect.Effect<number> {\n  return Effect.succeed(1);\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Put the Effect type directly on the service method or function signature instead of a separate alias. The alias requires another lookup to inspect the operation's result, errors, and dependencies. Keep that contract beside the operation, or inline the type at its use.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Put the Effect type directly on the service method or function signature instead of a separate alias. The alias requires another lookup to inspect the operation's result, errors, and dependencies. Keep that contract beside the operation, or inline the type at its use."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-effect-type-alias/operation-contracts/invalid.ts"
+          },
+          "span": [
+            46,
+            59
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

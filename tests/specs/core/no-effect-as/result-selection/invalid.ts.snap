@@ -1,0 +1,128 @@
+{
+  "input": "import { Effect, pipe } from \"effect\";\n\n{\n  const curriedResult = Effect.as(1);\n}\n\n{\n  const dataFirstResult = Effect.as(task, 1);\n}\n\n{\n  const genericResult = Effect.as<number>(1);\n}\n\n{\n  const pipelineResult = Effect.void.pipe(Effect.as(1));\n}\n\nconst mappedResult = Effect.void.pipe(Effect.map(() => 1));\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-as/result-selection/invalid.ts"
+          },
+          "span": [
+            66,
+            78
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-as/result-selection/invalid.ts"
+          },
+          "span": [
+            111,
+            129
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-as/result-selection/invalid.ts"
+          },
+          "span": [
+            160,
+            180
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-as/result-selection/invalid.ts"
+          },
+          "span": [
+            229,
+            241
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 4,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

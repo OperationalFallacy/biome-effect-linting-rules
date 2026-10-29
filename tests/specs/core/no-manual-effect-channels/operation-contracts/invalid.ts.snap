@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Context } from \"effect\";\n\ninterface Counter {\n  read(): Effect.Effect<number>;\n}\nfunction read(): Effect.Effect<number> {\n  return Effect.succeed(1);\n}\n\n{\n  class Counter extends Context.Service<\n    Counter,\n    {\n      readonly read: Effect.Effect<number>;\n      readonly increment: (n: number) => Effect.Effect<number>;\n    }\n  >()(\"example/Counter\") {}\n}\n\n{\n  interface Counter {\n    read(): Effect.Effect<number>;\n    increment(n: number): Effect.Effect<number>;\n  }\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Let TypeScript infer the Effect or Layer type from the composed operation. Manual result, error, and dependency annotations duplicate a contract that the operation already defines. Remove the explicit Effect.Effect or Layer.Layer annotation and return the operation directly. Keep explicit public contracts in Context.Service, interfaces, and domain type declarations.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Let TypeScript infer the Effect or Layer type from the composed operation. Manual result, error, and dependency annotations duplicate a contract that the operation already defines. Remove the explicit Effect.Effect or Layer.Layer annotation and return the operation directly. Keep explicit public contracts in Context.Service, interfaces, and domain type declarations."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-manual-effect-channels/operation-contracts/invalid.ts"
+          },
+          "span": [
+            115,
+            136
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

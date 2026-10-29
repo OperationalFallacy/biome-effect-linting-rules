@@ -1,0 +1,11 @@
+{
+  "input": "import { Record, Ref, Struct } from \"effect\";\n\nconst setName = (id: string, name: string) =>\n  Ref.update(state, Struct.evolve({ names: Record.set(id, name) }));\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

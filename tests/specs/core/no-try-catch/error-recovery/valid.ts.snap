@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst readProfile = Schema.decodeUnknownEffect(Profile)(input).pipe(\n  Effect.catchTag(\"SchemaError\", () => readDefaultProfile),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

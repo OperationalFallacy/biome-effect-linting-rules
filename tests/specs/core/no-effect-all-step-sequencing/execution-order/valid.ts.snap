@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst saveProfile = Effect.fn(\"saveProfile\")(function* () {\n  const profile = yield* readProfile;\n  yield* persistProfile(profile);\n  yield* publishProfile(profile);\n  return profile;\n});\n\nconst independentReads = Effect.all({ profile: readProfile, settings: readSettings });\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

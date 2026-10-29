@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\nimport { Atom } from \"@effect/atom-react\";\n\nconst readCount = Effect.fn(\"readCount\")(function* () {\n  const count = yield* Atom.get(countAtom);\n  yield* Atom.set(countAtom, count + 1);\n  return count;\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

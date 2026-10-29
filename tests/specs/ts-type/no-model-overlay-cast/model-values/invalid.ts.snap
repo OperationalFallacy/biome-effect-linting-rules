@@ -1,0 +1,70 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst inputAssertionValue = input as {\n  id: string;\n};\n\ninterface User {\n  readonly id: string;\n  readonly name: string;\n}\n\ndeclare const raw: unknown;\n\nconst user = raw as User;\n\nconst namedTypeProgram = Effect.succeed(user.id);\n\nconst status = \"open\" as const;\n\nconst asConstLiteralProgram = Effect.succeed(status);\n\nconst DAY_TOKENS = [\"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\", \"Su\"] as const;\n\nconst first = Effect.succeed(DAY_TOKENS[0]);\n\nconst decodedInputValue = Schema.decodeUnknownEffect(Schema.Struct({ id: Schema.String }))(input);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Decode the value with the required Schema instead of a model type assertion through as. The assertion supplies a type without runtime validation against the schema. Read the fields from the decoded result and preserve validation failures.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Decode the value with the required Schema instead of a model type assertion through as. The assertion supplies a type without runtime validation against the schema. Read the fields from the decoded result and preserve validation failures."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-model-overlay-cast/model-values/invalid.ts"
+          },
+          "span": [
+            42,
+            96
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Decode the value with the required Schema instead of a model type assertion through as. The assertion supplies a type without runtime validation against the schema. Read the fields from the decoded result and preserve validation failures.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Decode the value with the required Schema instead of a model type assertion through as. The assertion supplies a type without runtime validation against the schema. Read the fields from the decoded result and preserve validation failures."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-model-overlay-cast/model-values/invalid.ts"
+          },
+          "span": [
+            196,
+            220
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

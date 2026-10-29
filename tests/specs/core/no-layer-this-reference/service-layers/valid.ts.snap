@@ -1,0 +1,11 @@
+{
+  "input": "import { Context, Effect, Layer } from \"effect\";\n\nclass UserRepository extends Context.Service<UserRepository>()(\"UserRepository\", {\n  make: Effect.succeed({ findUser: readUser }),\n}) {\n  static readonly layer = Layer.effect(UserRepository, UserRepository.make).pipe(\n    Layer.provide(Database.layer),\n  );\n\n  static createLayer = () => Layer.effect(this, this.make);\n\n  read() {\n    return this;\n  }\n}\n\nclass Widget {\n  static readonly layer = Layer.effect(this, this.make);\n}\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

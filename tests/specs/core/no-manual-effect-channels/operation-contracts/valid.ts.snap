@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst readName = Effect.fn(\"readName\")(function* (input: unknown) {\n  const user = yield* Schema.decodeUnknownEffect(User)(input);\n  return user.name;\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -26,7 +26,7 @@ Vitest saves the fixture text and runner result beside each fixture in a `.ts.sn
 
 Run `yarn vitest run tests/specs.test.ts`. After an intentional change to a fixture or diagnostic, add `--update` and review the snapshot diff. Whitespace changes can change recorded source spans. Do not regenerate snapshots to conceal an unexplained failure.
 
-Some tests still use `tests/rules/<rule>/` and `tests/support/rules.ts`. Use `tests/specs/` for new examples. Its README names the Biome test functions used as references and gives commands to read their source.
+The fixture README names the Biome test functions used as references and gives commands to read their source. The composition cases in `tests/composition/` check valid source with the full preset enabled.
 
 Read lint fixtures as source text. Keep them outside the project typecheck and do not import them as executable modules. A fixture may deliberately contain an invalid API or incomplete declarations. It needs no TypeScript suppression comments. Test the rule's response to that source, and keep tests for the package's CLI and WASM runner in `tests/runtime/`.
 

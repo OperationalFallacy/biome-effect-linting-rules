@@ -1,0 +1,41 @@
+{
+  "input": "import * as Value from \"effect/Data\";\n\nconst cellKey = (row: number, column: number) => [row, column];\nconst cells = new Map<ReturnType<typeof cellKey>, string>();\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-native-collections/submodule-keys/invalid.ts"
+          },
+          "span": [
+            117,
+            162
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 1,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "input": "import { Data } from \"effect\";\n\nconst originalData = Data;\n\nfunction makeIndex(Data: { struct: (input: string) => string }) {\n  const scalarKey = (input: string) => Data.struct(input);\n  return new Map<ReturnType<typeof scalarKey>, number>();\n}\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

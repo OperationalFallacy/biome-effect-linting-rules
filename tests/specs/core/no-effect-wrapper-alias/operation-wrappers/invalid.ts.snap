@@ -1,0 +1,70 @@
+{
+  "input": "import { Effect, pipe } from \"effect\";\n\ndeclare const readSession: Effect.Effect<string>;\n\nconst loadSession = () =>\n  pipe(\n    readSession,\n    Effect.map((session) => session.trim()),\n  );\n\nfunction loadSessionDirect() {\n  return Effect.map(readSession, (session) => session.trim());\n}\n\nfunction intermediateApi() {\n  const read = Effect.fn(\"read\")(function* () {\n    const fragment = () => Effect.succeed(1);\n    return yield* fragment();\n  });\n  return { read };\n}\n\nfunction normalizeSession(session: string): string {\n  return session.trim();\n}\n\n{\n  function pipelineApi() {\n    const read = pipe(\n      Effect.succeed(1),\n      Effect.map((n) => n + 1),\n    );\n    return { read };\n  }\n}\n\n{\n  function forwardedApi() {\n    const read = () => Effect.succeed(1);\n    return { read };\n  }\n}\n\n{\n  function parameterizedApi() {\n    const read = (id: number) =>\n      pipe(\n        Effect.succeed(id),\n        Effect.map((n) => n + 1),\n      );\n    return { read };\n  }\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline this intermediate Effect wrapper into its operation. The extra declaration makes the reader inspect another name to understand the steps. Define complete reusable operations with Effect.fn or Effect.fnUntraced, or expose them through the service's returned API. Keep intermediate fragments inside each operation. A new wrapper around the same fragment leaves the extra lookup in place.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline this intermediate Effect wrapper into its operation. The extra declaration makes the reader inspect another name to understand the steps. Define complete reusable operations with Effect.fn or Effect.fnUntraced, or expose them through the service's returned API. Keep intermediate fragments inside each operation. A new wrapper around the same fragment leaves the extra lookup in place."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-wrapper-alias/operation-wrappers/invalid.ts"
+          },
+          "span": [
+            193,
+            288
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline this intermediate Effect wrapper into its operation. The extra declaration makes the reader inspect another name to understand the steps. Define complete reusable operations with Effect.fn or Effect.fnUntraced, or expose them through the service's returned API. Keep intermediate fragments inside each operation. A new wrapper around the same fragment leaves the extra lookup in place.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline this intermediate Effect wrapper into its operation. The extra declaration makes the reader inspect another name to understand the steps. Define complete reusable operations with Effect.fn or Effect.fnUntraced, or expose them through the service's returned API. Keep intermediate fragments inside each operation. A new wrapper around the same fragment leaves the extra lookup in place."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-wrapper-alias/operation-wrappers/invalid.ts"
+          },
+          "span": [
+            371,
+            412
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

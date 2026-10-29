@@ -1,0 +1,128 @@
+{
+  "input": "import { Effect, pipe } from \"effect\";\n\ndeclare const invalidate: (key: readonly string[]) => Effect.Effect<void>;\ndeclare const setReady: Effect.Effect<void>;\ndeclare const nextStep: Effect.Effect<string>;\n\nconst invalidAsWrapper = Effect.as(\n  Effect.sync(() => {\n    console.info(\"ready\");\n  }),\n  \"ready\",\n);\n\nconst invalidAndThenWrapper = Effect.andThen(invalidate([\"books\"]), nextStep);\n\nconst invalidNestedSetStateWrapper = Effect.andThen(\n  Effect.sync(() => {\n    setState({ ready: true });\n  }),\n  setReady,\n);\n\ndeclare function setState(value: { readonly ready: boolean }): void;\n\nconst logResultReplacementValue = Effect.as(Effect.log(\"saved\"), 1);\n\nconst explicitContinuationValue = Effect.log(\"saved\").pipe(Effect.andThen(() => Effect.succeed(1)));\n\ndeclare const loadState: Effect.Effect<readonly string[]>;\ndeclare const publishState: Effect.Effect<void>;\ndeclare const invalidateCatalog: Effect.Effect<void>;\n\nconst namedEffectSequence = Effect.andThen(loadState, invalidateCatalog);\n\nconst continuousTap = loadState.pipe(\n  Effect.tap(() => publishState),\n  Effect.andThen(invalidateCatalog),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace this Effect.as wrapper with an explicit pipeline step for the update or log. The wrapper combines the operation with a replacement result and obscures their relationship. Sequence the work with Effect.andThen, Effect.flatMap, or Effect.tap, and produce the required result explicitly.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace this Effect.as wrapper with an explicit pipeline step for the update or log. The wrapper combines the operation with a replacement result and obscures their relationship. Sequence the work with Effect.andThen, Effect.flatMap, or Effect.tap, and produce the required result explicitly."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-side-effect-wrapper/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            233,
+            311
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen, Effect.flatMap, or Effect.tap to continue. Preserve the result the caller needs.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen, Effect.flatMap, or Effect.tap to continue. Preserve the result the caller needs."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-side-effect-wrapper/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            344,
+            391
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen, Effect.flatMap, or Effect.tap to continue. Preserve the result the caller needs.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen, Effect.flatMap, or Effect.tap to continue. Preserve the result the caller needs."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-side-effect-wrapper/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            431,
+            519
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace this Effect.as wrapper with an explicit pipeline step for the update or log. The wrapper combines the operation with a replacement result and obscures their relationship. Sequence the work with Effect.andThen, Effect.flatMap, or Effect.tap, and produce the required result explicitly.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace this Effect.as wrapper with an explicit pipeline step for the update or log. The wrapper combines the operation with a replacement result and obscures their relationship. Sequence the work with Effect.andThen, Effect.flatMap, or Effect.tap, and produce the required result explicitly."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-side-effect-wrapper/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            626,
+            659
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 4,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

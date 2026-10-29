@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, pipe } from \"effect\";\n\nconst summary = pipe(rows, selectActive, calculateTotals, formatTotals);\nconst operation = readUser.pipe(\n  Effect.flatMap((user) =>\n    readOrders(user.id).pipe(Effect.map((orders) => ({ user, orders }))),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

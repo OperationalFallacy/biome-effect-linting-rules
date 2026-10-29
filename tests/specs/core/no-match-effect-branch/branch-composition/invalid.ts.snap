@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Match, pipe } from \"effect\";\n\nconst branchSequenceValue = Match.value(1).pipe(\n  Match.when(1, () => Effect.succeed(1).pipe(Effect.map((n) => n + 1))),\n  Match.orElse(() => Effect.succeed(0)),\n);\n\nconst selectedValuesValue = Match.value(1).pipe(\n  Match.when(1, () => 2),\n  Match.orElse(() => 0),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Move multi-step Effect sequences out of Match branches. Separate case bodies make the operation's execution order harder to follow. Select the required value with Match, then sequence dependent work in one Effect pipeline. Keep skip decisions explicit. Do not disguise a branch as Option.toArray followed by collection traversal.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Move multi-step Effect sequences out of Match branches. Separate case bodies make the operation's execution order harder to follow. Select the required value with Match, then sequence dependent work in one Effect pipeline. Keep skip decisions explicit. Do not disguise a branch as Option.toArray followed by collection traversal."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-match-effect-branch/branch-composition/invalid.ts"
+          },
+          "span": [
+            75,
+            211
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

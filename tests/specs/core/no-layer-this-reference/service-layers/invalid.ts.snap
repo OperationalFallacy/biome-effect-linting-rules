@@ -1,0 +1,128 @@
+{
+  "input": "import { Context, Layer } from \"effect\";\n\n{\n  class ImplicitLayerService extends Context.Service<ImplicitLayerService, {}>()(\"Counter\") {\n    static readonly layer = Layer.effect(this, this.make);\n  }\n}\n\n{\n  class ImplicitMakeService extends Context.Service<ImplicitMakeService, {}>()(\"Counter\") {\n    static readonly layer = Layer.effect(ImplicitMakeService, this.make);\n  }\n}\n\n{\n  class ImplicitTagService extends Context.Service<ImplicitTagService, {}>()(\"Counter\") {\n    static readonly layer = Layer.effect(this, ImplicitTagService.make);\n  }\n}\n\n{\n  class ComposedImplicitService extends Context.Service<ComposedImplicitService, {}>()(\"Counter\") {\n    static readonly layer = Layer.effect(this, this.make).pipe(Layer.provide(Dependencies));\n  }\n}\n\n{\n  class ExplicitLayerService extends Context.Service<ExplicitLayerService, {}>()(\"Counter\") {\n    static readonly layer = Layer.effect(ExplicitLayerService, ExplicitLayerService.make).pipe(Layer.provide(Dependencies));\n  }\n}\n\n{\n  class InstanceMethodService extends Context.Service<InstanceMethodService, {}>()(\"Counter\") {\n    read() {\n      return this.value;\n    }\n  }\n}\n\n{\n  class LayerFactoryService extends Context.Service<LayerFactoryService, {}>()(\"Counter\") {\n    static createLayer = () => Layer.effect(this, this.make);\n  }\n}\n\n{\n  class Widget {\n    static layer = Layer.effect(this, this.make);\n  }\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use ImplicitLayerService and ImplicitLayerService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use ImplicitLayerService and ImplicitLayerService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-layer-this-reference/service-layers/invalid.ts"
+          },
+          "span": [
+            166,
+            195
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use ImplicitMakeService and ImplicitMakeService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use ImplicitMakeService and ImplicitMakeService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-layer-this-reference/service-layers/invalid.ts"
+          },
+          "span": [
+            326,
+            370
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use ImplicitTagService and ImplicitTagService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use ImplicitTagService and ImplicitTagService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-layer-this-reference/service-layers/invalid.ts"
+          },
+          "span": [
+            499,
+            542
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use ComposedImplicitService and ComposedImplicitService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use ComposedImplicitService and ComposedImplicitService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-layer-this-reference/service-layers/invalid.ts"
+          },
+          "span": [
+            681,
+            710
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 4,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

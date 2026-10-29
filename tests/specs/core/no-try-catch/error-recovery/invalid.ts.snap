@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, pipe } from \"effect\";\n\nfunction load() {\n  try {\n    return read();\n  } catch (error) {\n    return recover(error);\n  }\n}\n\nconst value = Effect.try({ try: read, catch: (cause) => cause }).pipe(\n  Effect.catch(() => Effect.succeed(0)),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent recoverable failures in the Effect error type instead of a try/catch block. The block handles thrown exceptions separately from the operation's typed errors. Handle those errors through Effect error combinators in the pipeline and preserve the original recovery behavior. Keep resource cleanup attached to the operation.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent recoverable failures in the Effect error type instead of a try/catch block. The block handles thrown exceptions separately from the operation's typed errors. Handle those errors through Effect error combinators in the pipeline and preserve the original recovery behavior. Keep resource cleanup attached to the operation."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-try-catch/error-recovery/invalid.ts"
+          },
+          "span": [
+            60,
+            135
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

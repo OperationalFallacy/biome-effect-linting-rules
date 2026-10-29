@@ -1,0 +1,11 @@
+{
+  "input": "import { Data } from \"effect\";\n\nclass Key extends Data.Class<{ id: string }> {}\nclass Map<K, V> {\n  declare key: K;\n  declare value: V;\n}\nclass Set<K> {\n  declare key: K;\n}\nconst index = new Map<Key, string>();\nconst selected = new Set<Key>();\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

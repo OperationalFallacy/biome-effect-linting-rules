@@ -1,0 +1,41 @@
+{
+  "input": "import \"effect\";\n\nconst namedCallback = [1].map(function increment(n) {\n  return n + 1;\n});\n\n{\n  const namedConstructorMock = vi.fn(function Widget() {\n    return { value: 1 };\n  });\n}\n\n{\n  const anonymousConstructorMock = vi.fn(function () {\n    return { value: 1 };\n  });\n}\n\n{\n  const callbackBindings = items.map(function normalize(item) {\n    const value = item.trim();\n    return value;\n  });\n}\n\n{\n  const argumentDependentCallback = items.map(function current() {\n    return arguments[0];\n  });\n}\n\n{\n  const expressionCallback = [1].map((n) => n + 1);\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "information",
+        "description": "Use an expression callback for this single transformation. The callback contains only a return statement. Keep function expressions when callers require constructor semantics, dynamic this, or arguments. Keep block callbacks for local bindings and multiple steps.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use an expression callback for this single transformation. The callback contains only a return statement. Keep function expressions when callers require constructor semantics, dynamic this, or arguments. Keep block callbacks for local bindings and multiple steps."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-in-callback/callback-bodies/invalid.ts"
+          },
+          "span": [
+            74,
+            87
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 1,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

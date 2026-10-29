@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, pipe } from \"effect\";\n\nconst nestedCallsValue = Effect.map(\n  Effect.map(Effect.succeed(1), (n) => n + 1),\n  (n) => n * 2,\n);\n\nconst callSequenceValue = Effect.succeed(1).pipe(\n  Effect.map((n) => n + 1),\n  Effect.map((n) => n * 2),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Put nested Effect calls into one pipeline in execution order. The reader must work from the inner call outward to reconstruct the sequence. Compute the required inputs first, then connect the dependent Effect steps in the same pipeline.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Put nested Effect calls into one pipeline in execution order. The reader must work from the inner call outward to reconstruct the sequence. Compute the required inputs first, then connect the dependent Effect steps in the same pipeline."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-nested-effect-call/call-composition/invalid.ts"
+          },
+          "span": [
+            65,
+            141
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

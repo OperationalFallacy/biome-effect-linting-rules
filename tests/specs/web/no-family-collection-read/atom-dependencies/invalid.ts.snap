@@ -1,0 +1,99 @@
+{
+  "input": "import { Effect } from \"effect\";\nimport { Atom } from \"effect/reactivity\";\n\nconst bookResultsAtom = Atom.make<readonly string[]>([]);\n\nconst atomGetBookAtom = Atom.family((isbn: string) =>\n  Atom.make(\n    Effect.gen(function* () {\n      const books = yield* Atom.get(bookResultsAtom);\n      return books.find((book) => book === isbn);\n    }),\n  ),\n);\n\nconst VisibleBooksAtom = Atom.make<readonly string[]>([]);\n\nconst getGetBookAtom = Atom.family((isbn: string) =>\n  Atom.make((get) => get.get(VisibleBooksAtom).find((book) => book === isbn)),\n);\n\nconst getBooksCollectionAtom = Atom.make<readonly string[]>([]);\n\nconst getBookAtom = Atom.family((isbn: string) =>\n  Atom.make((get) => get(getBooksCollectionAtom).find((book) => book === isbn)),\n);\n\nconst booksByKeyAtom = Atom.make<Readonly<Record<string, string>>>({});\nconst bookIndexAtom = Atom.make<Readonly<Record<string, string>>>({});\n\nconst keyedSourceBookAtom = Atom.family((isbn: string) =>\n  Atom.make((get) => get(booksByKeyAtom)[isbn] ?? get.get(bookIndexAtom)[isbn]),\n);\n\nconst outsideFamilyBooksCollectionAtom = Atom.make<readonly string[]>([]);\n\nconst bookCountAtom = Atom.make((get) => get(outsideFamilyBooksCollectionAtom).length);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-family-collection-read/atom-dependencies/invalid.ts"
+          },
+          "span": [
+            268,
+            283
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-family-collection-read/atom-dependencies/invalid.ts"
+          },
+          "span": [
+            495,
+            511
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-family-collection-read/atom-dependencies/invalid.ts"
+          },
+          "span": [
+            690,
+            712
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 3,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

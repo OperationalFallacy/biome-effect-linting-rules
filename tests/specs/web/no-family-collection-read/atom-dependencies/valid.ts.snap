@@ -1,0 +1,11 @@
+{
+  "input": "import { Atom } from \"@effect/atom-react\";\n\nconst userName = Atom.family((id: string) =>\n  Atom.make((get) => get(userById(id)).name),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

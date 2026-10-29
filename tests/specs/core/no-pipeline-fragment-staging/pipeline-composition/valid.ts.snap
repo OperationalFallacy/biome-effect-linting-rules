@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst readSummary = Effect.fn(\"readSummary\")(() =>\n  readOrders.pipe(\n    Effect.map(selectCompleted),\n    Effect.map(calculateTotals),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

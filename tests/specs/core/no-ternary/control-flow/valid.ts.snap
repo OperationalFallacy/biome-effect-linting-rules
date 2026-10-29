@@ -1,0 +1,11 @@
+{
+  "input": "import { Match } from \"effect\";\n\nconst total = Match.value(enabled).pipe(\n  Match.when(true, () => calculateTotal(rows)),\n  Match.orElse(() => 0),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

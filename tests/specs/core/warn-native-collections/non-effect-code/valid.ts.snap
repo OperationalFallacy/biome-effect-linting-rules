@@ -1,0 +1,11 @@
+{
+  "input": "import { other } from \"effect-tools\";\n\nconst byId = new Map<string, number>();\nconst nativeOutsideEffectSelected = new Set([\"a\", \"b\"]);\nconst packageName = \"effect\";\n\nconst unrelatedImportSelected = new Set([\"a\"]);\nconst name = \"effect\";\nconst value = other;\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

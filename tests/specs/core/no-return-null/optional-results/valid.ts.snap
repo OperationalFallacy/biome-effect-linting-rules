@@ -1,0 +1,11 @@
+{
+  "input": "import { Option } from \"effect\";\n\nconst findProfile = (id: string) =>\n  profiles.pipe(Option.filter((profile) => profile.id === id));\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

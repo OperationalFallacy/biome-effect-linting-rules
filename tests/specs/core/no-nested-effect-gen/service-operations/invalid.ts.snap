@@ -1,0 +1,157 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n{\n  const yieldedGenerator = Effect.gen(function* () {\n    return yield* Effect.gen(function* () {\n      return 1;\n    });\n  });\n}\n\n{\n  const localGeneratorStep = Effect.gen(function* () {\n    const fragment = Effect.gen(function* () {\n      return 1;\n    });\n    return yield* fragment;\n  });\n}\n\n{\n  const apiWithIntermediateGenerator = Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      const fragment = Effect.gen(function* () {\n        return 1;\n      });\n      return yield* fragment;\n    });\n    return { read };\n  });\n}\n\n{\n  const apiWithShadowedRead = Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      const read = Effect.gen(function* () {\n        return 1;\n      });\n      return yield* read;\n    });\n    return { read };\n  });\n}\n\n{\n  const nestedApiObject = Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      return 1;\n    });\n    return { nested: { read } };\n  });\n}\n\n{\n  const exposedGenerator = Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      return 1;\n    });\n    return { read };\n  });\n}\n\n{\n  const renamedGenerator = Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      return 1;\n    });\n    return { load: read };\n  });\n}\n\n{\n  const exposedFunction = Effect.gen(function* () {\n    const read = Effect.fn(\"read\")(function* () {\n      return 1;\n    });\n    return { read };\n  });\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together. Preserve dependencies, error propagation and recovery, and resource cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together. Preserve dependencies, error propagation and recovery, and resource cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-nested-effect-gen/service-operations/invalid.ts"
+          },
+          "span": [
+            107,
+            155
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together. Preserve dependencies, error propagation and recovery, and resource cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together. Preserve dependencies, error propagation and recovery, and resource cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-nested-effect-gen/service-operations/invalid.ts"
+          },
+          "span": [
+            244,
+            292
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together. Preserve dependencies, error propagation and recovery, and resource cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together. Preserve dependencies, error propagation and recovery, and resource cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-nested-effect-gen/service-operations/invalid.ts"
+          },
+          "span": [
+            464,
+            516
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together. Preserve dependencies, error propagation and recovery, and resource cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together. Preserve dependencies, error propagation and recovery, and resource cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-nested-effect-gen/service-operations/invalid.ts"
+          },
+          "span": [
+            706,
+            758
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together. Preserve dependencies, error propagation and recovery, and resource cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together. Preserve dependencies, error propagation and recovery, and resource cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-nested-effect-gen/service-operations/invalid.ts"
+          },
+          "span": [
+            895,
+            943
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 5,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

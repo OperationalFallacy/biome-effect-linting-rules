@@ -1,0 +1,41 @@
+{
+  "input": "const stringStatus = \"ready\";\nconst taggedStatus = { _tag: \"Ready\" };\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent status choices with domain values instead of string tokens. String statuses make callers interpret text to determine the outcome. Use a domain result, tagged union, Option, or Result for status choices. This rule flags string constants as potential status tokens. Ordinary text constants are outside the status convention. Resolve the status representation at its definition and callers. A new name or location leaves the same token in place.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent status choices with domain values instead of string tokens. String statuses make callers interpret text to determine the outcome. Use a domain result, tagged union, Option, or Result for status choices. This rule flags string constants as potential status tokens. Ordinary text constants are outside the status convention. Resolve the status representation at its definition and callers. A new name or location leaves the same token in place."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-string-sentinel-const/status-values/invalid.ts"
+          },
+          "span": [
+            0,
+            28
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

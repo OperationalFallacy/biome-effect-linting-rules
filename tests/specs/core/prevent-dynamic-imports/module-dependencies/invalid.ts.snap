@@ -1,0 +1,41 @@
+{
+  "input": "import { operation } from \"./operation\";\nimport \"effect\";\n\nconst dynamicImportValue = import(\"./operation\");\n\nconst staticImportValue = operation;\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace the dynamic import with a static import. A module load inside the operation forces the reader to inspect the execution path to identify the dependency. Declare the dependency with the file's other imports and update its uses.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace the dynamic import with a static import. A module load inside the operation forces the reader to inspect the execution path to identify the dependency. Declare the dependency with the file's other imports and update its uses."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/prevent-dynamic-imports/module-dependencies/invalid.ts"
+          },
+          "span": [
+            86,
+            107
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}
