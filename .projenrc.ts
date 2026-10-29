@@ -109,6 +109,7 @@ project.package.addField("exports", {
 project.gitignore.exclude("/dist/");
 project.gitignore.exclude("/docs/*-ticket.md");
 project.gitignore.exclude("/refs/");
+project.gitignore.exclude("/.local/");
 
 project.addTask("pack:dry-run", {
   exec: "npm pack --dry-run",
