@@ -19,6 +19,21 @@ or {
         `Effect.fnUntraced($args)`,
         `Effect.fnUntracedEager($args)`
     },
+    $statement <: not within or {
+        JsModule(items = $scopeItems),
+        JsFunctionBody(statements = $scopeItems),
+        JsBlockStatement(statements = $scopeItems)
+    } where {
+        $scopeItems <: [..., $statement, ...],
+        $scopeItems <: contains or {
+            `Layer.effect($_, $name)`,
+            `Layer.effect($_)($name)`,
+            `Context.Service<$serviceTypes>()($key, $options)` where {
+                $options <: JsObjectExpression(members = $optionsMembers),
+                $optionsMembers <: [..., JsPropertyObjectMember(name = `make`, value = $name), ...]
+            }
+        } until or { JsFunctionBody(), JsBlockStatement(), JsArrowFunctionExpression() }
+    } until or { JsFunctionBody(), JsBlockStatement(), JsModule() },
     // Only the nearest lexical scope's direct API return establishes membership.
     $statement <: not within JsFunctionBody(statements = $statements) where {
         $statements <: [..., $statement, ...],
@@ -30,7 +45,7 @@ or {
     } until or { JsFunctionBody(), JsBlockStatement() },
     register_diagnostic(
         span = $statement,
-        message = "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
+        message = "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
         severity = "error"
     )
 }

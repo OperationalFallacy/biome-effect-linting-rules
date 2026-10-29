@@ -5,11 +5,11 @@
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
         "message": [
           {
             "elements": [],
-            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid."
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
           }
         ],
         "advices": {
@@ -34,11 +34,11 @@
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
         "message": [
           {
             "elements": [],
-            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid."
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
           }
         ],
         "advices": {
@@ -63,11 +63,11 @@
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
         "message": [
           {
             "elements": [],
-            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid."
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
           }
         ],
         "advices": {
@@ -92,11 +92,11 @@
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
         "message": [
           {
             "elements": [],
-            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid."
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
           }
         ],
         "advices": {
@@ -121,11 +121,11 @@
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
         "message": [
           {
             "elements": [],
-            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid."
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
           }
         ],
         "advices": {

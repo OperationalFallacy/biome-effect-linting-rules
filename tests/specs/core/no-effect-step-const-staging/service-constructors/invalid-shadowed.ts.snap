@@ -1,0 +1,41 @@
+{
+  "input": "import { Context, Effect, Layer, Ref } from \"effect\";\n\ninterface CounterApi {\n  readonly read: Effect.Effect<number>;\n}\n\nexport class Counter extends Context.Service<Counter, CounterApi>()(\n  \"example/Counter\",\n) {}\n\nconst makeCounter = Effect.gen(function* () {\n  const count = yield* Ref.make(0);\n  return { read: Ref.get(count) };\n});\n\nexport const counterLayer = Layer.effect(Counter, makeCounter);\n\n/**\n * Incorrectly stages a local transformation behind another constant.\n * The service constructor with the same name belongs to a different scope.\n */\nexport const readInitialCount = Effect.fn(\"readInitialCount\")(function* () {\n  const makeCounter = Effect.succeed(1);\n  return yield* makeCounter;\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/service-constructors/invalid-shadowed.ts"
+          },
+          "span": [
+            637,
+            675
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -11,7 +11,7 @@ or {
         },
         register_diagnostic(
             span = $call,
-            message = "Replace this Effect.as wrapper with an explicit pipeline step for the update or log. The wrapper combines the operation with a replacement result and obscures their relationship. Sequence the work with Effect.andThen, Effect.flatMap, or Effect.tap, and produce the required result explicitly.",
+            message = "Replace this Effect.as wrapper with an explicit pipeline step for the update or log. The wrapper combines the operation with a replacement result and obscures their relationship. Sequence dependent work with Effect.andThen or Effect.flatMap, and produce the required result explicitly.",
             severity = "error"
         )
     },
@@ -25,7 +25,7 @@ or {
         },
         register_diagnostic(
             span = $call,
-            message = "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen, Effect.flatMap, or Effect.tap to continue. Preserve the result the caller needs.",
+            message = "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen or Effect.flatMap to continue. Preserve the result the caller needs.",
             severity = "error"
         )
     }

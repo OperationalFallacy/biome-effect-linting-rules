@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Correctly composes acquisition transformations in a pipeline and supplies\n * the completed acquisition effect with its matching release callback.\n */\nexport const acquireSession = Effect.fn(\"acquireSession\")(() =>\n  Effect.acquireRelease(\n    Effect.sync(() => new AbortController()).pipe(\n      Effect.map((controller) => ({ controller })),\n    ),\n    (session) => Effect.sync(() => session.controller.abort()),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

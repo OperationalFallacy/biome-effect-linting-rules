@@ -5,13 +5,14 @@ JsCallExpression(callee = `Effect.$outer`, arguments = JsCallArguments(args = $a
     $inner <: not or { `fn`, `fnUntraced`, `fnUntracedEager` },
     $outer <: not or {
         `fn`, `fnUntraced`, `fnUntracedEager`,
+        `when`, `acquireRelease`, `acquireUseRelease`, `scoped`,
         `runSync`, `runSyncWith`, `runSyncExit`, `runSyncExitWith`,
         `runPromise`, `runPromiseWith`, `runPromiseExit`, `runPromiseExitWith`,
         `runFork`, `runForkWith`
     },
     register_diagnostic(
         span = $call,
-        message = "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply the subsequent steps with pipe, Effect.flatMap, or Effect.andThen.",
+        message = "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply dependent steps with pipe, Effect.flatMap, or Effect.andThen. Preserve effectful conditions, scoped acquisition, and finalizers.",
         severity = "error"
     )
 }

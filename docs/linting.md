@@ -12,7 +12,7 @@ Repeated diagnostics in a large method call for a review of its structure. A wra
 
 ## Composition and state
 
-Keep related Effect steps in execution order in a pipeline or one `Effect.gen`. Sequence dependent effects with `Effect.flatMap` or `Effect.andThen`, and use `Effect.all` to collect results.
+Keep related Effect steps in execution order in a pipeline or one `Effect.gen`. Sequence dependent effects with `Effect.flatMap` or `Effect.andThen`, and use `Effect.all` to collect results. This package reserves `Effect.tap` for logging that retains the preceding result.
 
 Define complete service operations, then return them through the service API, for example `return { readCount, resetCount }`. Reusable Effect values, pipelines, and functions built with `Effect.fn` or `Effect.fnUntraced` are valid API members. Keep their inferred result, error, and dependency types. Inline intermediate Effect constants inside each operation so its sequence stays together. The rule still checks intermediate steps inside each API operation.
 
@@ -53,6 +53,10 @@ it.effect("reads the count", () => readCount.pipe(Effect.provide(counterLayer)))
 ```
 
 Inside a service operation, yield its dependencies. Compose their layers once with `Layer.provide` when the service is constructed. Use `Effect.provideService` for dynamic contextual values.
+
+A named constructor supplied to `Layer.effect`, including its curried form, or to `Context.Service` through `make` is a complete service operation. Keep that constructor and inline its intermediate steps. Exported query effects are public operations too.
+
+`Effect.when` accepts an Effect-valued condition in v4, in both data-first and curried forms. Both effects may appear inline in the data-first form. Preserve the condition's lazy reads and typed failures. `Effect.acquireRelease` and `Effect.acquireUseRelease` accept acquisition effects directly. Keep `Effect.scoped` around scoped resource operations and preserve their finalizers.
 
 Static service layer declarations must name the class explicitly:
 
