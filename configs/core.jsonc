@@ -1,6 +1,12 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.3/schema.json",
+  "linter": {
+    "rules": {
+      "complexity": { "useArrowFunction": "off" }
+    }
+  },
   "plugins": [
+    "./node_modules/@catenarycloud/linteffect/rules/no-layer-this-reference.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-if-statement.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-switch-statement.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-ternary.grit",
