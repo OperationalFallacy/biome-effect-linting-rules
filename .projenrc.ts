@@ -1,7 +1,7 @@
 import fs from "node:fs";
 
 import { Effect, Schema } from "effect";
-import { JsonPatch, javascript, ReleasableCommits } from "projen";
+import { JsonFile, JsonPatch, javascript, ReleasableCommits } from "projen";
 import type { JobStep } from "projen/lib/github/workflows-model";
 import { YarnNodeLinker } from "projen/lib/javascript";
 import { ReleaseTrigger } from "projen/lib/release";
@@ -29,6 +29,7 @@ const synthesize = Effect.fn("synthesize")(function* () {
     ],
     devDeps: [
       "@biomejs/biome@2.6.3",
+      "@catenarycloud/linteffect@dev",
       "@types/node@^24",
       "projen@^0.98.34",
       "tsx@^4.20.6",
@@ -80,6 +81,7 @@ const synthesize = Effect.fn("synthesize")(function* () {
 
   project.package.addField("files", [
     "biome.jsonc",
+    "biome.base.jsonc",
     "bin",
     "lib",
     "rules/*.grit",
@@ -139,6 +141,106 @@ const synthesize = Effect.fn("synthesize")(function* () {
   });
   project.addTask("lint", {
     exec: "biome check",
+    receiveArgs: true,
+  });
+  project.addTask("lint:dev", {
+    exec: "biome check --config-path=biome.jsonc",
+    receiveArgs: true,
+  });
+  project.addTask("lint:local", {
+    exec: "biome check --config-path=biome.local.jsonc",
+    receiveArgs: true,
+  });
+
+  new JsonFile(project, "biome.base.jsonc", {
+    marker: false,
+    obj: {
+      $schema: "./node_modules/@biomejs/biome/configuration_schema.json",
+      formatter: { enabled: true, indentStyle: "space", indentWidth: 2 },
+      javascript: { formatter: { quoteStyle: "double" } },
+      json: { formatter: { expand: "always" } },
+      assist: {
+        enabled: true,
+        actions: {
+          recommended: false,
+          source: {
+            organizeImports: {
+              level: "on",
+              options: {
+                groups: [
+                  [":BUN:", ":NODE:"],
+                  ":BLANK_LINE:",
+                  ":URL:",
+                  [
+                    ":PACKAGE:",
+                    ":PACKAGE_WITH_PROTOCOL:",
+                    "!effect/**",
+                    "!@effect/**",
+                  ],
+                  ":BLANK_LINE:",
+                  ["effect/**", "@effect/**"],
+                  ":BLANK_LINE:",
+                  ":URL:",
+                  ":BLANK_LINE:",
+                  ":PATH:",
+                ],
+              },
+            },
+          },
+        },
+      },
+      files: {
+        ignoreUnknown: false,
+        includes: [
+          ".projenrc.ts",
+          "bin/**",
+          "scripts/**",
+          "src/**",
+          "tests/**/*.test.ts",
+          "tests/support/**",
+          "vitest.config.mts",
+          "!!refs",
+          "!!.local",
+          "!!dist",
+          "!!lib",
+        ],
+      },
+      linter: {
+        enabled: true,
+        rules: {
+          preset: "recommended",
+          style: { useConst: "error" },
+          complexity: { useArrowFunction: "off" },
+        },
+      },
+      vcs: { clientKind: "git", enabled: true, useIgnoreFile: true },
+    },
+  });
+
+  new JsonFile(project, "biome.jsonc", {
+    marker: false,
+    obj: {
+      $schema: "./node_modules/@biomejs/biome/configuration_schema.json",
+      root: true,
+      extends: ["./biome.base.jsonc", "@catenarycloud/linteffect"],
+    },
+  });
+
+  const preset = yield* Schema.decodeUnknownEffect(
+    Schema.fromJsonString(
+      Schema.Struct({ plugins: Schema.Array(Schema.String) }),
+    ),
+  )(fs.readFileSync("configs/full.jsonc", "utf8"));
+  new JsonFile(project, "biome.local.jsonc", {
+    marker: false,
+    obj: {
+      $schema: "./node_modules/@biomejs/biome/configuration_schema.json",
+      root: true,
+      extends: ["./biome.base.jsonc"],
+      plugins: preset.plugins.map((plugin) =>
+        plugin.replace("./node_modules/@catenarycloud/linteffect/", "./"),
+      ),
+    },
   });
   project.compileTask.exec("tsc --project tsconfig.build.json");
   project.testTask.reset();

@@ -127,7 +127,26 @@
       "name": "lint",
       "steps": [
         {
-          "exec": "biome check"
+          "exec": "biome check",
+          "receiveArgs": true
+        }
+      ]
+    },
+    "lint:dev": {
+      "name": "lint:dev",
+      "steps": [
+        {
+          "exec": "biome check --config-path=biome.jsonc",
+          "receiveArgs": true
+        }
+      ]
+    },
+    "lint:local": {
+      "name": "lint:local",
+      "steps": [
+        {
+          "exec": "biome check --config-path=biome.local.jsonc",
+          "receiveArgs": true
         }
       ]
     },
@@ -257,7 +276,7 @@
           "exec": "yarn install"
         },
         {
-          "exec": "yarn up @biomejs/biome @types/node commit-and-tag-version constructs projen tsx typescript vite vitest @biomejs/wasm-nodejs @effect/platform-node-shared effect"
+          "exec": "yarn up @biomejs/biome @catenarycloud/linteffect @types/node commit-and-tag-version constructs projen tsx typescript vite vitest @biomejs/wasm-nodejs @effect/platform-node-shared effect"
         },
         {
           "exec": "npx projen"

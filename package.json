@@ -14,6 +14,8 @@
     "default": "npx projen default",
     "eject": "npx projen eject",
     "lint": "npx projen lint",
+    "lint:dev": "npx projen lint:dev",
+    "lint:local": "npx projen lint:local",
     "pack:dry-run": "npx projen pack:dry-run",
     "package": "npx projen package",
     "post-compile": "npx projen post-compile",
@@ -34,6 +36,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",
+    "@catenarycloud/linteffect": "dev",
     "@types/node": "^24",
     "commit-and-tag-version": "^12",
     "constructs": "^10.0.0",
@@ -68,6 +71,7 @@
   "packageManager": "yarn@4.6.0",
   "files": [
     "biome.jsonc",
+    "biome.base.jsonc",
     "bin",
     "lib",
     "rules/*.grit",

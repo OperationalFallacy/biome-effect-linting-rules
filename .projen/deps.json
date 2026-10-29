@@ -6,6 +6,11 @@
       "type": "build"
     },
     {
+      "name": "@catenarycloud/linteffect",
+      "version": "dev",
+      "type": "build"
+    },
+    {
       "name": "@types/node",
       "version": "^24",
       "type": "build"

@@ -50,4 +50,7 @@ jspm_packages/
 /refs/
 /.local/
 /lib/
+!/biome.base.jsonc
+!/biome.jsonc
+!/biome.local.jsonc
 !/.projenrc.js
