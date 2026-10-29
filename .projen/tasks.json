@@ -118,6 +118,14 @@
         }
       ]
     },
+    "lint": {
+      "name": "lint",
+      "steps": [
+        {
+          "exec": "biome check"
+        }
+      ]
+    },
     "pack:dry-run": {
       "name": "pack:dry-run",
       "steps": [
@@ -188,7 +196,21 @@
       "description": "Run tests",
       "steps": [
         {
-          "exec": "vitest run tests/rules"
+          "exec": "yarn lint"
+        },
+        {
+          "exec": "vitest run"
+        },
+        {
+          "exec": "yarn typecheck"
+        }
+      ]
+    },
+    "typecheck": {
+      "name": "typecheck",
+      "steps": [
+        {
+          "exec": "tsc --project tsconfig.json"
         }
       ]
     },
@@ -224,7 +246,7 @@
           "exec": "yarn install"
         },
         {
-          "exec": "yarn up commit-and-tag-version constructs effect projen tsx typescript vitest @biomejs/biome"
+          "exec": "yarn up @biomejs/biome @effect/platform-node-shared @types/node commit-and-tag-version constructs projen tsx typescript vite vitest @biomejs/wasm-nodejs effect"
         },
         {
           "exec": "npx projen"

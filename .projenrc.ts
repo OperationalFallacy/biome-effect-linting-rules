@@ -1,6 +1,7 @@
 import fs from "node:fs";
-import { javascript, JsonPatch, ReleasableCommits } from "projen";
-import { JobStep } from "projen/lib/github/workflows-model";
+
+import { JsonPatch, javascript, ReleasableCommits } from "projen";
+import type { JobStep } from "projen/lib/github/workflows-model";
 import { YarnNodeLinker } from "projen/lib/javascript";
 import { ReleaseTrigger } from "projen/lib/release";
 
@@ -8,7 +9,8 @@ const yarnVersion = "4.6.0";
 const upgradeSchedule = "0 0 * * 1,4";
 const packageManifestPath = "package.json";
 const currentPackageVersion = fs.existsSync(packageManifestPath)
-  ? JSON.parse(fs.readFileSync(packageManifestPath, "utf8")).version ?? "0.0.0"
+  ? (JSON.parse(fs.readFileSync(packageManifestPath, "utf8")).version ??
+    "0.0.0")
   : "0.0.0";
 
 const project = new javascript.NodeProject({
@@ -17,13 +19,16 @@ const project = new javascript.NodeProject({
   defaultReleaseBranch: "master",
   description:
     "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
-  deps: ["@biomejs/biome@^2.5.4"],
+  deps: ["@biomejs/wasm-nodejs@2.6.3", "effect@4.0.6"],
   devDeps: [
-    "effect@4.0.6",
+    "@biomejs/biome@2.6.3",
+    "@effect/platform-node-shared@4.0.6",
+    "@types/node@^24",
     "projen@^0.98.34",
     "tsx@^4.20.6",
     "typescript@^5.9.3",
-    "vitest@^4.1.1",
+    "vite@^8",
+    "vitest@^5.0.5",
   ],
   entrypoint: "",
   github: true,
@@ -50,7 +55,8 @@ const project = new javascript.NodeProject({
   release: true,
   releaseTrigger: ReleaseTrigger.workflowDispatch(),
   releasableCommits: ReleasableCommits.featuresAndFixes(),
-  repository: "https://github.com/OperationalFallacy/biome-effect-linting-rules.git",
+  repository:
+    "https://github.com/OperationalFallacy/biome-effect-linting-rules.git",
   workflowNodeVersion: "24.11.1",
   yarnBerryOptions: {
     version: yarnVersion,
@@ -112,7 +118,15 @@ project.addTask("refresh:biome-grammars", {
   exec: "tsx scripts/refresh-biome-grammars.ts",
 });
 
-project.testTask.reset("vitest run tests/rules");
+project.addTask("typecheck", {
+  exec: "tsc --project tsconfig.json",
+});
+project.addTask("lint", {
+  exec: "biome check",
+});
+project.testTask.reset("yarn lint");
+project.testTask.exec("vitest run");
+project.testTask.exec("yarn typecheck");
 
 project.defaultTask?.reset("tsx .projenrc.ts");
 
@@ -120,8 +134,8 @@ if (project.github) {
   const buildWorkflow = project.github.workflows.find(
     (workflow) => workflow.name === "build",
   );
-  const upgradeWorkflows = project.github.workflows.filter(
-    (workflow) => workflow.name.startsWith("upgrade-"),
+  const upgradeWorkflows = project.github.workflows.filter((workflow) =>
+    workflow.name.startsWith("upgrade-"),
   );
 
   const corepackStep = {
@@ -197,7 +211,7 @@ const upgradeWorkflowFile = fs.existsSync(upgradeWorkflowPath)
 const rewrittenUpgradeWorkflow = upgradeWorkflowFile
   ?.replace(`    - cron: 0 0 * * *`, `    - cron: ${upgradeSchedule}`)
   .replace(
-  `      - name: Checkout
+    `      - name: Checkout
         uses: actions/checkout@v5
         with:
           ref: master
@@ -205,7 +219,7 @@ const rewrittenUpgradeWorkflow = upgradeWorkflowFile
         uses: actions/setup-node@v5
         with:
           node-version: 24.11.1`,
-  `      - name: Checkout
+    `      - name: Checkout
         uses: actions/checkout@v5
         with:
           ref: master
@@ -218,7 +232,10 @@ const rewrittenUpgradeWorkflow = upgradeWorkflowFile
           package-manager-cache: false`,
   );
 
-if (rewrittenUpgradeWorkflow && rewrittenUpgradeWorkflow !== upgradeWorkflowFile) {
+if (
+  rewrittenUpgradeWorkflow &&
+  rewrittenUpgradeWorkflow !== upgradeWorkflowFile
+) {
   fs.chmodSync(upgradeWorkflowPath, 0o644);
   fs.writeFileSync(upgradeWorkflowPath, rewrittenUpgradeWorkflow);
   fs.chmodSync(upgradeWorkflowPath, 0o444);
@@ -339,7 +356,8 @@ fs.chmodSync(releaseWorkflowPath, 0o444);
 
 const devReleasePleaseConfigPath = "release-please-config.dev.json";
 const devReleasePleaseConfig = {
-  $schema: "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  $schema:
+    "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   packages: {
     ".": {
       "bump-patch-for-minor-pre-major": true,
