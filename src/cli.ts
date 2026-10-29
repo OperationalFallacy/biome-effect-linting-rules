@@ -20,7 +20,7 @@ import { Argument, Command, Flag } from "effect/cli";
 
 import { Biome, type BiomeDiagnostic } from "./biome.ts";
 
-/** Presets name packaged configurations, and plugin entries identify package-relative files. */
+/** Each preset lists rule files within the package. */
 const Preset = Schema.fromJsonString(
   Schema.Struct({ plugins: Schema.Array(Schema.String) }),
 );
@@ -59,7 +59,7 @@ const formatDiagnostic = (
   return `${file}${position} ${severity} ${diagnostic.category ?? ""}\n  ${diagnostic.description}`;
 };
 
-/** ProjectChecks loads packaged rules and checks file targets without changing source files. */
+/** ProjectChecks loads package presets and reports diagnostics for requested files. */
 export class ProjectChecks extends Context.Service<ProjectChecks>()(
   "@catenarycloud/linteffect/cli/ProjectChecks",
   {
@@ -103,7 +103,7 @@ export class ProjectChecks extends Context.Service<ProjectChecks>()(
         }
       });
 
-      /** Finds supported files once, without descending into dependencies or directory links. */
+      /** Lists supported files and skips dependency folders and directory links. */
       const discoverFiles = Effect.fn("ProjectChecks.discoverFiles")(function* (
         targets: ReadonlyArray<string>,
       ) {
@@ -276,7 +276,7 @@ export class ProjectChecks extends Context.Service<ProjectChecks>()(
   );
 }
 
-/** Effect CLI owns argument parsing, validation, help, and command dispatch. */
+/** Effect CLI parses arguments and dispatches the check and guide commands. */
 export const command = Command.make("linteffect").pipe(
   Command.withSubcommands([
     Command.make(

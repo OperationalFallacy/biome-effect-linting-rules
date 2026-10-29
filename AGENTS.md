@@ -67,7 +67,7 @@ Use the Yarn version declared in `package.json`. Run these commands from the rep
 
 For rule changes, run the relevant tests and then the full suite. For package or workflow changes, run the build and review its generated files. Documentation changes need a prose and link review; use `git diff --check` to check whitespace.
 
-The installed dev release is locked in `yarn.lock`. Update it with `yarn up @catenarycloud/linteffect@dev`. Compare published and local diagnostics during rule development. Do not suppress findings or change valid code solely to accommodate a published matcher bug.
+The installed dev release is locked in `yarn.lock`. Update it with `yarn up -R @catenarycloud/linteffect` so the dependency keeps its dev tag. Compare published and local diagnostics during rule development. Do not suppress findings or change valid code solely to accommodate a published matcher bug.
 
 `tsconfig.json` configures the Effect Language Service. The compile and typecheck tasks apply its compiler patch before they run TypeScript. The workspace compiler and editor use that configuration. Effect errors fail compilation; warnings and suggestions remain visible. Repair the service composition or implementation that caused a diagnostic. Do not widen Effect channels or add casts to hide it.
 

@@ -31,7 +31,7 @@ export class Biome extends Context.Service<Biome>()(
     make: Effect.gen(function* () {
       yield* Effect.try(main);
 
-      /** Returns the SDK result after releasing the workspace and memory filesystem. */
+      /** Releases both WASM resources before the caller receives the SDK result. */
       const lint = Effect.fn("Biome.lint")(function* (input: BiomeInput) {
         const fileSystem = yield* Effect.try(() => new MemoryFileSystem()).pipe(
           (acquire) =>

@@ -119,7 +119,7 @@ The [guide](./docs/linting.md) explains the diagnostics and how to fix the code.
 
 Clone this repository and install its development dependencies with `yarn install`. Run `yarn test` to check the rules and `yarn build` to regenerate project files, run the tests, and create the npm archive.
 
-`yarn lint` checks implementation code with the installed `@catenarycloud/linteffect@dev` package. `yarn lint:dev` selects it explicitly. Yarn locks the installed release; run `yarn up @catenarycloud/linteffect@dev` to update it.
+`yarn lint` checks implementation code with the installed `@catenarycloud/linteffect@dev` package. `yarn lint:dev` selects it explicitly. Yarn locks the installed release; run `yarn up -R @catenarycloud/linteffect` to update that resolution without replacing the dev tag with a version range.
 
 `yarn lint:local` checks the same files with this checkout's rules. Both configurations share formatting, import organization, recommended Biome rules, and Git ignore settings. Fixture source files stay outside these checks because they contain deliberate violations. Pass a path to focus either check:
 
@@ -128,11 +128,11 @@ yarn lint:dev src/cli.ts
 yarn lint:local src/cli.ts
 ```
 
-Tests and builds run `yarn lint`. To use the checkout's rules throughout a development run, set `BIOME_CONFIG_PATH=biome.local.jsonc`, for example `BIOME_CONFIG_PATH=biome.local.jsonc yarn test`. The published package can report findings that have already been fixed in the checkout; compare both commands before changing code to satisfy a diagnostic.
+Tests and builds run `yarn lint`. Set `BIOME_CONFIG_PATH=biome.local.jsonc` to use the checkout's rules, for example `BIOME_CONFIG_PATH=biome.local.jsonc yarn test`. Compare published and local diagnostics before a rewrite.
 
 `.projenrc.ts` generates both configurations and their shared `biome.base.jsonc`. It derives the local plugin list from `configs/full.jsonc`.
 
-The Effect Language Service adds type-aware diagnostics in editors and `yarn typecheck`. The compile and typecheck tasks apply its compiler patch before they run TypeScript. The editor settings select the workspace compiler. `yarn effect:diagnostics` reports Effect findings separately. Errors fail the typecheck; warnings and suggestions remain visible without blocking it. Biome checks the project's syntax conventions, while the language service checks Effect usage and boolean conditions.
+The Effect Language Service checks Effect usage and boolean conditions in editors and `yarn typecheck`. Compiler tasks apply its patch automatically. `yarn effect:diagnostics` reports its findings separately. Errors fail the typecheck; warnings and suggestions do not. Biome checks syntax and format.
 
 Add rule test cases using the [fixture layout and commands](tests/specs/README.md).
 

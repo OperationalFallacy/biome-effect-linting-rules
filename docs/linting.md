@@ -46,13 +46,13 @@ Use `Match` to select pure values. A `Match` branch that returns `Effect.void` i
 
 ### Dependency assembly
 
-Provide a layer around an exported operation at application or test assembly. A test can construct its own dependencies without changing the operation's implementation:
+Provide layers at the application or test entry point. A test can supply its own dependencies:
 
 ```ts
 it.effect("reads the count", () => readCount.pipe(Effect.provide(counterLayer)));
 ```
 
-Inside a service operation, yield its dependencies instead of calling `Effect.provide` to acquire a new layer on every invocation. Define acquisition in the service's construction Effect and compose dependencies with `Layer.provide`. `Effect.provideService` remains appropriate for dynamic contextual values.
+Inside a service operation, yield its dependencies. Compose their layers once with `Layer.provide` when the service is constructed. Use `Effect.provideService` for dynamic contextual values.
 
 Static service layer declarations must name the class explicitly:
 
