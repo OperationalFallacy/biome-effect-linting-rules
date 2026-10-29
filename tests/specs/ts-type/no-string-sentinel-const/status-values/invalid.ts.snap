@@ -5,11 +5,11 @@
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Represent status choices with domain values instead of string tokens. String statuses make callers interpret text to determine the outcome. Use a domain result, tagged union, Option, or Result for status choices. This rule flags string constants as potential status tokens. Ordinary text constants are outside the status convention. Resolve the status representation at its definition and callers. A new name or location leaves the same token in place.",
+        "description": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model.",
         "message": [
           {
             "elements": [],
-            "content": "Represent status choices with domain values instead of string tokens. String statuses make callers interpret text to determine the outcome. Use a domain result, tagged union, Option, or Result for status choices. This rule flags string constants as potential status tokens. Ordinary text constants are outside the status convention. Resolve the status representation at its definition and callers. A new name or location leaves the same token in place."
+            "content": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model."
           }
         ],
         "advices": {
@@ -23,7 +23,7 @@
             "file": "/project/ts-type/no-string-sentinel-const/status-values/invalid.ts"
           },
           "span": [
-            0,
+            6,
             28
           ],
           "sourceCode": null

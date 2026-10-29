@@ -1,0 +1,11 @@
+{
+  "input": "const status = LoadState.Ready({ count: 3 });\nconst loadState: LoadState = LoadState.Loading();\nexport const requestPhase = RequestPhase.Pending();\nconst request_outcome = RequestOutcome.Failed({ cause });\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

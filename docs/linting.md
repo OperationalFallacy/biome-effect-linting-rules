@@ -70,6 +70,8 @@ Keep a constructible function or class when a mock will be called with `new`. An
 
 Decode external data with Schema and use the decoded values in services. Define optional boolean defaults in the schema so each service applies the same policy. Put the required validation in that decoder so its result is ready for the operation. Express absence with `Option`, failures with typed errors, and status choices with tagged unions.
 
+`no-string-sentinel-const` checks string constants named `status`, `state`, `phase`, or `outcome`, including camelCase and snake_case suffixes. It cannot infer the role of every string from syntax. Paths, versions, schedules, and display text are allowed. Review the domain representation rather than rename a status token to evade the rule.
+
 Use `Record` operations inside `Struct.evolve` for state updates. Reconstruct validated models with their schema constructors, such as `Model.make`. Decode serialized input with `Schema.decodeUnknownEffect` and encode output with `Schema.encodeEffect`. Apply `Schema.fromJsonString` to the model schema for JSON input and output.
 
 The web preset uses atoms for React state and subscriptions. Keep canonical state changes in Effect services, with atoms responsible for reads and commands. An atom action that reads state, copies it with object spread, and writes it back spreads a state transition across separate calls. Give that transition a service operation with an explicit result.

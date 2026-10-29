@@ -1,10 +1,13 @@
 language js(typescript, jsx)
 
-`const $name = $val` as $sentinel where {
+JsVariableDeclarator(id = $name, initializer = JsInitializerClause(expression = $val)) as $sentinel where {
+    $sentinel <: within JsVariableDeclaration() as $declaration,
+    $declaration <: r"const\s[\s\S]*",
+    $name <: r"(?:status|state|phase|outcome|[A-Za-z_$][A-Za-z0-9_$]*(?:Status|State|Phase|Outcome)|[A-Za-z_$][A-Za-z0-9_$]*_(?:status|state|phase|outcome))",
     $val <: JsStringLiteralExpression(),
     register_diagnostic(
         span = $sentinel,
-        message = "Represent status choices with domain values instead of string tokens. String statuses make callers interpret text to determine the outcome. Use a domain result, tagged union, Option, or Result for status choices. This rule flags string constants as potential status tokens. Ordinary text constants are outside the status convention. Resolve the status representation at its definition and callers. A new name or location leaves the same token in place.",
+        message = "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model.",
         severity = "error"
     )
 }
