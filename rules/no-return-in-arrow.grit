@@ -1,52 +1,7 @@
 language js(typescript, jsx)
 
-or {
-    `$callee(($params) => { $block })` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: [`return $value` as $ret]
-    },
-    `$callee(($params): $return => { $block })` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: [`return $value` as $ret]
-    },
-    `$callee($param => { $block })` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: [`return $value` as $ret]
-    },
-    `$callee($before, ($params) => { $block })` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: [`return $value` as $ret]
-    },
-    `$callee($before, ($params): $return => { $block })` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: [`return $value` as $ret]
-    },
-    `$callee($before, $param => { $block })` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: [`return $value` as $ret]
-    },
-    `$callee($before, ($params) => { $block }, $after)` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: [`return $value` as $ret]
-    },
-    `$callee($before, ($params): $return => { $block }, $after)` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: [`return $value` as $ret]
-    },
-    `$callee($before, $param => { $block }, $after)` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: [`return $value` as $ret]
-    }
-} where {
+JsCallExpression(callee = $callee, arguments = JsCallArguments(args = $args)) where {
+    $args <: [..., JsArrowFunctionExpression(body = JsFunctionBody(statements = [`return $value` as $ret])), ...],
     $callee <: not or {
         `Schema.makeFilter`, `Schema.refine`, `Schema.declare`,
         `S.makeFilter`, `S.refine`, `S.declare`

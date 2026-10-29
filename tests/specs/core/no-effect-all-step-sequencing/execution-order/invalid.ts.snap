@@ -1,15 +1,15 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst sequentialLogsValue = Effect.all([Effect.log(\"start\"), Effect.log(\"done\")], {\n  concurrency: 1,\n});\n\nconst collectedResultsValue = Effect.all([Effect.succeed(1), Effect.succeed(2)]);\n",
+  "input": "import { Effect, Ref } from \"effect\";\n\n/**\n * Misuses Effect.all by grouping sequential operations into an array,\n * then enforcing their order with a concurrency limit.\n */\nexport const markDelivered = Effect.fn(\"markDelivered\")(function* (\n  delivered: Ref.Ref<boolean>,\n  recipient: string,\n) {\n  yield* Effect.all(\n    [\n      Effect.logInfo(`Parcel delivered to ${recipient}`),\n      Ref.set(delivered, true),\n    ],\n    { concurrency: 1 },\n  );\n  return yield* Ref.get(delivered);\n});\n",
   "result": {
     "diagnostics": [
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Sequence these Effect operations with Effect.andThen or Effect.flatMap. Effect.all treats consecutive steps as collection entries, so its options determine their execution order. Keep the steps in one pipeline and preserve their order and failure behavior. Reserve Effect.all for operations that collect results.",
+        "description": "Sequence these steps with Effect.gen, Effect.andThen, or Effect.flatMap. Preserve their order and failure behavior. Use Effect.all to collect independent results, including per-item successes and failures with mode: result.",
         "message": [
           {
             "elements": [],
-            "content": "Sequence these Effect operations with Effect.andThen or Effect.flatMap. Effect.all treats consecutive steps as collection entries, so its options determine their execution order. Keep the steps in one pipeline and preserve their order and failure behavior. Reserve Effect.all for operations that collect results."
+            "content": "Sequence these steps with Effect.gen, Effect.andThen, or Effect.flatMap. Preserve their order and failure behavior. Use Effect.all to collect independent results, including per-item successes and failures with mode: result."
           }
         ],
         "advices": {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-effect-all-step-sequencing/execution-order/invalid.ts"
           },
           "span": [
-            62,
-            138
+            307,
+            449
           ],
           "sourceCode": null
         },

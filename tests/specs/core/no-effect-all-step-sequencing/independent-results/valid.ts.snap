@@ -1,0 +1,11 @@
+{
+  "input": "import { Array as Arr, Effect, Schema } from \"effect\";\n\n/**\n * Correctly uses Effect.all to collect independent validation results.\n * Result mode represents validation failures as data so one bad input\n * does not stop the batch.\n */\nexport const validateNames = Effect.fn(\"validateNames\")(\n  (names: ReadonlyArray<unknown>) =>\n    Effect.all(\n      Arr.map(names, (input) =>\n        Schema.decodeUnknownEffect(Schema.NonEmptyString)(input).pipe(\n          Effect.tap((name) => Effect.logInfo(`Guest name accepted: ${name}`)),\n        ),\n      ),\n      { concurrency: 1, mode: \"result\" },\n    ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

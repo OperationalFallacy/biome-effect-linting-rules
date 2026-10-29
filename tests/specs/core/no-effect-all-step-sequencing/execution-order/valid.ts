@@ -1,10 +1,14 @@
-import { Effect } from "effect";
+import { Effect, Ref } from "effect";
 
-const saveProfile = Effect.fn("saveProfile")(function* () {
-  const profile = yield* readProfile;
-  yield* persistProfile(profile);
-  yield* publishProfile(profile);
-  return profile;
+/**
+ * Correctly sequences effects in an Effect.fn generator body, where yield*
+ * expresses their execution order directly.
+ */
+export const markDelivered = Effect.fn("markDelivered")(function* (
+  delivered: Ref.Ref<boolean>,
+  recipient: string,
+) {
+  yield* Effect.logInfo(`Parcel delivered to ${recipient}`);
+  yield* Ref.set(delivered, true);
+  return yield* Ref.get(delivered);
 });
-
-const independentReads = Effect.all({ profile: readProfile, settings: readSettings });

@@ -1,13 +1,14 @@
-import { Effect } from "effect";
+const names = ["Ada", "Grace"];
 
-const labels = rows.map((row) => row.name);
+/**
+ * Correctly uses an expression callback for a single transformation.
+ */
+export const searchTerms = names.map((name) => name.toLowerCase());
 
-const normalized = rows.map((row) => {
-  const name = row.name.trim();
+/**
+ * Correctly uses a block callback when a local declaration needs its own scope.
+ */
+export const labels = names.map((input) => {
+  const name = input.trim();
   return name.toUpperCase();
-});
-
-const load = Effect.fn("load")(function* () {
-  const profile = yield* readProfile;
-  return profile.name;
 });

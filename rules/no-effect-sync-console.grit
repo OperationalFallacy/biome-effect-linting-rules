@@ -1,12 +1,14 @@
-file($body) where {
+language js(typescript, jsx)
+
+or {
+    `Effect.sync($fn)` as $call,
+    `Effect.sync<$types>($fn)` as $call
+} where {
+    $fn <: contains `console.$method($_)`,
+    $call <: within JsModule() as $body,
     $body <: contains bubble JsModuleSource() as $moduleSource where {
         $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
-    or {
-        $body <: contains `Effect.sync($fn)` as $call,
-        $body <: contains `Effect.sync<$types>($fn)` as $call
-    },
-    $fn <: contains `console.$method($_)`,
     register_diagnostic(
         span = $call,
         message = "Use Effect.log, Effect.logDebug, or another Effect log function for logs in Effect code. A console call inside Effect.sync bypasses Effect's log context and levels. Choose the Effect log function that matches the required level, or remove a log that serves no purpose.",

@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst loadProfile = readProfile.pipe(\n  Effect.tap((profile) => Effect.logInfo(\"Profile loaded\", { id: profile.id })),\n);\n",
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Correctly uses Effect's logging API so logger configuration and minimum\n * log level apply to the operation's output.\n */\nexport const announceDelivery = Effect.fn(\"announceDelivery\")(function* (\n  recipient: string,\n) {\n  yield* Effect.logInfo(`Parcel delivered to ${recipient}`);\n  return recipient;\n});\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

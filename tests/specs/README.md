@@ -11,7 +11,24 @@ core/no-effect-do/construction/valid.ts.snap
 
 The preset must register the rule from `rules/<rule>.grit`. Separate scenarios by behavior, such as call forms or import conditions. Use `.ts` or `.tsx` files named `valid`, `invalid`, or variants such as `valid-no-imports`.
 
-`tests/specs.test.ts` discovers the files and runs each against its selected rule. Fixtures are source text, so incomplete declarations and invalid API calls need no TypeScript suppression comments.
+`tests/specs.test.ts` discovers the files and runs each against its selected rule. Pair `invalid.ts` and `valid.ts` around the same task. Preserve the result, failure behavior, and order of side effects so the reader can compare the implementations.
+
+Define each example's inputs, schemas, and dependencies. Use `/** ... */` comments that identify correct, incorrect, or questionable usage and explain the composition choice directly. See the [fixture writing guidance](../../docs/rule-guidance.md#write-fixtures-as-learning-examples).
+
+Give parser edge cases separate variants. An invalid fixture may use an obsolete API to demonstrate a migration; ordinary examples should not depend on undeclared globals.
+
+Use generic domains and invented data. Reproduce the code shape behind application feedback without private source, identifiers, or records.
+
+| Task | Before | After |
+| --- | --- | --- |
+| Reject a bad check-in record before the welcome message; return the name for confirmation. | [Nested callbacks](core/no-flatmap-ladder/composition/invalid.ts) | [A name pipeline with tap](core/no-flatmap-ladder/composition/valid.ts) |
+| Log a delivery before the status changes. | [Steps in a collection](core/no-effect-all-step-sequencing/execution-order/invalid.ts) | [Explicit sequence](core/no-effect-all-step-sequencing/execution-order/valid.ts) |
+| Report a completed delivery. | [Raw console call](core/no-effect-sync-console/logging/invalid.ts) | [Effect log context](core/no-effect-sync-console/logging/valid.ts) |
+| Read a counter. | [Manual Effect annotation](core/no-manual-effect-channels/operation-contracts/invalid.ts) | [Inferred operation](core/no-manual-effect-channels/operation-contracts/valid.ts) |
+
+The [schema examples](core/no-return-in-arrow/schema-predicates/valid.ts) keep v4 check predicates intact. The [refinement](core/no-return-in-arrow/schema-predicates/valid-refinement.ts) narrows the decoded type.
+
+The [batch validation example](core/no-effect-all-step-sequencing/independent-results/valid.ts) treats individual failures as results. It contrasts a collection of outcomes with an ordered workflow.
 
 A valid case must produce zero diagnostics. An invalid case must produce at least one diagnostic, including warnings. Parse errors, plugin-load failures, and skipped diagnostics fail the test.
 

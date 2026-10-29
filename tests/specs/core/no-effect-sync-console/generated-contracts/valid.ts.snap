@@ -1,0 +1,11 @@
+{
+  "input": "import type { Effect } from \"effect\";\n\nexport interface CatalogItem {\n  readonly id: string;\n  readonly title: string;\n}\n\nexport interface CatalogPage {\n  readonly items: ReadonlyArray<CatalogItem>;\n  readonly nextCursor?: string;\n}\n\n/**\n * Correctly describes effectful client operations in a type-only contract.\n * An Effect return type declares the operation without executing a side effect.\n */\nexport interface CatalogClient {\n  readonly list: (cursor?: string) => Effect.Effect<CatalogPage>;\n}\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}
