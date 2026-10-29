@@ -2,7 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
 const args = process.argv.slice(2);
-const refFlagIndex = args.findIndex((arg) => arg === "--ref");
+const refFlagIndex = args.indexOf("--ref");
 const biomeRef =
   refFlagIndex >= 0 && args[refFlagIndex + 1] ? args[refFlagIndex + 1] : "main";
 
@@ -24,7 +24,9 @@ const refreshGrammar = async (fileName: string, url: string) => {
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Failed to fetch ${url}: ${response.status} ${response.statusText}`,
+    );
   }
 
   const body = await response.text();

@@ -1,224 +1,231 @@
 import fs from "node:fs";
 
+import { Effect, Schema } from "effect";
 import { JsonPatch, javascript, ReleasableCommits } from "projen";
 import type { JobStep } from "projen/lib/github/workflows-model";
 import { YarnNodeLinker } from "projen/lib/javascript";
 import { ReleaseTrigger } from "projen/lib/release";
 
-const yarnVersion = "4.6.0";
-const upgradeSchedule = "0 0 * * 1,4";
-const packageManifestPath = "package.json";
-const currentPackageVersion = fs.existsSync(packageManifestPath)
-  ? (JSON.parse(fs.readFileSync(packageManifestPath, "utf8")).version ??
-    "0.0.0")
-  : "0.0.0";
+const synthesize = Effect.fn("synthesize")(function* () {
+  const yarnVersion = "4.6.0";
+  const upgradeSchedule = "0 0 * * 1,4";
+  const packageManifestPath = "package.json";
+  const currentPackageVersion = fs.existsSync(packageManifestPath)
+    ? (yield* Schema.decodeUnknownEffect(
+        Schema.fromJsonString(Schema.Struct({ version: Schema.String })),
+      )(fs.readFileSync(packageManifestPath, "utf8"))).version
+    : "0.0.0";
 
-const project = new javascript.NodeProject({
-  authorName: "Roman Naumenko",
-  authorEmail: "hi@catenary.cloud",
-  defaultReleaseBranch: "master",
-  description:
-    "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
-  deps: [
-    "@biomejs/wasm-nodejs@2.6.3",
-    "@effect/platform-node-shared@4.0.6",
-    "effect@4.0.6",
-  ],
-  devDeps: [
-    "@biomejs/biome@2.6.3",
-    "@types/node@^24",
-    "projen@^0.98.34",
-    "tsx@^4.20.6",
-    "typescript@^5.9.3",
-    "vite@^8",
-    "vitest@^5.0.5",
-  ],
-  entrypoint: "",
-  github: true,
-  jest: false,
-  keywords: [
-    "biome",
-    "grit",
-    "effect",
-    "typescript",
-    "lint",
-    "agent",
-    "code-style",
-  ],
-  license: "MIT",
-  licensed: true,
-  majorVersion: 0,
-  minNodeVersion: "24.0.0",
-  name: "lintEffect",
-  npmAccess: javascript.NpmAccess.PUBLIC,
-  npmDistTag: "latest",
-  packageManager: javascript.NodePackageManager.YARN_BERRY,
-  packageName: "@catenarycloud/linteffect",
-  prettier: false,
-  releaseToNpm: true,
-  release: true,
-  releaseTrigger: ReleaseTrigger.workflowDispatch(),
-  releasableCommits: ReleasableCommits.featuresAndFixes(),
-  repository:
-    "https://github.com/OperationalFallacy/biome-effect-linting-rules.git",
-  workflowNodeVersion: "24.11.1",
-  yarnBerryOptions: {
-    version: yarnVersion,
-    zeroInstalls: false,
-    yarnRcOptions: {
-      nodeLinker: YarnNodeLinker.NODE_MODULES,
+  const project = new javascript.NodeProject({
+    authorName: "Roman Naumenko",
+    authorEmail: "hi@catenary.cloud",
+    defaultReleaseBranch: "master",
+    description:
+      "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
+    deps: [
+      "@biomejs/wasm-nodejs@2.6.3",
+      "@effect/platform-node-shared@4.0.6",
+      "effect@4.0.6",
+    ],
+    devDeps: [
+      "@biomejs/biome@2.6.3",
+      "@types/node@^24",
+      "projen@^0.98.34",
+      "tsx@^4.20.6",
+      "typescript@^5.9.3",
+      "vite@^8",
+      "vitest@^5.0.5",
+    ],
+    entrypoint: "",
+    github: true,
+    jest: false,
+    keywords: [
+      "biome",
+      "grit",
+      "effect",
+      "typescript",
+      "lint",
+      "agent",
+      "code-style",
+    ],
+    license: "MIT",
+    licensed: true,
+    majorVersion: 0,
+    minNodeVersion: "24.0.0",
+    name: "lintEffect",
+    npmAccess: javascript.NpmAccess.PUBLIC,
+    npmDistTag: "latest",
+    packageManager: javascript.NodePackageManager.YARN_BERRY,
+    packageName: "@catenarycloud/linteffect",
+    prettier: false,
+    releaseToNpm: true,
+    release: true,
+    releaseTrigger: ReleaseTrigger.workflowDispatch(),
+    releasableCommits: ReleasableCommits.featuresAndFixes(),
+    repository:
+      "https://github.com/OperationalFallacy/biome-effect-linting-rules.git",
+    workflowNodeVersion: "24.11.1",
+    yarnBerryOptions: {
+      version: yarnVersion,
+      zeroInstalls: false,
+      yarnRcOptions: {
+        nodeLinker: YarnNodeLinker.NODE_MODULES,
+      },
     },
-  },
-});
+  });
 
-project.release?.publisher?.publishToNpm({
-  trustedPublishing: true,
-});
+  project.release?.publisher?.publishToNpm({
+    trustedPublishing: true,
+  });
 
-project.package.addField("files", [
-  "biome.jsonc",
-  "bin",
-  "src",
-  "rules/*.grit",
-  "configs",
-  "examples",
-  "docs",
-  "!docs/*-ticket.md",
-  "README.md",
-  "LICENSE",
-]);
+  project.package.addField("files", [
+    "biome.jsonc",
+    "bin",
+    "src",
+    "rules/*.grit",
+    "configs",
+    "examples",
+    "docs",
+    "!docs/*-ticket.md",
+    "README.md",
+    "LICENSE",
+  ]);
 
-project.package.addField("bin", "./bin/linteffect.mjs");
-project.package.addField("type", "module");
+  project.package.addField("bin", "./bin/linteffect.mjs");
+  project.package.addField("type", "module");
 
-project.package.addField("publishConfig", {
-  access: "public",
-});
+  project.package.addField("publishConfig", {
+    access: "public",
+  });
 
-project.package.addVersion(currentPackageVersion);
+  project.package.addVersion(currentPackageVersion);
 
-project.package.addField("repository", {
-  type: "git",
-  url: "https://github.com/OperationalFallacy/biome-effect-linting-rules.git",
-});
+  project.package.addField("repository", {
+    type: "git",
+    url: "https://github.com/OperationalFallacy/biome-effect-linting-rules.git",
+  });
 
-project.package.addField("exports", {
-  ".": "./configs/full.jsonc",
-  "./recommended": "./configs/full.jsonc",
-  "./core": "./configs/core.jsonc",
-  "./web": "./configs/web.jsonc",
-  "./ts-type": "./configs/ts-type.jsonc",
-  "./agent-guide": "./docs/linting.md",
-  "./package.json": "./package.json",
-});
+  project.package.addField("exports", {
+    ".": "./configs/full.jsonc",
+    "./recommended": "./configs/full.jsonc",
+    "./core": "./configs/core.jsonc",
+    "./web": "./configs/web.jsonc",
+    "./ts-type": "./configs/ts-type.jsonc",
+    "./agent-guide": "./docs/linting.md",
+    "./package.json": "./package.json",
+  });
 
-project.gitignore.exclude("/dist/");
-project.gitignore.exclude("/docs/*-ticket.md");
-project.gitignore.exclude("/refs/");
-project.gitignore.exclude("/.local/");
-
-project.addTask("pack:dry-run", {
-  exec: "npm pack --dry-run",
-});
-
-project.addTask("refresh:biome-grammars", {
-  exec: "tsx scripts/refresh-biome-grammars.ts",
-});
-
-project.addTask("typecheck", {
-  exec: "tsc --project tsconfig.json",
-});
-project.addTask("lint", {
-  exec: "biome check",
-});
-project.testTask.reset("yarn lint");
-project.testTask.exec("vitest run");
-project.testTask.exec("yarn typecheck");
-
-project.defaultTask?.reset("tsx .projenrc.ts");
-
-if (project.github) {
-  const buildWorkflow = project.github.workflows.find(
-    (workflow) => workflow.name === "build",
-  );
-  const upgradeWorkflows = project.github.workflows.filter((workflow) =>
-    workflow.name.startsWith("upgrade-"),
+  project.gitignore.exclude("/dist/");
+  project.gitignore.exclude("/docs/*-ticket.md");
+  project.gitignore.exclude("/refs/");
+  project.gitignore.exclude("/.local/");
+  project.gitattributes.addAttributes(
+    "/tests/runtime/native-parity/unicode-crlf.ts",
+    "-text",
   );
 
-  const corepackStep = {
-    name: "Install Specific Yarn Version",
-    run: `corepack enable && corepack prepare yarn@${yarnVersion} --activate`,
-  };
+  project.addTask("pack:dry-run", {
+    exec: "npm pack --dry-run",
+  });
 
-  const getJobSteps = (job: { steps?: unknown }): JobStep[] => {
-    const rawSteps = job.steps;
-    return typeof rawSteps === "function"
-      ? (rawSteps as () => JobStep[])()
-      : ((rawSteps as JobStep[]) ?? []);
-  };
+  project.addTask("refresh:biome-grammars", {
+    exec: "tsx scripts/refresh-biome-grammars.ts",
+  });
 
-  if (buildWorkflow) {
-    buildWorkflow.file?.patch(
-      JsonPatch.add("/on/workflow_dispatch/inputs", {
-        repository: {
-          description: "Repository to check out, for example owner/repo",
-          required: false,
-          type: "string",
-        },
-        ref: {
-          description: "Branch, tag, or SHA to check out",
-          required: false,
-          type: "string",
-        },
-      }),
-      JsonPatch.replace("/jobs/build/permissions/contents", "read"),
-      JsonPatch.replace(
-        "/jobs/build/steps/0/with/ref",
-        "${{ github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name) || github.event.pull_request.head.ref }}",
-      ),
-      JsonPatch.replace(
-        "/jobs/build/steps/0/with/repository",
-        "${{ github.event_name == 'workflow_dispatch' && (inputs.repository || github.repository) || github.event.pull_request.head.repo.full_name }}",
-      ),
-      JsonPatch.add("/jobs/build/steps/2/with/package-manager-cache", false),
-      JsonPatch.replace(
-        "/jobs/self-mutation/if",
-        "always() && github.event_name == 'pull_request' && needs.build.outputs.self_mutation_happened && github.event.pull_request.head.repo.full_name == github.repository",
-      ),
+  project.addTask("typecheck", {
+    exec: "tsc --project tsconfig.json",
+  });
+  project.addTask("lint", {
+    exec: "biome check",
+  });
+  project.testTask.reset("yarn lint");
+  project.testTask.exec("vitest run");
+  project.testTask.exec("yarn typecheck");
+
+  project.defaultTask?.reset("tsx .projenrc.ts");
+
+  if (project.github) {
+    const buildWorkflow = project.github.workflows.find(
+      (workflow) => workflow.name === "build",
     );
-    const buildJob = buildWorkflow.getJob("build");
-    if (buildJob && "steps" in buildJob) {
-      const buildSteps = getJobSteps(buildJob);
-      buildWorkflow.updateJob("build", {
-        ...buildJob,
-        steps: [buildSteps[0], corepackStep, ...buildSteps.slice(1)],
-      });
+    const upgradeWorkflows = project.github.workflows.filter((workflow) =>
+      workflow.name.startsWith("upgrade-"),
+    );
+
+    const corepackStep = {
+      name: "Install Specific Yarn Version",
+      run: `corepack enable && corepack prepare yarn@${yarnVersion} --activate`,
+    };
+
+    const getJobSteps = (job: { steps?: unknown }): JobStep[] => {
+      const rawSteps = job.steps;
+      return typeof rawSteps === "function"
+        ? (rawSteps as () => JobStep[])()
+        : ((rawSteps as JobStep[]) ?? []);
+    };
+
+    if (buildWorkflow) {
+      buildWorkflow.file?.patch(
+        JsonPatch.add("/on/workflow_dispatch/inputs", {
+          repository: {
+            description: "Repository to check out, for example owner/repo",
+            required: false,
+            type: "string",
+          },
+          ref: {
+            description: "Branch, tag, or SHA to check out",
+            required: false,
+            type: "string",
+          },
+        }),
+        JsonPatch.replace("/jobs/build/permissions/contents", "read"),
+        JsonPatch.replace(
+          "/jobs/build/steps/0/with/ref",
+          `\${{ github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name) || github.event.pull_request.head.ref }}`,
+        ),
+        JsonPatch.replace(
+          "/jobs/build/steps/0/with/repository",
+          `\${{ github.event_name == 'workflow_dispatch' && (inputs.repository || github.repository) || github.event.pull_request.head.repo.full_name }}`,
+        ),
+        JsonPatch.add("/jobs/build/steps/2/with/package-manager-cache", false),
+        JsonPatch.replace(
+          "/jobs/self-mutation/if",
+          "always() && github.event_name == 'pull_request' && needs.build.outputs.self_mutation_happened && github.event.pull_request.head.repo.full_name == github.repository",
+        ),
+      );
+      const buildJob = buildWorkflow.getJob("build");
+      if (buildJob && "steps" in buildJob) {
+        const buildSteps = getJobSteps(buildJob);
+        buildWorkflow.updateJob("build", {
+          ...buildJob,
+          steps: [buildSteps[0], corepackStep, ...buildSteps.slice(1)],
+        });
+      }
+    }
+
+    for (const upgradeWorkflow of upgradeWorkflows) {
+      const upgradeJob = upgradeWorkflow.getJob("upgrade");
+      if (upgradeJob && "steps" in upgradeJob) {
+        const upgradeSteps = getJobSteps(upgradeJob);
+        upgradeWorkflow.updateJob("upgrade", {
+          ...upgradeJob,
+          steps: [upgradeSteps[0], corepackStep, ...upgradeSteps.slice(1)],
+        });
+      }
     }
   }
 
-  for (const upgradeWorkflow of upgradeWorkflows) {
-    const upgradeJob = upgradeWorkflow.getJob("upgrade");
-    if (upgradeJob && "steps" in upgradeJob) {
-      const upgradeSteps = getJobSteps(upgradeJob);
-      upgradeWorkflow.updateJob("upgrade", {
-        ...upgradeJob,
-        steps: [upgradeSteps[0], corepackStep, ...upgradeSteps.slice(1)],
-      });
-    }
-  }
-}
+  project.synth();
 
-project.synth();
+  const upgradeWorkflowPath = ".github/workflows/upgrade-master.yml";
+  const upgradeWorkflowFile = fs.existsSync(upgradeWorkflowPath)
+    ? fs.readFileSync(upgradeWorkflowPath, "utf8")
+    : undefined;
 
-const upgradeWorkflowPath = ".github/workflows/upgrade-master.yml";
-const upgradeWorkflowFile = fs.existsSync(upgradeWorkflowPath)
-  ? fs.readFileSync(upgradeWorkflowPath, "utf8")
-  : undefined;
-
-const rewrittenUpgradeWorkflow = upgradeWorkflowFile
-  ?.replace(`    - cron: 0 0 * * *`, `    - cron: ${upgradeSchedule}`)
-  .replace(
-    `      - name: Checkout
+  const rewrittenUpgradeWorkflow = upgradeWorkflowFile
+    ?.replace(`    - cron: 0 0 * * *`, `    - cron: ${upgradeSchedule}`)
+    .replace(
+      `      - name: Checkout
         uses: actions/checkout@v5
         with:
           ref: master
@@ -226,7 +233,7 @@ const rewrittenUpgradeWorkflow = upgradeWorkflowFile
         uses: actions/setup-node@v5
         with:
           node-version: 24.11.1`,
-    `      - name: Checkout
+      `      - name: Checkout
         uses: actions/checkout@v5
         with:
           ref: master
@@ -237,19 +244,19 @@ const rewrittenUpgradeWorkflow = upgradeWorkflowFile
         with:
           node-version: 24.11.1
           package-manager-cache: false`,
-  );
+    );
 
-if (
-  rewrittenUpgradeWorkflow &&
-  rewrittenUpgradeWorkflow !== upgradeWorkflowFile
-) {
-  fs.chmodSync(upgradeWorkflowPath, 0o644);
-  fs.writeFileSync(upgradeWorkflowPath, rewrittenUpgradeWorkflow);
-  fs.chmodSync(upgradeWorkflowPath, 0o444);
-}
+  if (
+    rewrittenUpgradeWorkflow &&
+    rewrittenUpgradeWorkflow !== upgradeWorkflowFile
+  ) {
+    fs.chmodSync(upgradeWorkflowPath, 0o644);
+    fs.writeFileSync(upgradeWorkflowPath, rewrittenUpgradeWorkflow);
+    fs.chmodSync(upgradeWorkflowPath, 0o444);
+  }
 
-const releaseWorkflowPath = ".github/workflows/release.yml";
-const releasePleaseWorkflow = `# ~~ Generated by projen. To modify, edit .projenrc.js and run "npx projen".
+  const releaseWorkflowPath = ".github/workflows/release.yml";
+  const releasePleaseWorkflow = `# ~~ Generated by projen. To modify, edit .projenrc.js and run "npx projen".
 
 name: release
 on:
@@ -357,29 +364,32 @@ jobs:
           npm publish --tag dev --access public
 `;
 
-fs.chmodSync(releaseWorkflowPath, 0o644);
-fs.writeFileSync(releaseWorkflowPath, releasePleaseWorkflow);
-fs.chmodSync(releaseWorkflowPath, 0o444);
+  fs.chmodSync(releaseWorkflowPath, 0o644);
+  fs.writeFileSync(releaseWorkflowPath, releasePleaseWorkflow);
+  fs.chmodSync(releaseWorkflowPath, 0o444);
 
-const devReleasePleaseConfigPath = "release-please-config.dev.json";
-const devReleasePleaseConfig = {
-  $schema:
-    "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-  packages: {
-    ".": {
-      "bump-patch-for-minor-pre-major": true,
-      "changelog-path": "CHANGELOG.md",
-      "include-component-in-tag": false,
-      "package-name": "@catenarycloud/linteffect",
-      prerelease: true,
-      "prerelease-type": "dev",
-      "release-type": "node",
-      versioning: "prerelease",
+  const devReleasePleaseConfigPath = "release-please-config.dev.json";
+  const devReleasePleaseConfig = {
+    $schema:
+      "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+    packages: {
+      ".": {
+        "bump-patch-for-minor-pre-major": true,
+        "changelog-path": "CHANGELOG.md",
+        "include-component-in-tag": false,
+        "package-name": "@catenarycloud/linteffect",
+        prerelease: true,
+        "prerelease-type": "dev",
+        "release-type": "node",
+        versioning: "prerelease",
+      },
     },
-  },
-};
+  };
 
-fs.writeFileSync(
-  devReleasePleaseConfigPath,
-  `${JSON.stringify(devReleasePleaseConfig, null, 2)}\n`,
-);
+  const configuration = yield* Schema.encodeEffect(
+    Schema.fromJsonString(Schema.Unknown, { space: 2 }),
+  )(devReleasePleaseConfig);
+  fs.writeFileSync(devReleasePleaseConfigPath, `${configuration}\n`);
+});
+
+Effect.runSync(synthesize());
