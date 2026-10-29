@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.0-dev.4](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.3...v0.1.0-dev.4) (2026-10-29)
+
+### Fixture documentation and validation
+
+All 158 rule fixtures now include documentation. The examples define their dependencies and explain the composition choices. Fixture loading rejects source files without a documentation comment.
+
+The test suite passes all 208 tests. Strict typechecking passes for the 157 ordinary fixtures. One migration fixture deliberately uses the obsolete Effect.async API.
+
+The packaged rules and CLI are unchanged from 0.1.0-dev.3.
+
 ## [0.1.0-dev.3](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.2...v0.1.0-dev.3) (2026-10-29)
 
 
