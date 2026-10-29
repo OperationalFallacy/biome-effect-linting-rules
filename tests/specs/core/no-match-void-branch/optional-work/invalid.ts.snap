@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Match } from \"effect\";\n\n/**\n * Incorrectly models optional work as a Match branch returning Effect.void.\n * This turns the decision to skip work into an empty branch operation.\n */\nexport const saveWhenEnabled = Effect.fn(\"saveWhenEnabled\")(\n  (enabled: boolean) =>\n    Match.value(enabled).pipe(\n      Match.when(false, () => Effect.void),\n      Match.orElse(() => Effect.logInfo(\"Saved settings\")),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Express optional Effect work with a conditional yield inside Effect.gen or Effect.fn. A Match branch that returns Effect.void represents skipped work rather than a selected value. Keep the condition and the dependent work inside the same operation so they run at the original time. Use Match for pure value selection.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Express optional Effect work with a conditional yield inside Effect.gen or Effect.fn. A Match branch that returns Effect.void represents skipped work rather than a selected value. Keep the condition and the dependent work inside the same operation so they run at the original time. Use Match for pure value selection."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-match-void-branch/optional-work/invalid.ts"
+          },
+          "span": [
+            320,
+            356
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

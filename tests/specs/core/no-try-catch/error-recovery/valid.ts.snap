@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Correctly represents parser and decoder failures in the Effect error channel.\n * Recovery covers both steps at the end of their pipeline.\n */\nexport const readCount = Effect.fn(\"readCount\")((text: string) =>\n  Effect.try(() => JSON.parse(text)).pipe(\n    Effect.flatMap(Schema.decodeUnknownEffect(Schema.Number)),\n    Effect.catch(() => Effect.succeed(0)),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

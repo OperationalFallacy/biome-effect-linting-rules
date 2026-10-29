@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst decodeCount = Schema.decodeUnknownEffect(Schema.Int);\n\n/**\n * Correctly defines the complete decoding operation without nested generator bodies.\n */\nexport const readCount = Effect.fn(\"readCount\")((input: unknown) =>\n  decodeCount(input),\n);\nexport const readLocalCount = readCount;\n\n/**\n * Correctly exposes the complete decoder as a direct API operation.\n */\nexport const makeApi = (input: unknown) =>\n  Effect.gen(function* () {\n    const read = decodeCount(input);\n    return { read };\n  });\nexport const makeShadowedApi = makeApi;\nexport const makeDirectApi = makeApi;\n\n/**\n * Correctly constructs a complete nested API value without staging a generator.\n */\nexport const makeNestedApi = (input: unknown) =>\n  Effect.gen(function* () {\n    return { nested: { read: decodeCount(input) } };\n  });\n\n/**\n * Correctly exposes a complete operation through an explicit API member name.\n */\nexport const makeRenamedApi = (input: unknown) =>\n  Effect.gen(function* () {\n    const read = decodeCount(input);\n    return { load: read };\n  });\n\n/**\n * Correctly exposes an Effect.fn operation through its service API.\n */\nexport const makeCallableApi = (input: unknown) =>\n  Effect.gen(function* () {\n    const read = Effect.fn(\"read\")(() => decodeCount(input));\n    return { read };\n  });\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Incorrectly stages a count before the exposed operation. The nested factory\n * exposes a different operation with the same local name.\n */\nexport function makeNestedReturn(initialCount: number) {\n  const staged = Effect.succeed(initialCount);\n  function makeNestedOperations() {\n    const staged = Effect.succeed(initialCount);\n    return { staged };\n  }\n  const run = staged.pipe(Effect.map((count) => count + 1));\n  return { run, makeNestedOperations };\n}\n\n/**\n * Incorrectly stages an Effect outside the callback that returns it.\n * The outer operation's API exposes the callback and the completed run operation.\n */\nexport function makeCallbackOperations(initialCount: number) {\n  const staged = Effect.succeed(initialCount);\n  const callback = () => ({ staged });\n  const run = staged.pipe(Effect.map((count) => count + 1));\n  return { run, callback };\n}\n\n/**\n * Incorrectly stages a step inside an exposed generator. Each operation body\n * needs its own continuous sequence even when the outer API exposes a similar name.\n */\nexport function makeReturnScopes(initialCount: number) {\n  const step = Effect.succeed(initialCount);\n  const run = Effect.gen(function* () {\n    const step = Effect.succeed(initialCount);\n    return yield* step;\n  });\n  return { step, run };\n}\n\n/**\n * Questionably stores executable work under metadata. A consumer must traverse\n * the metadata record to find the locally staged operation.\n */\nexport function makeNestedObject(initialCount: number) {\n  const staged = Effect.succeed(initialCount);\n  return { metadata: { staged } };\n}\n\n/**\n * Incorrectly creates a shadowed, unused Effect in a nested block.\n * A reference to that value does not execute the operation.\n */\nexport function makeBlockOperations(initialCount: number) {\n  const run = Effect.succeed(initialCount);\n  {\n    const run = Effect.succeed(initialCount);\n    void run;\n  }\n  return { run };\n}\n\n/**\n * Correctly exposes a complete operation under an explicit API member name.\n */\nexport function makeRenamedOperations(initialCount: number) {\n  const run = Effect.succeed(initialCount);\n  return { execute: run };\n}\n\ninterface CounterApi {\n  readonly run: Effect.Effect<number>;\n}\n\n/**\n * Correctly checks an API operation against its public member type.\n */\nexport function makeTypedOperations(initialCount: number) {\n  const run: CounterApi[\"run\"] = Effect.succeed(initialCount);\n  return { run };\n}\n\n/**\n * Correctly exposes a factory whose own body returns a complete operation.\n * Construction and operation scopes remain separate.\n */\nexport function makeNestedFactory(initialCount: number) {\n  const makeOperations = () => {\n    const run = Effect.succeed(initialCount);\n    return { run };\n  };\n  return { makeOperations };\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/service-api-scope/invalid.ts"
+          },
+          "span": [
+            239,
+            283
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/service-api-scope/invalid.ts"
+          },
+          "span": [
+            726,
+            770
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/service-api-scope/invalid.ts"
+          },
+          "span": [
+            1219,
+            1261
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/service-api-scope/invalid.ts"
+          },
+          "span": [
+            1527,
+            1571
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/service-api-scope/invalid.ts"
+          },
+          "span": [
+            1859,
+            1900
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 5,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

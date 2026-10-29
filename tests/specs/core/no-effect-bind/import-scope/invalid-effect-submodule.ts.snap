@@ -1,0 +1,41 @@
+{
+  "input": "import * as Effect from \"effect/Effect\";\n\n/**\n * Questionably exposes a record-building fragment from an Effect submodule.\n * Callers must supply the intermediate record that the builder extends.\n */\nexport const addCount = Effect.bind(\"count\", () => Effect.succeed(3));\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-bind/import-scope/invalid-effect-submodule.ts"
+          },
+          "span": [
+            224,
+            269
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

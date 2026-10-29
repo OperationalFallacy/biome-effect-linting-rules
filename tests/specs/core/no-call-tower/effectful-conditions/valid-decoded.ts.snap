@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Correctly decodes an effectful condition before conditional work.\n * A decoding failure stays in the error channel and prevents that work from running.\n */\nexport const reportWhenDecoded = Effect.fn(\"reportWhenDecoded\")(\n  (input: unknown) =>\n    Effect.logInfo(\"Ready\").pipe(\n      Effect.when(Schema.decodeUnknownEffect(Schema.Boolean)(input)),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

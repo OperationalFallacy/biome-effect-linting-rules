@@ -1,0 +1,11 @@
+{
+  "input": "import { Option } from \"effect\";\n\nconst name = Option.some(\"Mira\");\n\n/**\n * Correctly uses Option.map for explicit result-producing callbacks.\n * The transformation preserves absence when the input is Option.none.\n */\nexport const availability = Option.map(() => true);\nexport const available = Option.map(name, () => true);\nexport const genericAvailability = Option.map<unknown, boolean>(() => true);\nexport const presentAvailability = Option.some(\"Mira\").pipe(\n  Option.map(() => true),\n);\nexport const mappedAvailability = name.pipe(Option.map(() => true));\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "input": "import { format as Effect } from \"node:util\";\n\n/**\n * Correctly binds a synchronous formatter from another module.\n * These bound functions format text and do not compose Effect operations.\n */\nexport const formatCount = Effect.bind(undefined, \"count=%d\");\nexport const formatNamedCount = Effect.bind(undefined, \"%s=%d\", \"count\");\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

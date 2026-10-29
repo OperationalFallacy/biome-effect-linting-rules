@@ -1,0 +1,70 @@
+{
+  "input": "import { Option, pipe } from \"effect\";\n\ntype QueryCode = string | ReadonlyArray<string> | undefined;\n\n/**\n * Incorrectly stages the producer before its returned pipeline. The caller's\n * selection and normalization are split across declarations in one operation.\n */\nexport function resolveBookCode(query: QueryCode, path: string) {\n  const fromQuery = pipe(\n    Option.fromNullishOr(query),\n    Option.filter((value): value is string => typeof value === \"string\"),\n  );\n  return pipe(\n    fromQuery,\n    Option.orElse(() =>\n      Option.fromNullishOr(path.match(/^\\/books\\/([A-Za-z0-9-]+)$/)?.[1]),\n    ),\n    Option.map((code) => code.trim().toUpperCase()),\n  );\n}\n\n/**\n * Incorrectly stages an optional input before its normalization pipeline.\n */\nexport function readCode(input: string | undefined) {\n  const candidate = pipe(input, Option.fromNullishOr);\n  return pipe(\n    candidate,\n    Option.map((code) => code.trim().toUpperCase()),\n  );\n}\n\n/**\n * Correctly extracts a complete route representation as a domain value.\n */\nexport const routeParts = (query: QueryCode, path: string) => ({ query, path });\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine the local pipeline fragment with the returned pipeline. The producer and final selection occupy separate declarations, so the reader must reconstruct the operation. Keep the steps together in execution order. Extracted functions must perform complete domain operations with clear result contracts. A helper around the same fragment preserves the split.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine the local pipeline fragment with the returned pipeline. The producer and final selection occupy separate declarations, so the reader must reconstruct the operation. Keep the steps together in execution order. Extracted functions must perform complete domain operations with clear result contracts. A helper around the same fragment preserves the split."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-pipeline-fragment-staging/pipeline-composition/invalid.ts"
+          },
+          "span": [
+            331,
+            666
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine the local pipeline fragment with the returned pipeline. The producer and final selection occupy separate declarations, so the reader must reconstruct the operation. Keep the steps together in execution order. Extracted functions must perform complete domain operations with clear result contracts. A helper around the same fragment preserves the split.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine the local pipeline fragment with the returned pipeline. The producer and final selection occupy separate declarations, so the reader must reconstruct the operation. Keep the steps together in execution order. Extracted functions must perform complete domain operations with clear result contracts. A helper around the same fragment preserves the split."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-pipeline-fragment-staging/pipeline-composition/invalid.ts"
+          },
+          "span": [
+            803,
+            949
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "input": "import { Match } from \"effect\";\n\ntype State = { readonly _tag: \"Ready\"; readonly value: string } | {\n  readonly _tag: \"Pending\";\n};\n\n/**\n * Unnecessarily wraps value selection in an immediately invoked function.\n * The extra function call makes a local expression look like another operation.\n */\nexport const selectLabel = (state: State) =>\n  (() =>\n    Match.value(state).pipe(\n      Match.when({ _tag: \"Ready\" }, (ready) => ready.value),\n      Match.orElse(() => \"Pending\"),\n    ))();\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Remove the immediately invoked function and express its work directly in the operation. The extra function body makes the decision and execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue in one pipeline.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Remove the immediately invoked function and express its work directly in the operation. The extra function body makes the decision and execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue in one pipeline."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-iife-wrapper/value-composition/invalid.ts"
+          },
+          "span": [
+            344,
+            486
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "input": "import { Data, Option, Schema } from \"effect\";\n\nconst messageFields = (error: Error) => ({ message: error.message });\n\n/**\n * Incorrectly splits response construction across object-fragment helpers.\n * The caller must inspect the helper to discover the complete response shape.\n */\nexport const toResponse = (error: Error) => ({\n  kind: \"Failure\",\n  ...messageFields(error),\n});\n\nexport const toTracedResponse = (error: Error) => ({\n  ...messageFields(error),\n  trace: Option.fromNullishOr(error.stack).pipe(\n    Option.map((stack) => stack.split(\"\\n\")),\n  ),\n});\n\nclass ReadFailure extends Schema.TaggedError<ReadFailure>()(\"ReadFailure\", {\n  operation: Schema.String,\n  reason: Schema.String,\n  cause: Schema.Unknown,\n}) {}\nconst failureFields = (cause: unknown) => ({ reason: \"Read failed\", cause });\n\n/**\n * Incorrectly hides required constructor fields in a spread-producing helper.\n * The construction site no longer describes the complete error value.\n */\nexport const toReadFailure = (operation: string, cause: unknown) =>\n  new ReadFailure({ operation, ...failureFields(cause) });\n\ntype FailureKind = Data.TaggedEnum<{ Read: { readonly operation: string } }>;\nconst FailureKind = Data.taggedEnum<FailureKind>();\n\n/**\n * Correctly exposes a complete tagged constructor as a reusable domain operation.\n */\nexport const readFailureKind = FailureKind.Read;\n\ninterface ErrorView {\n  readonly message: string;\n}\n\n/**\n * Correctly defines a complete typed projection. The return type names the\n * whole result that the helper constructs.\n */\nexport const projectError = (error: Error): ErrorView => ({\n  message: error.message,\n});\n\n/**\n * Correctly exposes a complete schema decoder as a reusable operation.\n */\nexport const decodeErrorView = Schema.decodeUnknownEffect(\n  Schema.Struct({ message: Schema.String }),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Construct the complete domain object in one place. Helper-produced fragments make the reader inspect several functions to understand the payload. Keep validation, value selection, and construction together, or use a domain constructor whose signature describes the complete result. Extract complete operations rather than payload fragments.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Construct the complete domain object in one place. Helper-produced fragments make the reader inspect several functions to understand the payload. Keep validation, value selection, and construction together, or use a domain constructor whose signature describes the complete result. Extract complete operations rather than payload fragments."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-fragmented-const-assembly/object-assembly/invalid.ts"
+          },
+          "span": [
+            327,
+            376
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Construct the complete domain object in one place. Helper-produced fragments make the reader inspect several functions to understand the payload. Keep validation, value selection, and construction together, or use a domain constructor whose signature describes the complete result. Extract complete operations rather than payload fragments.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Construct the complete domain object in one place. Helper-produced fragments make the reader inspect several functions to understand the payload. Keep validation, value selection, and construction together, or use a domain constructor whose signature describes the complete result. Extract complete operations rather than payload fragments."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-fragmented-const-assembly/object-assembly/invalid.ts"
+          },
+          "span": [
+            431,
+            561
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Construct the complete domain object in one place. Helper-produced fragments make the reader inspect several functions to understand the payload. Keep validation, value selection, and construction together, or use a domain constructor whose signature describes the complete result. Extract complete operations rather than payload fragments.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Construct the complete domain object in one place. Helper-produced fragments make the reader inspect several functions to understand the payload. Keep validation, value selection, and construction together, or use a domain constructor whose signature describes the complete result. Extract complete operations rather than payload fragments."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-fragmented-const-assembly/object-assembly/invalid.ts"
+          },
+          "span": [
+            1049,
+            1087
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 3,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

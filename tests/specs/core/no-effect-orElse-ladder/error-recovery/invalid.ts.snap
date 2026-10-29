@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Incorrectly wraps a dependent pipeline in an outer recovery call. The reader\n * must inspect the nested argument to determine which failures recovery covers.\n */\nexport const readCount = Effect.fn(\"readCount\")((text: string) =>\n  Effect.catch(\n    Effect.try(() => JSON.parse(text)).pipe(\n      Effect.flatMap(Schema.decodeUnknownEffect(Schema.Number)),\n    ),\n    () => Effect.succeed(0),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Put the Effect sequence and its recovery in one pipeline. Effect.catch around a nested chain makes the reader inspect the inner operation to determine which failures it handles. Sequence the work first and place recovery at the end. Preserve the failures that recovery covers and the result it returns.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Put the Effect sequence and its recovery in one pipeline. Effect.catch around a nested chain makes the reader inspect the inner operation to determine which failures it handles. Sequence the work first and place recovery at the end. Preserve the failures that recovery covers and the result it returns."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-orElse-ladder/error-recovery/invalid.ts"
+          },
+          "span": [
+            279,
+            442
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst LineItem = Schema.Struct({\n  unitPrice: Schema.Number,\n  quantity: Schema.Int,\n});\n\n/**\n * Incorrectly nests Effect combinators around a parser. The reader must work\n * from the innermost call outward to follow the dependent transformations.\n */\nexport const formatTotal = Effect.fn(\"formatTotal\")((text: string) => {\n  return Effect.map(\n    Effect.map(\n      Effect.flatMap(\n        Effect.try(() => JSON.parse(text)),\n        Schema.decodeUnknownEffect(LineItem),\n      ),\n      (item) => item.unitPrice * item.quantity,\n    ),\n    (total) => `$${total.toFixed(2)}`,\n  );\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Put nested Effect combinators in one pipeline. The reader must work from the inner call outward to reconstruct execution order. Build shared inputs once with Effect.all or Effect.map, then sequence the dependent steps in the pipeline. Preserve dependencies between steps and the operation's failure behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Put nested Effect combinators in one pipeline. The reader must work from the inner call outward to reconstruct execution order. Build shared inputs once with Effect.all or Effect.map, then sequence the dependent steps in the pipeline. Preserve dependencies between steps and the operation's failure behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-ladder/call-composition/invalid.ts"
+          },
+          "span": [
+            368,
+            622
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst Guest = Schema.Struct({ name: Schema.NonEmptyString });\n\n/**\n * Unnecessarily nests Effect.flatMap callbacks to compose dependent effects,\n * adding callback scopes to a linear workflow.\n */\nexport const greet = Effect.fn(\"greet\")((input: unknown) =>\n  Effect.flatMap(Schema.decodeUnknownEffect(Guest)(input), (guest) =>\n    Effect.flatMap(Effect.logInfo(`Hello, ${guest.name}`), () =>\n      Effect.succeed(guest.name),\n    ),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use one pipeline or Effect.gen for these dependent steps. Nested Effect.flatMap callbacks obscure their order. Use Effect.all only to collect independent results.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use one pipeline or Effect.gen for these dependent steps. Nested Effect.flatMap callbacks obscure their order. Use Effect.all only to collect independent results."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-flatmap-ladder/composition/invalid.ts"
+          },
+          "span": [
+            301,
+            478
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 1,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

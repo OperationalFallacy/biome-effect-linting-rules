@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Match } from \"effect\";\n\n/**\n * Correctly completes pure value selection before constructing the Effect.\n * The operation has one continuation after the decision.\n */\nexport const chooseLabel = Effect.fn(\"chooseLabel\")((ready: boolean) => {\n  const label = Match.value(ready).pipe(\n    Match.when(true, () => \" Ready \".trim()),\n    Match.orElse(() => \"Loading\"),\n  );\n  return Effect.succeed(label);\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

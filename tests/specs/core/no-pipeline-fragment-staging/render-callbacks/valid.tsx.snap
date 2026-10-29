@@ -1,0 +1,11 @@
+{
+  "input": "import { Match, Option } from \"effect\";\nimport { AsyncResult } from \"effect/reactivity\";\n\ntype Book = { readonly isbn: string };\ntype Search = AsyncResult.AsyncResult<\n  { readonly books: readonly Book[] },\n  Error\n>;\n\n/**\n * Correctly keeps local render values inside their result callback. The selected\n * branch returns a complete view without staging an intermediate pipe fragment.\n */\nexport function BookPanel(props: {\n  readonly search: Search;\n  readonly isbn: string;\n}) {\n  const content = AsyncResult.match(props.search, {\n    onFailure: () => <div>Search failed</div>,\n    onInitial: () => <div>Search pending</div>,\n    onSuccess({ value }) {\n      const book = Option.fromNullishOr(\n        value.books.find((item) => item.isbn === props.isbn),\n      );\n      const missing = <div>No matching book</div>;\n      return Option.match(book, {\n        onNone: () =>\n          Match.value(value.books.length).pipe(\n            Match.when(0, () => <div>Empty catalog</div>),\n            Match.orElse(() => missing),\n          ),\n        onSome: (item) => <div>{item.isbn}</div>,\n      });\n    },\n  });\n  return content;\n}\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

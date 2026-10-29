@@ -1,0 +1,11 @@
+{
+  "input": "import { Deferred, Effect } from \"effect\";\n\ninterface BackgroundWork {\n  readonly run: Effect.Effect<void>;\n  readonly stopRequested: Deferred.Deferred<void>;\n}\n\n/**\n * Correctly attaches background work to the operation's scope. The scoped\n * function transform closes that scope after shutdown or interruption.\n */\nexport const observe = Effect.fn(\"observe\")(function* (work: BackgroundWork) {\n  yield* Effect.forkScoped(work.run);\n  yield* Deferred.await(work.stopRequested);\n}, Effect.scoped);\n\n/**\n * Correctly uses a runtime runner at an application integration entry point.\n * The caller receives the fiber and manages its lifetime.\n */\nexport const startApplication = (work: BackgroundWork) =>\n  Effect.runFork(work.run);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

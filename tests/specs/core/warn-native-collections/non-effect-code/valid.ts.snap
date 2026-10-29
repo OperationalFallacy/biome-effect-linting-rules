@@ -1,0 +1,11 @@
+{
+  "input": "import { format } from \"node:util\";\n\n/**\n * Correctly uses native object identity in a module outside Effect composition.\n * Callers use the same object instances to retrieve their stored values.\n */\nexport const index = new Map<{ readonly id: string }, string>();\nexport const selected = new Set<{ readonly id: string }>();\n\n/**\n * Correctly treats a package name as ordinary text for display.\n */\nexport const packageName = format(\"%s\", \"effect\");\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

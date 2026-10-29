@@ -1,13 +1,13 @@
-file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+language js(typescript, jsx)
+
+JsCallExpression(callee = `Effect.bind`) as $effectBind where {
+    $effectBind <: within JsModule() as $body,
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
-    $body <: contains `Effect.bind($name, $step)` as $effectBind,
     register_diagnostic(
         span = $effectBind,
-        message = "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Accumulating named fields makes the reader track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation.",
+        message = "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation.",
         severity = "error"
     )
 }

@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Misuses Effect.sync as a logging adapter. The wrapped console call\n * bypasses Effect's logger configuration and minimum log level.\n */\nexport const announceDelivery = Effect.fn(\"announceDelivery\")(function* (\n  recipient: string,\n) {\n  yield* Effect.sync(() => console.info(`Parcel delivered to ${recipient}`));\n  return recipient;\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.log, Effect.logDebug, or another Effect log function for logs in Effect code. A console call inside Effect.sync bypasses Effect's log context and levels. Choose the Effect log function that matches the required level, or remove a log that serves no purpose.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.log, Effect.logDebug, or another Effect log function for logs in Effect code. A console call inside Effect.sync bypasses Effect's log context and levels. Choose the Effect log function that matches the required level, or remove a log that serves no purpose."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-sync-console/logging/invalid.ts"
+          },
+          "span": [
+            285,
+            352
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

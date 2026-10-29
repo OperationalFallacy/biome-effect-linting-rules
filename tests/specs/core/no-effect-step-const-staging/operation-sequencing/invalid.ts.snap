@@ -1,0 +1,99 @@
+{
+  "input": "import { Effect, Schema, pipe } from \"effect\";\n\nconst Policy = Schema.Struct({ allow: Schema.optionalKey(Schema.Boolean) });\nconst decodePolicy = Schema.decodeUnknownEffect(Schema.fromJsonString(Policy));\ntype Decision = { readonly decision: \"ALLOW\" | \"DENY\" };\n\n/**\n * Incorrectly stages validation and result construction as separate Effect\n * constants. The reader must follow the bindings to reconstruct one operation.\n */\nexport const evaluatePolicy = Effect.fn(\"evaluatePolicy\")((text: string) => {\n  const allowed = decodePolicy(text).pipe(\n    Effect.map((policy) => policy.allow === true),\n  );\n  const evaluated = allowed.pipe(\n    Effect.map((allow): Decision => ({ decision: allow ? \"ALLOW\" : \"DENY\" })),\n  );\n  return evaluated;\n});\n\n/**\n * Incorrectly names an entire pipeline only to return it in the next statement.\n * The binding adds another lookup without representing a reusable operation.\n */\nexport const evaluateViaPipe = Effect.fn(\"evaluateViaPipe\")((text: string) => {\n  const evaluation = pipe(\n    decodePolicy(text),\n    Effect.map(\n      (policy): Decision => ({\n        decision: policy.allow === true ? \"ALLOW\" : \"DENY\",\n      }),\n    ),\n  );\n  return evaluation;\n});\n\n/**\n * Correctly names a completed domain value inside a transformation.\n * This local record is the operation's result, not an unexecuted Effect step.\n */\nexport const evaluateDirect = Effect.fn(\"evaluateDirect\")((text: string) =>\n  decodePolicy(text).pipe(\n    Effect.map((policy): Decision => {\n      const result: Decision = {\n        decision: policy.allow === true ? \"ALLOW\" : \"DENY\",\n      };\n      return result;\n    }),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            507,
+            603
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            606,
+            721
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            996,
+            1173
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 3,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

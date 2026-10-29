@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Questionably uses a ternary for a value-pipeline decision. Match expresses\n * the alternatives through the same composition style as subsequent steps.\n */\nexport const selectLabel = (enabled: boolean) =>\n  enabled ? \"Enabled\" : \"Disabled\";\n\n/**\n * Correctly defers a decision inside Effect.suspend. The condition is read\n * each time the effect executes.\n */\nexport const readDeferredLabel = (state: { enabled: boolean }) =>\n  Effect.suspend(() => Effect.succeed(state.enabled ? \"Enabled\" : \"Disabled\"));\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-ternary/control-flow/invalid.ts"
+          },
+          "span": [
+            247,
+            254
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

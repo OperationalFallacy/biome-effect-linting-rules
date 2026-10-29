@@ -77,7 +77,15 @@
     },
     "compile": {
       "name": "compile",
-      "description": "Only compile"
+      "description": "Only compile",
+      "steps": [
+        {
+          "exec": "effect-language-service patch"
+        },
+        {
+          "exec": "tsc --project tsconfig.build.json"
+        }
+      ]
     },
     "default": {
       "name": "default",
@@ -85,6 +93,15 @@
       "steps": [
         {
           "exec": "tsx .projenrc.ts"
+        }
+      ]
+    },
+    "effect:diagnostics": {
+      "name": "effect:diagnostics",
+      "steps": [
+        {
+          "exec": "effect-language-service diagnostics --project tsconfig.json",
+          "receiveArgs": true
         }
       ]
     },
@@ -118,9 +135,39 @@
         }
       ]
     },
+    "lint": {
+      "name": "lint",
+      "steps": [
+        {
+          "exec": "biome check",
+          "receiveArgs": true
+        }
+      ]
+    },
+    "lint:dev": {
+      "name": "lint:dev",
+      "steps": [
+        {
+          "exec": "biome check --config-path=biome.jsonc",
+          "receiveArgs": true
+        }
+      ]
+    },
+    "lint:local": {
+      "name": "lint:local",
+      "steps": [
+        {
+          "exec": "biome check --config-path=biome.local.jsonc",
+          "receiveArgs": true
+        }
+      ]
+    },
     "pack:dry-run": {
       "name": "pack:dry-run",
       "steps": [
+        {
+          "spawn": "compile"
+        },
         {
           "exec": "npm pack --dry-run"
         }
@@ -188,7 +235,27 @@
       "description": "Run tests",
       "steps": [
         {
-          "exec": "vitest run tests/rules"
+          "spawn": "compile"
+        },
+        {
+          "exec": "yarn lint"
+        },
+        {
+          "exec": "vitest run"
+        },
+        {
+          "exec": "yarn typecheck"
+        }
+      ]
+    },
+    "typecheck": {
+      "name": "typecheck",
+      "steps": [
+        {
+          "exec": "effect-language-service patch"
+        },
+        {
+          "exec": "tsc --project tsconfig.json"
         }
       ]
     },
@@ -224,7 +291,7 @@
           "exec": "yarn install"
         },
         {
-          "exec": "yarn up commit-and-tag-version constructs effect projen tsx typescript vitest @biomejs/biome"
+          "exec": "yarn up @biomejs/biome @catenarycloud/linteffect @effect/language-service @types/node commit-and-tag-version constructs projen tsx typescript vite vitest @biomejs/wasm-nodejs @effect/platform-node-shared effect"
         },
         {
           "exec": "npx projen"

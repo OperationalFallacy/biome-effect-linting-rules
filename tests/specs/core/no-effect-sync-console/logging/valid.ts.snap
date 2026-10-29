@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Correctly uses Effect's logging API so logger configuration and minimum\n * log level apply to the operation's output.\n */\nexport const announceDelivery = Effect.fn(\"announceDelivery\")(function* (\n  recipient: string,\n) {\n  yield* Effect.logInfo(`Parcel delivered to ${recipient}`);\n  return recipient;\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

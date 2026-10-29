@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Correctly uses a block to define and return an operation. The nested generator\n * needs its return statement to supply the operation's success value.\n */\nexport const makeGreeter = Effect.sync(() => {\n  const greet = Effect.fn(\"greet\")(function* (name: string) {\n    yield* Effect.logInfo(`Hello, ${name}`);\n    return name;\n  });\n  return { greet };\n});\n\nconst rows = [\n  { name: \"Mira\", hidden: false },\n  { name: \"Owen\", hidden: true },\n];\n\n/**\n * Correctly retains a block callback with separate conditional returns.\n * An expression-only rewrite would need a different branching construct.\n */\nexport const labels = rows.map((row) => {\n  if (row.hidden) {\n    return \"Hidden\";\n  }\n  return row.name;\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

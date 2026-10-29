@@ -1,0 +1,11 @@
+{
+  "input": "import { style } from \"@vanilla-extract/css\";\n\n/**\n * Correctly exports each generated class from its style declaration.\n * Consumers have one public name for each style.\n */\nexport const panel = style({ width: \"100%\" });\nexport const heading = style({ fontWeight: 600 });\n\n/**\n * Correctly composes a new class from an existing class and additional styles.\n */\nexport const compactPanel = style([panel, { minWidth: 0 }]);\n\n/**\n * Correctly exports ordinary metadata without another class-name alias.\n */\nexport const metadata = \"panel\";\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

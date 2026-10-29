@@ -1,0 +1,11 @@
+{
+  "input": "import { setTimeout } from \"node:timers\";\n\nconst Effect = {\n  async: <A>(register: (resume: (value: A) => void) => void) =>\n    new Promise<A>((resolve) => register(resolve)),\n};\n\n/**\n * Correctly uses a local Promise-based bridge outside Effect composition.\n * Its callback completes with a plain value.\n */\nexport const registration = Effect.async((resume) => {\n  setTimeout(() => resume(3), 0);\n});\nexport const genericRegistration = Effect.async<number>((resume) => {\n  setTimeout(() => resume(3), 0);\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

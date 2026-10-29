@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Match } from \"effect\";\n\n/**\n * Correctly expresses value-pipeline alternatives with Match. The selection\n * is an expression that can continue into later transformations.\n */\nexport const selectLabel = (enabled: boolean) =>\n  Match.value(enabled).pipe(\n    Match.when(true, () => \"Enabled\"),\n    Match.orElse(() => \"Disabled\"),\n  );\n\n/**\n * Correctly defers a decision inside Effect.suspend. The condition is read\n * each time the effect executes.\n */\nexport const readDeferredLabel = (state: { enabled: boolean }) =>\n  Effect.suspend(() => Effect.succeed(state.enabled ? \"Enabled\" : \"Disabled\"));\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

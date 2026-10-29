@@ -1,0 +1,11 @@
+{
+  "input": "import { useAtomSet, useAtomValue } from \"@effect/atom-react\";\nimport { Atom } from \"effect/reactivity\";\n\nexport const countAtom = Atom.make(0);\n\n/**\n * Correctly subscribes to the canonical count through an atom. Functional\n * updates use the current value, and other subscribers observe the same state.\n */\nexport function Count() {\n  const count = useAtomValue(countAtom);\n  const setCount = useAtomSet(countAtom);\n  return (\n    <button type=\"button\" onClick={() => setCount((current) => current + 1)}>\n      {count}\n    </button>\n  );\n}\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "input": "import { Deferred, Effect } from \"effect\";\n\ninterface Subscription {\n  readonly stopRequested: Deferred.Deferred<void>;\n  readonly close: Effect.Effect<void>;\n}\n\ninterface SubscriptionSource {\n  readonly open: Effect.Effect<Subscription>;\n}\n\n/**\n * Incorrectly keeps an acquired subscription alive with Effect.never.\n * The subscription's own stop signal has no role in the operation's lifetime.\n */\nexport const observe = Effect.fn(\"observe\")((source: SubscriptionSource) =>\n  Effect.acquireUseRelease(\n    source.open,\n    () => Effect.never,\n    (subscription) => subscription.close,\n  ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Give this long-lived operation an explicit lifetime and cleanup. Effect.never waits for interruption and leaves termination to cancellation elsewhere. Use Stream or acquire/release to express the operation's lifetime and resource release together.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Give this long-lived operation an explicit lifetime and cleanup. Effect.never waits for interruption and leaves termination to cancellation elsewhere. Use Stream or acquire/release to express the operation's lifetime and resource release together."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-never/operation-lifetime/invalid.ts"
+          },
+          "span": [
+            531,
+            543
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

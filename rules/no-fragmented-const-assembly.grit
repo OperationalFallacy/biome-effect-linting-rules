@@ -1,11 +1,11 @@
 language js(typescript, jsx)
 
 JsObjectExpression(members = $members) as $assembly where {
-    $members <: contains JsSpread(argument = $argument),
+    $members <: [..., JsSpread(argument = $argument), ...],
     $argument <: `$fragment($args)`,
     register_diagnostic(
         span = $assembly,
-        message = "Construct the complete domain object instead of spreading helper-produced fragments. Those fragments make the reader inspect several functions to understand the payload. Keep validation, value selection, and construction together, or use a domain constructor whose signature describes the complete result. Extract complete operations rather than payload fragments.",
+        message = "Construct the complete domain object in one place. Helper-produced fragments make the reader inspect several functions to understand the payload. Keep validation, value selection, and construction together, or use a domain constructor whose signature describes the complete result. Extract complete operations rather than payload fragments.",
         severity = "error"
     )
 }

@@ -12,7 +12,11 @@
     "clobber": "npx projen clobber",
     "compile": "npx projen compile",
     "default": "npx projen default",
+    "effect:diagnostics": "npx projen effect:diagnostics",
     "eject": "npx projen eject",
+    "lint": "npx projen lint",
+    "lint:dev": "npx projen lint:dev",
+    "lint:local": "npx projen lint:local",
     "pack:dry-run": "npx projen pack:dry-run",
     "package": "npx projen package",
     "post-compile": "npx projen post-compile",
@@ -21,6 +25,7 @@
     "refresh:biome-grammars": "npx projen refresh:biome-grammars",
     "release": "npx projen release",
     "test": "npx projen test",
+    "typecheck": "npx projen typecheck",
     "unbump": "npx projen unbump",
     "upgrade": "npx projen upgrade",
     "projen": "npx projen"
@@ -31,16 +36,22 @@
     "organization": false
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.3",
+    "@catenarycloud/linteffect": "dev",
+    "@effect/language-service": "0.87.5",
+    "@types/node": "^24",
     "commit-and-tag-version": "^12",
     "constructs": "^10.0.0",
-    "effect": "^3.21.2",
     "projen": "^0.98.34",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.1"
+    "vite": "^8",
+    "vitest": "^5.0.5"
   },
   "dependencies": {
-    "@biomejs/biome": "^2.5.4"
+    "@biomejs/wasm-nodejs": "2.6.3",
+    "@effect/platform-node-shared": "4.1.0",
+    "effect": "4.1.0"
   },
   "keywords": [
     "agent",
@@ -51,15 +62,20 @@
     "lint",
     "typescript"
   ],
+  "engines": {
+    "node": ">= 24.0.0"
+  },
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
-  "version": "0.0.9",
+  "version": "0.1.0",
   "packageManager": "yarn@4.6.0",
   "files": [
     "biome.jsonc",
+    "biome.base.jsonc",
     "bin",
+    "lib",
     "rules/*.grit",
     "configs",
     "examples",
@@ -68,6 +84,7 @@
     "README.md",
     "LICENSE"
   ],
+  "type": "module",
   "exports": {
     ".": "./configs/full.jsonc",
     "./recommended": "./configs/full.jsonc",

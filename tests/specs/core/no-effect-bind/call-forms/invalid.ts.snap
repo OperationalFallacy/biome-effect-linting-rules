@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Questionably sequences decoding through record-building callbacks.\n * The builder makes the reader track an intermediate record between steps.\n */\nexport const readCount = Effect.fn(\"readCount\")((input: unknown) =>\n  Effect.succeed({ label: \"Counter\" }).pipe(\n    Effect.bind(\"count\", () => Schema.decodeUnknownEffect(Schema.Int)(input)),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-bind/call-forms/invalid.ts"
+          },
+          "span": [
+            313,
+            386
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

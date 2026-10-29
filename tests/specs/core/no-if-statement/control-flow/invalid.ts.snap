@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Questionably splits a pure value selection across imperative return paths.\n * A Match expression can represent the decision as one composable value.\n */\nexport function selectLabel(enabled: boolean) {\n  if (enabled) {\n    return \"Enabled\";\n  }\n  return \"Disabled\";\n}\n\n/**\n * Correctly keeps a conditional yield inside a named Effect operation.\n * The decision runs when the operation executes.\n */\nexport const logWhenEnabled = Effect.fn(\"logWhenEnabled\")(function* (\n  enabled: boolean,\n) {\n  if (enabled) {\n    yield* Effect.logInfo(\"Enabled\");\n  }\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-if-statement/control-flow/invalid.ts"
+          },
+          "span": [
+            248,
+            255
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

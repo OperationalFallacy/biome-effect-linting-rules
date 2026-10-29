@@ -1,28 +1,31 @@
 language js(typescript, jsx)
 
 or {
-    or {
-        `const $name = Effect.flatMap($args)` as $call,
-        `const $name: $type = Effect.flatMap($args)` as $call,
-        `return Effect.flatMap($args)` as $call
-    } where {
-        $args <: contains `Effect.flatMap($_)`,
+    JsCallExpression(callee = `Effect.flatMap`, arguments = JsCallArguments(args = $args)) as $call where {
+        or {
+            $args <: [JsCallExpression(callee = `Effect.flatMap`), ...],
+            and {
+                $args <: [..., JsArrowFunctionExpression(body = $body)],
+                $body <: or {
+                    JsCallExpression(callee = `Effect.flatMap`),
+                    JsFunctionBody(statements = [`return Effect.flatMap($innerArgs)`])
+                }
+            }
+        },
         register_diagnostic(
             span = $call,
-            message = "Combine nested Effect.flatMap calls into one pipeline. Spreading dependent steps across callback bodies makes their execution order harder to follow. Build shared inputs once with Effect.all or Effect.map, then pass them through the dependent steps in order.",
-            severity = "warning"
+            message = "Use one pipeline or Effect.gen for these dependent steps. Nested Effect.flatMap callbacks obscure their order. Use Effect.all only to collect independent results.",
+            severity = "warn"
         )
     },
     or {
-        `const $name = Effect.flatten($outer)` as $call,
-        `const $name: $type = Effect.flatten($outer)` as $call,
-        `return Effect.flatten($outer)` as $call
+        JsCallExpression(callee = `Effect.flatten`, arguments = JsCallArguments(args = [JsCallExpression(callee = `Effect.map`)])) as $call,
+        `Effect.map($args).pipe(Effect.flatten)` as $call
     } where {
-        $outer <: contains `Effect.map($_)`,
         register_diagnostic(
             span = $call,
-            message = "Replace Effect.map followed by Effect.flatten with Effect.flatMap. The map produces an Effect and the flatten joins it, splitting one transformation across two calls. Effect.flatMap expresses that transformation directly.",
-            severity = "warning"
+            message = "Replace Effect.map followed by Effect.flatten with Effect.flatMap. The map produces an Effect and the flatten joins it. Effect.flatMap expresses that transformation directly.",
+            severity = "warn"
         )
     }
 }

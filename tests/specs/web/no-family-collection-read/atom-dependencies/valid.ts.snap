@@ -1,0 +1,11 @@
+{
+  "input": "import { Option } from \"effect\";\nimport { Atom } from \"effect/reactivity\";\n\ntype Book = { readonly isbn: string; readonly title: string };\nexport const bookSourceAtom = Atom.family((_isbn: string) =>\n  Atom.make(Option.none<Book>()),\n);\nexport const bookResultsAtom = Atom.make<ReadonlyArray<Book>>([]);\n\n/**\n * Correctly reads a per-key source from each item projection. Updating one\n * source leaves unrelated item atoms independent of list changes.\n */\nexport const effectBookAtom = Atom.family((isbn: string) =>\n  Atom.make(Atom.get(bookSourceAtom(isbn))),\n);\nexport const contextBookAtom = Atom.family((isbn: string) =>\n  Atom.make((get) => get.get(bookSourceAtom(isbn))),\n);\nexport const directBookAtom = Atom.family((isbn: string) =>\n  Atom.make((get) => get(bookSourceAtom(isbn))),\n);\n\n/**\n * Correctly keeps collection reads in the list-level count projection.\n */\nexport const bookCountAtom = Atom.make((get) => get(bookResultsAtom).length);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

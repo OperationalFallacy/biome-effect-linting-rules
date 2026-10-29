@@ -1,0 +1,128 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst task = Schema.decodeUnknownEffect(Schema.NonEmptyString)(\"Mira\");\n\n/**\n * Questionably uses Effect.as for result selection. This package favors\n * explicit result-producing callbacks in composition.\n */\nexport const completion = Effect.as(true);\nexport const complete = Effect.as(task, true);\nexport const genericCompletion = Effect.as<boolean>(true);\nexport const pipelineCompletion = task.pipe(Effect.as(true));\n\n/**\n * Correctly expresses result selection through an Effect.map callback.\n */\nexport const mappedCompletion = task.pipe(Effect.map(() => true));\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-as/result-selection/invalid.ts"
+          },
+          "span": [
+            277,
+            292
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-as/result-selection/invalid.ts"
+          },
+          "span": [
+            318,
+            339
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-as/result-selection/invalid.ts"
+          },
+          "span": [
+            374,
+            398
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-as/result-selection/invalid.ts"
+          },
+          "span": [
+            444,
+            459
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 4,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "input": "type DataMessage = { readonly kind: \"data\"; readonly payload: string };\ntype StreamMessage = DataMessage | { readonly kind: \"status\" };\n\n/**\n * Correctly narrows an already-typed union through its discriminant.\n * The input has already passed the external-data validation step.\n */\nexport const isDataMessage = (message: StreamMessage): message is DataMessage =>\n  message.kind === \"data\";\n\nexport class StreamFailure extends Error {}\n\n/**\n * Correctly checks nominal class identity with instanceof. The predicate\n * identifies an existing error instance for subsequent error handling.\n */\nexport const isStreamFailure = (cause: unknown): cause is StreamFailure =>\n  cause instanceof StreamFailure;\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

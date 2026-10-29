@@ -1,0 +1,157 @@
+{
+  "input": "import { Effect, Schema, pipe } from \"effect\";\n\nconst Book = Schema.Struct({ title: Schema.NonEmptyString, pages: Schema.Int });\nconst books = [\n  { title: \"Garden Notes\", pages: 118 },\n  { title: \"Night Ferry\", pages: 331 },\n];\n\n/**\n * Unnecessarily uses block callbacks for direct projections. The return\n * statements add control-flow syntax to single-expression transformations.\n */\nexport const titles = books.map((book) => { return book.title; });\nexport const summaries = books.map((book): string => {\n  return `${book.title}: ${book.pages} pages`;\n});\nexport const pageCounts = books.map(book => { return book.pages; });\n\nexport const decodeTitle = (input: unknown) =>\n  Effect.map(Schema.decodeUnknownEffect(Book)(input), (book) => {\n    return book.title;\n  });\n\nexport const bookCount = pipe(books, (items) => { return items.length; });\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "information",
+        "description": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-in-arrow/call-forms/invalid.ts"
+          },
+          "span": [
+            431,
+            449
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "information",
+        "description": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-in-arrow/call-forms/invalid.ts"
+          },
+          "span": [
+            511,
+            555
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "information",
+        "description": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-in-arrow/call-forms/invalid.ts"
+          },
+          "span": [
+            606,
+            624
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "information",
+        "description": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-in-arrow/call-forms/invalid.ts"
+          },
+          "span": [
+            747,
+            765
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "information",
+        "description": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-in-arrow/call-forms/invalid.ts"
+          },
+          "span": [
+            823,
+            843
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 5,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

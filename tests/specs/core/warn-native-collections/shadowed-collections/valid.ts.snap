@@ -1,0 +1,11 @@
+{
+  "input": "import { Array as Arr, Data, Equal, Option } from \"effect\";\n\nclass Key extends Data.Class<{ readonly id: string }> {}\n\n/**\n * Correctly defines a local collection with explicit value-equality lookup.\n * Its Map name identifies this implementation's own semantics.\n */\nclass Map<K, V> {\n  constructor(readonly entries: ReadonlyArray<readonly [K, V]>) {}\n  get(key: K) {\n    return Arr.findFirst(this.entries, ([stored]) =>\n      Equal.equals(stored, key),\n    ).pipe(Option.map(([, value]) => value));\n  }\n}\n\n/**\n * Correctly defines local membership through explicit value equality.\n */\nclass Set<K> {\n  constructor(readonly entries: ReadonlyArray<K>) {}\n  has(key: K) {\n    return Arr.some(this.entries, (stored) => Equal.equals(stored, key));\n  }\n}\n\nexport const index = new Map<Key, string>([\n  [new Key({ id: \"guest-1\" }), \"Mira\"],\n]);\nexport const selected = new Set<Key>([new Key({ id: \"guest-1\" })]);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

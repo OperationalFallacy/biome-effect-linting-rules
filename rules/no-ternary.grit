@@ -1,13 +1,19 @@
 file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
     $body <: contains `$cond ? $then : $else` as $ternary,
+    $cond <: not within or {
+        `Effect.gen($ownerArgs)`,
+        `Effect.fn($ownerArgs)`,
+        `Effect.fn($ownerName)($ownerBody)`,
+        `Effect.fnUntraced($ownerArgs)`,
+        `Effect.fnUntracedEager($ownerArgs)`,
+        `Effect.suspend($ownerArgs)`
+    },
     register_diagnostic(
         span = $cond,
-        message = "Replace the ternary with an explicit value-selection step. Embedding the decision in another expression mixes selection with the surrounding operation. Select the value with Match.value, Option.match, or Either.match, then continue the Effect pipeline. Preserve the condition and both outcomes.",
+        message = "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow.",
         severity = "error"
     )
 }

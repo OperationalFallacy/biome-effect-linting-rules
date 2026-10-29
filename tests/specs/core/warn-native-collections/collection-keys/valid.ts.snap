@@ -1,0 +1,11 @@
+{
+  "input": "import { Data, HashMap, HashSet } from \"effect\";\n\nclass Key extends Data.Class<{ readonly id: string }> {}\nconst itemKey = (group: string, id: number) => ({ group, id });\nconst cellKey = (row: number, column: number): readonly [number, number] => [\n  row,\n  column,\n];\nconst qualifiedKey = (id: string) => ({ id });\nconst plainKey = (id: string) => ({ id });\n\n/**\n * Correctly uses Effect collections for reconstructed value keys.\n * Lookups can use a newly constructed equal key.\n */\nexport const byDomainKey = HashMap.make([new Key({ id: \"guest-1\" }), \"Mira\"]);\nexport const selectedDomainKeys = HashSet.make(new Key({ id: \"guest-1\" }));\nexport const items = HashMap.make([itemKey(\"catalog\", 3), \"Mira\"]);\nexport const selectedItems = HashSet.make(itemKey(\"catalog\", 3));\nexport const cells = HashMap.make([cellKey(0, 1), \"occupied\"]);\nexport const qualifiedIndex = HashMap.make([qualifiedKey(\"guest-1\"), 3]);\nexport const qualifiedSelection = HashSet.make(qualifiedKey(\"guest-1\"));\nexport const plainIndex = HashMap.make([plainKey(\"guest-1\"), 3]);\nexport const structuralIndex = HashMap.make([itemKey(\"catalog\", 3), \"Mira\"]);\nexport const structuralSelection = HashSet.make(itemKey(\"catalog\", 3));\n\n/**\n * Correctly uses native collections for scalar keys and object values.\n * Equality of the stored value does not affect lookup by its string key.\n */\nexport const labels = new Map<string, string>([[\"guest-1\", \"Mira\"]]);\nexport const visited = new Set<number>([3]);\nexport const objectValues = new Map<string, ReturnType<typeof itemKey>>([\n  [\"guest-1\", itemKey(\"catalog\", 3)],\n]);\nexport const inferredIds = new Set([\"guest-1\", \"guest-2\"]);\n\n/**\n * Correctly attaches metadata to object lifetimes through weak collections.\n */\nexport const weakIndex = new WeakMap<object, string>();\nexport const weakSelection = new WeakSet<object>();\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

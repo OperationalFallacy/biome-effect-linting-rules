@@ -1,0 +1,41 @@
+{
+  "input": "import { Array as Arr, Option } from \"effect\";\n\nconst profiles = [{ id: \"guest-1\", name: \"Mira\" }];\n\n/**\n * Incorrectly unwraps an Option into a null sentinel. Callers lose the optional\n * value composition already provided by the lookup.\n */\nexport const findProfile = (id: string) => {\n  const profile = Arr.findFirst(profiles, (profile) => profile.id === id);\n  if (Option.isSome(profile)) {\n    return profile.value;\n  }\n  return null;\n};\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Return Option.none for absence or Effect.fail for an error instead of null. Each caller must interpret a null sentinel before it uses the value. Express the outcome in the return type and update callers to handle it explicitly.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Return Option.none for absence or Effect.fail for an error instead of null. Each caller must interpret a null sentinel before it uses the value. Express the outcome in the return type and update callers to handle it explicitly."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-null/optional-results/invalid.ts"
+          },
+          "span": [
+            427,
+            439
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

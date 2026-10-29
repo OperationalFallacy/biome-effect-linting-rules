@@ -1,0 +1,41 @@
+{
+  "input": "import { Deferred, Effect } from \"effect\";\n\ninterface BackgroundWork {\n  readonly run: Effect.Effect<void>;\n  readonly stopRequested: Deferred.Deferred<void>;\n}\n\n/**\n * Incorrectly starts an independent runtime fiber inside an Effect operation.\n * The child can outlive the operation after its stop signal arrives.\n */\nexport const observe = Effect.fn(\"observe\")(function* (work: BackgroundWork) {\n  Effect.runFork(work.run);\n  yield* Deferred.await(work.stopRequested);\n});\n\n/**\n * Correctly uses a runtime runner at an application integration entry point.\n * The caller receives the fiber and manages its lifetime.\n */\nexport const startApplication = (work: BackgroundWork) =>\n  Effect.runFork(work.run);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.forkChild or Effect.forkScoped for work started inside an Effect operation. Effect.runFork and Effect.runForkWith start independent runtime fibers and leave cancellation and cleanup to the caller. Keep service work attached to its parent fiber or Scope. Reserve the run functions for application startup and external integrations.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.forkChild or Effect.forkScoped for work started inside an Effect operation. Effect.runFork and Effect.runForkWith start independent runtime fibers and leave cancellation and cleanup to the caller. Keep service work attached to its parent fiber or Scope. Reserve the run functions for application startup and external integrations."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-runtime-runfork/fiber-lifetimes/invalid.ts"
+          },
+          "span": [
+            400,
+            424
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

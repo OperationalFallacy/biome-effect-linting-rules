@@ -1,0 +1,11 @@
+{
+  "input": "import { Array as Arr, Effect, pipe } from \"effect\";\n\nconst amounts = [12, 8, 5];\nconst sum = (values: ReadonlyArray<number>) =>\n  Arr.reduce(values, 0, (total, value) => total + value);\nconst format = (total: number) => `$${total.toFixed(2)}`;\n\n/**\n * Correctly composes consecutive transformations in one pipeline. A new pipe\n * call is unnecessary when the next step continues the same data flow.\n */\nexport const receipt = pipe(amounts, sum, format);\nexport const receiptEffect = Effect.succeed(amounts).pipe(\n  Effect.map(sum),\n  Effect.map(format),\n);\nexport const directReceipt = pipe(amounts, sum, format);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,26 +1,22 @@
-file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+language js(typescript, jsx)
+
+JsCallExpression(callee = `Effect.provide`) as $provide where {
+    $provide <: within or {
+        `Effect.gen($ownerArgs)`,
+        `Effect.fn($ownerArgs)`,
+        `Effect.fn($ownerName)($ownerBody)`,
+        `Effect.fnUntraced($ownerArgs)`,
+        `Effect.fnUntracedEager($ownerArgs)`
     },
-    or {
-        $body <: contains `function*`,
-        $body <: contains `const $name = yield* $runtime.pipe(`,
-        $body <: contains `Effect.provide($layer)` as $provide where {
-            $provide <: not contains `,`
-        }
-    },
-    or {
-        $body <: contains `function*`,
-        $body <: contains `return yield* $runtime.pipe(`,
-        $body <: contains `Effect.provide($layer)` as $provide where {
-            $provide <: not contains `,`
+    $provide <: not within JsCallExpression(callee = $test) where {
+        $test <: or {
+            `it`, `test`, `it.effect`, `test.effect`, `it.scoped`, `test.scoped`,
+            `it.skip`, `test.skip`, `it.only`, `test.only`
         }
     },
     register_diagnostic(
         span = $provide,
-        message = "Assemble dependencies on the service or exported operation instead of inside the method. A local runtime.pipe with Effect.provide mixes dependency setup with the method's work. Declare the live dependency on Effect.Service or provide it once on the exported operation. Yield the configured runtime or service directly in the body.",
+        message = "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
         severity = "error"
     )
 }

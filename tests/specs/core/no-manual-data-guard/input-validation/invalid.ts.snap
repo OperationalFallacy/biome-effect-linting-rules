@@ -1,0 +1,41 @@
+{
+  "input": "interface User {\n  readonly id: string;\n  readonly active: boolean;\n}\n\n/**\n * Questionably duplicates model validation in a hand-written type predicate.\n * Callers must perform the check and handle rejection outside the Effect error channel.\n */\nexport const isUser = (input: unknown): input is User =>\n  typeof input === \"object\" &&\n  input !== null &&\n  \"id\" in input &&\n  typeof input.id === \"string\" &&\n  \"active\" in input &&\n  typeof input.active === \"boolean\";\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Decode unknown input with the model's Schema instead of a hand-written type predicate. TypeScript trusts the predicate's declared type. It does not verify those tests against the model. Use the decoded value in service logic and typed Match patterns for subsequent decisions. Predicates over known typed unions and nominal class identity checks remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Decode unknown input with the model's Schema instead of a hand-written type predicate. TypeScript trusts the predicate's declared type. It does not verify those tests against the model. Use the decoded value in service logic and typed Match patterns for subsequent decisions. Predicates over known typed unions and nominal class identity checks remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-manual-data-guard/input-validation/invalid.ts"
+          },
+          "span": [
+            286,
+            299
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

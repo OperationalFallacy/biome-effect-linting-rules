@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Questionably loads a known module inside the operation. The dependency\n * becomes visible only after the reader follows the operation's execution path.\n */\nexport const createId = Effect.fn(\"createId\")(() =>\n  Effect.promise(() => import(\"node:crypto\")).pipe(\n    Effect.map((crypto) => crypto.randomUUID()),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace the dynamic import with a static import. A module load inside the operation forces the reader to inspect the execution path to identify the dependency. Declare the dependency with the file's other imports and update its uses.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace the dynamic import with a static import. A module load inside the operation forces the reader to inspect the execution path to identify the dependency. Declare the dependency with the file's other imports and update its uses."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/prevent-dynamic-imports/module-dependencies/invalid.ts"
+          },
+          "span": [
+            272,
+            293
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

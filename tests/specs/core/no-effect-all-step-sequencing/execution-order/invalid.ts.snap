@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Ref } from \"effect\";\n\n/**\n * Misuses Effect.all by grouping sequential operations into an array,\n * then enforcing their order with a concurrency limit.\n */\nexport const markDelivered = Effect.fn(\"markDelivered\")(function* (\n  delivered: Ref.Ref<boolean>,\n  recipient: string,\n) {\n  yield* Effect.all(\n    [\n      Effect.logInfo(`Parcel delivered to ${recipient}`),\n      Ref.set(delivered, true),\n    ],\n    { concurrency: 1 },\n  );\n  return yield* Ref.get(delivered);\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Sequence these steps with Effect.gen, Effect.andThen, or Effect.flatMap. Preserve their order and failure behavior. Use Effect.all to collect independent results, including per-item successes and failures with mode: result.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Sequence these steps with Effect.gen, Effect.andThen, or Effect.flatMap. Preserve their order and failure behavior. Use Effect.all to collect independent results, including per-item successes and failures with mode: result."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-all-step-sequencing/execution-order/invalid.ts"
+          },
+          "span": [
+            307,
+            449
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

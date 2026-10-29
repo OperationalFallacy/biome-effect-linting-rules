@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\ninterface CounterStore {\n  readonly update: () => Effect.Effect<number>;\n}\n\n/**\n * Correctly exposes the store's update as the operation's Effect.\n * Execution performs the update and returns its success value.\n */\nexport const increment = Effect.fn(\"increment\")((store: CounterStore) =>\n  store.update(),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

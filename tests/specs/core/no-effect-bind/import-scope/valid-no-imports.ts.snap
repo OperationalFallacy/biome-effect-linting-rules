@@ -1,0 +1,11 @@
+{
+  "input": "const Effect = {\n  bind: (name: string, read: () => number) => ({ [name]: read() }),\n};\n\n/**\n * Correctly uses a local synchronous data builder outside Effect composition.\n * The builder reads its value immediately and returns an ordinary record.\n */\nexport const count = Effect.bind(\"count\", () => 3);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

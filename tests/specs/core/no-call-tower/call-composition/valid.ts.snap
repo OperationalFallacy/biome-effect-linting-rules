@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst Guest = Schema.Struct({ name: Schema.NonEmptyString });\n\n/**\n * Correctly composes parsing and validation in one pipeline. The source reads\n * in execution order, and a failure prevents the dependent transformations.\n */\nexport const decodeName = Effect.fn(\"decodeName\")((text: string) =>\n  Effect.try(() => JSON.parse(text)).pipe(\n    Effect.flatMap(Schema.decodeUnknownEffect(Guest)),\n    Effect.map((guest) => guest.name),\n  ),\n);\n\n/**\n * Correctly sequences the continuation after decoding through Effect.andThen.\n * The continuation runs only after the decoder succeeds.\n */\nexport const reportDecodedName = Effect.fn(\"reportDecodedName\")(\n  (text: string) =>\n    decodeName(text).pipe(\n      Effect.andThen(() => Effect.logInfo(\"Decoded guest name\")),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

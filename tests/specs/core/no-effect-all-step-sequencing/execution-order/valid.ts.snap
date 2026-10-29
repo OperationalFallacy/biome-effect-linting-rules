@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Ref } from \"effect\";\n\n/**\n * Correctly sequences effects in an Effect.fn generator body, where yield*\n * expresses their execution order directly.\n */\nexport const markDelivered = Effect.fn(\"markDelivered\")(function* (\n  delivered: Ref.Ref<boolean>,\n  recipient: string,\n) {\n  yield* Effect.logInfo(`Parcel delivered to ${recipient}`);\n  yield* Ref.set(delivered, true);\n  return yield* Ref.get(delivered);\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}
