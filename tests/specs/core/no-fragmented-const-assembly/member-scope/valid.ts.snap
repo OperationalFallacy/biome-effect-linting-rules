@@ -1,0 +1,11 @@
+{
+  "input": "const workflow = {\n  ...baseJob,\n  steps: [checkout, corepack, ...existingSteps.slice(1)],\n};\n\nconst request = {\n  ...defaults,\n  retries: attempts.map((attempt) => ({ ...attempt, delay: 100 })),\n};\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}
