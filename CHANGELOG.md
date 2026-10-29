@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.0-dev.3](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.2...v0.1.0-dev.3) (2026-10-29)
+
+
+### Bug Fixes
+
+* align operation composition with Effect v4 APIs ([d8a6b54](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/d8a6b5466d2189956c629e4077d98bb262cecb5f))
+* align operation composition with Effect v4 APIs ([afeee88](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/afeee88b1484f915271ab47f6b67d7c4c43b9e72))
+
 ## [0.1.0-dev.2](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.1...v0.1.0-dev.2) (2026-10-29)
 
 
