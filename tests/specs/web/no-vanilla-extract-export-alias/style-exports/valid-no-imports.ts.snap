@@ -1,0 +1,11 @@
+{
+  "input": "const style = (definition: { readonly width: string }) => definition;\nconst base = style({ width: \"100%\" });\n\n/**\n * Correctly aliases an ordinary local function's result. A module-name string\n * does not make this code a Vanilla Extract stylesheet.\n */\nexport const alias = base;\nexport const moduleName = \"@vanilla-extract/css\";\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}
