@@ -1,15 +1,15 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst nestedFlatmapsValue = Effect.flatMap(Effect.succeed(1), (n) =>\n  Effect.flatMap(Effect.succeed(n), (m) => Effect.succeed(m)),\n);\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst Guest = Schema.Struct({ name: Schema.NonEmptyString });\n\n/**\n * Unnecessarily nests Effect.flatMap callbacks to compose dependent effects,\n * adding callback scopes to a linear workflow.\n */\nexport const greet = Effect.fn(\"greet\")((input: unknown) =>\n  Effect.flatMap(Schema.decodeUnknownEffect(Guest)(input), (guest) =>\n    Effect.flatMap(Effect.logInfo(`Hello, ${guest.name}`), () =>\n      Effect.succeed(guest.name),\n    ),\n  ),\n);\n",
   "result": {
     "diagnostics": [
       {
         "category": "plugin",
         "severity": "warning",
-        "description": "Combine nested Effect.flatMap calls into one pipeline. The reader must follow separate callback bodies to understand the dependent steps and their execution order. Build shared inputs once with Effect.all or Effect.map, then pass them through the dependent steps in order.",
+        "description": "Use one pipeline or Effect.gen for these dependent steps. Nested Effect.flatMap callbacks obscure their order. Use Effect.all only to collect independent results.",
         "message": [
           {
             "elements": [],
-            "content": "Combine nested Effect.flatMap calls into one pipeline. The reader must follow separate callback bodies to understand the dependent steps and their execution order. Build shared inputs once with Effect.all or Effect.map, then pass them through the dependent steps in order."
+            "content": "Use one pipeline or Effect.gen for these dependent steps. Nested Effect.flatMap callbacks obscure their order. Use Effect.all only to collect independent results."
           }
         ],
         "advices": {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-flatmap-ladder/composition/invalid.ts"
           },
           "span": [
-            34,
-            167
+            301,
+            478
           ],
           "sourceCode": null
         },

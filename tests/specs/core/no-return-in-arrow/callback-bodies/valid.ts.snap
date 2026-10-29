@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst labels = rows.map((row) => row.name);\n\nconst normalized = rows.map((row) => {\n  const name = row.name.trim();\n  return name.toUpperCase();\n});\n\nconst load = Effect.fn(\"load\")(function* () {\n  const profile = yield* readProfile;\n  return profile.name;\n});\n",
+  "input": "const names = [\"Ada\", \"Grace\"];\n\n/**\n * Correctly uses an expression callback for a single transformation.\n */\nexport const searchTerms = names.map((name) => name.toLowerCase());\n\n/**\n * Correctly uses a block callback when a local declaration needs its own scope.\n */\nexport const labels = names.map((input) => {\n  const name = input.trim();\n  return name.toUpperCase();\n});\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

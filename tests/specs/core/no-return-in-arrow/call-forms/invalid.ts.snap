@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, pipe } from \"effect\";\n\nconst direct = rows.map((row) => { return row.name; });\nconst typed = rows.map((row): string => { return row.name; });\nconst short = rows.map(row => { return row.name; });\nconst transformed = Effect.map(readProfile, (profile) => { return profile.name; });\nconst piped = pipe(rows, (items) => { return items.length; });\n",
+  "input": "import { Effect, Schema, pipe } from \"effect\";\n\nconst Book = Schema.Struct({ title: Schema.NonEmptyString, pages: Schema.Int });\nconst books = [\n  { title: \"Garden Notes\", pages: 118 },\n  { title: \"Night Ferry\", pages: 331 },\n];\n\n/**\n * Unnecessarily uses block callbacks for direct projections. The return\n * statements add control-flow syntax to single-expression transformations.\n */\nexport const titles = books.map((book) => { return book.title; });\nexport const summaries = books.map((book): string => {\n  return `${book.title}: ${book.pages} pages`;\n});\nexport const pageCounts = books.map(book => { return book.pages; });\n\nexport const decodeTitle = (input: unknown) =>\n  Effect.map(Schema.decodeUnknownEffect(Book)(input), (book) => {\n    return book.title;\n  });\n\nexport const bookCount = pipe(books, (items) => { return items.length; });\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-return-in-arrow/call-forms/invalid.ts"
           },
           "span": [
-            75,
-            91
+            431,
+            449
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/core/no-return-in-arrow/call-forms/invalid.ts"
           },
           "span": [
-            138,
-            154
+            511,
+            555
           ],
           "sourceCode": null
         },
@@ -81,8 +81,8 @@
             "file": "/project/core/no-return-in-arrow/call-forms/invalid.ts"
           },
           "span": [
-            191,
-            207
+            606,
+            624
           ],
           "sourceCode": null
         },
@@ -110,8 +110,8 @@
             "file": "/project/core/no-return-in-arrow/call-forms/invalid.ts"
           },
           "span": [
-            271,
-            291
+            747,
+            765
           ],
           "sourceCode": null
         },
@@ -139,8 +139,8 @@
             "file": "/project/core/no-return-in-arrow/call-forms/invalid.ts"
           },
           "span": [
-            334,
-            354
+            823,
+            843
           ],
           "sourceCode": null
         },

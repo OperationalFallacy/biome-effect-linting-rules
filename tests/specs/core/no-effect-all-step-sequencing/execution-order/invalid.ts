@@ -1,7 +1,19 @@
-import { Effect } from "effect";
+import { Effect, Ref } from "effect";
 
-const sequentialLogsValue = Effect.all([Effect.log("start"), Effect.log("done")], {
-  concurrency: 1,
+/**
+ * Misuses Effect.all by grouping sequential operations into an array,
+ * then enforcing their order with a concurrency limit.
+ */
+export const markDelivered = Effect.fn("markDelivered")(function* (
+  delivered: Ref.Ref<boolean>,
+  recipient: string,
+) {
+  yield* Effect.all(
+    [
+      Effect.logInfo(`Parcel delivered to ${recipient}`),
+      Ref.set(delivered, true),
+    ],
+    { concurrency: 1 },
+  );
+  return yield* Ref.get(delivered);
 });
-
-const collectedResultsValue = Effect.all([Effect.succeed(1), Effect.succeed(2)]);
