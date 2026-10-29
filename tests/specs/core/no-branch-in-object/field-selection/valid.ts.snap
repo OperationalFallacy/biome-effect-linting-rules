@@ -1,5 +1,5 @@
 {
-  "input": "import { Match } from \"effect\";\n\nconst label = Match.value(isReady).pipe(\n  Match.when(true, () => \"Ready\"),\n  Match.orElse(() => \"Loading\"),\n);\nconst view = { label, count };\n",
+  "input": "import { Result } from \"effect\";\n\n/**\n * Correctly selects the field value before constructing the result object.\n * The object declaration describes the result's structure directly.\n */\nexport const summarize = (result: Result.Result<number, string>) => {\n  const count = Result.match(result, {\n    onSuccess: (count) => count,\n    onFailure: () => 0,\n  });\n  return { count };\n};\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

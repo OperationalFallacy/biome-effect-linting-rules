@@ -1,13 +1,13 @@
-import { Effect, pipe } from "effect";
+import { Effect, Schema } from "effect";
 
-function load() {
+/**
+ * Incorrectly catches synchronous decoder exceptions inside an Effect operation.
+ * The failures never enter the typed error channel for recovery through composition.
+ */
+export const readCount = Effect.fn("readCount")(function* (text: string) {
   try {
-    return read();
-  } catch (error) {
-    return recover(error);
+    return Schema.decodeUnknownSync(Schema.Number)(JSON.parse(text));
+  } catch {
+    return 0;
   }
-}
-
-const value = Effect.try({ try: read, catch: (cause) => cause }).pipe(
-  Effect.catch(() => Effect.succeed(0)),
-);
+});

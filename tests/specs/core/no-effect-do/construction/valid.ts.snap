@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst operation = Effect.gen(function* () {\n  return 1;\n});\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Correctly sequences decoding with a direct yield and constructs the result\n * record once, after the operation has its value.\n */\nexport const readCount = Effect.fn(\"readCount\")(function* (input: unknown) {\n  const count = yield* Schema.decodeUnknownEffect(Schema.Int)(input);\n  return { count };\n});\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

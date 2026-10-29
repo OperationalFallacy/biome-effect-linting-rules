@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, Match } from \"effect\";\n\ndeclare const _unused: Effect.Effect<number>;\n\nconst switchDescribe = (kind: \"a\" | \"b\" | \"c\"): string => {\n  switch (kind) {\n    case \"a\":\n      return \"Alpha\";\n    case \"b\":\n      return \"Beta\";\n    default:\n      return \"Gamma\";\n  }\n};\n\nfunction valueSwitchChoose(value) {\n  switch (value) {\n    case 1:\n      return 1;\n    default:\n      return 0;\n  }\n}\n\nconst matchValueDescribe = (kind: \"a\" | \"b\" | \"c\"): string =>\n  Match.value(kind).pipe(\n    Match.when(\"a\", () => \"Alpha\"),\n    Match.when(\"b\", () => \"Beta\"),\n    Match.orElse(() => \"Gamma\"),\n  );\n\nconst operationSwitchChoose = Effect.fn(\"choose\")(function* (value) {\n  switch (value) {\n    case 1:\n      return 1;\n    default:\n      return 0;\n  }\n});\n",
+  "input": "import { Effect, Match } from \"effect\";\n\ntype Phase = \"ready\" | \"loading\" | \"failed\";\n\n/**\n * Questionably splits pure value selection across switch return paths.\n * Match can express the complete selection as one value.\n */\nexport const describePhase = (phase: Phase) => {\n  switch (phase) {\n    case \"ready\":\n      return \"Ready\";\n    case \"loading\":\n      return \"Loading\";\n    default:\n      return \"Failed\";\n  }\n};\n\nexport function isReady(phase: Phase) {\n  switch (phase) {\n    case \"ready\":\n      return true;\n    default:\n      return false;\n  }\n}\n\n/**\n * Correctly uses Match for pure value selection.\n */\nexport const describeMatched = (phase: Phase) =>\n  Match.value(phase).pipe(\n    Match.when(\"ready\", () => \"Ready\"),\n    Match.when(\"loading\", () => \"Loading\"),\n    Match.orElse(() => \"Failed\"),\n  );\n\n/**\n * Correctly keeps branching inside a named Effect operation.\n * The branch executes when the operation runs.\n */\nexport const describeOperation = Effect.fn(\"describeOperation\")(function* (\n  phase: Phase,\n) {\n  switch (phase) {\n    case \"ready\":\n      return \"Ready\";\n    case \"loading\":\n      return \"Loading\";\n    default:\n      return \"Failed\";\n  }\n});\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-switch-statement/control-flow/invalid.ts"
           },
           "span": [
-            150,
-            275
+            276,
+            416
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/core/no-switch-statement/control-flow/invalid.ts"
           },
           "span": [
-            318,
-            395
+            463,
+            553
           ],
           "sourceCode": null
         },

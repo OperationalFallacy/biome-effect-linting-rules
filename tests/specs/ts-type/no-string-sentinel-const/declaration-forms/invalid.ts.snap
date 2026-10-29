@@ -1,5 +1,5 @@
 {
-  "input": "const status = \"ready\";\nconst loadState: string = \"loading\";\nexport const requestPhase = \"pending\";\nconst request_outcome = \"failed\", retryStatus = \"scheduled\";\n",
+  "input": "/**\n * Questionably stores workflow states as independent text tokens across\n * declaration forms. Their data and allowed alternatives have no shared model.\n */\nconst status = \"ready\";\nconst loadState: string = \"loading\";\nexport const requestPhase = \"pending\";\nconst request_outcome = \"failed\",\n  retryStatus = \"scheduled\";\n\nexport const states = {\n  status,\n  loadState,\n  requestPhase,\n  request_outcome,\n  retryStatus,\n};\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/ts-type/no-string-sentinel-const/declaration-forms/invalid.ts"
           },
           "span": [
-            6,
-            22
+            167,
+            183
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/ts-type/no-string-sentinel-const/declaration-forms/invalid.ts"
           },
           "span": [
-            30,
-            59
+            191,
+            220
           ],
           "sourceCode": null
         },
@@ -81,8 +81,8 @@
             "file": "/project/ts-type/no-string-sentinel-const/declaration-forms/invalid.ts"
           },
           "span": [
-            74,
-            98
+            235,
+            259
           ],
           "sourceCode": null
         },
@@ -110,8 +110,8 @@
             "file": "/project/ts-type/no-string-sentinel-const/declaration-forms/invalid.ts"
           },
           "span": [
-            106,
-            132
+            267,
+            293
           ],
           "sourceCode": null
         },
@@ -139,8 +139,8 @@
             "file": "/project/ts-type/no-string-sentinel-const/declaration-forms/invalid.ts"
           },
           "span": [
-            134,
-            159
+            297,
+            322
           ],
           "sourceCode": null
         },

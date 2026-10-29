@@ -1,5 +1,5 @@
 {
-  "input": "import { operation } from \"./operation\";\nimport \"effect\";\n\nconst dynamicImportValue = import(\"./operation\");\n\nconst staticImportValue = operation;\n",
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Questionably loads a known module inside the operation. The dependency\n * becomes visible only after the reader follows the operation's execution path.\n */\nexport const createId = Effect.fn(\"createId\")(() =>\n  Effect.promise(() => import(\"node:crypto\")).pipe(\n    Effect.map((crypto) => crypto.randomUUID()),\n  ),\n);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/prevent-dynamic-imports/module-dependencies/invalid.ts"
           },
           "span": [
-            86,
-            107
+            272,
+            293
           ],
           "sourceCode": null
         },

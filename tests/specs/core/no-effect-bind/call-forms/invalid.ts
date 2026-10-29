@@ -1,7 +1,11 @@
-import { Effect } from "effect";
+import { Effect, Schema } from "effect";
 
-const addCount = Effect.bind("count", read);
-const addCountToTask = Effect.bind(task, "count", read);
-const addComputedCount = Effect.bind("count", () => Effect.succeed(1));
-const addTypedCount = Effect.bind<"count">("count", read);
-const withCount = task.pipe(Effect.bind("count", read));
+/**
+ * Questionably sequences decoding through record-building callbacks.
+ * The builder makes the reader track an intermediate record between steps.
+ */
+export const readCount = Effect.fn("readCount")((input: unknown) =>
+  Effect.succeed({ label: "Counter" }).pipe(
+    Effect.bind("count", () => Schema.decodeUnknownEffect(Schema.Int)(input)),
+  ),
+);

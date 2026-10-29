@@ -1,11 +1,14 @@
-import { Effect, pipe } from "effect";
+import { Effect, Schema } from "effect";
 
-const outerRecoveryValue = Effect.catch(
-  Effect.succeed(1).pipe(Effect.flatMap((n) => Effect.succeed(n + 1))),
-  () => Effect.succeed(0),
-);
-
-const pipelineRecoveryValue = Effect.succeed(1).pipe(
-  Effect.flatMap((n) => Effect.succeed(n + 1)),
-  Effect.catch(() => Effect.succeed(0)),
+/**
+ * Incorrectly wraps a dependent pipeline in an outer recovery call. The reader
+ * must inspect the nested argument to determine which failures recovery covers.
+ */
+export const readCount = Effect.fn("readCount")((text: string) =>
+  Effect.catch(
+    Effect.try(() => JSON.parse(text)).pipe(
+      Effect.flatMap(Schema.decodeUnknownEffect(Schema.Number)),
+    ),
+    () => Effect.succeed(0),
+  ),
 );

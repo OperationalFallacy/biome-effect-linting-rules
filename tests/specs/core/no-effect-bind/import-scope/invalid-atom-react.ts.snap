@@ -1,5 +1,5 @@
 {
-  "input": "import { Atom } from \"@effect/atom-react\";\n\nconst addCount = Effect.bind(\"count\", read);\n",
+  "input": "import \"@effect/atom-react\";\n\ntype EffectApi = typeof import(\"effect\").Effect;\n\n/**\n * Questionably builds an intermediate record in a React integration module.\n * The supplied Effect namespace still creates a record-building fragment.\n */\nexport const addCount = (Effect: EffectApi) =>\n  Effect.bind(\"count\", () => Effect.succeed(3));\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-effect-bind/import-scope/invalid-atom-react.ts"
           },
           "span": [
-            61,
-            87
+            289,
+            334
           ],
           "sourceCode": null
         },

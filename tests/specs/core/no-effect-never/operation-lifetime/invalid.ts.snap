@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst unboundedLifetimeValue = Effect.never;\n\nconst resourceLifetimeValue = Effect.acquireUseRelease(\n  Effect.succeed(1),\n  (n) => Effect.succeed(n),\n  () => Effect.void,\n);\n",
+  "input": "import { Deferred, Effect } from \"effect\";\n\ninterface Subscription {\n  readonly stopRequested: Deferred.Deferred<void>;\n  readonly close: Effect.Effect<void>;\n}\n\ninterface SubscriptionSource {\n  readonly open: Effect.Effect<Subscription>;\n}\n\n/**\n * Incorrectly keeps an acquired subscription alive with Effect.never.\n * The subscription's own stop signal has no role in the operation's lifetime.\n */\nexport const observe = Effect.fn(\"observe\")((source: SubscriptionSource) =>\n  Effect.acquireUseRelease(\n    source.open,\n    () => Effect.never,\n    (subscription) => subscription.close,\n  ),\n);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-effect-never/operation-lifetime/invalid.ts"
           },
           "span": [
-            65,
-            77
+            531,
+            543
           ],
           "sourceCode": null
         },

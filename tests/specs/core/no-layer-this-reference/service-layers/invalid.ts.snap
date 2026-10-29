@@ -1,15 +1,15 @@
 {
-  "input": "import { Context, Layer } from \"effect\";\n\n{\n  class ImplicitLayerService extends Context.Service<ImplicitLayerService, {}>()(\"Counter\") {\n    static readonly layer = Layer.effect(this, this.make);\n  }\n}\n\n{\n  class ImplicitMakeService extends Context.Service<ImplicitMakeService, {}>()(\"Counter\") {\n    static readonly layer = Layer.effect(ImplicitMakeService, this.make);\n  }\n}\n\n{\n  class ImplicitTagService extends Context.Service<ImplicitTagService, {}>()(\"Counter\") {\n    static readonly layer = Layer.effect(this, ImplicitTagService.make);\n  }\n}\n\n{\n  class ComposedImplicitService extends Context.Service<ComposedImplicitService, {}>()(\"Counter\") {\n    static readonly layer = Layer.effect(this, this.make).pipe(Layer.provide(Dependencies));\n  }\n}\n\n{\n  class ExplicitLayerService extends Context.Service<ExplicitLayerService, {}>()(\"Counter\") {\n    static readonly layer = Layer.effect(ExplicitLayerService, ExplicitLayerService.make).pipe(Layer.provide(Dependencies));\n  }\n}\n\n{\n  class InstanceMethodService extends Context.Service<InstanceMethodService, {}>()(\"Counter\") {\n    read() {\n      return this.value;\n    }\n  }\n}\n\n{\n  class LayerFactoryService extends Context.Service<LayerFactoryService, {}>()(\"Counter\") {\n    static createLayer = () => Layer.effect(this, this.make);\n  }\n}\n\n{\n  class Widget {\n    static layer = Layer.effect(this, this.make);\n  }\n}\n",
+  "input": "import { Context, Effect, Layer } from \"effect\";\n\ninterface CounterApi {\n  readonly read: Effect.Effect<number>;\n}\nexport class Seed extends Context.Service<Seed, { readonly initial: number }>()(\n  \"example/Seed\",\n) {}\nexport const dependencies = Layer.succeed(Seed, { initial: 3 });\nconst makeCounter = Effect.gen(function* () {\n  const seed = yield* Seed;\n  return { read: Effect.succeed(seed.initial) };\n});\n\n/**\n * Questionably uses implicit static receivers for the service key and constructor.\n * Explicit class names identify both parts of the layer at its declaration.\n */\nexport class Counter extends Context.Service<Counter, CounterApi>()(\n  \"example/Counter\",\n  { make: makeCounter },\n) {\n  static readonly layer = Layer.effect(this, this.make);\n}\n\n/**\n * Questionably leaves the construction Effect behind a static this reference.\n */\nexport class CounterByMake extends Context.Service<CounterByMake, CounterApi>()(\n  \"example/CounterByMake\",\n  { make: makeCounter },\n) {\n  static readonly layer = Layer.effect(CounterByMake, this.make);\n}\n\n/**\n * Questionably leaves the service key behind a static this reference.\n */\nexport class CounterByKey extends Context.Service<CounterByKey, CounterApi>()(\n  \"example/CounterByKey\",\n  { make: makeCounter },\n) {\n  static readonly layer = Layer.effect(this, CounterByKey.make);\n}\n\n/**\n * Questionably carries implicit class references into dependency assembly.\n */\nexport class ProvidedCounter extends Context.Service<\n  ProvidedCounter,\n  CounterApi\n>()(\"example/ProvidedCounter\", { make: makeCounter }) {\n  static readonly layer = Layer.effect(this, this.make).pipe(\n    Layer.provide(dependencies),\n  );\n}\n\n/**\n * Correctly names the service and its construction Effect in a static layer.\n */\nexport class ExplicitCounter extends Context.Service<\n  ExplicitCounter,\n  CounterApi\n>()(\"example/ExplicitCounter\", { make: makeCounter }) {\n  static readonly layer = Layer.effect(ExplicitCounter, ExplicitCounter.make);\n}\n\n/**\n * Correctly uses the static receiver inside a callable layer factory.\n * The factory establishes its own operation boundary.\n */\nexport class FactoryCounter extends Context.Service<\n  FactoryCounter,\n  CounterApi\n>()(\"example/FactoryCounter\", { make: makeCounter }) {\n  static createLayer = () => Layer.effect(this, this.make);\n}\n\n/**\n * Correctly uses a helper class's own key and constructor in its layer factory.\n * This class assembles an existing key rather than declaring a service subclass.\n */\nexport class Widget {\n  static readonly key = Context.Service<CounterApi>(\"example/Widget\");\n  static readonly make = Effect.succeed({ read: Effect.succeed(3) });\n  static readonly layer = Layer.effect(this.key, this.make);\n}\n",
   "result": {
     "diagnostics": [
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Use ImplicitLayerService and ImplicitLayerService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration.",
+        "description": "Use Counter and Counter.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration.",
         "message": [
           {
             "elements": [],
-            "content": "Use ImplicitLayerService and ImplicitLayerService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."
+            "content": "Use Counter and Counter.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."
           }
         ],
         "advices": {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-layer-this-reference/service-layers/invalid.ts"
           },
           "span": [
-            166,
-            195
+            726,
+            755
           ],
           "sourceCode": null
         },
@@ -34,11 +34,11 @@
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Use ImplicitMakeService and ImplicitMakeService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration.",
+        "description": "Use CounterByMake and CounterByMake.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration.",
         "message": [
           {
             "elements": [],
-            "content": "Use ImplicitMakeService and ImplicitMakeService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."
+            "content": "Use CounterByMake and CounterByMake.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."
           }
         ],
         "advices": {
@@ -52,8 +52,8 @@
             "file": "/project/core/no-layer-this-reference/service-layers/invalid.ts"
           },
           "span": [
-            326,
-            370
+            1010,
+            1048
           ],
           "sourceCode": null
         },
@@ -63,11 +63,11 @@
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Use ImplicitTagService and ImplicitTagService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration.",
+        "description": "Use CounterByKey and CounterByKey.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration.",
         "message": [
           {
             "elements": [],
-            "content": "Use ImplicitTagService and ImplicitTagService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."
+            "content": "Use CounterByKey and CounterByKey.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."
           }
         ],
         "advices": {
@@ -81,8 +81,8 @@
             "file": "/project/core/no-layer-this-reference/service-layers/invalid.ts"
           },
           "span": [
-            499,
-            542
+            1292,
+            1329
           ],
           "sourceCode": null
         },
@@ -92,11 +92,11 @@
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Use ComposedImplicitService and ComposedImplicitService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration.",
+        "description": "Use ProvidedCounter and ProvidedCounter.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration.",
         "message": [
           {
             "elements": [],
-            "content": "Use ComposedImplicitService and ComposedImplicitService.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."
+            "content": "Use ProvidedCounter and ProvidedCounter.make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."
           }
         ],
         "advices": {
@@ -110,8 +110,8 @@
             "file": "/project/core/no-layer-this-reference/service-layers/invalid.ts"
           },
           "span": [
-            681,
-            710
+            1586,
+            1615
           ],
           "sourceCode": null
         },

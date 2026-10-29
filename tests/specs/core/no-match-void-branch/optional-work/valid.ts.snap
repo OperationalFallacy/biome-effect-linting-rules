@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst saveWhenEnabled = Effect.fn(\"saveWhenEnabled\")(function* (enabled: boolean) {\n  if (enabled) {\n    yield* saveSettings;\n  }\n});\n",
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Correctly uses Effect.when for optional work. Effect.asVoid discards the\n * conditional result because this operation only reports completion.\n */\nexport const saveWhenEnabled = Effect.fn(\"saveWhenEnabled\")(\n  (enabled: boolean) =>\n    Effect.logInfo(\"Saved settings\").pipe(\n      Effect.when(Effect.succeed(enabled)),\n      Effect.asVoid,\n    ),\n);\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

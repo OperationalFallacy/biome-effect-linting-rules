@@ -1,9 +1,13 @@
-import { other } from "effect-tools";
+import { format } from "node:util";
 
-const byId = new Map<string, number>();
-const nativeOutsideEffectSelected = new Set(["a", "b"]);
-const packageName = "effect";
+/**
+ * Correctly uses native object identity in a module outside Effect composition.
+ * Callers use the same object instances to retrieve their stored values.
+ */
+export const index = new Map<{ readonly id: string }, string>();
+export const selected = new Set<{ readonly id: string }>();
 
-const unrelatedImportSelected = new Set(["a"]);
-const name = "effect";
-const value = other;
+/**
+ * Correctly treats a package name as ordinary text for display.
+ */
+export const packageName = format("%s", "effect");

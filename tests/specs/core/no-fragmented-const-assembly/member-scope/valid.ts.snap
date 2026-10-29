@@ -1,5 +1,5 @@
 {
-  "input": "const workflow = {\n  ...baseJob,\n  steps: [checkout, corepack, ...existingSteps.slice(1)],\n};\n\nconst request = {\n  ...defaults,\n  retries: attempts.map((attempt) => ({ ...attempt, delay: 100 })),\n};\n",
+  "input": "/**\n * Correctly constructs the complete nested response body at its declaration site.\n */\nexport const response = (cause: Error) => ({\n  status: 400,\n  body: { type: \"ValidationFailure\", message: cause.message },\n});\n\n/**\n * Correctly spreads complete input records when the operation adds fields.\n * The inputs already represent the domain values that the caller supplies.\n */\nexport const workflow = (\n  baseJob: { readonly name: string },\n  existingSteps: ReadonlyArray<string>,\n) => ({\n  ...baseJob,\n  steps: [\"checkout\", \"corepack\", ...existingSteps.slice(1)],\n});\n\nexport const request = (\n  defaults: { readonly endpoint: string },\n  attempts: ReadonlyArray<{ readonly number: number }>,\n) => ({\n  ...defaults,\n  retries: attempts.map((attempt) => ({ ...attempt, delay: 100 })),\n});\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

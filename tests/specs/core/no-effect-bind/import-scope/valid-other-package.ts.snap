@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"task-builder\";\n\nconst addCount = Effect.bind(\"count\", read);\nconst addCountToTask = Effect.bind(task, \"count\", read);\n",
+  "input": "import { format as Effect } from \"node:util\";\n\n/**\n * Correctly binds a synchronous formatter from another module.\n * These bound functions format text and do not compose Effect operations.\n */\nexport const formatCount = Effect.bind(undefined, \"count=%d\");\nexport const formatNamedCount = Effect.bind(undefined, \"%s=%d\", \"count\");\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

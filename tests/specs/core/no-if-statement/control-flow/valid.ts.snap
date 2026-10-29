@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, Match } from \"effect\";\n\nconst label = Match.value(enabled).pipe(\n  Match.when(true, () => \"Enabled\"),\n  Match.orElse(() => \"Disabled\"),\n);\n\nconst writeWhen = Effect.fn(\"writeWhen\")(function* (enabled: boolean) {\n  if (enabled) {\n    yield* writer.write;\n  }\n});\n",
+  "input": "import { Effect, Match } from \"effect\";\n\n/**\n * Correctly expresses pure value selection with Match. The selected value\n * can continue through a pipeline without separate return paths.\n */\nexport const selectLabel = (enabled: boolean) =>\n  Match.value(enabled).pipe(\n    Match.when(true, () => \"Enabled\"),\n    Match.orElse(() => \"Disabled\"),\n  );\n\n/**\n * Correctly keeps a conditional yield inside a named Effect operation.\n * The decision runs when the operation executes.\n */\nexport const logWhenEnabled = Effect.fn(\"logWhenEnabled\")(function* (\n  enabled: boolean,\n) {\n  if (enabled) {\n    yield* Effect.logInfo(\"Enabled\");\n  }\n});\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

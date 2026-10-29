@@ -1,23 +1,25 @@
 import { Effect } from "effect";
 
 interface CounterSource {
-  subscribe(listener: (value: number) => void): () => void;
+  readOnce(listener: (value: number) => void): () => void;
 }
 
-function registerWithAsync(source: CounterSource) {
-  return Effect.async((resume) => {
-    const unsubscribe = source.subscribe((value) => {
-      resume(Effect.succeed(value));
-    });
-    return Effect.sync(unsubscribe);
-  });
+interface ResumeCount {
+  (value: Effect.Effect<number>): void;
 }
 
-function registerWithGenericAsync(source: CounterSource) {
-  return Effect.async<number>((resume) => {
-    const unsubscribe = source.subscribe((value) => {
-      resume(Effect.succeed(value));
-    });
-    return Effect.sync(unsubscribe);
+/**
+ * Incorrectly uses the obsolete Effect.async constructor for a callback bridge.
+ * The one-shot source supplies a cancellation function for interrupted reads.
+ */
+export const nextCount = (source: CounterSource) =>
+  Effect.async((resume: ResumeCount) => {
+    const cancel = source.readOnce((value) => resume(Effect.succeed(value)));
+    return Effect.sync(cancel);
   });
-}
+
+export const nextCountGeneric = (source: CounterSource) =>
+  Effect.async<number>((resume: ResumeCount) => {
+    const cancel = source.readOnce((value) => resume(Effect.succeed(value)));
+    return Effect.sync(cancel);
+  });

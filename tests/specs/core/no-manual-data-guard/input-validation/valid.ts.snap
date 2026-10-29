@@ -1,5 +1,5 @@
 {
-  "input": "import { Schema } from \"effect\";\n\nconst User = Schema.Struct({ id: Schema.String, active: Schema.Boolean });\nconst decodeUser = Schema.decodeUnknownEffect(User);\n",
+  "input": "import { Schema } from \"effect\";\n\nconst User = Schema.Struct({ id: Schema.String, active: Schema.Boolean });\n\n/**\n * Correctly decodes external data through the model schema. The operation\n * returns a validated value or a typed decoding failure.\n */\nexport const decodeUser = Schema.decodeUnknownEffect(User);\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

@@ -1,5 +1,5 @@
 {
-  "input": "import { Match, pipe } from \"effect\";\n\nMatch.value(1).pipe(\n  Match.when(1, () => console.log(\"render\")),\n  Match.orElse(() => undefined),\n);\n\nconst value = Match.value(1).pipe(\n  Match.when(1, () => \"ready\"),\n  Match.orElse(() => \"waiting\"),\n);\n",
+  "input": "import { Match } from \"effect\";\nimport { createElement } from \"react\";\n\ntype LabelProps = {\n  readonly ready: boolean;\n  readonly onReport: (message: string) => void;\n};\n\n/**\n * Incorrectly reports state during rendering. React can render the component\n * repeatedly, so the callback runs without a user action and may run again.\n */\nexport function Label({ ready, onReport }: LabelProps) {\n  Match.value(ready).pipe(\n    Match.when(true, () => onReport(\"Ready\")),\n    Match.orElse(() => undefined),\n  );\n  const label = Match.value(ready).pipe(\n    Match.when(true, () => \"Ready\"),\n    Match.orElse(() => \"Waiting\"),\n  );\n  return createElement(\"button\", { type: \"button\", disabled: !ready }, label);\n}\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/web/no-render-side-effects/render-expressions/invalid.ts"
           },
           "span": [
-            39,
-            141
+            393,
+            504
           ],
           "sourceCode": null
         },

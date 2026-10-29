@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"task-builder\";\n\nconst registration = Effect.async((resume) => subscribe(resume));\nconst genericRegistration = Effect.async<number>((resume) => subscribe(resume));\n",
+  "input": "import { setTimeout } from \"node:timers\";\n\nconst Effect = {\n  async: <A>(register: (resume: (value: A) => void) => void) =>\n    new Promise<A>((resolve) => register(resolve)),\n};\n\n/**\n * Correctly uses a local Promise-based bridge outside Effect composition.\n * Its callback completes with a plain value.\n */\nexport const registration = Effect.async((resume) => {\n  setTimeout(() => resume(3), 0);\n});\nexport const genericRegistration = Effect.async<number>((resume) => {\n  setTimeout(() => resume(3), 0);\n});\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

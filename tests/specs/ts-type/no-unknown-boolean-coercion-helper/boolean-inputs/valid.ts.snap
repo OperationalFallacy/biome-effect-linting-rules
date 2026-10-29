@@ -1,5 +1,5 @@
 {
-  "input": "import { Schema } from \"effect\";\n\nconst Input = Schema.Struct({ enabled: Schema.Boolean });\nconst decodeInput = Schema.decodeUnknownEffect(Input);\n",
+  "input": "import { Schema } from \"effect\";\n\n/**\n * Correctly decodes boolean input through Schema. Malformed input produces\n * a typed failure that callers can recover from through Effect composition.\n */\nexport const decodeEnabled = Schema.decodeUnknownEffect(Schema.Boolean);\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

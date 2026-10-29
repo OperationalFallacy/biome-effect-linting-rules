@@ -1,51 +1,68 @@
-import { Ref, Struct, Record, Schema, Array, Option } from "effect";
+import { Array as Arr, Option, Record, Ref, Schema, Struct } from "effect";
 
-declare const spreadShelf: Ref.Ref<{ readonly books: Readonly<Record<string, number>> }>;
-declare const spreadIsbn: string;
+const Shelf = Schema.Struct({
+  books: Schema.Record(Schema.String, Schema.Number),
+});
+type Shelf = typeof Shelf.Type;
 
-const spreadAddBook = Ref.update(spreadShelf, (state) => ({
-  ...state,
-  books: { ...state.books, [spreadIsbn]: 1 },
-}));
+/**
+ * Incorrectly updates model state through nested object copies. The field
+ * change bypasses the model's construction and validation rules.
+ */
+export const addBySpread = (shelf: Ref.Ref<Shelf>, isbn: string) =>
+  Ref.update(shelf, (state) => ({
+    ...state,
+    books: { ...state.books, [isbn]: 1 },
+  }));
 
-declare const fromEntriesShelf: Ref.Ref<{ readonly books: Readonly<Record<string, number>> }>;
-declare const fromEntriesIsbn: string;
+/**
+ * Incorrectly rebuilds an existing record through raw entries. The update
+ * loses the field operation that describes the intended change.
+ */
+export const addByEntries = (shelf: Ref.Ref<Shelf>, isbn: string) =>
+  Ref.update(
+    shelf,
+    Struct.evolve({
+      books: (books) =>
+        Object.fromEntries([...Object.entries(books), [isbn, 1]]),
+    }),
+  );
 
-const fromEntriesAddBook = Ref.update(
-  fromEntriesShelf,
-  Struct.evolve({
-    books: (books) => Object.fromEntries([...Object.entries(books), [fromEntriesIsbn, 1]]),
-  }),
-);
+/**
+ * Incorrectly assembles a model update through unvalidated Object.assign copies.
+ */
+export const addByAssign = (shelf: Ref.Ref<Shelf>, isbn: string) =>
+  Ref.update(shelf, (state) =>
+    Object.assign({}, state, {
+      books: Object.assign({}, state.books, { [isbn]: 1 }),
+    }),
+  );
 
-declare const objectAssignShelf: Ref.Ref<{ readonly books: Readonly<Record<string, number>> }>;
-declare const objectAssignIsbn: string;
-
-const objectAssignAddBook = Ref.update(objectAssignShelf, (state) =>
-  Object.assign({}, state, {
-    books: Object.assign({}, state.books, { [objectAssignIsbn]: 1 }),
-  }),
-);
-
-const Shelf = Schema.Struct({ books: Schema.Record(Schema.String, Schema.Number) });
-declare const effectRecordSetShelf: Ref.Ref<typeof Shelf.Type>;
-declare const effectRecordSetIsbn: string;
-
-const effectRecordSetAddBook = Ref.update(
-  effectRecordSetShelf,
-  Struct.evolve({
-    books: (books) => Shelf.fields.books.make(Record.set(books, effectRecordSetIsbn, 1)),
-  }),
-);
+/**
+ * Correctly describes a field change and reconstructs that field through its schema.
+ */
+export const addByField = (shelf: Ref.Ref<Shelf>, isbn: string) =>
+  Ref.update(
+    shelf,
+    Struct.evolve({
+      books: (books) => Shelf.fields.books.make(Record.set(books, isbn, 1)),
+    }),
+  );
 
 type Book = { readonly isbn?: string | null; readonly title: string };
 
-const indexBooks = (books: ReadonlyArray<Book>) =>
+/**
+ * Correctly constructs a complete index from source models. Missing identifiers
+ * contribute no entry to the newly constructed domain value.
+ */
+export const indexBooks = (books: ReadonlyArray<Book>) =>
   Object.fromEntries(
-    Array.flatMap(books, (book) =>
+    Arr.flatMap(books, (book) =>
       Option.match(Option.fromNullishOr(book.isbn), {
         onNone: () => [],
-        onSome: (isbn) => [[isbn, book] as const],
+        onSome: (isbn): ReadonlyArray<readonly [string, Book]> => [
+          [isbn, book],
+        ],
       }),
     ),
   );

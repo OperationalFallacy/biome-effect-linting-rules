@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"task-builder\";\n\nconst builder = Effect.Do;\n",
+  "input": "import { constants } from \"node:os\";\n\nconst Effect = { Do: constants.signals };\n\n/**\n * Correctly accesses data through a local namespace outside Effect composition.\n * The Do property contains native signal constants.\n */\nexport const signals = Effect.Do;\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst detachedOperationValue = Effect.gen(function* () {\n  return Effect.runFork(Effect.void);\n});\n\nconst applicationRunnerValue = Effect.runFork(Effect.void);\n",
+  "input": "import { Deferred, Effect } from \"effect\";\n\ninterface BackgroundWork {\n  readonly run: Effect.Effect<void>;\n  readonly stopRequested: Deferred.Deferred<void>;\n}\n\n/**\n * Incorrectly starts an independent runtime fiber inside an Effect operation.\n * The child can outlive the operation after its stop signal arrives.\n */\nexport const observe = Effect.fn(\"observe\")(function* (work: BackgroundWork) {\n  Effect.runFork(work.run);\n  yield* Deferred.await(work.stopRequested);\n});\n\n/**\n * Correctly uses a runtime runner at an application integration entry point.\n * The caller receives the fiber and manages its lifetime.\n */\nexport const startApplication = (work: BackgroundWork) =>\n  Effect.runFork(work.run);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-runtime-runfork/fiber-lifetimes/invalid.ts"
           },
           "span": [
-            100,
-            127
+            400,
+            424
           ],
           "sourceCode": null
         },
