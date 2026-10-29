@@ -1,5 +1,5 @@
 {
-  "input": "import { style } from \"@vanilla-extract/css\";\n\nconst disclosureBase = style({ width: \"100%\" });\nexport const disclosureAlias = disclosureBase;\n\nexport const commandTrigger = style({ width: \"fit-content\" });\nexport const accountCommandTrigger = commandTrigger;\n\nexport const disclosure = style([disclosureBase, { minWidth: 0 }]);\nexport const metadata = \"disclosure\";\n",
+  "input": "import { style } from \"@vanilla-extract/css\";\n\n/**\n * Questionably exports aliases for generated classes. Consumers must follow\n * another declaration to find each style, and an exported base adds a second\n * public name for the same class.\n */\nconst panelBase = style({ width: \"100%\" });\nexport const panel = panelBase;\n\nexport const headingBase = style({ fontWeight: 600 });\nexport const heading = headingBase;\n\n/**\n * Correctly composes a new class with style. This declaration adds styles\n * and produces its own class name.\n */\nexport const compactPanel = style([panelBase, { minWidth: 0 }]);\n\n/**\n * Correctly exports ordinary metadata without another class-name alias.\n */\nexport const metadata = \"panel\";\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/web/no-vanilla-extract-export-alias/style-exports/invalid.ts"
           },
           "span": [
-            96,
-            142
+            289,
+            320
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/web/no-vanilla-extract-export-alias/style-exports/invalid.ts"
           },
           "span": [
-            207,
-            259
+            377,
+            412
           ],
           "sourceCode": null
         },

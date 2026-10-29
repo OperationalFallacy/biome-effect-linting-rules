@@ -1,26 +1,23 @@
-import { Effect, Schema } from "effect";
+import { Effect } from "effect";
 
-const inputAssertionValue = input as {
-  id: string;
-};
-
-interface User {
+interface Profile {
   readonly id: string;
   readonly name: string;
 }
 
-declare const raw: unknown;
+/**
+ * Incorrectly asserts untrusted input into model types without validation.
+ * Invalid fields reach the success channel because these assertions only
+ * change TypeScript's view of the input.
+ */
+export const decodeProfile = Effect.fn("decodeProfile")(function* (input: unknown) {
+  const profile = input as Profile;
+  return profile;
+});
 
-const user = raw as User;
-
-const namedTypeProgram = Effect.succeed(user.id);
-
-const status = "open" as const;
-
-const asConstLiteralProgram = Effect.succeed(status);
-
-const DAY_TOKENS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"] as const;
-
-const first = Effect.succeed(DAY_TOKENS[0]);
-
-const decodedInputValue = Schema.decodeUnknownEffect(Schema.Struct({ id: Schema.String }))(input);
+export const decodeInlineProfile = Effect.fn("decodeInlineProfile")(function* (
+  input: unknown,
+) {
+  const profile = input as { readonly id: string; readonly name: string };
+  return profile;
+});

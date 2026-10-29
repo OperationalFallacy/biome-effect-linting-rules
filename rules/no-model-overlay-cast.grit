@@ -1,11 +1,11 @@
 language js(typescript, jsx)
 
 `const $castName = $value as $type` as $call where {
+    $call <: not `const $_ = $_ as const`,
     $call <: within JsModule() as $body,
     $body <: contains bubble JsModuleSource() as $moduleSource where {
         $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
-    $call <: not `const $_ = $_ as const`,
     register_diagnostic(
         span = $call,
         message = "Decode the value with the required Schema instead of a model type assertion through as. The assertion supplies a type without runtime validation against the schema. Read the fields from the decoded result and preserve validation failures.",

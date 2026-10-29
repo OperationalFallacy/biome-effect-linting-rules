@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, Schema } from \"effect\";\n\nconst inputAssertionValue = input as {\n  id: string;\n};\n\ninterface User {\n  readonly id: string;\n  readonly name: string;\n}\n\ndeclare const raw: unknown;\n\nconst user = raw as User;\n\nconst namedTypeProgram = Effect.succeed(user.id);\n\nconst status = \"open\" as const;\n\nconst asConstLiteralProgram = Effect.succeed(status);\n\nconst DAY_TOKENS = [\"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\", \"Su\"] as const;\n\nconst first = Effect.succeed(DAY_TOKENS[0]);\n\nconst decodedInputValue = Schema.decodeUnknownEffect(Schema.Struct({ id: Schema.String }))(input);\n",
+  "input": "import { Effect } from \"effect\";\n\ninterface Profile {\n  readonly id: string;\n  readonly name: string;\n}\n\n/**\n * Incorrectly asserts untrusted input into model types without validation.\n * Invalid fields reach the success channel because these assertions only\n * change TypeScript's view of the input.\n */\nexport const decodeProfile = Effect.fn(\"decodeProfile\")(function* (input: unknown) {\n  const profile = input as Profile;\n  return profile;\n});\n\nexport const decodeInlineProfile = Effect.fn(\"decodeInlineProfile\")(function* (\n  input: unknown,\n) {\n  const profile = input as { readonly id: string; readonly name: string };\n  return profile;\n});\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/ts-type/no-model-overlay-cast/model-values/invalid.ts"
           },
           "span": [
-            42,
-            96
+            392,
+            424
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/ts-type/no-model-overlay-cast/model-values/invalid.ts"
           },
           "span": [
-            196,
-            220
+            553,
+            624
           ],
           "sourceCode": null
         },
