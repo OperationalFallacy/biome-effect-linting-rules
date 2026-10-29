@@ -46,7 +46,7 @@ Edit `.projenrc.ts` for generated package settings, then run `yarn projen`. Revi
 
 ## Local commands
 
-Use the Yarn version declared in `package.json`. Run these commands from the repository root:
+Use the Yarn version declared in `package.json`. Do not use Python for repository work. Profile performance against real source code, never synthetic workloads. Keep nonpublic profiling inputs, paths, and results out of tracked files. Run these commands from the repository root:
 
 | Command | Purpose |
 | --- | --- |

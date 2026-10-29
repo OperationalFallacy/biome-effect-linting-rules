@@ -46,6 +46,8 @@ The runner reads fixtures as source text. Keep them outside the project typechec
 
 Validate with a minimal Biome config that loads the rule alone. Test real code and a regression that should trigger the rule before you add it to the relevant presets. Run `yarn projen` after a full-preset registration change to update the local lint configuration.
 
+Profile rule performance against real source code. Do not generate synthetic performance fixtures or tests. Keep nonpublic source, paths, and measurements out of tracked files.
+
 Biome matches Grit patterns against source syntax within one file. Anchor a matcher on the relevant AST node or API call. Scope `contains` checks to that node rather than scan the whole file.
 
 Consult `rules/js.ungram` and `rules/gritql.ungram` for node names. Refresh these grammar references with:
