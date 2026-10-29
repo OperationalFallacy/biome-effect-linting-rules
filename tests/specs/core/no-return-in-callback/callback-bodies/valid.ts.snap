@@ -1,0 +1,11 @@
+{
+  "input": "import \"effect\";\n\nconst labels = rows.map((row) => row.name);\nconst normalized = rows.map(function normalize(row) {\n  const name = row.name.trim();\n  return name.toUpperCase();\n});\nconst constructor = vi.fn(function Widget() {\n  return { name: \"Widget\" };\n});\nconst dynamicContext = rows.map(function current() {\n  return this.name;\n});\nconst argument = rows.map(function first() {\n  return arguments[0];\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

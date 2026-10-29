@@ -1,12 +1,11 @@
-file($body) where {
+language js(typescript, jsx)
+
+JsIfStatement(test = $cond) as $branch where {
+    $branch <: within JsModule() as $body,
     $body <: contains bubble JsModuleSource() as $moduleSource where {
         $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
-    or {
-        $body <: contains `if ($cond) { $_ }`,
-        $body <: contains `if ($cond) $_`
-    },
-    $cond <: not within or {
+    $branch <: not within or {
         `Effect.gen($ownerArgs)`,
         `Effect.fn($ownerArgs)`,
         `Effect.fn($ownerName)($ownerBody)`,

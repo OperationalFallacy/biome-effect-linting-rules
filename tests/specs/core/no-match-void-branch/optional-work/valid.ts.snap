@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst saveWhenEnabled = Effect.fn(\"saveWhenEnabled\")(function* (enabled: boolean) {\n  if (enabled) {\n    yield* saveSettings;\n  }\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

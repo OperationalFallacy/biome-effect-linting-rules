@@ -9,7 +9,7 @@ file($body) where {
     },
     register_diagnostic(
         span = $branch,
-        message = "Separate value selection from skipped Effect work. An Effect.void branch mixes a decision with an empty operation. Select the required value with Match and perform the Effect work afterward. Remove redundant empty branches and preserve the original skip behavior.",
+        message = "Express optional Effect work with a conditional yield inside Effect.gen or Effect.fn. A Match branch that returns Effect.void represents skipped work rather than a selected value. Keep the condition and the dependent work inside the same operation so they run at the original time. Use Match for pure value selection.",
         severity = "error"
     )
 }

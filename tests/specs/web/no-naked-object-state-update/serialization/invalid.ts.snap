@@ -1,0 +1,128 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\ndeclare const book: { readonly title: string };\ndeclare const write: (payload: string) => Effect.Effect<void>;\ndeclare const read: () => Effect.Effect<string>;\n\nconst copyBook = Effect.gen(function* () {\n  yield* write(JSON.stringify(book));\n  const raw = yield* read();\n  yield* write(JSON.stringify(JSON.parse(raw)));\n});\n\nconst rawJsonValue = JSON.parse(input);\n\nconst schemaJsonValue = Schema.decodeUnknownEffect(\n  Schema.fromJsonString(Schema.Struct({ id: Schema.String })),\n)(input);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Update state through its model and field operations instead of raw object copies or record rebuilds. Raw copies separate field changes from the model's construction and validation rules. Use Record.set, Record.modify, or Record.remove inside Struct.evolve, and reconstruct models with their schema constructors, such as Model.make or a field schema's make method. Use Schema.encodeEffect and Schema.decodeUnknownEffect with Schema.fromJsonString for serialized data instead of raw JSON calls. Follow docs/linting.md for the full procedure.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Update state through its model and field operations instead of raw object copies or record rebuilds. Raw copies separate field changes from the model's construction and validation rules. Use Record.set, Record.modify, or Record.remove inside Struct.evolve, and reconstruct models with their schema constructors, such as Model.make or a field schema's make method. Use Schema.encodeEffect and Schema.decodeUnknownEffect with Schema.fromJsonString for serialized data instead of raw JSON calls. Follow docs/linting.md for the full procedure."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-naked-object-state-update/serialization/invalid.ts"
+          },
+          "span": [
+            261,
+            281
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Update state through its model and field operations instead of raw object copies or record rebuilds. Raw copies separate field changes from the model's construction and validation rules. Use Record.set, Record.modify, or Record.remove inside Struct.evolve, and reconstruct models with their schema constructors, such as Model.make or a field schema's make method. Use Schema.encodeEffect and Schema.decodeUnknownEffect with Schema.fromJsonString for serialized data instead of raw JSON calls. Follow docs/linting.md for the full procedure.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Update state through its model and field operations instead of raw object copies or record rebuilds. Raw copies separate field changes from the model's construction and validation rules. Use Record.set, Record.modify, or Record.remove inside Struct.evolve, and reconstruct models with their schema constructors, such as Model.make or a field schema's make method. Use Schema.encodeEffect and Schema.decodeUnknownEffect with Schema.fromJsonString for serialized data instead of raw JSON calls. Follow docs/linting.md for the full procedure."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-naked-object-state-update/serialization/invalid.ts"
+          },
+          "span": [
+            328,
+            359
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Update state through its model and field operations instead of raw object copies or record rebuilds. Raw copies separate field changes from the model's construction and validation rules. Use Record.set, Record.modify, or Record.remove inside Struct.evolve, and reconstruct models with their schema constructors, such as Model.make or a field schema's make method. Use Schema.encodeEffect and Schema.decodeUnknownEffect with Schema.fromJsonString for serialized data instead of raw JSON calls. Follow docs/linting.md for the full procedure.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Update state through its model and field operations instead of raw object copies or record rebuilds. Raw copies separate field changes from the model's construction and validation rules. Use Record.set, Record.modify, or Record.remove inside Struct.evolve, and reconstruct models with their schema constructors, such as Model.make or a field schema's make method. Use Schema.encodeEffect and Schema.decodeUnknownEffect with Schema.fromJsonString for serialized data instead of raw JSON calls. Follow docs/linting.md for the full procedure."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-naked-object-state-update/serialization/invalid.ts"
+          },
+          "span": [
+            343,
+            358
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Update state through its model and field operations instead of raw object copies or record rebuilds. Raw copies separate field changes from the model's construction and validation rules. Use Record.set, Record.modify, or Record.remove inside Struct.evolve, and reconstruct models with their schema constructors, such as Model.make or a field schema's make method. Use Schema.encodeEffect and Schema.decodeUnknownEffect with Schema.fromJsonString for serialized data instead of raw JSON calls. Follow docs/linting.md for the full procedure.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Update state through its model and field operations instead of raw object copies or record rebuilds. Raw copies separate field changes from the model's construction and validation rules. Use Record.set, Record.modify, or Record.remove inside Struct.evolve, and reconstruct models with their schema constructors, such as Model.make or a field schema's make method. Use Schema.encodeEffect and Schema.decodeUnknownEffect with Schema.fromJsonString for serialized data instead of raw JSON calls. Follow docs/linting.md for the full procedure."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-naked-object-state-update/serialization/invalid.ts"
+          },
+          "span": [
+            388,
+            405
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 4,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

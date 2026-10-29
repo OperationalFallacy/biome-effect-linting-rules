@@ -1,16 +1,16 @@
 language js(typescript, jsx)
 
 or {
-    `pipe($args)`,
-    `$target.pipe($args)`
+    `pipe($input, $steps)`,
+    `$input.pipe($steps)`
 } where {
-    or {
-        $args <: contains `pipe($_)` as $nested until JsFunctionExpression(),
-        $args <: contains `$inner.pipe($_)` as $nested until JsFunctionExpression()
-    },
+    $input <: or {
+        `pipe($innerArgs)`,
+        `$target.pipe($innerArgs)`
+    } as $nested,
     register_diagnostic(
         span = $nested,
-        message = "Combine nested pipe calls into one pipeline. The reader must reconstruct execution order across the nested expressions. Keep the steps in order and make the value decision once.",
+        message = "Combine directly chained pipe calls into one pipeline. The output of the inner pipeline is the input of the outer pipeline, so keep those steps together in execution order. Pipelines inside callbacks can compute separate values and do not need to merge with the enclosing pipeline.",
         severity = "error"
     )
 }

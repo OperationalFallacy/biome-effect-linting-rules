@@ -1,0 +1,70 @@
+{
+  "input": "import { Effect, Match } from \"effect\";\n\ndeclare const _unused: Effect.Effect<number>;\n\nconst switchDescribe = (kind: \"a\" | \"b\" | \"c\"): string => {\n  switch (kind) {\n    case \"a\":\n      return \"Alpha\";\n    case \"b\":\n      return \"Beta\";\n    default:\n      return \"Gamma\";\n  }\n};\n\nfunction valueSwitchChoose(value) {\n  switch (value) {\n    case 1:\n      return 1;\n    default:\n      return 0;\n  }\n}\n\nconst matchValueDescribe = (kind: \"a\" | \"b\" | \"c\"): string =>\n  Match.value(kind).pipe(\n    Match.when(\"a\", () => \"Alpha\"),\n    Match.when(\"b\", () => \"Beta\"),\n    Match.orElse(() => \"Gamma\"),\n  );\n\nconst operationSwitchChoose = Effect.fn(\"choose\")(function* (value) {\n  switch (value) {\n    case 1:\n      return 1;\n    default:\n      return 0;\n  }\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-switch-statement/control-flow/invalid.ts"
+          },
+          "span": [
+            150,
+            275
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-switch-statement/control-flow/invalid.ts"
+          },
+          "span": [
+            318,
+            395
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

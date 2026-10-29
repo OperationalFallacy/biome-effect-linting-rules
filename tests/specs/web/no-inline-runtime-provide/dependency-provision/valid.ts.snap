@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Layer } from \"effect\";\n\nconst loadUser = Effect.fn(\"loadUser\")(function* () {\n  const repository = yield* UserRepository;\n  return yield* repository.findUser(id);\n});\n\nconst liveLoad = loadUser().pipe(Effect.provide(UserRepository.layer));\nconst serviceLayer = Layer.effect(UserService, makeUserService).pipe(\n  Layer.provide(UserRepository.layer),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst load = Effect.sync(() => {\n  const read = Effect.fn(\"read\")(function* () {\n    const profile = yield* readProfile;\n    return profile.name;\n  });\n  return { read };\n});\n\nconst labels = rows.map((row) => {\n  if (row.hidden) {\n    return \"Hidden\";\n  }\n  return row.name;\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "input": "import { pipe } from \"effect\";\n\nconst wrapped = (() => 1)();\nconst composed = pipe(1, (count) => count + 1);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Remove the immediately invoked function and express its work directly in the operation. The extra function body makes the decision and execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue in one pipeline.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Remove the immediately invoked function and express its work directly in the operation. The extra function body makes the decision and execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue in one pipeline."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-iife-wrapper/value-composition/invalid.ts"
+          },
+          "span": [
+            48,
+            59
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

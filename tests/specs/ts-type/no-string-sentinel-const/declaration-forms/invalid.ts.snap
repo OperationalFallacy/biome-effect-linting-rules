@@ -1,0 +1,157 @@
+{
+  "input": "const status = \"ready\";\nconst loadState: string = \"loading\";\nexport const requestPhase = \"pending\";\nconst request_outcome = \"failed\", retryStatus = \"scheduled\";\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-string-sentinel-const/declaration-forms/invalid.ts"
+          },
+          "span": [
+            6,
+            22
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-string-sentinel-const/declaration-forms/invalid.ts"
+          },
+          "span": [
+            30,
+            59
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-string-sentinel-const/declaration-forms/invalid.ts"
+          },
+          "span": [
+            74,
+            98
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-string-sentinel-const/declaration-forms/invalid.ts"
+          },
+          "span": [
+            106,
+            132
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-string-sentinel-const/declaration-forms/invalid.ts"
+          },
+          "span": [
+            134,
+            159
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 5,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

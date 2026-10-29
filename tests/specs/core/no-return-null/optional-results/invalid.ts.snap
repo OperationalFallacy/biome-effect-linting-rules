@@ -1,0 +1,41 @@
+{
+  "input": "import { Option } from \"effect\";\n\nfunction nullResultLoad() {\n  return null;\n}\n\nfunction optionalResultLoad() {\n  return Option.none();\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Return Option.none for absence or Effect.fail for an error instead of null. Each caller must interpret a null sentinel before it uses the value. Express the outcome in the return type and update callers to handle it explicitly.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Return Option.none for absence or Effect.fail for an error instead of null. Each caller must interpret a null sentinel before it uses the value. Express the outcome in the return type and update callers to handle it explicitly."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-null/optional-results/invalid.ts"
+          },
+          "span": [
+            64,
+            76
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -8,9 +8,15 @@ JsCallExpression(callee = `Effect.provide`) as $provide where {
         `Effect.fnUntraced($ownerArgs)`,
         `Effect.fnUntracedEager($ownerArgs)`
     },
+    $provide <: not within JsCallExpression(callee = $test) where {
+        $test <: or {
+            `it`, `test`, `it.effect`, `test.effect`, `it.scoped`, `test.scoped`,
+            `it.skip`, `test.skip`, `it.only`, `test.only`
+        }
+    },
     register_diagnostic(
         span = $provide,
-        message = "Assemble service dependencies with Layer.provide on the service's layer or exported operation. A method that rebuilds its service graph combines dependency setup with domain work. Define acquisition in the service's make Effect, construct its layer with Layer.effect, and yield dependencies directly in the operation. Keep the application runner's final Effect.provide at application assembly.",
+        message = "Assemble service dependencies with Layer.provide outside the operation's implementation. Effect.provide inside a reusable operation can acquire and release its layer on every call. Yield dependencies from the operation and provide its layer at application or test assembly. Per-test provision around an exported operation is valid. Keep Effect.provideService for dynamic contextual values.",
         severity = "error"
     )
 }

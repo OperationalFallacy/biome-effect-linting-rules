@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Match } from \"effect\";\n\nconst label = Match.value(state).pipe(\n  Match.when({ _tag: \"Ready\" }, (ready) => ready.name),\n  Match.orElse(() => \"Loading\"),\n);\n\nconst display = Effect.logInfo(label);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

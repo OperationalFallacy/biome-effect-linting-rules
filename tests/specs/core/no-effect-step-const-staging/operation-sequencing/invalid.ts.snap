@@ -1,0 +1,99 @@
+{
+  "input": "import { Effect, pipe } from \"effect\";\n\ntype PolicyResult = {\n  readonly decision: \"ALLOW\" | \"DENY\";\n};\n\nconst effectStepConstStagingEvaluatePolicy = (\n  policyText: string,\n): Effect.Effect<PolicyResult, Error> => {\n  const parsedPolicy = Effect.try({\n    try: () => JSON.parse(policyText) as { readonly allow?: boolean },\n    catch: (cause) => new Error(`Policy parse failed: ${cause}`),\n  });\n\n  // Derailment: this second Effect const continues the staged chain instead of\n  // keeping parse -> validate -> result construction in one visible pipeline.\n  const evaluatedPolicy = Effect.map(\n    parsedPolicy,\n    (policy): PolicyResult => ({\n      decision: policy.allow === true ? \"ALLOW\" : \"DENY\",\n    }),\n  );\n\n  return evaluatedPolicy;\n};\n\nconst pipeEffectStepConstStagingEvaluatePolicy = (\n  policyText: string,\n): Effect.Effect<PolicyResult, Error> => {\n  const evaluationPipeline = pipe(\n    Effect.try({\n      try: () => JSON.parse(policyText) as { readonly allow?: boolean },\n      catch: (cause) => new Error(`Policy parse failed: ${cause}`),\n    }),\n    Effect.map(\n      (policy): PolicyResult => ({\n        decision: policy.allow === true ? \"ALLOW\" : \"DENY\",\n      }),\n    ),\n  );\n\n  return evaluationPipeline;\n};\n\nconst effectStepContinuousFlowEvaluatePolicy = (\n  policyText: string,\n): Effect.Effect<PolicyResult, Error> =>\n  pipe(\n    Effect.try({\n      try: () => JSON.parse(policyText) as { readonly allow?: boolean },\n      catch: (cause) => new Error(`Policy parse failed: ${cause}`),\n    }),\n    Effect.map((policy): PolicyResult => {\n      const result: PolicyResult = {\n        decision: policy.allow === true ? \"ALLOW\" : \"DENY\",\n      };\n\n      return result;\n    }),\n  );\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            219,
+            395
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            558,
+            715
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            865,
+            1196
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 3,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

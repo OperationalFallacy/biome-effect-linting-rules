@@ -1,0 +1,128 @@
+{
+  "input": "import { Option } from \"effect\";\n\n{\n  const curriedResult = Option.as(1);\n}\n\n{\n  const dataFirstResult = Option.as(option, 1);\n}\n\n{\n  const genericResult = Option.as<number>(1);\n}\n\n{\n  const nestedOptionResult = Option.as(Option.some(1), 2);\n}\n\nconst mappedResult = Option.map(Option.some(1), () => 2);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace Option.as with Option.map or Option.match. This rule requires value selection to appear in a callback so the result choice is explicit. Return the selected value from the callback and preserve the Option's absence behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace Option.as with Option.map or Option.match. This rule requires value selection to appear in a callback so the result choice is explicit. Return the selected value from the callback and preserve the Option's absence behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-option-as/result-selection/invalid.ts"
+          },
+          "span": [
+            60,
+            72
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace Option.as with Option.map or Option.match. This rule requires value selection to appear in a callback so the result choice is explicit. Return the selected value from the callback and preserve the Option's absence behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace Option.as with Option.map or Option.match. This rule requires value selection to appear in a callback so the result choice is explicit. Return the selected value from the callback and preserve the Option's absence behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-option-as/result-selection/invalid.ts"
+          },
+          "span": [
+            105,
+            125
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace Option.as with Option.map or Option.match. This rule requires value selection to appear in a callback so the result choice is explicit. Return the selected value from the callback and preserve the Option's absence behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace Option.as with Option.map or Option.match. This rule requires value selection to appear in a callback so the result choice is explicit. Return the selected value from the callback and preserve the Option's absence behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-option-as/result-selection/invalid.ts"
+          },
+          "span": [
+            156,
+            176
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace Option.as with Option.map or Option.match. This rule requires value selection to appear in a callback so the result choice is explicit. Return the selected value from the callback and preserve the Option's absence behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace Option.as with Option.map or Option.match. This rule requires value selection to appear in a callback so the result choice is explicit. Return the selected value from the callback and preserve the Option's absence behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-option-as/result-selection/invalid.ts"
+          },
+          "span": [
+            212,
+            240
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 4,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

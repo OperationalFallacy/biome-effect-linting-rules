@@ -1,0 +1,11 @@
+{
+  "input": "const yarnVersion = \"4.6.0\";\nconst packageManifestPath = \"package.json\";\nconst upgradeSchedule = \"0 0 * * 1,4\";\nconst label = \"Ready\";\nconst statusPage = \"/status\";\nconst estate = \"Seaside\";\nconst stateDirectory = \".state\";\n\nconst defaults = { status: \"ready\" };\nlet status = \"loading\";\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "input": "import { Match, pipe, Schema } from \"effect\";\n\nconst manualBooleanInputValue = Match.value(input).pipe(\n  Match.when(\n    (n) => typeof n === \"boolean\",\n    (n) => n,\n  ),\n  Match.orElse(() => null),\n);\n\nconst decodedBooleanValue = Schema.decodeUnknownEffect(Schema.Boolean)(input);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Decode boolean input with Schema before service logic uses it. Local type checks spread coercion and optionality policy across operations. Define the boolean's optionality in the schema, decode the input once, and read the typed result in the Effect pipeline. Preserve the accepted input values and the treatment of absence.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Decode boolean input with Schema before service logic uses it. Local type checks spread coercion and optionality policy across operations. Define the boolean's optionality in the schema, decode the input once, and read the typed result in the Effect pipeline. Preserve the accepted input values and the treatment of absence."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-unknown-boolean-coercion-helper/boolean-inputs/invalid.ts"
+          },
+          "span": [
+            129,
+            151
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

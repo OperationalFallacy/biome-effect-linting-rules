@@ -1,0 +1,70 @@
+{
+  "input": "import { Effect } from \"effect\";\n\ninterface CounterSource {\n  subscribe(listener: (value: number) => void): () => void;\n}\n\nfunction registerWithAsync(source: CounterSource) {\n  return Effect.async((resume) => {\n    const unsubscribe = source.subscribe((value) => {\n      resume(Effect.succeed(value));\n    });\n    return Effect.sync(unsubscribe);\n  });\n}\n\nfunction registerWithGenericAsync(source: CounterSource) {\n  return Effect.async<number>((resume) => {\n    const unsubscribe = source.subscribe((value) => {\n      resume(Effect.succeed(value));\n    });\n    return Effect.sync(unsubscribe);\n  });\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace Effect.async with Effect.callback. Effect.callback registers asynchronous work and resumes the operation through a callback. Keep registration inside the callback and return its cleanup Effect to release resources on interruption. Use Stream for a sequence of events and acquire/release for resource lifetimes.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace Effect.async with Effect.callback. Effect.callback registers asynchronous work and resumes the operation through a callback. Keep registration inside the callback and return its cleanup Effect to release resources on interruption. Use Stream for a sequence of events and acquire/release for resource lifetimes."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-async/registration/invalid.ts"
+          },
+          "span": [
+            184,
+            351
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace Effect.async with Effect.callback. Effect.callback registers asynchronous work and resumes the operation through a callback. Keep registration inside the callback and return its cleanup Effect to release resources on interruption. Use Stream for a sequence of events and acquire/release for resource lifetimes.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace Effect.async with Effect.callback. Effect.callback registers asynchronous work and resumes the operation through a callback. Keep registration inside the callback and return its cleanup Effect to release resources on interruption. Use Stream for a sequence of events and acquire/release for resource lifetimes."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-async/registration/invalid.ts"
+          },
+          "span": [
+            424,
+            599
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

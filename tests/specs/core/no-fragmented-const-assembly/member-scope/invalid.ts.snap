@@ -1,0 +1,41 @@
+{
+  "input": "const response = {\n  status: 400,\n  body: {\n    type: \"ValidationFailure\",\n    ...errorFields(cause),\n  },\n};\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Construct the complete domain object in one place. Helper-produced fragments make the reader inspect several functions to understand the payload. Keep validation, value selection, and construction together, or use a domain constructor whose signature describes the complete result. Extract complete operations rather than payload fragments.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Construct the complete domain object in one place. Helper-produced fragments make the reader inspect several functions to understand the payload. Keep validation, value selection, and construction together, or use a domain constructor whose signature describes the complete result. Extract complete operations rather than payload fragments."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-fragmented-const-assembly/member-scope/invalid.ts"
+          },
+          "span": [
+            42,
+            105
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

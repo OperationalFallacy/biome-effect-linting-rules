@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, pipe } from \"effect\";\n\nconst outerRecoveryValue = Effect.catch(\n  Effect.succeed(1).pipe(Effect.flatMap((n) => Effect.succeed(n + 1))),\n  () => Effect.succeed(0),\n);\n\nconst pipelineRecoveryValue = Effect.succeed(1).pipe(\n  Effect.flatMap((n) => Effect.succeed(n + 1)),\n  Effect.catch(() => Effect.succeed(0)),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Put the Effect sequence and its recovery in one pipeline. Effect.catch around a nested chain makes the reader inspect the inner operation to determine which failures it handles. Sequence the work first and place recovery at the end. Preserve the failures that recovery covers and the result it returns.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Put the Effect sequence and its recovery in one pipeline. Effect.catch around a nested chain makes the reader inspect the inner operation to determine which failures it handles. Sequence the work first and place recovery at the end. Preserve the failures that recovery covers and the result it returns."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-orElse-ladder/error-recovery/invalid.ts"
+          },
+          "span": [
+            67,
+            181
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

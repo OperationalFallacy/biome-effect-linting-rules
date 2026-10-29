@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst consoleLog = Effect.sync(() => console.log(\"saved\"));\nconst effectLog = Effect.log(\"saved\");\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.log, Effect.logDebug, or another Effect log function for logs in Effect code. A console call inside Effect.sync bypasses Effect's log context and levels. Choose the Effect log function that matches the required level, or remove a log that serves no purpose.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.log, Effect.logDebug, or another Effect log function for logs in Effect code. A console call inside Effect.sync bypasses Effect's log context and levels. Choose the Effect log function that matches the required level, or remove a log that serves no purpose."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-sync-console/logging/invalid.ts"
+          },
+          "span": [
+            53,
+            92
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

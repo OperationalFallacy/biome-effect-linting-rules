@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst dependent = Effect.succeed(1).pipe(Effect.flatMap((count) => Effect.succeed(count + 1)));\nconst directYields = Effect.gen(function* () {\n  const count = yield* read;\n  return count + 1;\n});\nconst namedResult = task.pipe(Effect.bindTo(\"count\"));\nconst unrelatedBind = other.bind(\"count\", read);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

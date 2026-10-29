@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Match } from \"effect\";\n\nconst label = Match.value(enabled).pipe(\n  Match.when(true, () => \"Enabled\"),\n  Match.orElse(() => \"Disabled\"),\n);\n\nconst writeWhen = Effect.fn(\"writeWhen\")(function* (enabled: boolean) {\n  if (enabled) {\n    yield* writer.write;\n  }\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

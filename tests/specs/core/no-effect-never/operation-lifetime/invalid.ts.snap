@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst unboundedLifetimeValue = Effect.never;\n\nconst resourceLifetimeValue = Effect.acquireUseRelease(\n  Effect.succeed(1),\n  (n) => Effect.succeed(n),\n  () => Effect.void,\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Give this long-lived operation an explicit lifetime and cleanup. Effect.never waits for interruption and leaves termination to cancellation elsewhere. Use Stream or acquire/release to express the operation's lifetime and resource release together.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Give this long-lived operation an explicit lifetime and cleanup. Effect.never waits for interruption and leaves termination to cancellation elsewhere. Use Stream or acquire/release to express the operation's lifetime and resource release together."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-never/operation-lifetime/invalid.ts"
+          },
+          "span": [
+            65,
+            77
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

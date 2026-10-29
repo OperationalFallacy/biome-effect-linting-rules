@@ -1,0 +1,99 @@
+{
+  "input": "import { Effect, pipe } from \"effect\";\n\ninterface WorkStore {\n  readonly clearPending: Effect.Effect<void>;\n  readonly clearCompleted: Effect.Effect<void>;\n  readonly invalidateSummary: Effect.Effect<void>;\n  readonly loadItems: Effect.Effect<string>;\n  readonly prepareItems: (items: string) => Effect.Effect<string>;\n  readonly fetchItems: Effect.Effect<string>;\n  readonly saveItems: (items: string) => Effect.Effect<void>;\n}\n\ndeclare const workStore: WorkStore;\n\nconst makeWorkOperations = () =>\n  Effect.gen(function* () {\n    const resetWork = Effect.gen(function* () {\n      yield* workStore.clearPending;\n      yield* workStore.clearCompleted;\n      yield* workStore.invalidateSummary;\n    });\n    const prepare = workStore.loadItems.pipe(Effect.flatMap(workStore.prepareItems));\n    const load = pipe(\n      workStore.loadItems,\n      Effect.map((items) => items),\n    );\n    const refresh = Effect.fnUntraced(function* () {\n      const items = yield* workStore.fetchItems;\n      yield* workStore.saveItems(items);\n      return items;\n    });\n    const reload = Effect.fn(function* () {\n      return yield* workStore.fetchItems;\n    });\n    const tracedReload = Effect.fn(\"reload\")(function* () {\n      return yield* workStore.fetchItems;\n    });\n\n    return { resetWork, prepare, load, refresh, reload, tracedReload };\n  });\n\nmakeWorkOperations satisfies () => Effect.Effect<{\n  readonly resetWork: Effect.Effect<void>;\n  readonly prepare: Effect.Effect<string>;\n  readonly load: Effect.Effect<string>;\n  readonly refresh: () => Effect.Effect<string>;\n  readonly reload: () => Effect.Effect<string>;\n  readonly tracedReload: () => Effect.Effect<string>;\n}>;\n\nconst makeOperations = () =>\n  Effect.gen(function* () {\n    const staged = Effect.succeed(1);\n    const run = Effect.gen(function* () {\n      const parsed = Effect.succeed(2);\n      const evaluated = parsed.pipe(Effect.map((value) => value + 1));\n      return yield* evaluated;\n    });\n    const load = staged.pipe(Effect.map((value) => value + 1));\n\n    return { run, load };\n  });\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/service-operations/invalid.ts"
+          },
+          "span": [
+            1730,
+            1763
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/service-operations/invalid.ts"
+          },
+          "span": [
+            1812,
+            1845
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use flatMap, andThen, or tap to connect the steps. Keep complete operations exposed through the service's returned API. Reusable Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values with explicit types remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/service-operations/invalid.ts"
+          },
+          "span": [
+            1852,
+            1916
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 3,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

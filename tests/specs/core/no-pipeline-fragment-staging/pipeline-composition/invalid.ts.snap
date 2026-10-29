@@ -1,0 +1,70 @@
+{
+  "input": "import { Option, pipe } from \"effect\";\n\nconst pipelineFragmentReturnResolveBookSlug = (\n  querySlug: string | readonly string[] | undefined,\n  asPath: string,\n): Option.Option<string> => {\n  const symbolFromQuery = pipe(\n    Option.fromNullishOr(querySlug),\n    Option.filter((value): value is string => typeof value === \"string\"),\n  );\n  const symbolFromPath = pipe(\n    Option.fromNullishOr(asPath.split(\"?\")[0]),\n    Option.flatMap((path) => Option.fromNullishOr(path.match(/^\\/books\\/([^/]+)$/)?.[1])),\n  );\n\n  return pipe(\n    symbolFromQuery,\n    Option.orElse(() => symbolFromPath),\n    Option.map((value) => decodeURIComponent(value).toUpperCase()),\n  );\n};\n\nfunction pipelineFragmentLoad() {\n  const staged = pipe(input, Option.fromNullishOr);\n  return pipe(\n    staged,\n    Option.map((n) => n),\n  );\n}\n\nfunction completePipelineLoad() {\n  return pipe(\n    input,\n    Option.fromNullishOr,\n    Option.map((n) => n),\n  );\n}\n\ntype RouteParts = {\n  readonly path: string;\n  readonly query: string | readonly string[] | undefined;\n};\n\nconst routeParts = (\n  querySlug: string | readonly string[] | undefined,\n  asPath: string,\n): RouteParts => ({\n  path: asPath.split(\"?\")[0] ?? \"\",\n  query: querySlug,\n});\n\nconst pipelineFinalDomainValueResolveBookSlug = (\n  querySlug: string | readonly string[] | undefined,\n  asPath: string,\n): Option.Option<string> =>\n  pipe(\n    Option.fromNullishOr(routeParts(querySlug, asPath).query),\n    Option.filter((value): value is string => typeof value === \"string\"),\n    Option.map((value) => decodeURIComponent(value).toUpperCase()),\n  );\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine the local pipeline fragment with the returned pipeline. The producer and final selection occupy separate declarations, so the reader must reconstruct the operation. Keep the steps together in execution order. Extracted functions must perform complete domain operations with clear result contracts. A helper around the same fragment preserves the split.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine the local pipeline fragment with the returned pipeline. The producer and final selection occupy separate declarations, so the reader must reconstruct the operation. Keep the steps together in execution order. Extracted functions must perform complete domain operations with clear result contracts. A helper around the same fragment preserves the split."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-pipeline-fragment-staging/pipeline-composition/invalid.ts"
+          },
+          "span": [
+            187,
+            664
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine the local pipeline fragment with the returned pipeline. The producer and final selection occupy separate declarations, so the reader must reconstruct the operation. Keep the steps together in execution order. Extracted functions must perform complete domain operations with clear result contracts. A helper around the same fragment preserves the split.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine the local pipeline fragment with the returned pipeline. The producer and final selection occupy separate declarations, so the reader must reconstruct the operation. Keep the steps together in execution order. Extracted functions must perform complete domain operations with clear result contracts. A helper around the same fragment preserves the split."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-pipeline-fragment-staging/pipeline-composition/invalid.ts"
+          },
+          "span": [
+            699,
+            812
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

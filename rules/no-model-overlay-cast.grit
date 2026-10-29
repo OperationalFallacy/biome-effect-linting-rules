@@ -1,8 +1,10 @@
-file($body) where {
+language js(typescript, jsx)
+
+`const $castName = $value as $type` as $call where {
+    $call <: within JsModule() as $body,
     $body <: contains bubble JsModuleSource() as $moduleSource where {
         $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
-    $body <: contains `const $castName = $value as $type` as $call,
     $call <: not `const $_ = $_ as const`,
     register_diagnostic(
         span = $call,

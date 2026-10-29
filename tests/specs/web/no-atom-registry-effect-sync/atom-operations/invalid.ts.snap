@@ -1,0 +1,302 @@
+{
+  "input": "import { Effect } from \"effect\";\nimport { Atom, AtomRegistry } from \"effect/reactivity\";\n\n{\n  const readWithSync = Effect.sync(() => Atom.get(counter));\n}\n\n{\n  const readWithSyncBlock = Effect.sync(() => {\n    return Atom.get(counter);\n  });\n}\n\n{\n  const writeWithSync = Effect.sync(() => Atom.set(counter, 1));\n}\n\n{\n  const writeWithSyncBlock = Effect.sync(() => {\n    return Atom.set(counter, 1);\n  });\n}\n\n{\n  const updateWithSync = Effect.sync(() => Atom.update(counter, (n) => n + 1));\n}\n\n{\n  const updateWithSyncBlock = Effect.sync(() => {\n    return Atom.update(counter, (n) => n + 1);\n  });\n}\n\n{\n  const modifyWithSync = Effect.sync(() => Atom.modify(counter, (n) => [n, n + 1]));\n}\n\n{\n  const modifyWithSyncBlock = Effect.sync(() => {\n    return Atom.modify(counter, (n) => [n, n + 1]);\n  });\n}\n\n{\n  const refreshWithSync = Effect.sync(() => Atom.refresh(counter));\n}\n\n{\n  const refreshWithSyncBlock = Effect.sync(() => {\n    return Atom.refresh(counter);\n  });\n}\n\n{\n  const readDirectly = Atom.get(counter);\n}\n\n{\n  const writeDirectly = Atom.set(counter, 1);\n}\n\n{\n  const updateDirectly = Atom.update(counter, (n) => n + 1);\n}\n\n{\n  const modifyDirectly = Atom.modify(counter, (n) => [n, n + 1]);\n}\n\n{\n  const refreshDirectly = Atom.refresh(counter);\n}\n\n{\n  const counter = Atom.make(0);\n  const atomRegistry = AtomRegistry.make();\n  const read = Effect.sync(() => atomRegistry.get(counter));\n  const write = Effect.sync(() => {\n    atomRegistry.set(counter, 1);\n  });\n}\n\n{\n  const deferredReadFunction = Effect.sync(() => () => Atom.get(counter));\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
+          },
+          "span": [
+            133,
+            150
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
+          },
+          "span": [
+            217,
+            234
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
+          },
+          "span": [
+            289,
+            309
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
+          },
+          "span": [
+            377,
+            397
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
+          },
+          "span": [
+            453,
+            487
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
+          },
+          "span": [
+            556,
+            590
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
+          },
+          "span": [
+            646,
+            685
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
+          },
+          "span": [
+            754,
+            793
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
+          },
+          "span": [
+            850,
+            871
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
+          },
+          "span": [
+            941,
+            962
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 10,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

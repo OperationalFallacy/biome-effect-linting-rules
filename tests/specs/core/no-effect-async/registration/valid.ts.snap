@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\ninterface CounterSource {\n  subscribe(listener: (value: number) => void): () => void;\n}\n\nfunction registerWithCallback(source: CounterSource) {\n  return Effect.callback<number>((resume) => {\n    const unsubscribe = source.subscribe((value) => {\n      resume(Effect.succeed(value));\n    });\n    return Effect.sync(unsubscribe);\n  });\n}\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

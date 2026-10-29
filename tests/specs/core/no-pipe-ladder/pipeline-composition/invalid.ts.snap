@@ -1,0 +1,99 @@
+{
+  "input": "import { pipe } from \"effect\";\n\n{\n  const nestedFreePipes = pipe(pipe(input, first), second);\n}\n\n{\n  const nestedMethodPipes = input.pipe(first).pipe(second);\n}\n\n{\n  const nestedTransforms = pipe(\n    pipe(1, (n) => n + 1),\n    (n) => n * 2,\n  );\n}\n\nconst linearPipeline = pipe(\n  1,\n  (n) => n + 1,\n  (n) => n * 2,\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine directly chained pipe calls into one pipeline. The output of the inner pipeline is the input of the outer pipeline, so keep those steps together in execution order. Pipelines inside callbacks can compute separate values and do not need to merge with the enclosing pipeline.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine directly chained pipe calls into one pipeline. The output of the inner pipeline is the input of the outer pipeline, so keep those steps together in execution order. Pipelines inside callbacks can compute separate values and do not need to merge with the enclosing pipeline."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-pipe-ladder/pipeline-composition/invalid.ts"
+          },
+          "span": [
+            65,
+            83
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine directly chained pipe calls into one pipeline. The output of the inner pipeline is the input of the outer pipeline, so keep those steps together in execution order. Pipelines inside callbacks can compute separate values and do not need to merge with the enclosing pipeline.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine directly chained pipe calls into one pipeline. The output of the inner pipeline is the input of the outer pipeline, so keep those steps together in execution order. Pipelines inside callbacks can compute separate values and do not need to merge with the enclosing pipeline."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-pipe-ladder/pipeline-composition/invalid.ts"
+          },
+          "span": [
+            127,
+            144
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine directly chained pipe calls into one pipeline. The output of the inner pipeline is the input of the outer pipeline, so keep those steps together in execution order. Pipelines inside callbacks can compute separate values and do not need to merge with the enclosing pipeline.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine directly chained pipe calls into one pipeline. The output of the inner pipeline is the input of the outer pipeline, so keep those steps together in execution order. Pipelines inside callbacks can compute separate values and do not need to merge with the enclosing pipeline."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-pipe-ladder/pipeline-composition/invalid.ts"
+          },
+          "span": [
+            201,
+            222
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 3,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

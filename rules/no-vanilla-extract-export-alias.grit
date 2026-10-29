@@ -1,6 +1,7 @@
 language js(typescript, jsx)
 
-file($body) where {
+`export const $name = $value;` as $exportAlias where {
+    $exportAlias <: within JsModule() as $body,
     $body <: contains `"@vanilla-extract/css"`,
     or {
         $body <: contains `const $value = style($definition)`,
@@ -8,7 +9,6 @@ file($body) where {
         $body <: contains `const $value = styleVariants($definition)`,
         $body <: contains `export const $value = styleVariants($definition)`
     },
-    $body <: contains `export const $name = $value;` as $exportAlias,
     register_diagnostic(
         span = $exportAlias,
         message = "Export the generated class under one name that describes its role. A second exported name lets consumers refer to the same styles through different names. Remove the alias and update consumers to use the chosen name. Define variants in the Vanilla Extract declaration.",

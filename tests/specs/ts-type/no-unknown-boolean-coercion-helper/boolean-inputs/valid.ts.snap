@@ -1,0 +1,11 @@
+{
+  "input": "import { Schema } from \"effect\";\n\nconst Input = Schema.Struct({ enabled: Schema.Boolean });\nconst decodeInput = Schema.decodeUnknownEffect(Input);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

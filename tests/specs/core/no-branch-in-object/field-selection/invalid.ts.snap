@@ -1,0 +1,41 @@
+{
+  "input": "import { Result } from \"effect\";\n\nconst fieldDecisionsValue = {\n  count: Result.match(result, { onSuccess: (n) => n, onFailure: () => 0 }),\n};\n\nconst count = Result.match(result, {\n  onSuccess: (n) => n,\n  onFailure: () => 0,\n});\nconst selectedFieldsValue = { count };\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Select field values, then construct the object. Match, Option, or Result decisions inside field definitions mix value selection with the result's structure. Compute the decision once, then construct the object from named values. An immediately invoked function around the construction leaves the same problem in place.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Select field values, then construct the object. Match, Option, or Result decisions inside field definitions mix value selection with the result's structure. Compute the decision once, then construct the object from named values. An immediately invoked function around the construction leaves the same problem in place."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-branch-in-object/field-selection/invalid.ts"
+          },
+          "span": [
+            66,
+            138
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

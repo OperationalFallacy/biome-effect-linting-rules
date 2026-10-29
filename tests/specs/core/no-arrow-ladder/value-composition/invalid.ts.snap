@@ -1,0 +1,41 @@
+{
+  "input": "import { pipe } from \"effect\";\n\nconst nestedInvocationsValue = ((a) => ((b) => b)(a))(1);\n\nconst valuePipelineValue = pipe(1, (n) => n + 1);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace nested immediately invoked functions with local values and one pipeline. The nested function bodies make the operation's execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue the operation after that decision.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace nested immediately invoked functions with local values and one pipeline. The nested function bodies make the operation's execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue the operation after that decision."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-arrow-ladder/value-composition/invalid.ts"
+          },
+          "span": [
+            71,
+            84
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

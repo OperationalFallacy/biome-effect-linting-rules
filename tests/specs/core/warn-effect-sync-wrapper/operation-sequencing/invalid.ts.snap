@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst opaqueSyncCallValue = Effect.sync(() => update());\n\nconst namedEffectOperationValue = Effect.log(\"updated\");\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Make the wrapped operation explicit in the Effect pipeline. A generic Effect.sync callback hides the call's role among the other steps. Use Effect log functions for logs and give updates or other operations a clear pipeline step. Preserve deferred execution and failure behavior through the rewrite.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Make the wrapped operation explicit in the Effect pipeline. A generic Effect.sync callback hides the call's role among the other steps. Use Effect log functions for logs and give updates or other operations a clear pipeline step. Preserve deferred execution and failure behavior through the rewrite."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-effect-sync-wrapper/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            62,
+            89
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 1,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

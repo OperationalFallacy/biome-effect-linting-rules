@@ -1,0 +1,11 @@
+{
+  "input": "import { pipe } from \"effect\";\n\nconst total = (price: number, quantity: number) => price * quantity;\nconst describeTotal = (value: number) => pipe(value, formatCurrency, addLabel);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -48,4 +48,9 @@ jspm_packages/
 /dist/
 /docs/*-ticket.md
 /refs/
+/.local/
+/lib/
+!/biome.base.jsonc
+!/biome.jsonc
+!/biome.local.jsonc
 !/.projenrc.js

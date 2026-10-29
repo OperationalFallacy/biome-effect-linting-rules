@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"task-builder\";\n\nconst registration = Effect.async((resume) => subscribe(resume));\nconst genericRegistration = Effect.async<number>((resume) => subscribe(resume));\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

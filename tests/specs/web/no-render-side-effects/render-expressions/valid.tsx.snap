@@ -1,0 +1,11 @@
+{
+  "input": "import { useAtomValue } from \"@effect/atom-react\";\n\nexport function Profile() {\n  const profile = useAtomValue(profileAtom);\n  return <span>{profile.name}</span>;\n}\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

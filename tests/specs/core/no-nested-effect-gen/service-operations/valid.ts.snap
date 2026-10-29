@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst loadProfile = Effect.fn(\"loadProfile\")(function* () {\n  const user = yield* readUser;\n  const profile = yield* readProfile(user.id);\n  return { user, profile };\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

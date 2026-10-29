@@ -4,47 +4,47 @@ or {
     `$callee(($params) => { $block })` as $call where {
         $callee <: not `S.filter`,
         $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
+        $block <: [`return $value` as $ret]
     },
     `$callee(($params): $return => { $block })` as $call where {
         $callee <: not `S.filter`,
         $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
+        $block <: [`return $value` as $ret]
     },
     `$callee($param => { $block })` as $call where {
         $callee <: not `S.filter`,
         $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
+        $block <: [`return $value` as $ret]
     },
     `$callee($before, ($params) => { $block })` as $call where {
         $callee <: not `S.filter`,
         $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
+        $block <: [`return $value` as $ret]
     },
     `$callee($before, ($params): $return => { $block })` as $call where {
         $callee <: not `S.filter`,
         $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
+        $block <: [`return $value` as $ret]
     },
     `$callee($before, $param => { $block })` as $call where {
         $callee <: not `S.filter`,
         $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
+        $block <: [`return $value` as $ret]
     },
     `$callee($before, ($params) => { $block }, $after)` as $call where {
         $callee <: not `S.filter`,
         $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
+        $block <: [`return $value` as $ret]
     },
     `$callee($before, ($params): $return => { $block }, $after)` as $call where {
         $callee <: not `S.filter`,
         $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
+        $block <: [`return $value` as $ret]
     },
     `$callee($before, $param => { $block }, $after)` as $call where {
         $callee <: not `S.filter`,
         $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
+        $block <: [`return $value` as $ret]
     }
 } where {
     $callee <: not or {
@@ -53,7 +53,7 @@ or {
     },
     register_diagnostic(
         span = $ret,
-        message = "Use expression callbacks for single transformations. An explicit return adds unnecessary structure around a single result. Review the collection operations. HashMap.set offers an alternative to repeated native Map copies. Retain blocks for useful local bindings and multiple steps. Keep those steps visible in the callback. A wrapper that hides them only changes the syntax.",
+        message = "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps.",
         severity = "info"
     )
 }

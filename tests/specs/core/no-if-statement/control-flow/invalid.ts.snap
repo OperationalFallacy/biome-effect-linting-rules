@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nfunction valueBranchChoose(flag) {\n  if (flag) {\n    return 1;\n  }\n  return 0;\n}\n\nconst operationBranchChoose = Effect.fn(\"choose\")(function* (flag) {\n  if (flag) {\n    return 1;\n  }\n  return 0;\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-if-statement/control-flow/invalid.ts"
+          },
+          "span": [
+            75,
+            79
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

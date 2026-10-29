@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst detachedOperationValue = Effect.gen(function* () {\n  return Effect.runFork(Effect.void);\n});\n\nconst applicationRunnerValue = Effect.runFork(Effect.void);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.forkChild or Effect.forkScoped for work started inside an Effect operation. Effect.runFork and Effect.runForkWith start independent runtime fibers and leave cancellation and cleanup to the caller. Keep service work attached to its parent fiber or Scope. Reserve the run functions for application startup and external integrations.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.forkChild or Effect.forkScoped for work started inside an Effect operation. Effect.runFork and Effect.runForkWith start independent runtime fibers and leave cancellation and cleanup to the caller. Keep service work attached to its parent fiber or Scope. Reserve the run functions for application startup and external integrations."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-runtime-runfork/fiber-lifetimes/invalid.ts"
+          },
+          "span": [
+            100,
+            127
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

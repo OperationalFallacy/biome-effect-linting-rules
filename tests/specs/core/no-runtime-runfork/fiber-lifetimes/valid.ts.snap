@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst observe = Effect.gen(function* () {\n  const fiber = yield* Effect.forkScoped(observeUpdates);\n  yield* awaitShutdown;\n  return fiber;\n}).pipe(Effect.scoped);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

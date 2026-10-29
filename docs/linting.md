@@ -22,7 +22,55 @@ See the [service operation examples](service-effect-operations.md) for allowed A
 
 Use ordinary control flow inside `Effect.gen`, `Effect.fn`, or `Effect.fnUntraced` to express decisions in execution order. Use `Match.value`, `Option.match`, or `Result.match` for decisions outside those operations. Compute selected values before you construct an object from them. Keep callback blocks when local bindings or multiple steps improve readability.
 
+### Conditional Effect work
+
+A callback can contain a pipeline that computes a different value from the enclosing pipeline. Keep that computation local. Combine pipelines when one pipeline's result feeds directly into another.
+
+For optional Effect work, put the condition and its dependent yield in one operation. This form skips the write when disabled and defers both the decision and the write until execution:
+
+```ts
+import { Effect } from "effect";
+
+interface Writer {
+  readonly write: Effect.Effect<void>;
+}
+
+export const writeWhen = Effect.fn("writeWhen")(function* (enabled: boolean, writer: Writer) {
+  if (enabled) {
+    yield* writer.write;
+  }
+});
+```
+
+Use `Match` to select pure values. A `Match` branch that returns `Effect.void` is a decision to skip Effect work, so use a conditional yield instead.
+
+### Dependency assembly
+
+Provide a layer around an exported operation at application or test assembly. A test can construct its own dependencies without changing the operation's implementation:
+
+```ts
+it.effect("reads the count", () => readCount.pipe(Effect.provide(counterLayer)));
+```
+
+Inside a service operation, yield its dependencies instead of calling `Effect.provide` to acquire a new layer on every invocation. Define acquisition in the service's construction Effect and compose dependencies with `Layer.provide`. `Effect.provideService` remains appropriate for dynamic contextual values.
+
+Static service layer declarations must name the class explicitly:
+
+```ts
+static readonly layer = Layer.effect(Counter, Counter.make);
+```
+
+Use that form inside dependency-composition pipelines too. `no-layer-this-reference` applies to static layer fields in `Context.Service` classes, not ordinary instance methods. This is the package's readability convention. Effect supports `Layer.effect(this, this.make)`.
+
+### Constructor callbacks
+
+Keep a constructible function or class when a mock will be called with `new`. An arrow function cannot replace it. The presets disable Biome's `useArrowFunction` rule to avoid unsafe constructor rewrites. The callback-return rule applies only to single-return transformation callbacks, not constructor mocks or callbacks with several steps.
+
+### Data and state
+
 Decode external data with Schema and use the decoded values in services. Define optional boolean defaults in the schema so each service applies the same policy. Put the required validation in that decoder so its result is ready for the operation. Express absence with `Option`, failures with typed errors, and status choices with tagged unions.
+
+`no-string-sentinel-const` checks string constants named `status`, `state`, `phase`, or `outcome`, including camelCase and snake_case suffixes. It cannot infer the role of every string from syntax. Paths, versions, schedules, and display text are allowed. Review the domain representation rather than rename a status token to evade the rule.
 
 Use `Record` operations inside `Struct.evolve` for state updates. Reconstruct validated models with their schema constructors, such as `Model.make`. Decode serialized input with `Schema.decodeUnknownEffect` and encode output with `Schema.encodeEffect`. Apply `Schema.fromJsonString` to the model schema for JSON input and output.
 

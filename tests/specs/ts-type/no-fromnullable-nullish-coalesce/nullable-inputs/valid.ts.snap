@@ -1,0 +1,11 @@
+{
+  "input": "import { Option } from \"effect\";\n\nconst displayName = Option.fromNullishOr(input).pipe(\n  Option.getOrElse(() => \"Anonymous\"),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

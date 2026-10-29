@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\nimport { readProfile } from \"./profile\";\n\nconst loadProfile = Effect.fn(\"loadProfile\")(() => readProfile);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst profile = readProfile.pipe(\n  Effect.catchTags({\n    MissingProfile: () => defaultProfile,\n    ProfileUnavailable: () => cachedProfile,\n  }),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

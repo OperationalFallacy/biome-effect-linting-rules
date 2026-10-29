@@ -1,0 +1,11 @@
+{
+  "input": "import { Option } from \"effect\";\n\nconst displayName = user.pipe(Option.map((user) => user.name));\nconst available = user.pipe(Option.map(() => true));\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

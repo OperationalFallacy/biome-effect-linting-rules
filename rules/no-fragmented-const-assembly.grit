@@ -1,7 +1,7 @@
 language js(typescript, jsx)
 
 JsObjectExpression(members = $members) as $assembly where {
-    $members <: contains JsSpread(argument = $argument),
+    $members <: [..., JsSpread(argument = $argument), ...],
     $argument <: `$fragment($args)`,
     register_diagnostic(
         span = $assembly,

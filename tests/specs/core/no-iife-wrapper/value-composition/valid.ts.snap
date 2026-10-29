@@ -1,0 +1,11 @@
+{
+  "input": "import { Match } from \"effect\";\n\nconst selected = Match.value(state).pipe(\n  Match.when({ _tag: \"Ready\" }, (ready) => ready.value),\n  Match.orElse(() => fallback),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}
