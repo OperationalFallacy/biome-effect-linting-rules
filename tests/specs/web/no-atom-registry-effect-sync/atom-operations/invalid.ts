@@ -1,85 +1,75 @@
 import { Effect } from "effect";
 import { Atom, AtomRegistry } from "effect/reactivity";
 
-{
-  const readWithSync = Effect.sync(() => Atom.get(counter));
-}
+export const counter = Atom.make(0);
 
-{
-  const readWithSyncBlock = Effect.sync(() => {
-    return Atom.get(counter);
-  });
-}
+/**
+ * Incorrectly wraps an atom read in sync. The wrapper succeeds with the
+ * unexecuted read Effect instead of reading the current count.
+ */
+export const readCount = Effect.sync(() => Atom.get(counter));
+export const readCountBlock = Effect.sync(() => {
+  return Atom.get(counter);
+});
 
-{
-  const writeWithSync = Effect.sync(() => Atom.set(counter, 1));
-}
+/**
+ * Incorrectly returns a write Effect from sync. The counter is never changed.
+ */
+export const setCount = Effect.sync(() => Atom.set(counter, 1));
+export const setCountBlock = Effect.sync(() => {
+  return Atom.set(counter, 1);
+});
 
-{
-  const writeWithSyncBlock = Effect.sync(() => {
-    return Atom.set(counter, 1);
-  });
-}
+/**
+ * Incorrectly returns an update Effect from sync. The increment remains unexecuted.
+ */
+export const increment = Effect.sync(() =>
+  Atom.update(counter, (count) => count + 1),
+);
+export const incrementBlock = Effect.sync(() => {
+  return Atom.update(counter, (count) => count + 1);
+});
 
-{
-  const updateWithSync = Effect.sync(() => Atom.update(counter, (n) => n + 1));
-}
+/**
+ * Incorrectly returns a modification Effect from sync. Neither its returned
+ * count nor its new state is produced by executing the wrapper.
+ */
+export const takeAndIncrement = Effect.sync(() =>
+  Atom.modify(counter, (count) => [count, count + 1]),
+);
+export const takeAndIncrementBlock = Effect.sync(() => {
+  return Atom.modify(counter, (count) => [count, count + 1]);
+});
 
-{
-  const updateWithSyncBlock = Effect.sync(() => {
-    return Atom.update(counter, (n) => n + 1);
-  });
-}
+/**
+ * Incorrectly returns a refresh Effect from sync. Refreshing remains deferred
+ * inside the wrapper's success value.
+ */
+export const refresh = Effect.sync(() => Atom.refresh(counter));
+export const refreshBlock = Effect.sync(() => {
+  return Atom.refresh(counter);
+});
 
-{
-  const modifyWithSync = Effect.sync(() => Atom.modify(counter, (n) => [n, n + 1]));
-}
+/**
+ * Correctly defers synchronous registry instance methods. The factory owns
+ * the registry and exposes disposal alongside its operations.
+ */
+export const makeRegistryOperations = () => {
+  const registry = AtomRegistry.make();
+  return {
+    read: Effect.sync(() => registry.get(counter)),
+    write: Effect.sync(() => {
+      registry.set(counter, 1);
+    }),
+    dispose: () => registry.dispose(),
+  };
+};
 
-{
-  const modifyWithSyncBlock = Effect.sync(() => {
-    return Atom.modify(counter, (n) => [n, n + 1]);
-  });
-}
-
-{
-  const refreshWithSync = Effect.sync(() => Atom.refresh(counter));
-}
-
-{
-  const refreshWithSyncBlock = Effect.sync(() => {
-    return Atom.refresh(counter);
-  });
-}
-
-{
-  const readDirectly = Atom.get(counter);
-}
-
-{
-  const writeDirectly = Atom.set(counter, 1);
-}
-
-{
-  const updateDirectly = Atom.update(counter, (n) => n + 1);
-}
-
-{
-  const modifyDirectly = Atom.modify(counter, (n) => [n, n + 1]);
-}
-
-{
-  const refreshDirectly = Atom.refresh(counter);
-}
-
-{
-  const counter = Atom.make(0);
-  const atomRegistry = AtomRegistry.make();
-  const read = Effect.sync(() => atomRegistry.get(counter));
-  const write = Effect.sync(() => {
-    atomRegistry.set(counter, 1);
-  });
-}
-
-{
-  const deferredReadFunction = Effect.sync(() => () => Atom.get(counter));
-}
+/**
+ * Correctly creates an owned atom in a deferred factory. The returned function
+ * constructs a read operation when its caller requests one.
+ */
+export const makeReader = Effect.sync(() => {
+  const localCounter = Atom.make(0);
+  return () => Atom.get(localCounter);
+});

@@ -1,78 +1,60 @@
 import { Data, Option, Schema } from "effect";
 
-type directConstFragmentFailureKind = Data.TaggedEnum<{
-  Transport: { readonly boundary: string };
-}>;
+const messageFields = (error: Error) => ({ message: error.message });
 
-const directConstFragmentFailureKind = Data.taggedEnum<directConstFragmentFailureKind>();
+/**
+ * Incorrectly splits response construction across object-fragment helpers.
+ * The caller must inspect the helper to discover the complete response shape.
+ */
+export const toResponse = (error: Error) => ({
+  kind: "Failure",
+  ...messageFields(error),
+});
 
-const directConstFragmentApiErrorFields = (error: { readonly message: string }) => ({
+export const toTracedResponse = (error: Error) => ({
+  ...messageFields(error),
+  trace: Option.fromNullishOr(error.stack).pipe(
+    Option.map((stack) => stack.split("\n")),
+  ),
+});
+
+class ReadFailure extends Schema.TaggedError<ReadFailure>()("ReadFailure", {
+  operation: Schema.String,
+  reason: Schema.String,
+  cause: Schema.Unknown,
+}) {}
+const failureFields = (cause: unknown) => ({ reason: "Read failed", cause });
+
+/**
+ * Incorrectly hides required constructor fields in a spread-producing helper.
+ * The construction site no longer describes the complete error value.
+ */
+export const toReadFailure = (operation: string, cause: unknown) =>
+  new ReadFailure({ operation, ...failureFields(cause) });
+
+type FailureKind = Data.TaggedEnum<{ Read: { readonly operation: string } }>;
+const FailureKind = Data.taggedEnum<FailureKind>();
+
+/**
+ * Correctly exposes a complete tagged constructor as a reusable domain operation.
+ */
+export const readFailureKind = FailureKind.Read;
+
+interface ErrorView {
+  readonly message: string;
+}
+
+/**
+ * Correctly defines a complete typed projection. The return type names the
+ * whole result that the helper constructs.
+ */
+export const projectError = (error: Error): ErrorView => ({
   message: error.message,
 });
 
-const directConstFragmentApiErrorObject = (error: { readonly message: string }) => ({
-  errorType: "BoundaryFailure",
-  ...directConstFragmentApiErrorFields(error),
-});
-
-const assemblyChainFailureKind = Data.taggedEnum<assemblyChainFailureKind>();
-
-const assemblyChainApiErrorFields = (message: string) => ({
-  errorMessage: message,
-});
-
-const assemblyChainApiErrorObject = (error: { readonly message: string }) => ({
-  ...assemblyChainApiErrorFields(error.message),
-  stackTrace: Option.fromNullishOr(error.message).pipe(Option.map((value) => [value])),
-});
-
-class BoundaryError extends Error {
-  readonly reason: string;
-  readonly cause: unknown;
-
-  constructor(input: {
-    readonly reason: string;
-    readonly parameterName: string;
-    readonly cause: unknown;
-  }) {
-    super(input.reason);
-    this.reason = input.reason;
-    this.cause = input.cause;
-  }
-}
-
-const errorFields = (cause: unknown) => ({
-  reason: "Failed to load config",
-  cause,
-});
-
-const toBoundaryError = (parameterName: string, cause: unknown) =>
-  new BoundaryError({
-    parameterName,
-    ...errorFields(cause),
-  });
-
-type Availability = Data.TaggedEnum<{
-  InStock: { readonly copies: number };
-  OnOrder: { readonly expected: string };
-}>;
-
-const Availability = Data.taggedEnum<Availability>();
-const BookInput = Schema.Struct({ isbn: Schema.String, title: Schema.String });
-
-type BookLabel = {
-  readonly isbn: string;
-  readonly text: string;
-};
-
-const bookLabel = (input: typeof BookInput.Type): BookLabel => {
-  const label: BookLabel = {
-    isbn: input.isbn,
-    text: input.title.trim(),
-  };
-  return label;
-};
-
-const decodeBook = Schema.decodeUnknownEffect(BookInput);
-const inStock = Availability.InStock;
-const labelBook = bookLabel;
+/**
+ * Correctly exposes a complete schema decoder as a reusable operation.
+ */
+export const decodeErrorView = Schema.decodeUnknownEffect(
+  Schema.Struct({ message: Schema.String }),
+);

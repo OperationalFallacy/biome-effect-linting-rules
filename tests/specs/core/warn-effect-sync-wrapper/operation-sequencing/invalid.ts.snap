@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst opaqueSyncCallValue = Effect.sync(() => update());\n\nconst namedEffectOperationValue = Effect.log(\"updated\");\n",
+  "input": "import { Effect } from \"effect\";\n\ninterface CounterStore {\n  readonly update: () => Effect.Effect<number>;\n}\n\n/**\n * Questionably wraps an already-effectful update in Effect.sync. Running the\n * outer effect only constructs the update instead of executing it.\n */\nexport const increment = Effect.fn(\"increment\")((store: CounterStore) =>\n  Effect.sync(() => store.update()),\n);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/warn-effect-sync-wrapper/operation-sequencing/invalid.ts"
           },
           "span": [
-            62,
-            89
+            339,
+            372
           ],
           "sourceCode": null
         },

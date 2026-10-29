@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, pipe } from \"effect\";\n\ntype PolicyResult = {\n  readonly decision: \"ALLOW\" | \"DENY\";\n};\n\nconst effectStepConstStagingEvaluatePolicy = (\n  policyText: string,\n): Effect.Effect<PolicyResult, Error> => {\n  const parsedPolicy = Effect.try({\n    try: () => JSON.parse(policyText) as { readonly allow?: boolean },\n    catch: (cause) => new Error(`Policy parse failed: ${cause}`),\n  });\n\n  // Derailment: this second Effect const continues the staged chain instead of\n  // keeping parse -> validate -> result construction in one visible pipeline.\n  const evaluatedPolicy = Effect.map(\n    parsedPolicy,\n    (policy): PolicyResult => ({\n      decision: policy.allow === true ? \"ALLOW\" : \"DENY\",\n    }),\n  );\n\n  return evaluatedPolicy;\n};\n\nconst pipeEffectStepConstStagingEvaluatePolicy = (\n  policyText: string,\n): Effect.Effect<PolicyResult, Error> => {\n  const evaluationPipeline = pipe(\n    Effect.try({\n      try: () => JSON.parse(policyText) as { readonly allow?: boolean },\n      catch: (cause) => new Error(`Policy parse failed: ${cause}`),\n    }),\n    Effect.map(\n      (policy): PolicyResult => ({\n        decision: policy.allow === true ? \"ALLOW\" : \"DENY\",\n      }),\n    ),\n  );\n\n  return evaluationPipeline;\n};\n\nconst effectStepContinuousFlowEvaluatePolicy = (\n  policyText: string,\n): Effect.Effect<PolicyResult, Error> =>\n  pipe(\n    Effect.try({\n      try: () => JSON.parse(policyText) as { readonly allow?: boolean },\n      catch: (cause) => new Error(`Policy parse failed: ${cause}`),\n    }),\n    Effect.map((policy): PolicyResult => {\n      const result: PolicyResult = {\n        decision: policy.allow === true ? \"ALLOW\" : \"DENY\",\n      };\n\n      return result;\n    }),\n  );\n",
+  "input": "import { Effect, Schema, pipe } from \"effect\";\n\nconst Policy = Schema.Struct({ allow: Schema.optionalKey(Schema.Boolean) });\nconst decodePolicy = Schema.decodeUnknownEffect(Schema.fromJsonString(Policy));\ntype Decision = { readonly decision: \"ALLOW\" | \"DENY\" };\n\n/**\n * Incorrectly stages validation and result construction as separate Effect\n * constants. The reader must follow the bindings to reconstruct one operation.\n */\nexport const evaluatePolicy = Effect.fn(\"evaluatePolicy\")((text: string) => {\n  const allowed = decodePolicy(text).pipe(\n    Effect.map((policy) => policy.allow === true),\n  );\n  const evaluated = allowed.pipe(\n    Effect.map((allow): Decision => ({ decision: allow ? \"ALLOW\" : \"DENY\" })),\n  );\n  return evaluated;\n});\n\n/**\n * Incorrectly names an entire pipeline only to return it in the next statement.\n * The binding adds another lookup without representing a reusable operation.\n */\nexport const evaluateViaPipe = Effect.fn(\"evaluateViaPipe\")((text: string) => {\n  const evaluation = pipe(\n    decodePolicy(text),\n    Effect.map(\n      (policy): Decision => ({\n        decision: policy.allow === true ? \"ALLOW\" : \"DENY\",\n      }),\n    ),\n  );\n  return evaluation;\n});\n\n/**\n * Correctly names a completed domain value inside a transformation.\n * This local record is the operation's result, not an unexecuted Effect step.\n */\nexport const evaluateDirect = Effect.fn(\"evaluateDirect\")((text: string) =>\n  decodePolicy(text).pipe(\n    Effect.map((policy): Decision => {\n      const result: Decision = {\n        decision: policy.allow === true ? \"ALLOW\" : \"DENY\",\n      };\n      return result;\n    }),\n  ),\n);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-effect-step-const-staging/operation-sequencing/invalid.ts"
           },
           "span": [
-            219,
-            395
+            507,
+            603
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/core/no-effect-step-const-staging/operation-sequencing/invalid.ts"
           },
           "span": [
-            558,
-            715
+            606,
+            721
           ],
           "sourceCode": null
         },
@@ -81,8 +81,8 @@
             "file": "/project/core/no-effect-step-const-staging/operation-sequencing/invalid.ts"
           },
           "span": [
-            865,
-            1196
+            996,
+            1173
           ],
           "sourceCode": null
         },

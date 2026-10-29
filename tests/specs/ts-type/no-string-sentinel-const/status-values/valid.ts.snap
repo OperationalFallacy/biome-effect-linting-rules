@@ -1,5 +1,5 @@
 {
-  "input": "import { Data } from \"effect\";\n\nconst LoadState = Data.taggedEnum<{\n  Loading: {};\n  Ready: { readonly count: number };\n}>();\nconst state = LoadState.Ready({ count: 3 });\n",
+  "input": "import { Data } from \"effect\";\n\ntype LoadState = Data.TaggedEnum<{\n  Loading: {};\n  Ready: { readonly count: number };\n}>;\nconst LoadState = Data.taggedEnum<LoadState>();\n\n/**\n * Correctly represents a state as a tagged value with its associated data.\n * Callers can select behavior through the discriminant and typed payload.\n */\nexport const state = LoadState.Ready({ count: 3 });\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

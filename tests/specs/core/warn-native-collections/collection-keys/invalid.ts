@@ -1,56 +1,63 @@
-import { Data, HashMap, HashSet, Effect, Array as Arr } from "effect";
-import * as Equal from "effect/Equal";
+import { Data, HashMap, HashSet } from "effect";
 
 class Key extends Data.Class<{ readonly id: string }> {}
-const byDomainKey = new Map<Key, string>([[new Key({ id: "a" }), "first"]]);
-const selectedDomainKeys = new Set<Key>([new Key({ id: "a" })]);
 
+/**
+ * Questionably uses native collections for value-object keys. A fresh equal
+ * key has a different object identity, so a native lookup misses the stored entry.
+ */
+export const byDomainKey = new Map<Key, string>([
+  [new Key({ id: "guest-1" }), "Mira"],
+]);
+export const selectedDomainKeys = new Set<Key>([new Key({ id: "guest-1" })]);
+
+/**
+ * Questionably uses reconstructed record keys with native Map and Set.
+ * The logical identity comes from the fields of each key.
+ */
 const itemKey = (group: string, id: number) => ({ group, id });
-const collectionKeysItems = new Map<ReturnType<typeof itemKey>, string>();
-const selectedItems = new Set<ReturnType<typeof itemKey>>();
+export const items = new Map<ReturnType<typeof itemKey>, string>([
+  [itemKey("catalog", 3), "Mira"],
+]);
+export const selectedItems = new Set<ReturnType<typeof itemKey>>([
+  itemKey("catalog", 3),
+]);
 
-const cellKey = (row: number, column: number) => [row, column];
-const cells = new Map<ReturnType<typeof cellKey>, string>();
+/**
+ * Questionably keys a native Map by reconstructed coordinate arrays.
+ * Equal row and column values do not identify the same native key instance.
+ */
+const cellKey = (row: number, column: number): readonly [number, number] => [
+  row,
+  column,
+];
+export const cells = new Map<ReturnType<typeof cellKey>, string>([
+  [cellKey(0, 1), "occupied"],
+]);
 
+/**
+ * Questionably uses qualified native constructors for record-valued keys.
+ * Constructor qualification preserves the same reference-equality behavior.
+ */
 const qualifiedKey = (id: string) => ({ id });
-const qualifiedIndex = new globalThis.Map<ReturnType<typeof qualifiedKey>, number>();
-const qualifiedSelection = new globalThis.Set<ReturnType<typeof qualifiedKey>>();
+export const qualifiedIndex = new globalThis.Map<
+  ReturnType<typeof qualifiedKey>,
+  number
+>([[qualifiedKey("guest-1"), 3]]);
+export const qualifiedSelection = new globalThis.Set<
+  ReturnType<typeof qualifiedKey>
+>([qualifiedKey("guest-1")]);
 
+/**
+ * Questionably treats plain record keys as stable native identities.
+ */
 const plainKey = (id: string) => ({ id });
-const plainIndex = new Map<ReturnType<typeof plainKey>, number>();
+export const plainIndex = new Map<ReturnType<typeof plainKey>, number>([
+  [plainKey("guest-1"), 3],
+]);
 
-const structuralIndex = HashMap.empty<ReturnType<typeof itemKey>, string>();
-const structuralSelection = HashSet.empty<ReturnType<typeof itemKey>>();
-const scalarKeys = HashMap.empty<string, number>();
-const selectedScalars = HashSet.empty<string>();
-const objectValues = new Map<string, ReturnType<typeof itemKey>>();
-const plainStructuralIndex = HashMap.empty<ReturnType<typeof plainKey>, number>();
-
-const bareConstructorsIndex = new Map();
-const bareConstructorsSelected = new Set();
-const bareConstructorsReady = Effect.succeed(true);
-
-declare const custom: { Map: new () => object; Set: new () => object };
-const otherConstructorsIndex = new custom.Map();
-const otherConstructorsSelected = new custom.Set();
-const weakIndex = new WeakMap<object, string>();
-const weakSelected = new WeakSet<object>();
-const otherConstructorsReady = Effect.succeed(true);
-
-const cache = new Map<object, string>();
-const referenceKeysReady = Effect.succeed(true);
-
-const keyString = (key: { id: string }) => key.id;
-const records = new Map<ReturnType<typeof keyString>, string>();
-const scalarFactorySelected = new Set<ReturnType<typeof keyString>>();
-const view = { ready: true };
-
-const scalarKeysById = new Map<string, number>();
-const selectedIds = new Set(["a", "b"]);
-const scalarKeysReady = Effect.succeed(true);
-
-const stringIndexItems = [{ id: "first", value: 1 }];
-const stringIndexById = new Map(Arr.map(stringIndexItems, (item) => [item.id, item.value]));
-
-const untypedCollectionSelected = new Set();
-const equal = Equal.equals;
+/**
+ * Correctly uses Effect collections for record keys that require value equality.
+ */
+export const structuralIndex = HashMap.make([itemKey("catalog", 3), "Mira"]);
+export const structuralSelection = HashSet.make(itemKey("catalog", 3));

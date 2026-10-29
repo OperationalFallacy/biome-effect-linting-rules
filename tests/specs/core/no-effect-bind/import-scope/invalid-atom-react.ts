@@ -1,3 +1,10 @@
-import { Atom } from "@effect/atom-react";
+import "@effect/atom-react";
 
-const addCount = Effect.bind("count", read);
+type EffectApi = typeof import("effect").Effect;
+
+/**
+ * Questionably builds an intermediate record in a React integration module.
+ * The supplied Effect namespace still creates a record-building fragment.
+ */
+export const addCount = (Effect: EffectApi) =>
+  Effect.bind("count", () => Effect.succeed(3));

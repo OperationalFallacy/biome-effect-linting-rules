@@ -1,52 +1,26 @@
-import { Effect } from "effect";
+import { Effect, Schema } from "effect";
 
-{
-  const nestedMap = Effect.map(Effect.succeed(1), (n) => n + 1);
-}
+const Guest = Schema.Struct({ name: Schema.NonEmptyString });
 
-{
-  const nestedAcquisition = Effect.acquireUseRelease(Effect.succeed(1), use, release);
-}
+/**
+ * Incorrectly nests dependent Effect calls around a parser. The reader must
+ * work from the innermost call outward to find the execution order.
+ */
+export const decodeName = Effect.fn("decodeName")((text: string) =>
+  Effect.map(
+    Effect.flatMap(
+      Effect.try(() => JSON.parse(text)),
+      Schema.decodeUnknownEffect(Guest),
+    ),
+    (guest) => guest.name,
+  ),
+);
 
-{
-  const nestedContinuation = Effect.andThen(first, Effect.succeed(1));
-}
-
-{
-  const pipeline = Effect.succeed(1).pipe(Effect.map((n) => n + 1));
-}
-
-{
-  const namedCallback = Effect.flatMap(
-    first,
-    Effect.fn(function* (n) {
-      return n + 1;
-    }),
-  );
-}
-
-{
-  const untracedCallback = Effect.flatMap(
-    first,
-    Effect.fnUntraced(function* (n) {
-      return n + 1;
-    }),
-  );
-}
-
-{
-  const eagerCallback = Effect.flatMap(
-    first,
-    Effect.fnUntracedEager(function* (n) {
-      return n + 1;
-    }),
-  );
-}
-
-{
-  const syncEntrypoint = Effect.runSync(Effect.succeed(1));
-}
-
-{
-  const exitEntrypoint = Effect.runSyncExit(Effect.succeed(1));
-}
+/**
+ * Incorrectly puts the continuation inside data-first Effect.andThen arguments.
+ * A pipeline can express this sequence in execution order.
+ */
+export const reportDecodedName = Effect.fn("reportDecodedName")(
+  (text: string) =>
+    Effect.andThen(decodeName(text), Effect.logInfo("Decoded guest name")),
+);

@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, pipe } from \"effect\";\n\nconst outerRecoveryValue = Effect.catch(\n  Effect.succeed(1).pipe(Effect.flatMap((n) => Effect.succeed(n + 1))),\n  () => Effect.succeed(0),\n);\n\nconst pipelineRecoveryValue = Effect.succeed(1).pipe(\n  Effect.flatMap((n) => Effect.succeed(n + 1)),\n  Effect.catch(() => Effect.succeed(0)),\n);\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Incorrectly wraps a dependent pipeline in an outer recovery call. The reader\n * must inspect the nested argument to determine which failures recovery covers.\n */\nexport const readCount = Effect.fn(\"readCount\")((text: string) =>\n  Effect.catch(\n    Effect.try(() => JSON.parse(text)).pipe(\n      Effect.flatMap(Schema.decodeUnknownEffect(Schema.Number)),\n    ),\n    () => Effect.succeed(0),\n  ),\n);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-effect-orElse-ladder/error-recovery/invalid.ts"
           },
           "span": [
-            67,
-            181
+            279,
+            442
           ],
           "sourceCode": null
         },

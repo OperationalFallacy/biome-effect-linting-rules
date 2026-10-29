@@ -1,3 +1,7 @@
 import { style } from "@vanilla-extract/css";
 
-export const panel = style({ display: "grid", gap: "1rem" });
+/**
+ * Correctly gives the heading class a concrete role by resetting its margin.
+ */
+export const heading = style({ margin: 0 });
+export const panel = style({ margin: 0 });

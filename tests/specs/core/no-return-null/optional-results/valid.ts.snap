@@ -1,5 +1,5 @@
 {
-  "input": "import { Option } from \"effect\";\n\nconst findProfile = (id: string) =>\n  profiles.pipe(Option.filter((profile) => profile.id === id));\n",
+  "input": "import { Array as Arr } from \"effect\";\n\nconst profiles = [{ id: \"guest-1\", name: \"Mira\" }];\n\n/**\n * Correctly exposes absence through the lookup's Option result. Callers can\n * compose another optional operation without inventing a sentinel convention.\n */\nexport const findProfile = (id: string) =>\n  Arr.findFirst(profiles, (profile) => profile.id === id);\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

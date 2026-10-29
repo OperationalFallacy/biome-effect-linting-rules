@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst addCount = Effect.bind(\"count\", read);\nconst addCountToTask = Effect.bind(task, \"count\", read);\nconst addComputedCount = Effect.bind(\"count\", () => Effect.succeed(1));\nconst addTypedCount = Effect.bind<\"count\">(\"count\", read);\nconst withCount = task.pipe(Effect.bind(\"count\", read));\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Questionably sequences decoding through record-building callbacks.\n * The builder makes the reader track an intermediate record between steps.\n */\nexport const readCount = Effect.fn(\"readCount\")((input: unknown) =>\n  Effect.succeed({ label: \"Counter\" }).pipe(\n    Effect.bind(\"count\", () => Schema.decodeUnknownEffect(Schema.Int)(input)),\n  ),\n);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,124 +23,8 @@
             "file": "/project/core/no-effect-bind/call-forms/invalid.ts"
           },
           "span": [
-            51,
-            77
-          ],
-          "sourceCode": null
-        },
-        "tags": [],
-        "source": null
-      },
-      {
-        "category": "plugin",
-        "severity": "error",
-        "description": "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation.",
-        "message": [
-          {
-            "elements": [],
-            "content": "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation."
-          }
-        ],
-        "advices": {
-          "advices": []
-        },
-        "verboseAdvices": {
-          "advices": []
-        },
-        "location": {
-          "path": {
-            "file": "/project/core/no-effect-bind/call-forms/invalid.ts"
-          },
-          "span": [
-            102,
-            134
-          ],
-          "sourceCode": null
-        },
-        "tags": [],
-        "source": null
-      },
-      {
-        "category": "plugin",
-        "severity": "error",
-        "description": "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation.",
-        "message": [
-          {
-            "elements": [],
-            "content": "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation."
-          }
-        ],
-        "advices": {
-          "advices": []
-        },
-        "verboseAdvices": {
-          "advices": []
-        },
-        "location": {
-          "path": {
-            "file": "/project/core/no-effect-bind/call-forms/invalid.ts"
-          },
-          "span": [
-            161,
-            206
-          ],
-          "sourceCode": null
-        },
-        "tags": [],
-        "source": null
-      },
-      {
-        "category": "plugin",
-        "severity": "error",
-        "description": "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation.",
-        "message": [
-          {
-            "elements": [],
-            "content": "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation."
-          }
-        ],
-        "advices": {
-          "advices": []
-        },
-        "verboseAdvices": {
-          "advices": []
-        },
-        "location": {
-          "path": {
-            "file": "/project/core/no-effect-bind/call-forms/invalid.ts"
-          },
-          "span": [
-            230,
-            265
-          ],
-          "sourceCode": null
-        },
-        "tags": [],
-        "source": null
-      },
-      {
-        "category": "plugin",
-        "severity": "error",
-        "description": "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation.",
-        "message": [
-          {
-            "elements": [],
-            "content": "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation."
-          }
-        ],
-        "advices": {
-          "advices": []
-        },
-        "verboseAdvices": {
-          "advices": []
-        },
-        "location": {
-          "path": {
-            "file": "/project/core/no-effect-bind/call-forms/invalid.ts"
-          },
-          "span": [
-            295,
-            321
+            313,
+            386
           ],
           "sourceCode": null
         },
@@ -148,7 +32,7 @@
         "source": null
       }
     ],
-    "errors": 5,
+    "errors": 1,
     "warnings": 0,
     "infos": 0,
     "parseErrors": 0,

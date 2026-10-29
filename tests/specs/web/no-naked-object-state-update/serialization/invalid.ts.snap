@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, Schema } from \"effect\";\n\ndeclare const book: { readonly title: string };\ndeclare const write: (payload: string) => Effect.Effect<void>;\ndeclare const read: () => Effect.Effect<string>;\n\nconst copyBook = Effect.gen(function* () {\n  yield* write(JSON.stringify(book));\n  const raw = yield* read();\n  yield* write(JSON.stringify(JSON.parse(raw)));\n});\n\nconst rawJsonValue = JSON.parse(input);\n\nconst schemaJsonValue = Schema.decodeUnknownEffect(\n  Schema.fromJsonString(Schema.Struct({ id: Schema.String })),\n)(input);\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst Book = Schema.Struct({ title: Schema.String });\ninterface Storage {\n  readonly write: (payload: string) => Effect.Effect<void>;\n  readonly read: Effect.Effect<string>;\n}\n\n/**\n * Incorrectly serializes model data through raw JSON calls. Parsing can throw,\n * and the operation never checks the stored payload against its model schema.\n */\nexport const copyBook = Effect.fn(\"copyBook\")(\n  (book: typeof Book.Type, storage: Storage) =>\n    Effect.gen(function* () {\n      yield* storage.write(JSON.stringify(book));\n      const raw = yield* storage.read;\n      yield* storage.write(JSON.stringify(JSON.parse(raw)));\n    }),\n);\n\n/**\n * Incorrectly accepts a parsed value without model validation or a typed failure.\n */\nexport const decodeBook = (input: string) => JSON.parse(input);\n\n/**\n * Correctly decodes serialized model data through its JSON schema.\n */\nexport const decodeCheckedBook = Schema.decodeUnknownEffect(\n  Schema.fromJsonString(Book),\n);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/web/no-naked-object-state-update/serialization/invalid.ts"
           },
           "span": [
-            261,
-            281
+            538,
+            558
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/web/no-naked-object-state-update/serialization/invalid.ts"
           },
           "span": [
-            328,
-            359
+            627,
+            658
           ],
           "sourceCode": null
         },
@@ -81,8 +81,8 @@
             "file": "/project/web/no-naked-object-state-update/serialization/invalid.ts"
           },
           "span": [
-            343,
-            358
+            642,
+            657
           ],
           "sourceCode": null
         },
@@ -110,8 +110,8 @@
             "file": "/project/web/no-naked-object-state-update/serialization/invalid.ts"
           },
           "span": [
-            388,
-            405
+            809,
+            826
           ],
           "sourceCode": null
         },

@@ -31,6 +31,11 @@ const Preset = Schema.fromJsonString(
 /** Discovery requires at least one source file. */
 const FixtureFiles = Schema.NonEmptyArray(Schema.String);
 
+/** Every source case needs a nonempty prose documentation comment. */
+const DocumentedSource = Schema.String.check(
+  Schema.isPattern(/\/\*\*\s*\*?\s*[^*\s/]/),
+);
+
 /**
  * FixtureRepository supplies fixture files and production rules to lint tests.
  * Discovery checks preset registration; loading reads the selected source and rule.
@@ -109,7 +114,9 @@ export class FixtureRepository extends Context.Service<FixtureRepository>()(
         fixture: Fixture,
       ) {
         const { source, rule } = yield* Effect.all({
-          source: fs.readFileString(fixture.file),
+          source: fs
+            .readFileString(fixture.file)
+            .pipe(Effect.flatMap(Schema.decodeUnknownEffect(DocumentedSource))),
           rule: fs.readFileString(
             path.join(packageRoot, "rules", `${fixture.rule}.grit`),
           ),

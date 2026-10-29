@@ -1,39 +1,54 @@
 import { Effect, Match } from "effect";
 
-declare const _unused: Effect.Effect<number>;
+type Phase = "ready" | "loading" | "failed";
 
-const switchDescribe = (kind: "a" | "b" | "c"): string => {
-  switch (kind) {
-    case "a":
-      return "Alpha";
-    case "b":
-      return "Beta";
+/**
+ * Questionably splits pure value selection across switch return paths.
+ * Match can express the complete selection as one value.
+ */
+export const describePhase = (phase: Phase) => {
+  switch (phase) {
+    case "ready":
+      return "Ready";
+    case "loading":
+      return "Loading";
     default:
-      return "Gamma";
+      return "Failed";
   }
 };
 
-function valueSwitchChoose(value) {
-  switch (value) {
-    case 1:
-      return 1;
+export function isReady(phase: Phase) {
+  switch (phase) {
+    case "ready":
+      return true;
     default:
-      return 0;
+      return false;
   }
 }
 
-const matchValueDescribe = (kind: "a" | "b" | "c"): string =>
-  Match.value(kind).pipe(
-    Match.when("a", () => "Alpha"),
-    Match.when("b", () => "Beta"),
-    Match.orElse(() => "Gamma"),
+/**
+ * Correctly uses Match for pure value selection.
+ */
+export const describeMatched = (phase: Phase) =>
+  Match.value(phase).pipe(
+    Match.when("ready", () => "Ready"),
+    Match.when("loading", () => "Loading"),
+    Match.orElse(() => "Failed"),
   );
 
-const operationSwitchChoose = Effect.fn("choose")(function* (value) {
-  switch (value) {
-    case 1:
-      return 1;
+/**
+ * Correctly keeps branching inside a named Effect operation.
+ * The branch executes when the operation runs.
+ */
+export const describeOperation = Effect.fn("describeOperation")(function* (
+  phase: Phase,
+) {
+  switch (phase) {
+    case "ready":
+      return "Ready";
+    case "loading":
+      return "Loading";
     default:
-      return 0;
+      return "Failed";
   }
 });

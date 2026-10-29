@@ -1,5 +1,5 @@
 {
-  "input": "import \"effect\";\n\nconst reactStateHookValue = useState(0);\n\nconst atomSubscriptionValue = useAtomValue(counterAtom);\n",
+  "input": "import { createElement, useState } from \"react\";\n\n/**\n * Questionably owns the canonical count in a component-local hook.\n * Other views cannot subscribe to the value updated by this button.\n */\nexport function Count() {\n  const [count, setCount] = useState(0);\n  return createElement(\n    \"button\",\n    {\n      type: \"button\",\n      onClick: () => setCount((current) => current + 1),\n    },\n    count,\n  );\n}\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/web/no-react-state/state-subscriptions/invalid.ts"
           },
           "span": [
-            46,
-            54
+            249,
+            257
           ],
           "sourceCode": null
         },

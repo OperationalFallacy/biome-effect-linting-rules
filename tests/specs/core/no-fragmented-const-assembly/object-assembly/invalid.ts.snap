@@ -1,5 +1,5 @@
 {
-  "input": "import { Data, Option, Schema } from \"effect\";\n\ntype directConstFragmentFailureKind = Data.TaggedEnum<{\n  Transport: { readonly boundary: string };\n}>;\n\nconst directConstFragmentFailureKind = Data.taggedEnum<directConstFragmentFailureKind>();\n\nconst directConstFragmentApiErrorFields = (error: { readonly message: string }) => ({\n  message: error.message,\n});\n\nconst directConstFragmentApiErrorObject = (error: { readonly message: string }) => ({\n  errorType: \"BoundaryFailure\",\n  ...directConstFragmentApiErrorFields(error),\n});\n\nconst assemblyChainFailureKind = Data.taggedEnum<assemblyChainFailureKind>();\n\nconst assemblyChainApiErrorFields = (message: string) => ({\n  errorMessage: message,\n});\n\nconst assemblyChainApiErrorObject = (error: { readonly message: string }) => ({\n  ...assemblyChainApiErrorFields(error.message),\n  stackTrace: Option.fromNullishOr(error.message).pipe(Option.map((value) => [value])),\n});\n\nclass BoundaryError extends Error {\n  readonly reason: string;\n  readonly cause: unknown;\n\n  constructor(input: {\n    readonly reason: string;\n    readonly parameterName: string;\n    readonly cause: unknown;\n  }) {\n    super(input.reason);\n    this.reason = input.reason;\n    this.cause = input.cause;\n  }\n}\n\nconst errorFields = (cause: unknown) => ({\n  reason: \"Failed to load config\",\n  cause,\n});\n\nconst toBoundaryError = (parameterName: string, cause: unknown) =>\n  new BoundaryError({\n    parameterName,\n    ...errorFields(cause),\n  });\n\ntype Availability = Data.TaggedEnum<{\n  InStock: { readonly copies: number };\n  OnOrder: { readonly expected: string };\n}>;\n\nconst Availability = Data.taggedEnum<Availability>();\nconst BookInput = Schema.Struct({ isbn: Schema.String, title: Schema.String });\n\ntype BookLabel = {\n  readonly isbn: string;\n  readonly text: string;\n};\n\nconst bookLabel = (input: typeof BookInput.Type): BookLabel => {\n  const label: BookLabel = {\n    isbn: input.isbn,\n    text: input.title.trim(),\n  };\n  return label;\n};\n\nconst decodeBook = Schema.decodeUnknownEffect(BookInput);\nconst inStock = Availability.InStock;\nconst labelBook = bookLabel;\n",
+  "input": "import { Data, Option, Schema } from \"effect\";\n\nconst messageFields = (error: Error) => ({ message: error.message });\n\n/**\n * Incorrectly splits response construction across object-fragment helpers.\n * The caller must inspect the helper to discover the complete response shape.\n */\nexport const toResponse = (error: Error) => ({\n  kind: \"Failure\",\n  ...messageFields(error),\n});\n\nexport const toTracedResponse = (error: Error) => ({\n  ...messageFields(error),\n  trace: Option.fromNullishOr(error.stack).pipe(\n    Option.map((stack) => stack.split(\"\\n\")),\n  ),\n});\n\nclass ReadFailure extends Schema.TaggedError<ReadFailure>()(\"ReadFailure\", {\n  operation: Schema.String,\n  reason: Schema.String,\n  cause: Schema.Unknown,\n}) {}\nconst failureFields = (cause: unknown) => ({ reason: \"Read failed\", cause });\n\n/**\n * Incorrectly hides required constructor fields in a spread-producing helper.\n * The construction site no longer describes the complete error value.\n */\nexport const toReadFailure = (operation: string, cause: unknown) =>\n  new ReadFailure({ operation, ...failureFields(cause) });\n\ntype FailureKind = Data.TaggedEnum<{ Read: { readonly operation: string } }>;\nconst FailureKind = Data.taggedEnum<FailureKind>();\n\n/**\n * Correctly exposes a complete tagged constructor as a reusable domain operation.\n */\nexport const readFailureKind = FailureKind.Read;\n\ninterface ErrorView {\n  readonly message: string;\n}\n\n/**\n * Correctly defines a complete typed projection. The return type names the\n * whole result that the helper constructs.\n */\nexport const projectError = (error: Error): ErrorView => ({\n  message: error.message,\n});\n\n/**\n * Correctly exposes a complete schema decoder as a reusable operation.\n */\nexport const decodeErrorView = Schema.decodeUnknownEffect(\n  Schema.Struct({ message: Schema.String }),\n);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-fragmented-const-assembly/object-assembly/invalid.ts"
           },
           "span": [
-            445,
-            527
+            327,
+            376
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/core/no-fragmented-const-assembly/object-assembly/invalid.ts"
           },
           "span": [
-            778,
-            918
+            431,
+            561
           ],
           "sourceCode": null
         },
@@ -81,8 +81,8 @@
             "file": "/project/core/no-fragmented-const-assembly/object-assembly/invalid.ts"
           },
           "span": [
-            1410,
-            1461
+            1049,
+            1087
           ],
           "sourceCode": null
         },

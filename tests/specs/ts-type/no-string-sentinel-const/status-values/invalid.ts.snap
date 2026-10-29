@@ -1,5 +1,5 @@
 {
-  "input": "const stringStatus = \"ready\";\nconst taggedStatus = { _tag: \"Ready\" };\n",
+  "input": "/**\n * Questionably represents an operation's state with a string token.\n * The token cannot carry the data that explains the selected state.\n */\nexport const stringStatus = \"ready\";\n\n/**\n * Correctly represents the state and its associated data in a tagged value.\n */\nexport const taggedStatus = { _tag: \"Ready\", count: 3 };\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/ts-type/no-string-sentinel-const/status-values/invalid.ts"
           },
           "span": [
-            6,
-            28
+            159,
+            181
           ],
           "sourceCode": null
         },

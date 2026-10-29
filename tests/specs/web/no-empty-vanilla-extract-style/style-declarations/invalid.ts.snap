@@ -1,5 +1,5 @@
 {
-  "input": "import { style } from \"@vanilla-extract/css\";\n\nconst emptyStyleHeading = style({});\n\nconst tokenBackedStyleHeading = style({ margin: 0 });\n",
+  "input": "import { style } from \"@vanilla-extract/css\";\n\n/**\n * Questionably creates a heading class with no styling role. Its declaration\n * adds another dependency for consumers without defining a visual property.\n */\nexport const heading = style({});\n\n/**\n * Correctly gives a class a concrete role by resetting its default margin.\n */\nexport const panel = style({ margin: 0 });\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/web/no-empty-vanilla-extract-style/style-declarations/invalid.ts"
           },
           "span": [
-            73,
-            82
+            233,
+            242
           ],
           "sourceCode": null
         },

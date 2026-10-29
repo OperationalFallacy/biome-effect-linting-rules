@@ -1,36 +1,48 @@
-import { Effect } from "effect";
+import { Effect, Option } from "effect";
 import { Atom } from "effect/reactivity";
 
-const bookResultsAtom = Atom.make<readonly string[]>([]);
+type Book = { readonly isbn: string; readonly title: string };
+export const bookResultsAtom = Atom.make<ReadonlyArray<Book>>([]);
+export const visibleBookListAtom = Atom.make<ReadonlyArray<Book>>([]);
+export const booksCollectionAtom = Atom.make<ReadonlyArray<Book>>([]);
 
-const atomGetBookAtom = Atom.family((isbn: string) =>
+/**
+ * Incorrectly makes an item query depend on all search results. A list update
+ * invalidates the item query even when the requested book has not changed.
+ */
+export const effectBookAtom = Atom.family((isbn: string) =>
   Atom.make(
     Effect.gen(function* () {
       const books = yield* Atom.get(bookResultsAtom);
-      return books.find((book) => book === isbn);
+      return Option.fromNullishOr(books.find((book) => book.isbn === isbn));
     }),
   ),
 );
 
-const VisibleBooksAtom = Atom.make<readonly string[]>([]);
-
-const getGetBookAtom = Atom.family((isbn: string) =>
-  Atom.make((get) => get.get(VisibleBooksAtom).find((book) => book === isbn)),
+/**
+ * Incorrectly reads the visible list from each item projection. The dependency
+ * belongs to the list view and couples item reads to its visibility policy.
+ */
+export const contextBookAtom = Atom.family((isbn: string) =>
+  Atom.make((get) =>
+    Option.fromNullishOr(
+      get.get(visibleBookListAtom).find((book) => book.isbn === isbn),
+    ),
+  ),
 );
 
-const getBooksCollectionAtom = Atom.make<readonly string[]>([]);
-
-const getBookAtom = Atom.family((isbn: string) =>
-  Atom.make((get) => get(getBooksCollectionAtom).find((book) => book === isbn)),
+/**
+ * Incorrectly reads the entire collection from each keyed family member.
+ */
+export const directBookAtom = Atom.family((isbn: string) =>
+  Atom.make((get) =>
+    Option.fromNullishOr(
+      get(booksCollectionAtom).find((book) => book.isbn === isbn),
+    ),
+  ),
 );
 
-const booksByKeyAtom = Atom.make<Readonly<Record<string, string>>>({});
-const bookIndexAtom = Atom.make<Readonly<Record<string, string>>>({});
-
-const keyedSourceBookAtom = Atom.family((isbn: string) =>
-  Atom.make((get) => get(booksByKeyAtom)[isbn] ?? get.get(bookIndexAtom)[isbn]),
-);
-
-const outsideFamilyBooksCollectionAtom = Atom.make<readonly string[]>([]);
-
-const bookCountAtom = Atom.make((get) => get(outsideFamilyBooksCollectionAtom).length);
+/**
+ * Correctly reads a collection for a list-level count projection.
+ */
+export const bookCountAtom = Atom.make((get) => get(bookResultsAtom).length);

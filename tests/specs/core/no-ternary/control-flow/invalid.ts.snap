@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst valueTernaryValue = flag ? 1 : 0;\n\nconst deferredDecisionValue = Effect.suspend(() => Effect.succeed(flag ? 1 : 0));\n",
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Questionably uses a ternary for a value-pipeline decision. Match expresses\n * the alternatives through the same composition style as subsequent steps.\n */\nexport const selectLabel = (enabled: boolean) =>\n  enabled ? \"Enabled\" : \"Disabled\";\n\n/**\n * Correctly defers a decision inside Effect.suspend. The condition is read\n * each time the effect executes.\n */\nexport const readDeferredLabel = (state: { enabled: boolean }) =>\n  Effect.suspend(() => Effect.succeed(state.enabled ? \"Enabled\" : \"Disabled\"));\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-ternary/control-flow/invalid.ts"
           },
           "span": [
-            60,
-            64
+            247,
+            254
           ],
           "sourceCode": null
         },

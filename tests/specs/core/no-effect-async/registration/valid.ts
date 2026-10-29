@@ -1,14 +1,17 @@
 import { Effect } from "effect";
 
 interface CounterSource {
-  subscribe(listener: (value: number) => void): () => void;
+  readOnce(listener: (value: number) => void): () => void;
 }
 
-function registerWithCallback(source: CounterSource) {
-  return Effect.callback<number>((resume) => {
-    const unsubscribe = source.subscribe((value) => {
-      resume(Effect.succeed(value));
-    });
-    return Effect.sync(unsubscribe);
+/**
+ * Correctly bridges a one-shot callback with Effect.callback. The returned
+ * cleanup Effect cancels the pending native read on interruption.
+ */
+export const nextCount = (source: CounterSource) =>
+  Effect.callback<number>((resume) => {
+    const cancel = source.readOnce((value) => resume(Effect.succeed(value)));
+    return Effect.sync(cancel);
   });
-}
+
+export const nextCountGeneric = nextCount;

@@ -1,5 +1,5 @@
 {
-  "input": "import { Ref, Struct, Record, Schema, Array, Option } from \"effect\";\n\ndeclare const spreadShelf: Ref.Ref<{ readonly books: Readonly<Record<string, number>> }>;\ndeclare const spreadIsbn: string;\n\nconst spreadAddBook = Ref.update(spreadShelf, (state) => ({\n  ...state,\n  books: { ...state.books, [spreadIsbn]: 1 },\n}));\n\ndeclare const fromEntriesShelf: Ref.Ref<{ readonly books: Readonly<Record<string, number>> }>;\ndeclare const fromEntriesIsbn: string;\n\nconst fromEntriesAddBook = Ref.update(\n  fromEntriesShelf,\n  Struct.evolve({\n    books: (books) => Object.fromEntries([...Object.entries(books), [fromEntriesIsbn, 1]]),\n  }),\n);\n\ndeclare const objectAssignShelf: Ref.Ref<{ readonly books: Readonly<Record<string, number>> }>;\ndeclare const objectAssignIsbn: string;\n\nconst objectAssignAddBook = Ref.update(objectAssignShelf, (state) =>\n  Object.assign({}, state, {\n    books: Object.assign({}, state.books, { [objectAssignIsbn]: 1 }),\n  }),\n);\n\nconst Shelf = Schema.Struct({ books: Schema.Record(Schema.String, Schema.Number) });\ndeclare const effectRecordSetShelf: Ref.Ref<typeof Shelf.Type>;\ndeclare const effectRecordSetIsbn: string;\n\nconst effectRecordSetAddBook = Ref.update(\n  effectRecordSetShelf,\n  Struct.evolve({\n    books: (books) => Shelf.fields.books.make(Record.set(books, effectRecordSetIsbn, 1)),\n  }),\n);\n\ntype Book = { readonly isbn?: string | null; readonly title: string };\n\nconst indexBooks = (books: ReadonlyArray<Book>) =>\n  Object.fromEntries(\n    Array.flatMap(books, (book) =>\n      Option.match(Option.fromNullishOr(book.isbn), {\n        onNone: () => [],\n        onSome: (isbn) => [[isbn, book] as const],\n      }),\n    ),\n  );\n",
+  "input": "import { Array as Arr, Option, Record, Ref, Schema, Struct } from \"effect\";\n\nconst Shelf = Schema.Struct({\n  books: Schema.Record(Schema.String, Schema.Number),\n});\ntype Shelf = typeof Shelf.Type;\n\n/**\n * Incorrectly updates model state through nested object copies. The field\n * change bypasses the model's construction and validation rules.\n */\nexport const addBySpread = (shelf: Ref.Ref<Shelf>, isbn: string) =>\n  Ref.update(shelf, (state) => ({\n    ...state,\n    books: { ...state.books, [isbn]: 1 },\n  }));\n\n/**\n * Incorrectly rebuilds an existing record through raw entries. The update\n * loses the field operation that describes the intended change.\n */\nexport const addByEntries = (shelf: Ref.Ref<Shelf>, isbn: string) =>\n  Ref.update(\n    shelf,\n    Struct.evolve({\n      books: (books) =>\n        Object.fromEntries([...Object.entries(books), [isbn, 1]]),\n    }),\n  );\n\n/**\n * Incorrectly assembles a model update through unvalidated Object.assign copies.\n */\nexport const addByAssign = (shelf: Ref.Ref<Shelf>, isbn: string) =>\n  Ref.update(shelf, (state) =>\n    Object.assign({}, state, {\n      books: Object.assign({}, state.books, { [isbn]: 1 }),\n    }),\n  );\n\n/**\n * Correctly describes a field change and reconstructs that field through its schema.\n */\nexport const addByField = (shelf: Ref.Ref<Shelf>, isbn: string) =>\n  Ref.update(\n    shelf,\n    Struct.evolve({\n      books: (books) => Shelf.fields.books.make(Record.set(books, isbn, 1)),\n    }),\n  );\n\ntype Book = { readonly isbn?: string | null; readonly title: string };\n\n/**\n * Correctly constructs a complete index from source models. Missing identifiers\n * contribute no entry to the newly constructed domain value.\n */\nexport const indexBooks = (books: ReadonlyArray<Book>) =>\n  Object.fromEntries(\n    Arr.flatMap(books, (book) =>\n      Option.match(Option.fromNullishOr(book.isbn), {\n        onNone: () => [],\n        onSome: (isbn): ReadonlyArray<readonly [string, Book]> => [\n          [isbn, book],\n        ],\n      }),\n    ),\n  );\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/web/no-naked-object-state-update/state-updates/invalid.ts"
           },
           "span": [
-            217,
-            316
+            417,
+            510
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/web/no-naked-object-state-update/state-updates/invalid.ts"
           },
           "span": [
-            553,
-            621
+            807,
+            864
           ],
           "sourceCode": null
         },
@@ -81,8 +81,8 @@
             "file": "/project/web/no-naked-object-state-update/state-updates/invalid.ts"
           },
           "span": [
-            841,
-            942
+            1073,
+            1166
           ],
           "sourceCode": null
         },
@@ -110,8 +110,8 @@
             "file": "/project/web/no-naked-object-state-update/state-updates/invalid.ts"
           },
           "span": [
-            879,
-            936
+            1113,
+            1158
           ],
           "sourceCode": null
         },

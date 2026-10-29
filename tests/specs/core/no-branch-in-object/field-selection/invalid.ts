@@ -1,11 +1,12 @@
 import { Result } from "effect";
 
-const fieldDecisionsValue = {
-  count: Result.match(result, { onSuccess: (n) => n, onFailure: () => 0 }),
-};
-
-const count = Result.match(result, {
-  onSuccess: (n) => n,
-  onFailure: () => 0,
+/**
+ * Incorrectly embeds a Result decision inside an object field. The object
+ * mixes value selection with result assembly.
+ */
+export const summarize = (result: Result.Result<number, string>) => ({
+  count: Result.match(result, {
+    onSuccess: (count) => count,
+    onFailure: () => 0,
+  }),
 });
-const selectedFieldsValue = { count };

@@ -1,7 +1,8 @@
-import { Effect } from "effect";
+import { Effect, Ref } from "effect";
 
-type Load = Effect.Effect<number>;
-
-function load(): Effect.Effect<number> {
-  return Effect.succeed(1);
-}
+/**
+ * Questionably hides an operation's Effect channels behind a type alias.
+ * The implementation already supplies the channels that TypeScript can infer.
+ */
+type ReadCount = (counter: Ref.Ref<number>) => Effect.Effect<number>;
+export const readCount: ReadCount = (counter) => Ref.get(counter);

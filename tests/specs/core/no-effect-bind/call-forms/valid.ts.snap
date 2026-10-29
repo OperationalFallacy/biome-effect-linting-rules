@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nconst dependent = Effect.succeed(1).pipe(Effect.flatMap((count) => Effect.succeed(count + 1)));\nconst directYields = Effect.gen(function* () {\n  const count = yield* read;\n  return count + 1;\n});\nconst namedResult = task.pipe(Effect.bindTo(\"count\"));\nconst unrelatedBind = other.bind(\"count\", read);\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Correctly reads dependent values through direct yields and constructs the\n * result record once. The operation retains the decoder's failure channel.\n */\nexport const readCount = Effect.fn(\"readCount\")(function* (input: unknown) {\n  const count = yield* Schema.decodeUnknownEffect(Schema.Int)(input);\n  return { label: \"Counter\", count };\n});\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\nimport { Atom, AtomRegistry } from \"effect/reactivity\";\n\n{\n  const readWithSync = Effect.sync(() => Atom.get(counter));\n}\n\n{\n  const readWithSyncBlock = Effect.sync(() => {\n    return Atom.get(counter);\n  });\n}\n\n{\n  const writeWithSync = Effect.sync(() => Atom.set(counter, 1));\n}\n\n{\n  const writeWithSyncBlock = Effect.sync(() => {\n    return Atom.set(counter, 1);\n  });\n}\n\n{\n  const updateWithSync = Effect.sync(() => Atom.update(counter, (n) => n + 1));\n}\n\n{\n  const updateWithSyncBlock = Effect.sync(() => {\n    return Atom.update(counter, (n) => n + 1);\n  });\n}\n\n{\n  const modifyWithSync = Effect.sync(() => Atom.modify(counter, (n) => [n, n + 1]));\n}\n\n{\n  const modifyWithSyncBlock = Effect.sync(() => {\n    return Atom.modify(counter, (n) => [n, n + 1]);\n  });\n}\n\n{\n  const refreshWithSync = Effect.sync(() => Atom.refresh(counter));\n}\n\n{\n  const refreshWithSyncBlock = Effect.sync(() => {\n    return Atom.refresh(counter);\n  });\n}\n\n{\n  const readDirectly = Atom.get(counter);\n}\n\n{\n  const writeDirectly = Atom.set(counter, 1);\n}\n\n{\n  const updateDirectly = Atom.update(counter, (n) => n + 1);\n}\n\n{\n  const modifyDirectly = Atom.modify(counter, (n) => [n, n + 1]);\n}\n\n{\n  const refreshDirectly = Atom.refresh(counter);\n}\n\n{\n  const counter = Atom.make(0);\n  const atomRegistry = AtomRegistry.make();\n  const read = Effect.sync(() => atomRegistry.get(counter));\n  const write = Effect.sync(() => {\n    atomRegistry.set(counter, 1);\n  });\n}\n\n{\n  const deferredReadFunction = Effect.sync(() => () => Atom.get(counter));\n}\n",
+  "input": "import { Effect } from \"effect\";\nimport { Atom, AtomRegistry } from \"effect/reactivity\";\n\nexport const counter = Atom.make(0);\n\n/**\n * Incorrectly wraps an atom read in sync. The wrapper succeeds with the\n * unexecuted read Effect instead of reading the current count.\n */\nexport const readCount = Effect.sync(() => Atom.get(counter));\nexport const readCountBlock = Effect.sync(() => {\n  return Atom.get(counter);\n});\n\n/**\n * Incorrectly returns a write Effect from sync. The counter is never changed.\n */\nexport const setCount = Effect.sync(() => Atom.set(counter, 1));\nexport const setCountBlock = Effect.sync(() => {\n  return Atom.set(counter, 1);\n});\n\n/**\n * Incorrectly returns an update Effect from sync. The increment remains unexecuted.\n */\nexport const increment = Effect.sync(() =>\n  Atom.update(counter, (count) => count + 1),\n);\nexport const incrementBlock = Effect.sync(() => {\n  return Atom.update(counter, (count) => count + 1);\n});\n\n/**\n * Incorrectly returns a modification Effect from sync. Neither its returned\n * count nor its new state is produced by executing the wrapper.\n */\nexport const takeAndIncrement = Effect.sync(() =>\n  Atom.modify(counter, (count) => [count, count + 1]),\n);\nexport const takeAndIncrementBlock = Effect.sync(() => {\n  return Atom.modify(counter, (count) => [count, count + 1]);\n});\n\n/**\n * Incorrectly returns a refresh Effect from sync. Refreshing remains deferred\n * inside the wrapper's success value.\n */\nexport const refresh = Effect.sync(() => Atom.refresh(counter));\nexport const refreshBlock = Effect.sync(() => {\n  return Atom.refresh(counter);\n});\n\n/**\n * Correctly defers synchronous registry instance methods. The factory owns\n * the registry and exposes disposal alongside its operations.\n */\nexport const makeRegistryOperations = () => {\n  const registry = AtomRegistry.make();\n  return {\n    read: Effect.sync(() => registry.get(counter)),\n    write: Effect.sync(() => {\n      registry.set(counter, 1);\n    }),\n    dispose: () => registry.dispose(),\n  };\n};\n\n/**\n * Correctly creates an owned atom in a deferred factory. The returned function\n * constructs a read operation when its caller requests one.\n */\nexport const makeReader = Effect.sync(() => {\n  const localCounter = Atom.make(0);\n  return () => Atom.get(localCounter);\n});\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
           },
           "span": [
-            133,
-            150
+            316,
+            333
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
           },
           "span": [
-            217,
-            234
+            395,
+            412
           ],
           "sourceCode": null
         },
@@ -81,8 +81,8 @@
             "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
           },
           "span": [
-            289,
-            309
+            548,
+            568
           ],
           "sourceCode": null
         },
@@ -110,8 +110,8 @@
             "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
           },
           "span": [
-            377,
-            397
+            629,
+            649
           ],
           "sourceCode": null
         },
@@ -139,8 +139,8 @@
             "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
           },
           "span": [
-            453,
-            487
+            794,
+            836
           ],
           "sourceCode": null
         },
@@ -168,8 +168,8 @@
             "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
           },
           "span": [
-            556,
-            590
+            900,
+            942
           ],
           "sourceCode": null
         },
@@ -197,8 +197,8 @@
             "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
           },
           "span": [
-            646,
-            685
+            1151,
+            1202
           ],
           "sourceCode": null
         },
@@ -226,8 +226,8 @@
             "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
           },
           "span": [
-            754,
-            793
+            1273,
+            1324
           ],
           "sourceCode": null
         },
@@ -255,8 +255,8 @@
             "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
           },
           "span": [
-            850,
-            871
+            1498,
+            1519
           ],
           "sourceCode": null
         },
@@ -284,8 +284,8 @@
             "file": "/project/web/no-atom-registry-effect-sync/atom-operations/invalid.ts"
           },
           "span": [
-            941,
-            962
+            1579,
+            1600
           ],
           "sourceCode": null
         },

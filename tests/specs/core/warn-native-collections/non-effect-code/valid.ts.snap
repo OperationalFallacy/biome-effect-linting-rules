@@ -1,5 +1,5 @@
 {
-  "input": "import { other } from \"effect-tools\";\n\nconst byId = new Map<string, number>();\nconst nativeOutsideEffectSelected = new Set([\"a\", \"b\"]);\nconst packageName = \"effect\";\n\nconst unrelatedImportSelected = new Set([\"a\"]);\nconst name = \"effect\";\nconst value = other;\n",
+  "input": "import { format } from \"node:util\";\n\n/**\n * Correctly uses native object identity in a module outside Effect composition.\n * Callers use the same object instances to retrieve their stored values.\n */\nexport const index = new Map<{ readonly id: string }, string>();\nexport const selected = new Set<{ readonly id: string }>();\n\n/**\n * Correctly treats a package name as ordinary text for display.\n */\nexport const packageName = format(\"%s\", \"effect\");\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

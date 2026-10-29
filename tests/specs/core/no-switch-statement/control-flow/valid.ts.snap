@@ -1,5 +1,5 @@
 {
-  "input": "import { Match } from \"effect\";\n\nconst label = Match.value(state).pipe(\n  Match.when({ _tag: \"Ready\" }, (ready) => ready.name),\n  Match.when({ _tag: \"Loading\" }, () => \"Loading\"),\n  Match.orElse(() => \"Unknown\"),\n);\n",
+  "input": "import { Effect, Match } from \"effect\";\n\ntype Phase = \"ready\" | \"loading\" | \"failed\";\n\n/**\n * Correctly expresses a pure selection with Match. The result can continue\n * into later transformations as a value.\n */\nexport const describePhase = (phase: Phase) =>\n  Match.value(phase).pipe(\n    Match.when(\"ready\", () => \"Ready\"),\n    Match.when(\"loading\", () => \"Loading\"),\n    Match.orElse(() => \"Failed\"),\n  );\n\nexport const isReady = (phase: Phase) =>\n  Match.value(phase).pipe(\n    Match.when(\"ready\", () => true),\n    Match.orElse(() => false),\n  );\n\nexport const describeMatched = describePhase;\n\n/**\n * Correctly keeps branching inside a named Effect operation.\n * The branch executes when the operation runs.\n */\nexport const describeOperation = Effect.fn(\"describeOperation\")(function* (\n  phase: Phase,\n) {\n  switch (phase) {\n    case \"ready\":\n      return \"Ready\";\n    case \"loading\":\n      return \"Loading\";\n    default:\n      return \"Failed\";\n  }\n});\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

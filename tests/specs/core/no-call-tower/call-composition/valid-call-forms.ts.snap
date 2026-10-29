@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst decodedCount = Schema.decodeUnknownEffect(Schema.Int)(3);\n\n/**\n * Correctly passes an Effect.fn operation as a flatMap callback. The operation\n * performs its work when the preceding effect supplies its input.\n */\nexport const reportCount = Effect.flatMap(\n  decodedCount,\n  Effect.fn(\"reportCount\")(function* (count: number) {\n    yield* Effect.logDebug(\"Count\", count);\n    return count;\n  }),\n);\n\n/**\n * Correctly uses the untraced operation constructor as a flatMap callback.\n */\nexport const reportCountUntraced = Effect.flatMap(\n  decodedCount,\n  Effect.fnUntraced(function* (count: number) {\n    yield* Effect.logDebug(\"Count\", count);\n    return count;\n  }),\n);\n\n/**\n * Correctly uses the eager untraced constructor as a flatMap callback.\n * The callback's first yield supplies an Effect for execution.\n */\nexport const reportCountEager = Effect.flatMap(\n  decodedCount,\n  Effect.fnUntracedEager(function* (count: number) {\n    yield* Effect.logDebug(\"Count\", count);\n    return count;\n  }),\n);\n\n/**\n * Correctly passes an Effect directly to a runner at an integration entry point.\n */\nexport const timestamp = Effect.runSync(\n  Effect.clockWith((clock) => clock.currentTimeMillis),\n);\nexport const timestampExit = Effect.runSyncExit(\n  Effect.clockWith((clock) => clock.currentTimeMillis),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, pipe } from \"effect\";\n\ninterface WorkStore {\n  readonly clearPending: Effect.Effect<void>;\n  readonly clearCompleted: Effect.Effect<void>;\n  readonly invalidateSummary: Effect.Effect<void>;\n  readonly loadItems: Effect.Effect<string>;\n  readonly prepareItems: (items: string) => Effect.Effect<string>;\n  readonly fetchItems: Effect.Effect<string>;\n  readonly saveItems: (items: string) => Effect.Effect<void>;\n}\n\ndeclare const workStore: WorkStore;\n\nconst makeWorkOperations = () =>\n  Effect.gen(function* () {\n    const resetWork = Effect.gen(function* () {\n      yield* workStore.clearPending;\n      yield* workStore.clearCompleted;\n      yield* workStore.invalidateSummary;\n    });\n    const prepare = workStore.loadItems.pipe(Effect.flatMap(workStore.prepareItems));\n    const load = pipe(\n      workStore.loadItems,\n      Effect.map((items) => items),\n    );\n    const refresh = Effect.fnUntraced(function* () {\n      const items = yield* workStore.fetchItems;\n      yield* workStore.saveItems(items);\n      return items;\n    });\n    const reload = Effect.fn(function* () {\n      return yield* workStore.fetchItems;\n    });\n    const tracedReload = Effect.fn(\"reload\")(function* () {\n      return yield* workStore.fetchItems;\n    });\n\n    return { resetWork, prepare, load, refresh, reload, tracedReload };\n  });\n\nmakeWorkOperations satisfies () => Effect.Effect<{\n  readonly resetWork: Effect.Effect<void>;\n  readonly prepare: Effect.Effect<string>;\n  readonly load: Effect.Effect<string>;\n  readonly refresh: () => Effect.Effect<string>;\n  readonly reload: () => Effect.Effect<string>;\n  readonly tracedReload: () => Effect.Effect<string>;\n}>;\n\nconst makeOperations = () =>\n  Effect.gen(function* () {\n    const staged = Effect.succeed(1);\n    const run = Effect.gen(function* () {\n      const parsed = Effect.succeed(2);\n      const evaluated = parsed.pipe(Effect.map((value) => value + 1));\n      return yield* evaluated;\n    });\n    const load = staged.pipe(Effect.map((value) => value + 1));\n\n    return { run, load };\n  });\n",
+  "input": "import { Effect, pipe } from \"effect\";\n\ninterface WorkStore {\n  readonly clearPending: Effect.Effect<void>;\n  readonly clearCompleted: Effect.Effect<void>;\n  readonly invalidateSummary: Effect.Effect<void>;\n  readonly loadItems: Effect.Effect<string>;\n  readonly prepareItems: (items: string) => Effect.Effect<string>;\n  readonly fetchItems: Effect.Effect<string>;\n  readonly saveItems: (items: string) => Effect.Effect<void>;\n}\n\n/**\n * Correctly exposes complete workflows through the returned API. Query effects\n * and callable operations each describe the complete work their caller requests.\n */\nexport const makeWorkOperations = (store: WorkStore) =>\n  Effect.gen(function* () {\n    const resetWork = Effect.gen(function* () {\n      yield* store.clearPending;\n      yield* store.clearCompleted;\n      yield* store.invalidateSummary;\n    });\n    const prepare = store.loadItems.pipe(Effect.flatMap(store.prepareItems));\n    const load = pipe(\n      store.loadItems,\n      Effect.map((items) => items.trim()),\n    );\n    const refresh = Effect.fnUntraced(function* () {\n      const items = yield* store.fetchItems;\n      yield* store.saveItems(items);\n      return items;\n    });\n    const reload = Effect.fn(function* () {\n      return yield* store.fetchItems;\n    });\n    const tracedReload = Effect.fn(\"reload\")(function* () {\n      return yield* store.fetchItems;\n    });\n    return { resetWork, prepare, load, refresh, reload, tracedReload };\n  });\n\n/**\n * Incorrectly stages clock reads before exposed queries and inside an operation.\n * The API members need continuous pipelines within their own operation bodies.\n */\nexport const makeTimeOperations = () =>\n  Effect.gen(function* () {\n    const staged = Effect.clockWith((clock) => clock.currentTimeMillis);\n    const run = Effect.gen(function* () {\n      const read = Effect.clockWith((clock) => clock.currentTimeMillis);\n      const formatted = read.pipe(\n        Effect.map((time) => new Date(time).toISOString()),\n      );\n      return yield* formatted;\n    });\n    const load = staged.pipe(\n      Effect.map((time) => new Date(time).toISOString()),\n    );\n    return { run, load };\n  });\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-effect-step-const-staging/service-operations/invalid.ts"
           },
           "span": [
-            1730,
-            1763
+            1700,
+            1768
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/core/no-effect-step-const-staging/service-operations/invalid.ts"
           },
           "span": [
-            1812,
-            1845
+            1817,
+            1883
           ],
           "sourceCode": null
         },
@@ -81,8 +81,8 @@
             "file": "/project/core/no-effect-step-const-staging/service-operations/invalid.ts"
           },
           "span": [
-            1852,
-            1916
+            1890,
+            1987
           ],
           "sourceCode": null
         },

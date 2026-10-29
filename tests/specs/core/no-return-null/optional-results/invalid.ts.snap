@@ -1,5 +1,5 @@
 {
-  "input": "import { Option } from \"effect\";\n\nfunction nullResultLoad() {\n  return null;\n}\n\nfunction optionalResultLoad() {\n  return Option.none();\n}\n",
+  "input": "import { Array as Arr, Option } from \"effect\";\n\nconst profiles = [{ id: \"guest-1\", name: \"Mira\" }];\n\n/**\n * Incorrectly unwraps an Option into a null sentinel. Callers lose the optional\n * value composition already provided by the lookup.\n */\nexport const findProfile = (id: string) => {\n  const profile = Arr.findFirst(profiles, (profile) => profile.id === id);\n  if (Option.isSome(profile)) {\n    return profile.value;\n  }\n  return null;\n};\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-return-null/optional-results/invalid.ts"
           },
           "span": [
-            64,
-            76
+            427,
+            439
           ],
           "sourceCode": null
         },

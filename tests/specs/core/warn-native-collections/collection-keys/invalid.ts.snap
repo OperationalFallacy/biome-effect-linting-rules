@@ -1,5 +1,5 @@
 {
-  "input": "import { Data, HashMap, HashSet, Effect, Array as Arr } from \"effect\";\nimport * as Equal from \"effect/Equal\";\n\nclass Key extends Data.Class<{ readonly id: string }> {}\nconst byDomainKey = new Map<Key, string>([[new Key({ id: \"a\" }), \"first\"]]);\nconst selectedDomainKeys = new Set<Key>([new Key({ id: \"a\" })]);\n\nconst itemKey = (group: string, id: number) => ({ group, id });\nconst collectionKeysItems = new Map<ReturnType<typeof itemKey>, string>();\nconst selectedItems = new Set<ReturnType<typeof itemKey>>();\n\nconst cellKey = (row: number, column: number) => [row, column];\nconst cells = new Map<ReturnType<typeof cellKey>, string>();\n\nconst qualifiedKey = (id: string) => ({ id });\nconst qualifiedIndex = new globalThis.Map<ReturnType<typeof qualifiedKey>, number>();\nconst qualifiedSelection = new globalThis.Set<ReturnType<typeof qualifiedKey>>();\n\nconst plainKey = (id: string) => ({ id });\nconst plainIndex = new Map<ReturnType<typeof plainKey>, number>();\n\nconst structuralIndex = HashMap.empty<ReturnType<typeof itemKey>, string>();\nconst structuralSelection = HashSet.empty<ReturnType<typeof itemKey>>();\nconst scalarKeys = HashMap.empty<string, number>();\nconst selectedScalars = HashSet.empty<string>();\nconst objectValues = new Map<string, ReturnType<typeof itemKey>>();\nconst plainStructuralIndex = HashMap.empty<ReturnType<typeof plainKey>, number>();\n\nconst bareConstructorsIndex = new Map();\nconst bareConstructorsSelected = new Set();\nconst bareConstructorsReady = Effect.succeed(true);\n\ndeclare const custom: { Map: new () => object; Set: new () => object };\nconst otherConstructorsIndex = new custom.Map();\nconst otherConstructorsSelected = new custom.Set();\nconst weakIndex = new WeakMap<object, string>();\nconst weakSelected = new WeakSet<object>();\nconst otherConstructorsReady = Effect.succeed(true);\n\nconst cache = new Map<object, string>();\nconst referenceKeysReady = Effect.succeed(true);\n\nconst keyString = (key: { id: string }) => key.id;\nconst records = new Map<ReturnType<typeof keyString>, string>();\nconst scalarFactorySelected = new Set<ReturnType<typeof keyString>>();\nconst view = { ready: true };\n\nconst scalarKeysById = new Map<string, number>();\nconst selectedIds = new Set([\"a\", \"b\"]);\nconst scalarKeysReady = Effect.succeed(true);\n\nconst stringIndexItems = [{ id: \"first\", value: 1 }];\nconst stringIndexById = new Map(Arr.map(stringIndexItems, (item) => [item.id, item.value]));\n\nconst untypedCollectionSelected = new Set();\nconst equal = Equal.equals;\n",
+  "input": "import { Data, HashMap, HashSet } from \"effect\";\n\nclass Key extends Data.Class<{ readonly id: string }> {}\n\n/**\n * Questionably uses native collections for value-object keys. A fresh equal\n * key has a different object identity, so a native lookup misses the stored entry.\n */\nexport const byDomainKey = new Map<Key, string>([\n  [new Key({ id: \"guest-1\" }), \"Mira\"],\n]);\nexport const selectedDomainKeys = new Set<Key>([new Key({ id: \"guest-1\" })]);\n\n/**\n * Questionably uses reconstructed record keys with native Map and Set.\n * The logical identity comes from the fields of each key.\n */\nconst itemKey = (group: string, id: number) => ({ group, id });\nexport const items = new Map<ReturnType<typeof itemKey>, string>([\n  [itemKey(\"catalog\", 3), \"Mira\"],\n]);\nexport const selectedItems = new Set<ReturnType<typeof itemKey>>([\n  itemKey(\"catalog\", 3),\n]);\n\n/**\n * Questionably keys a native Map by reconstructed coordinate arrays.\n * Equal row and column values do not identify the same native key instance.\n */\nconst cellKey = (row: number, column: number): readonly [number, number] => [\n  row,\n  column,\n];\nexport const cells = new Map<ReturnType<typeof cellKey>, string>([\n  [cellKey(0, 1), \"occupied\"],\n]);\n\n/**\n * Questionably uses qualified native constructors for record-valued keys.\n * Constructor qualification preserves the same reference-equality behavior.\n */\nconst qualifiedKey = (id: string) => ({ id });\nexport const qualifiedIndex = new globalThis.Map<\n  ReturnType<typeof qualifiedKey>,\n  number\n>([[qualifiedKey(\"guest-1\"), 3]]);\nexport const qualifiedSelection = new globalThis.Set<\n  ReturnType<typeof qualifiedKey>\n>([qualifiedKey(\"guest-1\")]);\n\n/**\n * Questionably treats plain record keys as stable native identities.\n */\nconst plainKey = (id: string) => ({ id });\nexport const plainIndex = new Map<ReturnType<typeof plainKey>, number>([\n  [plainKey(\"guest-1\"), 3],\n]);\n\n/**\n * Correctly uses Effect collections for record keys that require value equality.\n */\nexport const structuralIndex = HashMap.make([itemKey(\"catalog\", 3), \"Mira\"]);\nexport const structuralSelection = HashSet.make(itemKey(\"catalog\", 3));\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
           },
           "span": [
-            188,
-            243
+            304,
+            369
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
           },
           "span": [
-            272,
-            308
+            405,
+            447
           ],
           "sourceCode": null
         },
@@ -81,8 +81,8 @@
             "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
           },
           "span": [
-            403,
-            448
+            674,
+            757
           ],
           "sourceCode": null
         },
@@ -110,8 +110,8 @@
             "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
           },
           "span": [
-            472,
-            509
+            788,
+            853
           ],
           "sourceCode": null
         },
@@ -139,8 +139,8 @@
             "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
           },
           "span": [
-            590,
-            635
+            1130,
+            1209
           ],
           "sourceCode": null
         },
@@ -168,8 +168,8 @@
             "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
           },
           "span": [
-            708,
-            769
+            1449,
+            1546
           ],
           "sourceCode": null
         },
@@ -197,8 +197,8 @@
             "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
           },
           "span": [
-            798,
-            851
+            1582,
+            1664
           ],
           "sourceCode": null
         },
@@ -226,8 +226,8 @@
             "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
           },
           "span": [
-            916,
-            962
+            1814,
+            1891
           ],
           "sourceCode": null
         },

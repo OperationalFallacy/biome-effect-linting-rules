@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, pipe } from \"effect\";\n\ndeclare const readSession: Effect.Effect<string>;\n\nconst loadSession = () =>\n  pipe(\n    readSession,\n    Effect.map((session) => session.trim()),\n  );\n\nfunction loadSessionDirect() {\n  return Effect.map(readSession, (session) => session.trim());\n}\n\nfunction intermediateApi() {\n  const read = Effect.fn(\"read\")(function* () {\n    const fragment = () => Effect.succeed(1);\n    return yield* fragment();\n  });\n  return { read };\n}\n\nfunction normalizeSession(session: string): string {\n  return session.trim();\n}\n\n{\n  function pipelineApi() {\n    const read = pipe(\n      Effect.succeed(1),\n      Effect.map((n) => n + 1),\n    );\n    return { read };\n  }\n}\n\n{\n  function forwardedApi() {\n    const read = () => Effect.succeed(1);\n    return { read };\n  }\n}\n\n{\n  function parameterizedApi() {\n    const read = (id: number) =>\n      pipe(\n        Effect.succeed(id),\n        Effect.map((n) => n + 1),\n      );\n    return { read };\n  }\n}\n",
+  "input": "import { Effect, pipe } from \"effect\";\n\ninterface SessionStore {\n  readonly read: Effect.Effect<string>;\n}\n\n/**\n * Incorrectly hides an intermediate Effect transformation behind a local function.\n * The complete operation must follow that wrapper to find its next step.\n */\nexport const loadSession = Effect.fn(\"loadSession\")((store: SessionStore) => {\n  const normalize = () => Effect.map(store.read, (session) => session.trim());\n  return normalize();\n});\n\n/**\n * Questionably defines an Effect operation as a plain forwarding function.\n * A named Effect.fn operation can carry its identity and tracing with the work.\n */\nfunction loadSessionDirect(store: SessionStore) {\n  return Effect.map(store.read, (session) => session.trim());\n}\nexport const fromForwarder = (store: SessionStore) => loadSessionDirect(store);\n\n/**\n * Correctly keeps pure normalization as an ordinary function.\n */\nexport function normalizeSession(session: string) {\n  return session.trim();\n}\n\n/**\n * Correctly exposes a complete query through the returned service API.\n */\nexport function pipelineApi() {\n  const read = pipe(\n    Effect.clockWith((clock) => clock.currentTimeMillis),\n    Effect.map((time) => new Date(time).toISOString()),\n  );\n  return { read };\n}\n\n/**\n * Correctly exposes a callable query as a direct API operation.\n */\nexport function forwardedApi() {\n  const read = () => Effect.clockWith((clock) => clock.currentTimeMillis);\n  return { read };\n}\n\n/**\n * Correctly exposes a parameterized query that performs a complete transformation.\n */\nexport function parameterizedApi() {\n  const read = (offset: number) =>\n    pipe(\n      Effect.clockWith((clock) => clock.currentTimeMillis),\n      Effect.map((time) => new Date(time + offset).toISOString()),\n    );\n  return { read };\n}\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-effect-wrapper-alias/operation-wrappers/invalid.ts"
           },
           "span": [
-            193,
-            288
+            355,
+            431
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/core/no-effect-wrapper-alias/operation-wrappers/invalid.ts"
           },
           "span": [
-            371,
-            412
+            624,
+            737
           ],
           "sourceCode": null
         },

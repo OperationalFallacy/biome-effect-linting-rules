@@ -1,11 +1,14 @@
-import { Match, pipe, Schema } from "effect";
+import { Match } from "effect";
 
-const manualBooleanInputValue = Match.value(input).pipe(
-  Match.when(
-    (n) => typeof n === "boolean",
-    (n) => n,
-  ),
-  Match.orElse(() => null),
-);
-
-const decodedBooleanValue = Schema.decodeUnknownEffect(Schema.Boolean)(input);
+/**
+ * Incorrectly converts malformed boolean input into a null sentinel.
+ * Rejection loses the structured failure information needed by Effect callers.
+ */
+export const decodeEnabled = (input: unknown) =>
+  Match.value(input).pipe(
+    Match.when(
+      (value: unknown): value is boolean => typeof value === "boolean",
+      (value) => value,
+    ),
+    Match.orElse(() => null),
+  );

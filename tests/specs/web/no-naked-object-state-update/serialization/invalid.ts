@@ -1,17 +1,32 @@
 import { Effect, Schema } from "effect";
 
-declare const book: { readonly title: string };
-declare const write: (payload: string) => Effect.Effect<void>;
-declare const read: () => Effect.Effect<string>;
+const Book = Schema.Struct({ title: Schema.String });
+interface Storage {
+  readonly write: (payload: string) => Effect.Effect<void>;
+  readonly read: Effect.Effect<string>;
+}
 
-const copyBook = Effect.gen(function* () {
-  yield* write(JSON.stringify(book));
-  const raw = yield* read();
-  yield* write(JSON.stringify(JSON.parse(raw)));
-});
+/**
+ * Incorrectly serializes model data through raw JSON calls. Parsing can throw,
+ * and the operation never checks the stored payload against its model schema.
+ */
+export const copyBook = Effect.fn("copyBook")(
+  (book: typeof Book.Type, storage: Storage) =>
+    Effect.gen(function* () {
+      yield* storage.write(JSON.stringify(book));
+      const raw = yield* storage.read;
+      yield* storage.write(JSON.stringify(JSON.parse(raw)));
+    }),
+);
 
-const rawJsonValue = JSON.parse(input);
+/**
+ * Incorrectly accepts a parsed value without model validation or a typed failure.
+ */
+export const decodeBook = (input: string) => JSON.parse(input);
 
-const schemaJsonValue = Schema.decodeUnknownEffect(
-  Schema.fromJsonString(Schema.Struct({ id: Schema.String })),
-)(input);
+/**
+ * Correctly decodes serialized model data through its JSON schema.
+ */
+export const decodeCheckedBook = Schema.decodeUnknownEffect(
+  Schema.fromJsonString(Book),
+);

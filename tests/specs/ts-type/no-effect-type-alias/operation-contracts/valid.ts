@@ -1,5 +1,9 @@
-import { Effect } from "effect";
+import { Effect, Ref } from "effect";
 
-const loadUser = Effect.fn("loadUser")(function* (id: string) {
-  return yield* repository.findUser(id);
-});
+/**
+ * Correctly infers the named operation's channels from its implementation.
+ * The operation's type follows the effect it returns.
+ */
+export const readCount = Effect.fn("readCount")((counter: Ref.Ref<number>) =>
+  Ref.get(counter),
+);
