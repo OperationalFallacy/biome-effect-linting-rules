@@ -1,53 +1,21 @@
-file($body) where {
-    or {
-        $body <: contains `"@effect/atom-react"`,
-        $body <: contains `Atom.family($...)`
+language js(typescript, jsx)
+
+or {
+    `get($atom)` as $read,
+    `get.get($atom)` as $read,
+    `Atom.get($atom)` as $read
+} where {
+    $read <: within `Atom.family($args)`,
+    $read <: or {
+        r".*CollectionAtom\).*",
+        r".*ListAtom\).*",
+        r".*Visible.*Atom\).*",
+        r".*ResultsAtom\).*",
+        r".*ReadStateAtom\).*"
     },
-    or {
-        $body <: contains `Atom.family($...)` as $familyCall where {
-            $familyCall <: contains `get($atom)` as $read,
-            $read <: or {
-                r".*CollectionAtom\).*",
-                r".*ListAtom\).*",
-                r".*Visible.*Atom\).*",
-                r".*ResultsAtom\).*",
-                r".*ReadStateAtom\).*"
-            },
-            register_diagnostic(
-                span = $atom,
-                message = "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact.",
-                severity = "error"
-            )
-        },
-        $body <: contains `Atom.family($...)` as $familyCall where {
-            $familyCall <: contains `get.get($atom)` as $read,
-            $read <: or {
-                r".*CollectionAtom\).*",
-                r".*ListAtom\).*",
-                r".*Visible.*Atom\).*",
-                r".*ResultsAtom\).*",
-                r".*ReadStateAtom\).*"
-            },
-            register_diagnostic(
-                span = $atom,
-                message = "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact.",
-                severity = "error"
-            )
-        },
-        $body <: contains `Atom.family($...)` as $familyCall where {
-            $familyCall <: contains `Atom.get($atom)` as $read,
-            $read <: or {
-                r".*CollectionAtom\).*",
-                r".*ListAtom\).*",
-                r".*Visible.*Atom\).*",
-                r".*ResultsAtom\).*",
-                r".*ReadStateAtom\).*"
-            },
-            register_diagnostic(
-                span = $atom,
-                message = "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact.",
-                severity = "error"
-            )
-        }
-    }
+    register_diagnostic(
+        span = $atom,
+        message = "Read keyed sources from row or item atoms. A dependency on the collection couples each item projection to the list. Use a SourceAtom, ByKeyAtom, or IndexAtom for item reads. Keep route and list projections separate, with names that describe that role. This rule identifies collection reads by atom name. A new name for the collection leaves the item dependency intact.",
+        severity = "error"
+    )
 }

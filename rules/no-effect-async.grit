@@ -1,10 +1,9 @@
-file($body) where {
+language js(typescript, jsx)
+
+JsCallExpression(callee = `Effect.async`) as $async where {
+    $async <: within JsModule() as $body,
     $body <: contains bubble JsModuleSource() as $moduleSource where {
         $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    or {
-        $body <: contains `Effect.async($args)` as $async,
-        $body <: contains `Effect.async<$types>($args)` as $async
     },
     register_diagnostic(
         span = $async,

@@ -1,10 +1,12 @@
-file($body) where {
+language js(typescript, jsx)
+
+or {
+    `Option.fromNullishOr($value ?? null)` as $call,
+    `Option.fromNullishOr($value ?? undefined)` as $call
+} where {
+    $call <: within JsModule() as $body,
     $body <: contains bubble JsModuleSource() as $moduleSource where {
         $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    or {
-        $body <: contains `Option.fromNullishOr($value ?? null)` as $call,
-        $body <: contains `Option.fromNullishOr($value ?? undefined)` as $call
     },
     register_diagnostic(
         span = $call,

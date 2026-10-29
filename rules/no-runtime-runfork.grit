@@ -1,10 +1,9 @@
-file($body) where {
+language js(typescript, jsx)
+
+or { `Effect.runFork($args)` as $runFork, `Effect.runForkWith($args)` as $runFork } where {
+    $runFork <: within JsModule() as $body,
     $body <: contains bubble JsModuleSource() as $moduleSource where {
         $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    or {
-        $body <: contains `Effect.runFork($args)` as $runFork,
-        $body <: contains `Effect.runForkWith($args)` as $runFork
     },
     $runFork <: within or {
         `Effect.gen($ownerArgs)`,

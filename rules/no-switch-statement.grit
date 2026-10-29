@@ -1,8 +1,10 @@
-file($body) where {
+language js(typescript, jsx)
+
+JsSwitchStatement() as $switch where {
+    $switch <: within JsModule() as $body,
     $body <: contains bubble JsModuleSource() as $moduleSource where {
         $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
-    $body <: contains JsSwitchStatement() as $switch,
     $switch <: not within or {
         `Effect.gen($ownerArgs)`,
         `Effect.fn($ownerArgs)`,
