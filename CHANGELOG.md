@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.1.0-dev.1](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.0...v0.1.0-dev.1) (2026-10-29)
+
+
+### Features
+
+* replace custom CLI with native Effect commands and scoped Biome ([aa5c958](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/aa5c95848b9a283ec8a19fd1eccacba4510e97d2))
+* ship native Effect CLI and fixture-based rule testing ([f99d9ff](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/f99d9ff2f49fbf95fa6f99b372c7ea99733df023))
+* ship native Effect CLI and fixture-based rule testing ([f99d9ff](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/f99d9ff2f49fbf95fa6f99b372c7ea99733df023))
+
+
+### Bug Fixes
+
+* clarify service layers and preserve callback semantics ([022a877](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/022a87748203c96cb92481eaa23af15c0c9b0ff4))
+* compile Effect CLI modules for installed Node packages ([762b1af](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/762b1afcc20635961d93f96372a570b67b40fc20))
+* complete Effect-native tooling and pass release checks ([3283361](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/3283361d55d99dd5f3ff02bff7c3beb67a98d704))
+* distinguish status constants from ordinary text ([a41c0aa](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/a41c0aac14ddc3c53c1368ddbec697920ff183fe))
+* match only direct object spreads in fragment assembly rule ([a1ced38](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/a1ced38d215783ca93868ef2cfe8fe14bb035fe4))
+* preserve repeated matches and import scope in Effect rules ([628f963](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/628f963ab1625d94fe45212894b47ea45af4594e))
+* restrict expression callback advice to single return bodies ([4410d13](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/4410d13f6d52941d557988591e6c2fba48f023df))
+
 ## [0.1.0-dev.0](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.9...v0.1.0-dev.0) (2026-10-28)
 
 
