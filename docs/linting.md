@@ -62,10 +62,6 @@ static readonly layer = Layer.effect(Counter, Counter.make);
 
 Use that form inside dependency-composition pipelines too. `no-layer-this-reference` applies to static layer fields in `Context.Service` classes, not ordinary instance methods. This is the package's readability convention. Effect supports `Layer.effect(this, this.make)`.
 
-### Constructor callbacks
-
-Keep a constructible function or class when a mock will be called with `new`. An arrow function cannot replace it. The presets disable Biome's `useArrowFunction` rule to avoid unsafe constructor rewrites. The callback-return rule applies only to single-return transformation callbacks, not constructor mocks or callbacks with several steps.
-
 ### Data and state
 
 Decode external data with Schema and use the decoded values in services. Define optional boolean defaults in the schema so each service applies the same policy. Put the required validation in that decoder so its result is ready for the operation. Express absence with `Option`, failures with typed errors, and status choices with tagged unions.
