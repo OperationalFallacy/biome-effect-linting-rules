@@ -19,10 +19,13 @@ const project = new javascript.NodeProject({
   defaultReleaseBranch: "master",
   description:
     "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
-  deps: ["@biomejs/wasm-nodejs@2.6.3", "effect@4.0.6"],
+  deps: [
+    "@biomejs/wasm-nodejs@2.6.3",
+    "@effect/platform-node-shared@4.0.6",
+    "effect@4.0.6",
+  ],
   devDeps: [
     "@biomejs/biome@2.6.3",
-    "@effect/platform-node-shared@4.0.6",
     "@types/node@^24",
     "projen@^0.98.34",
     "tsx@^4.20.6",
@@ -45,6 +48,7 @@ const project = new javascript.NodeProject({
   license: "MIT",
   licensed: true,
   majorVersion: 0,
+  minNodeVersion: "24.0.0",
   name: "lintEffect",
   npmAccess: javascript.NpmAccess.PUBLIC,
   npmDistTag: "latest",
@@ -74,6 +78,7 @@ project.release?.publisher?.publishToNpm({
 project.package.addField("files", [
   "biome.jsonc",
   "bin",
+  "src",
   "rules/*.grit",
   "configs",
   "examples",
@@ -84,6 +89,7 @@ project.package.addField("files", [
 ]);
 
 project.package.addField("bin", "./bin/linteffect.mjs");
+project.package.addField("type", "module");
 
 project.package.addField("publishConfig", {
   access: "public",

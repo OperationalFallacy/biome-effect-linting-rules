@@ -246,7 +246,7 @@
           "exec": "yarn install"
         },
         {
-          "exec": "yarn up @biomejs/biome @effect/platform-node-shared @types/node commit-and-tag-version constructs projen tsx typescript vite vitest @biomejs/wasm-nodejs effect"
+          "exec": "yarn up @biomejs/biome @types/node commit-and-tag-version constructs projen tsx typescript vite vitest @biomejs/wasm-nodejs @effect/platform-node-shared effect"
         },
         {
           "exec": "npx projen"

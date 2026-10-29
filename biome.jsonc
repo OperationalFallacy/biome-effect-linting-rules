@@ -45,6 +45,7 @@
       ".projenrc.ts",
       "bin/**",
       "scripts/**",
+      "src/**",
       "tests/**/*.test.ts",
       "tests/support/**",
       "vitest.config.mts",

@@ -34,7 +34,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",
-    "@effect/platform-node-shared": "4.0.6",
     "@types/node": "^24",
     "commit-and-tag-version": "^12",
     "constructs": "^10.0.0",
@@ -46,6 +45,7 @@
   },
   "dependencies": {
     "@biomejs/wasm-nodejs": "2.6.3",
+    "@effect/platform-node-shared": "4.0.6",
     "effect": "4.0.6"
   },
   "keywords": [
@@ -57,6 +57,9 @@
     "lint",
     "typescript"
   ],
+  "engines": {
+    "node": ">= 24.0.0"
+  },
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -66,6 +69,7 @@
   "files": [
     "biome.jsonc",
     "bin",
+    "src",
     "rules/*.grit",
     "configs",
     "examples",
@@ -74,6 +78,7 @@
     "README.md",
     "LICENSE"
   ],
+  "type": "module",
   "exports": {
     ".": "./configs/full.jsonc",
     "./recommended": "./configs/full.jsonc",

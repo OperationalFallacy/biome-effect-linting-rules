@@ -42,7 +42,9 @@ You can check your code with `npx` without changes to your project's dependencie
 npx @catenarycloud/linteffect check src --preset=core
 ```
 
-The command checks `src` with the core preset and leaves your source files unchanged. It runs Biome with the selected preset in a temporary configuration, independently of your project's Biome settings.
+The command requires Node.js 24 or newer. It checks `src` with the core preset and leaves your source files unchanged. It runs Biome's WebAssembly engine in the same Node.js process, independently of your project's Biome settings. It loads the selected rules into an isolated in-memory workspace and creates no temporary configuration files.
+
+Directory targets include supported files recursively. The CLI skips dependency and version-control directories during traversal, and it never follows directory symlinks. Files larger than 1 MiB fail the check.
 
 Choose `core`, `web`, `ts-type`, or `full` with `--preset`. The [preset table](#presets) describes each group. If you omit `--preset`, the command uses `full`.
 
@@ -82,6 +84,8 @@ Create a `biome.json` or `biome.jsonc` with the core preset in `extends`. If you
 }
 ```
 
+The presets use Biome 2.6.3's configuration schema. The standalone CLI bundles the matching WebAssembly engine and does not need a separate Biome installation.
+
 With Yarn Berry, set `nodeLinker: node-modules` so Biome can find the rules in `node_modules`.
 
 ### Run your project checks
@@ -114,6 +118,10 @@ The [guide](./docs/linting.md) explains the diagnostics and how to fix the code.
 ## Develop and contribute
 
 Clone this repository and install its development dependencies with `yarn install`. Run `yarn test` to check the rules and `yarn build` to regenerate project files, run the tests, and create the npm archive.
+
+`yarn lint` checks implementation code with this checkout's Grit rules. It also runs before tests and builds. Fixture source files stay outside this check because they contain deliberate violations.
+
+Add rule test cases using the [fixture layout and commands](tests/specs/README.md).
 
 The rules are in `rules/*.grit`, and the files in `configs/` list the rules for each preset. The project uses Projen. Edit [`.projenrc.ts`](./.projenrc.ts) to change package metadata or build tasks.
 

@@ -6,11 +6,6 @@
       "type": "build"
     },
     {
-      "name": "@effect/platform-node-shared",
-      "version": "4.0.6",
-      "type": "build"
-    },
-    {
       "name": "@types/node",
       "version": "^24",
       "type": "build"
@@ -52,6 +47,11 @@
     {
       "name": "@biomejs/wasm-nodejs",
       "version": "2.6.3",
+      "type": "runtime"
+    },
+    {
+      "name": "@effect/platform-node-shared",
+      "version": "4.0.6",
       "type": "runtime"
     },
     {
