@@ -1,23 +1,31 @@
-import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { createRequire } from "node:module";
-import { tmpdir } from "node:os";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import process from "node:process";
 import { runInNewContext } from "node:vm";
 
-import { Schema } from "effect";
-import { describe, expect, it, vi } from "vitest";
+import {
+  Effect,
+  FileSystem,
+  Layer,
+  ManagedRuntime,
+  Path,
+  Schema,
+  Stream,
+} from "effect";
+import { afterAll, describe, expect, it, vi } from "vitest";
 
-const require = createRequire(import.meta.url);
-const root = fileURLToPath(new URL("../../../", import.meta.url));
-const nativeBin = path.join(
-  path.dirname(require.resolve("@biomejs/biome/package.json")),
-  "bin",
-  "biome",
+import {
+  NodeChildProcessSpawner,
+  NodeFileSystem,
+  NodePath,
+} from "@effect/platform-node-shared";
+import { ChildProcess } from "effect/process";
+
+const runtime = ManagedRuntime.make(
+  NodeChildProcessSpawner.layer.pipe(
+    Layer.provideMerge(Layer.mergeAll(NodeFileSystem.layer, NodePath.layer)),
+  ),
 );
+afterAll(() => runtime.dispose());
 
-const constructorFixture = new URL("./mock.js", import.meta.url);
 const Configuration = Schema.fromJsonString(
   Schema.Struct({
     plugins: Schema.Array(Schema.String),
@@ -29,61 +37,72 @@ const PluginPath = Schema.TemplateLiteralParser([
   Schema.NonEmptyString,
 ]);
 
-function loadFullPreset() {
-  const configPath = path.join(root, "configs", "full.jsonc");
-  const configuration = Schema.decodeUnknownSync(Configuration)(
-    readFileSync(configPath, "utf8"),
-  );
-
-  return {
-    plugins: configuration.plugins.map((plugin) => {
-      const [, relative] = Schema.decodeUnknownSync(PluginPath)(plugin);
-      return path.join(root, relative);
-    }),
-    linter: configuration.linter,
-  };
-}
-
 describe("Constructor callbacks", () => {
   it.each([false, true])(
     "It allows constructor mocks after a full configured check with lint enabled %s",
-    (enabled) => {
-      const directory = mkdtempSync(
-        path.join(tmpdir(), "linteffect-constructor-"),
-      );
-      const configPath = path.join(directory, "biome.json");
-      const sourcePath = path.join(directory, "constructor.test.js");
+    (enabled) =>
+      runtime.runPromise(
+        Effect.gen(function* () {
+          const fs = yield* FileSystem.FileSystem;
+          const path = yield* Path.Path;
+          const root = yield* path.fromFileUrl(
+            new URL("../../../", import.meta.url),
+          );
+          const directory = yield* fs.makeTempDirectoryScoped();
+          const sourcePath = path.join(directory, "constructor.test.js");
+          const configuration = yield* fs
+            .readFileString(path.join(root, "configs", "full.jsonc"))
+            .pipe(Effect.flatMap(Schema.decodeUnknownEffect(Configuration)));
+          const plugins = yield* Effect.forEach(
+            configuration.plugins,
+            (plugin) =>
+              Schema.decodeUnknownEffect(PluginPath)(plugin).pipe(
+                Effect.map(([, relative]) => path.join(root, relative)),
+              ),
+          );
+          yield* Schema.encodeEffect(Configuration)({
+            plugins,
+            linter: configuration.linter,
+          }).pipe(
+            Effect.flatMap((text) =>
+              fs.writeFileString(path.join(directory, "biome.json"), text),
+            ),
+          );
+          const fixture = yield* path.fromFileUrl(
+            new URL("./mock.js", import.meta.url),
+          );
+          yield* fs.copyFile(fixture, sourcePath);
 
-      try {
-        writeFileSync(
-          configPath,
-          Schema.encodeSync(Configuration)(loadFullPreset()),
-        );
-        writeFileSync(sourcePath, readFileSync(constructorFixture, "utf8"));
-
-        const result = spawnSync(
-          process.execPath,
-          [
-            nativeBin,
+          const child = yield* ChildProcess.make(process.execPath, [
+            path.join(
+              root,
+              "node_modules",
+              "@biomejs",
+              "biome",
+              "bin",
+              "biome",
+            ),
             "check",
             "--write",
             `--linter-enabled=${enabled}`,
             `--config-path=${directory}`,
             sourcePath,
-          ],
-          { encoding: "utf8" },
-        );
+          ]);
+          const result = yield* Effect.all(
+            {
+              status: child.exitCode,
+              stdout: child.stdout.pipe(Stream.decodeText(), Stream.mkString),
+              stderr: child.stderr.pipe(Stream.decodeText(), Stream.mkString),
+            },
+            { concurrency: "unbounded" },
+          );
+          expect(result.status, result.stderr).toBe(0);
 
-        expect(result.status, result.stderr).toBe(0);
-
-        const checkedSource = readFileSync(sourcePath, "utf8");
-        const context = { vi, widget: undefined };
-        runInNewContext(checkedSource, context);
-
-        expect(context.widget).toEqual({ value: 1 });
-      } finally {
-        rmSync(directory, { recursive: true, force: true });
-      }
-    },
+          const checkedSource = yield* fs.readFileString(sourcePath);
+          const context = { vi, widget: undefined };
+          yield* Effect.try(() => runInNewContext(checkedSource, context));
+          expect(context.widget).toEqual({ value: 1 });
+        }).pipe(Effect.scoped),
+      ),
   );
 });

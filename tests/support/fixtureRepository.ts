@@ -36,7 +36,7 @@ const FixtureFiles = Schema.NonEmptyArray(Schema.String);
  * Discovery checks preset registration; loading reads the selected source and rule.
  */
 export class FixtureRepository extends Context.Service<FixtureRepository>()(
-  "linteffect/tests/support/fixtureRepository",
+  "@catenarycloud/linteffect/tests/support/fixtureRepository",
   {
     make: Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;

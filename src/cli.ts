@@ -61,7 +61,7 @@ const formatDiagnostic = (
 
 /** ProjectChecks loads packaged rules and checks file targets without changing source files. */
 export class ProjectChecks extends Context.Service<ProjectChecks>()(
-  "linteffect/ProjectChecks",
+  "@catenarycloud/linteffect/cli/ProjectChecks",
   {
     make: Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;

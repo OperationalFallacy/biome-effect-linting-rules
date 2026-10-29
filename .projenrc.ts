@@ -1,19 +1,20 @@
-import fs from "node:fs";
-
-import { Effect, Schema } from "effect";
+import { Effect, FileSystem, Schema } from "effect";
 import { JsonFile, JsonPatch, javascript, ReleasableCommits } from "projen";
 import type { JobStep } from "projen/lib/github/workflows-model";
 import { YarnNodeLinker } from "projen/lib/javascript";
 import { ReleaseTrigger } from "projen/lib/release";
 
+import { NodeFileSystem } from "@effect/platform-node-shared";
+
 const synthesize = Effect.fn("synthesize")(function* () {
+  const fs = yield* FileSystem.FileSystem;
   const yarnVersion = "4.6.0";
   const upgradeSchedule = "0 0 * * 1,4";
   const packageManifestPath = "package.json";
-  const currentPackageVersion = fs.existsSync(packageManifestPath)
+  const currentPackageVersion = (yield* fs.exists(packageManifestPath))
     ? (yield* Schema.decodeUnknownEffect(
         Schema.fromJsonString(Schema.Struct({ version: Schema.String })),
-      )(fs.readFileSync(packageManifestPath, "utf8"))).version
+      )(yield* fs.readFileString(packageManifestPath))).version
     : "0.0.0";
 
   const project = new javascript.NodeProject({
@@ -238,7 +239,7 @@ const synthesize = Effect.fn("synthesize")(function* () {
     Schema.fromJsonString(
       Schema.Struct({ plugins: Schema.Array(Schema.String) }),
     ),
-  )(fs.readFileSync("configs/full.jsonc", "utf8"));
+  )(yield* fs.readFileString("configs/full.jsonc"));
   new JsonFile(project, "biome.local.jsonc", {
     marker: false,
     obj: {
@@ -260,7 +261,7 @@ const synthesize = Effect.fn("synthesize")(function* () {
 
   project.defaultTask?.reset("tsx .projenrc.ts");
 
-  if (project.github) {
+  if (project.github !== undefined) {
     const buildWorkflow = project.github.workflows.find(
       (workflow) => workflow.name === "build",
     );
@@ -280,8 +281,9 @@ const synthesize = Effect.fn("synthesize")(function* () {
         : ((rawSteps as JobStep[]) ?? []);
     };
 
-    if (buildWorkflow) {
+    if (buildWorkflow !== undefined) {
       buildWorkflow.file?.patch(
+        JsonPatch.add("/jobs/build/env/BIOME_CONFIG_PATH", "biome.local.jsonc"),
         JsonPatch.add("/on/workflow_dispatch/inputs", {
           repository: {
             description: "Repository to check out, for example owner/repo",
@@ -310,7 +312,7 @@ const synthesize = Effect.fn("synthesize")(function* () {
         ),
       );
       const buildJob = buildWorkflow.getJob("build");
-      if (buildJob && "steps" in buildJob) {
+      if (buildJob !== undefined && "steps" in buildJob) {
         const buildSteps = getJobSteps(buildJob);
         buildWorkflow.updateJob("build", {
           ...buildJob,
@@ -321,7 +323,7 @@ const synthesize = Effect.fn("synthesize")(function* () {
 
     for (const upgradeWorkflow of upgradeWorkflows) {
       const upgradeJob = upgradeWorkflow.getJob("upgrade");
-      if (upgradeJob && "steps" in upgradeJob) {
+      if (upgradeJob !== undefined && "steps" in upgradeJob) {
         const upgradeSteps = getJobSteps(upgradeJob);
         upgradeWorkflow.updateJob("upgrade", {
           ...upgradeJob,
@@ -334,8 +336,8 @@ const synthesize = Effect.fn("synthesize")(function* () {
   project.synth();
 
   const upgradeWorkflowPath = ".github/workflows/upgrade-master.yml";
-  const upgradeWorkflowFile = fs.existsSync(upgradeWorkflowPath)
-    ? fs.readFileSync(upgradeWorkflowPath, "utf8")
+  const upgradeWorkflowFile = (yield* fs.exists(upgradeWorkflowPath))
+    ? yield* fs.readFileString(upgradeWorkflowPath)
     : undefined;
 
   const rewrittenUpgradeWorkflow = upgradeWorkflowFile
@@ -363,12 +365,13 @@ const synthesize = Effect.fn("synthesize")(function* () {
     );
 
   if (
-    rewrittenUpgradeWorkflow &&
+    rewrittenUpgradeWorkflow !== undefined &&
+    rewrittenUpgradeWorkflow.length > 0 &&
     rewrittenUpgradeWorkflow !== upgradeWorkflowFile
   ) {
-    fs.chmodSync(upgradeWorkflowPath, 0o644);
-    fs.writeFileSync(upgradeWorkflowPath, rewrittenUpgradeWorkflow);
-    fs.chmodSync(upgradeWorkflowPath, 0o444);
+    yield* fs.chmod(upgradeWorkflowPath, 0o644);
+    yield* fs.writeFileString(upgradeWorkflowPath, rewrittenUpgradeWorkflow);
+    yield* fs.chmod(upgradeWorkflowPath, 0o444);
   }
 
   const releaseWorkflowPath = ".github/workflows/release.yml";
@@ -383,6 +386,7 @@ on:
   workflow_dispatch: {}
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  BIOME_CONFIG_PATH: biome.local.jsonc
 jobs:
   release_please:
     if: github.ref_name == 'master'
@@ -480,9 +484,9 @@ jobs:
           npm publish --tag dev --access public
 `;
 
-  fs.chmodSync(releaseWorkflowPath, 0o644);
-  fs.writeFileSync(releaseWorkflowPath, releasePleaseWorkflow);
-  fs.chmodSync(releaseWorkflowPath, 0o444);
+  yield* fs.chmod(releaseWorkflowPath, 0o644);
+  yield* fs.writeFileString(releaseWorkflowPath, releasePleaseWorkflow);
+  yield* fs.chmod(releaseWorkflowPath, 0o444);
 
   const devReleasePleaseConfigPath = "release-please-config.dev.json";
   const devReleasePleaseConfig = {
@@ -505,7 +509,9 @@ jobs:
   const configuration = yield* Schema.encodeEffect(
     Schema.fromJsonString(Schema.Unknown, { space: 2 }),
   )(devReleasePleaseConfig);
-  fs.writeFileSync(devReleasePleaseConfigPath, `${configuration}\n`);
+  yield* fs.writeFileString(devReleasePleaseConfigPath, `${configuration}\n`);
 });
 
-Effect.runSync(synthesize());
+await Effect.runPromise(
+  synthesize().pipe(Effect.provide(NodeFileSystem.layer)),
+);

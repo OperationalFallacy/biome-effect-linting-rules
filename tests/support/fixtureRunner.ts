@@ -18,7 +18,7 @@ const ExpectedDiagnostics = {
 
 /** FixtureRunner checks each case's expected outcome against Biome's original diagnostics. */
 export class FixtureRunner extends Context.Service<FixtureRunner>()(
-  "linteffect/tests/support/fixtureRunner",
+  "@catenarycloud/linteffect/tests/support/fixtureRunner",
   {
     make: Effect.gen(function* () {
       const repository = yield* FixtureRepository;

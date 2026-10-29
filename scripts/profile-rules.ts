@@ -8,6 +8,7 @@ import {
   Layer,
   Match,
   Path,
+  Schema,
 } from "effect";
 
 import {
@@ -23,6 +24,11 @@ import { Argument, Command, Flag } from "effect/cli";
 import metadata from "../package.json" with { type: "json" };
 import { Biome } from "../src/biome.ts";
 import { ProjectChecks } from "../src/cli.ts";
+
+/** Invalid profile selections fail before any measurements are printed. */
+class ProfileError extends Schema.TaggedError<ProfileError>()("ProfileError", {
+  message: Schema.String,
+}) {}
 
 /** Measures rule execution over the requested files with the CLI's preset loader. */
 const command = Command.make(
@@ -52,10 +58,12 @@ const command = Command.make(
     });
 
     if (selected.length === 0) {
-      return yield* Effect.fail(new Error("No matching rules selected."));
+      return yield* new ProfileError({
+        message: "No matching rules selected.",
+      });
     }
     if (files.length === 0) {
-      return yield* Effect.fail(new Error("No supported files found."));
+      return yield* new ProfileError({ message: "No supported files found." });
     }
 
     /** Reports elapsed analysis time and lint status for one selection of plugins. */
