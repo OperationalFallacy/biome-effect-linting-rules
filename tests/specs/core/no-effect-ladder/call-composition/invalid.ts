@@ -1,11 +1,23 @@
-import { Effect, pipe } from "effect";
+import { Effect, Schema } from "effect";
 
-const nestedCombinatorsValue = Effect.map(
-  Effect.map(Effect.succeed(1), (n) => n + 1),
-  (n) => n * 2,
-);
+const LineItem = Schema.Struct({
+  unitPrice: Schema.Number,
+  quantity: Schema.Int,
+});
 
-const orderedStepsValue = Effect.succeed(1).pipe(
-  Effect.map((n) => n + 1),
-  Effect.map((n) => n * 2),
-);
+/**
+ * Incorrectly nests Effect combinators around a parser. The reader must work
+ * from the innermost call outward to follow the dependent transformations.
+ */
+export const formatTotal = Effect.fn("formatTotal")((text: string) => {
+  return Effect.map(
+    Effect.map(
+      Effect.flatMap(
+        Effect.try(() => JSON.parse(text)),
+        Schema.decodeUnknownEffect(LineItem),
+      ),
+      (item) => item.unitPrice * item.quantity,
+    ),
+    (total) => `$${total.toFixed(2)}`,
+  );
+});

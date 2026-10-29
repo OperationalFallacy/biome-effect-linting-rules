@@ -38,7 +38,7 @@ Read [README.md](README.md) for package usage. For rule changes, read [docs/rule
 
 ## Common changes
 
-For a rule change, edit its `.grit` file and add fixtures that demonstrate the problem and nearby valid cases. Test the diagnostic's location and severity as well as whether it appears. Explain the matched pattern, its consequence, and the fix in complete sentences. Preserve conditions and exceptions that affect the rewrite.
+For a rule change, edit its `.grit` file and add small, self-contained fixtures. Pair the same task before and after the fix. Define each dependency and preserve the result, failure behavior, and side-effect order. Use generic names and invented data for application feedback. Test the diagnostic's location and severity as well as whether it appears. Explain the pattern and fix in complete sentences.
 
 For a new rule, register it in the appropriate presets and `configs/full.jsonc`, then run `yarn projen` to update `biome.local.jsonc`. Preset plugin paths use `./node_modules/@catenarycloud/linteffect/rules/`. The CLI reads those files from the package and loads their contents into the WASM memory filesystem for trial runs. Check both installed-project use and CLI use after configuration changes.
 

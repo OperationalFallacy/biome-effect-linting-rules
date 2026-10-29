@@ -1,22 +1,20 @@
-import { pipe } from "effect";
+import { Array as Arr, Effect, pipe } from "effect";
 
-{
-  const nestedFreePipes = pipe(pipe(input, first), second);
-}
+const amounts = [12, 8, 5];
+const sum = (values: ReadonlyArray<number>) =>
+  Arr.reduce(values, 0, (total, value) => total + value);
+const format = (total: number) => `$${total.toFixed(2)}`;
 
-{
-  const nestedMethodPipes = input.pipe(first).pipe(second);
-}
+/**
+ * Incorrectly nests or chains pipe calls to compose one sequence of
+ * transformations. Each extra pipe splits the same data flow across expressions.
+ */
+export const receipt = pipe(pipe(amounts, sum), format);
+export const receiptEffect = Effect.succeed(amounts)
+  .pipe(Effect.map(sum))
+  .pipe(Effect.map(format));
 
-{
-  const nestedTransforms = pipe(
-    pipe(1, (n) => n + 1),
-    (n) => n * 2,
-  );
-}
-
-const linearPipeline = pipe(
-  1,
-  (n) => n + 1,
-  (n) => n * 2,
-);
+/**
+ * Correctly places consecutive transformations in one pipe call.
+ */
+export const directReceipt = pipe(amounts, sum, format);

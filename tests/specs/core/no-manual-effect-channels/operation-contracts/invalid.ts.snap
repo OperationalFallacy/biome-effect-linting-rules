@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, Context } from \"effect\";\n\ninterface Counter {\n  read(): Effect.Effect<number>;\n}\nfunction read(): Effect.Effect<number> {\n  return Effect.succeed(1);\n}\n\n{\n  class Counter extends Context.Service<\n    Counter,\n    {\n      readonly read: Effect.Effect<number>;\n      readonly increment: (n: number) => Effect.Effect<number>;\n    }\n  >()(\"example/Counter\") {}\n}\n\n{\n  interface Counter {\n    read(): Effect.Effect<number>;\n    increment(n: number): Effect.Effect<number>;\n  }\n}\n",
+  "input": "import { Effect, Ref } from \"effect\";\n\n/**\n * Unnecessarily annotates an implemented operation's Effect return type.\n * The annotation duplicates channels that TypeScript can infer from the body.\n */\nexport function readCounter(counter: Ref.Ref<number>): Effect.Effect<number> {\n  return Ref.get(counter);\n}\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-manual-effect-channels/operation-contracts/invalid.ts"
           },
           "span": [
-            115,
-            136
+            255,
+            276
           ],
           "sourceCode": null
         },

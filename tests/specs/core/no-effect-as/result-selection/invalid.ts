@@ -1,19 +1,17 @@
-import { Effect, pipe } from "effect";
+import { Effect, Schema } from "effect";
 
-{
-  const curriedResult = Effect.as(1);
-}
+const task = Schema.decodeUnknownEffect(Schema.NonEmptyString)("Mira");
 
-{
-  const dataFirstResult = Effect.as(task, 1);
-}
+/**
+ * Questionably uses Effect.as for result selection. This package favors
+ * explicit result-producing callbacks in composition.
+ */
+export const completion = Effect.as(true);
+export const complete = Effect.as(task, true);
+export const genericCompletion = Effect.as<boolean>(true);
+export const pipelineCompletion = task.pipe(Effect.as(true));
 
-{
-  const genericResult = Effect.as<number>(1);
-}
-
-{
-  const pipelineResult = Effect.void.pipe(Effect.as(1));
-}
-
-const mappedResult = Effect.void.pipe(Effect.map(() => 1));
+/**
+ * Correctly expresses result selection through an Effect.map callback.
+ */
+export const mappedCompletion = task.pipe(Effect.map(() => true));
