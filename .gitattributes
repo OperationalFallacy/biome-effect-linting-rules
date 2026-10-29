@@ -21,5 +21,5 @@
 /.yarnrc.yml linguist-generated
 /LICENSE linguist-generated
 /package.json linguist-generated
-/tests/runtime/native-parity/unicode-crlf.ts -text
+/tests/runtime/native-parity/unicode-crlf.ts -text whitespace=cr-at-eol
 /yarn.lock linguist-generated

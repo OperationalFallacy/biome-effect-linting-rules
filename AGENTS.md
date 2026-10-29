@@ -19,6 +19,7 @@ Read [README.md](README.md) for package usage. For rule changes, read [docs/rule
 | `biome.jsonc` | Additional packaged configuration with a plugin list. Keep its registrations consistent with the relevant presets when rules change. |
 | `bin/linteffect.mjs`, `src/cli.ts` | Node entry point and native Effect CLI commands, preset loading, and file checks. |
 | `src/biome.ts` | Shared Effect service for scoped WASM workspaces and plugin diagnostics. |
+| `lib/` | Generated JavaScript and declarations for the published CLI. `yarn compile` builds it from `src/`. |
 | `tests/specs.test.ts`, `tests/specs/` | One test per source fixture. The test reads the group and rule from its directory path and saves a snapshot beside the fixture. |
 | `tests/support/` | Effect services for fixture path parsing, discovery, loading, and execution. |
 | `tests/composition.test.ts`, `tests/composition/` | Valid source checked with every full-preset rule enabled. |
@@ -50,6 +51,7 @@ Use the Yarn version declared in `package.json`. Run these commands from the rep
 | `yarn install --immutable` | Install dependencies from the lockfile. |
 | `yarn test` | Run the rule and runtime tests, then the project typecheck. |
 | `yarn typecheck` | Check project code and tests with `tsconfig.json`, also used by editors. |
+| `yarn compile` | Compile the Effect CLI and Biome service for Node.js. |
 | `yarn vitest run tests/specs.test.ts` | Run all fixtures in `tests/specs/`. |
 | `yarn projen` | Regenerate project files from `.projenrc.ts`. |
 | `yarn build` | Regenerate project files, run tests, and create the npm archive under `dist/js/`. |

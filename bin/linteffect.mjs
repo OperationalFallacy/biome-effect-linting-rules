@@ -12,8 +12,8 @@ import {
 } from "@effect/platform-node-shared";
 import { Command } from "effect/cli";
 
+import { command, ProjectChecks } from "../lib/cli.js";
 import metadata from "../package.json" with { type: "json" };
-import { command, ProjectChecks } from "../src/cli.ts";
 
 Command.run(command, { version: metadata.version }).pipe(
   Effect.provide(

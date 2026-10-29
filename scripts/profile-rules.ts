@@ -20,6 +20,7 @@ import {
 } from "@effect/platform-node-shared";
 import { Argument, Command, Flag } from "effect/cli";
 
+import metadata from "../package.json" with { type: "json" };
 import { Biome } from "../src/biome.ts";
 import { ProjectChecks } from "../src/cli.ts";
 
@@ -109,7 +110,7 @@ const command = Command.make(
   }),
 );
 
-Command.run(command, { version: "0.1.0" }).pipe(
+Command.run(command, { version: metadata.version }).pipe(
   Effect.provide(
     Layer.mergeAll(
       Biome.layer,

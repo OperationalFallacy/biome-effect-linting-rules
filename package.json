@@ -69,7 +69,7 @@
   "files": [
     "biome.jsonc",
     "bin",
-    "src",
+    "lib",
     "rules/*.grit",
     "configs",
     "examples",

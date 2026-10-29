@@ -77,7 +77,12 @@
     },
     "compile": {
       "name": "compile",
-      "description": "Only compile"
+      "description": "Only compile",
+      "steps": [
+        {
+          "exec": "tsc --project tsconfig.build.json"
+        }
+      ]
     },
     "default": {
       "name": "default",
@@ -129,6 +134,9 @@
     "pack:dry-run": {
       "name": "pack:dry-run",
       "steps": [
+        {
+          "spawn": "compile"
+        },
         {
           "exec": "npm pack --dry-run"
         }
@@ -195,6 +203,9 @@
       "name": "test",
       "description": "Run tests",
       "steps": [
+        {
+          "spawn": "compile"
+        },
         {
           "exec": "yarn lint"
         },

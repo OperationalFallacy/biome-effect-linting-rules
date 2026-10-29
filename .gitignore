@@ -49,4 +49,5 @@ jspm_packages/
 /docs/*-ticket.md
 /refs/
 /.local/
+/lib/
 !/.projenrc.js

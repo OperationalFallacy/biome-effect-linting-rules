@@ -81,7 +81,7 @@ const synthesize = Effect.fn("synthesize")(function* () {
   project.package.addField("files", [
     "biome.jsonc",
     "bin",
-    "src",
+    "lib",
     "rules/*.grit",
     "configs",
     "examples",
@@ -119,13 +119,15 @@ const synthesize = Effect.fn("synthesize")(function* () {
   project.gitignore.exclude("/docs/*-ticket.md");
   project.gitignore.exclude("/refs/");
   project.gitignore.exclude("/.local/");
+  project.gitignore.exclude("/lib/");
   project.gitattributes.addAttributes(
     "/tests/runtime/native-parity/unicode-crlf.ts",
     "-text",
+    "whitespace=cr-at-eol",
   );
 
   project.addTask("pack:dry-run", {
-    exec: "npm pack --dry-run",
+    steps: [{ spawn: "compile" }, { exec: "npm pack --dry-run" }],
   });
 
   project.addTask("refresh:biome-grammars", {
@@ -138,7 +140,10 @@ const synthesize = Effect.fn("synthesize")(function* () {
   project.addTask("lint", {
     exec: "biome check",
   });
-  project.testTask.reset("yarn lint");
+  project.compileTask.exec("tsc --project tsconfig.build.json");
+  project.testTask.reset();
+  project.testTask.spawn(project.compileTask);
+  project.testTask.exec("yarn lint");
   project.testTask.exec("vitest run");
   project.testTask.exec("yarn typecheck");
 
