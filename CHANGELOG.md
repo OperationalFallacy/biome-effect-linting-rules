@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.1.0](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.9...v0.1.0) (2026-10-29)
+
+### Breaking changes
+
+The rules now target Effect v4. Version 0.0.9 is the final release for Effect v3. Read the [migration guide](docs/effect-v4.md) before upgrading.
+
+The CLI requires Node.js 24 or newer. Preset configurations use the Biome 2.6.3 schema, and the CLI bundles the matching Biome engine.
+
+Remove `no-effect-fn-generator` and `no-wrapgraphql-catchall` from custom plugin lists. Reusable operations can use `Effect.fn` or `Effect.fnUntraced`. GraphQL recovery policy belongs in application-specific rules.
+
+The full preset now includes `no-inline-runtime-provide`. Assemble service dependencies with layers and keep final runtime provision at entry points. The new `no-layer-this-reference` rule enforces the package's convention of explicit class names in static service layer declarations.
+
+### CLI
+
+The CLI uses native Effect commands and runs Biome in the same Node.js process. It loads plugins into an isolated memory filesystem without temporary files or a separate Biome process. The `check` command leaves the project's configuration unchanged and supports the `core`, `web`, `ts-type`, and `full` presets. Use `--guide` to include the consumer guide with diagnostics.
+
+### Composition and service contracts
+
+The rules allow complete service constructors supplied to either form of `Layer.effect` or to `Context.Service` through `make`. They still report intermediate steps inside those constructors and distinguish declarations in different lexical scopes.
+
+Nested-call checks accept both forms of `Effect.when`, direct resource acquisition effects, and `Effect.scoped` around generators. Suggested rewrites preserve lazy conditions and resource finalizers. Collection guidance distinguishes independent results from dependent sequential work and preserves per-item failures with result mode.
+
+Branches with `if`, `switch`, or conditional expressions remain valid inside `Effect.gen`, Effect function constructors, and `Effect.suspend`. The package reserves `Effect.tap` for logging and recommends `Effect.flatMap` or `Effect.andThen` for dependent work.
+
+### Validation and diagnostics
+
+Schema predicate callbacks retain their block bodies and refinement types. Public Effect contracts remain valid in service declarations, interfaces, and type aliases. Atom rules distinguish effectful module operations from synchronous registry calls.
+
+Fixture snapshots retain complete Biome diagnostics, including severity and source spans. Regression examples cover v4 service construction, conditional work, and scoped resources. The CLI's SDK diagnostics also have native Biome parity checks.
+
+### Performance
+
+The model-cast and Vanilla Extract alias rules avoid repeated module scans on unrelated declarations. FlatMap-ladder and console-wrapper checks start from call expressions.
+
 ## [0.1.0-dev.3](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.2...v0.1.0-dev.3) (2026-10-29)
 
 
