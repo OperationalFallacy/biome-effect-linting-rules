@@ -24,12 +24,13 @@ const synthesize = Effect.fn("synthesize")(function* () {
       "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
     deps: [
       "@biomejs/wasm-nodejs@2.6.3",
-      "@effect/platform-node-shared@4.0.6",
-      "effect@4.0.6",
+      "@effect/platform-node-shared@4.1.0",
+      "effect@4.1.0",
     ],
     devDeps: [
       "@biomejs/biome@2.6.3",
       "@catenarycloud/linteffect@dev",
+      "@effect/language-service@0.87.5",
       "@types/node@^24",
       "projen@^0.98.34",
       "tsx@^4.20.6",
@@ -137,7 +138,14 @@ const synthesize = Effect.fn("synthesize")(function* () {
   });
 
   project.addTask("typecheck", {
-    exec: "tsc --project tsconfig.json",
+    steps: [
+      { exec: "effect-language-service patch" },
+      { exec: "tsc --project tsconfig.json" },
+    ],
+  });
+  project.addTask("effect:diagnostics", {
+    exec: "effect-language-service diagnostics --project tsconfig.json",
+    receiveArgs: true,
   });
   project.addTask("lint", {
     exec: "biome check",
@@ -242,6 +250,7 @@ const synthesize = Effect.fn("synthesize")(function* () {
       ),
     },
   });
+  project.compileTask.exec("effect-language-service patch");
   project.compileTask.exec("tsc --project tsconfig.build.json");
   project.testTask.reset();
   project.testTask.spawn(project.compileTask);

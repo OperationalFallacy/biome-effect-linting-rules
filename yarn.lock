@@ -270,11 +270,12 @@ __metadata:
     "@biomejs/biome": "npm:2.6.3"
     "@biomejs/wasm-nodejs": "npm:2.6.3"
     "@catenarycloud/linteffect": "npm:dev"
-    "@effect/platform-node-shared": "npm:4.0.6"
+    "@effect/language-service": "npm:0.87.5"
+    "@effect/platform-node-shared": "npm:4.1.0"
     "@types/node": "npm:^24"
     commit-and-tag-version: "npm:^12"
     constructs: "npm:^10.0.0"
-    effect: "npm:4.0.6"
+    effect: "npm:4.1.0"
     projen: "npm:^0.98.34"
     tsx: "npm:^4.20.6"
     typescript: "npm:^5.9.3"
@@ -285,15 +286,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@effect/platform-node-shared@npm:4.0.6":
-  version: 4.0.6
-  resolution: "@effect/platform-node-shared@npm:4.0.6"
+"@effect/language-service@npm:0.87.5":
+  version: 0.87.5
+  resolution: "@effect/language-service@npm:0.87.5"
+  bin:
+    effect-language-service: cli.js
+  checksum: 10c0/97e595fad502d2ddd33562cae9d8d1a8c867776261b7b7b67f5d3eee6eecc18bafa64b6e085d9460f3452b4077a011dfef124852ca5c055d271fab089d0e2dca
+  languageName: node
+  linkType: hard
+
+"@effect/platform-node-shared@npm:4.1.0":
+  version: 4.1.0
+  resolution: "@effect/platform-node-shared@npm:4.1.0"
   dependencies:
     "@types/ws": "npm:^8.18.2"
     ws: "npm:^8.22.0"
   peerDependencies:
-    effect: ^4.0.6
-  checksum: 10c0/2caee178bfc9a99e92733175e023208e7b5a01e6f95430d7003d2e0ec7febc57232dadfcdf2d747d8a7e82b329ba836d8b4a2d8afc670787c2980db5d6fdfd0f
+    effect: ^4.1.0
+  checksum: 10c0/392d670ec3d72f7186a55bf07123d0f34441ffa3b2c877f8ac4313403445306a47caf051870788dde474b73b8e46e27a3bae8ffd2192d9fe2c0fd222090d19b5
   languageName: node
   linkType: hard
 
@@ -1467,10 +1477,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"effect@npm:4.0.6":
-  version: 4.0.6
-  resolution: "effect@npm:4.0.6"
-  checksum: 10c0/9cc83670e5346d9bf25faa119ae209f0d0901c691005a9fe5efb2bbe37947255a149ec0fcd73a65caa38b2c47f4e3757a3f99f95d88ce9d4602e3a517a893946
+"effect@npm:4.1.0":
+  version: 4.1.0
+  resolution: "effect@npm:4.1.0"
+  checksum: 10c0/fb6e27eb178c3ed4ddc3a6b6d3e2236f388fea7e4ed5607b17c5d75ec7b287cf176fb1b33d3ae39ab37537590bf6d6486b4d7605f4d5e16c71d751ef95805328
   languageName: node
   linkType: hard
 
