@@ -2,9 +2,11 @@
 
 ## Development
 
-The rules are in `rules/*.grit`. The presets in `configs/*.jsonc` and the root `biome.jsonc` list the rules Biome loads. Edit [`.projenrc.ts`](../.projenrc.ts) to change the package metadata and Projen tasks.
+The rules are in `rules/*.grit`. The presets in `configs/*.jsonc` list the rules Biome loads. `.projenrc.ts` generates `biome.local.jsonc` from the full preset. The default `biome.jsonc` extends the installed dev package. Edit [`.projenrc.ts`](../.projenrc.ts) to change the package metadata, Biome settings, and Projen tasks.
 
 Use `yarn test` to run the tests. Use `yarn build` to regenerate the project files, run the tests, and create the npm archive.
+
+Use `yarn lint:dev` for feedback from the published dev package and `yarn lint:local` for the checkout's rules. Both accept file paths. Set `BIOME_CONFIG_PATH=biome.local.jsonc` for a test or build that must use the checkout's rules throughout.
 
 ## Match and test the rule
 
@@ -32,7 +34,7 @@ Read lint fixtures as source text. Keep them outside the project typecheck and d
 
 `FixtureRunner` loads the selected rule into Biome's memory filesystem and opens a workspace for that case. The test entry point runs discovery and execution through one Effect service graph.
 
-Validate with a minimal Biome config that loads the rule alone. Test real code and a regression that should trigger the rule before you add it to `biome.jsonc` and the relevant presets.
+Validate with a minimal Biome config that loads the rule alone. Test real code and a regression that should trigger the rule before you add it to the relevant presets. Run `yarn projen` after a full-preset registration change to update the local lint configuration.
 
 Biome matches Grit patterns against source syntax within one file. Use captures and scoped `contains` checks.
 

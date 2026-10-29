@@ -16,7 +16,9 @@ Read [README.md](README.md) for package usage. For rule changes, read [docs/rule
 | `configs/web.jsonc` | React, atom, and Vanilla Extract rules. |
 | `configs/ts-type.jsonc` | Type assertions, data guards, optional values, and status rules. |
 | `configs/full.jsonc` | Full preset, exported through the package root and `/recommended`. |
-| `biome.jsonc` | Additional packaged configuration with a plugin list. Keep its registrations consistent with the relevant presets when rules change. |
+| `biome.jsonc` | Default configuration. Extends the installed dev package and the shared settings. |
+| `biome.base.jsonc` | Shared formatting, import organization, recommended Biome rules, and implementation file selection. |
+| `biome.local.jsonc` | Development configuration with checkout plugins generated from `configs/full.jsonc`. |
 | `bin/linteffect.mjs`, `src/cli.ts` | Node entry point and native Effect CLI commands, preset loading, and file checks. |
 | `src/biome.ts` | Shared Effect service for scoped WASM workspaces and plugin diagnostics. |
 | `lib/` | Generated JavaScript and declarations for the published CLI. `yarn compile` builds it from `src/`. |
@@ -38,7 +40,7 @@ Read [README.md](README.md) for package usage. For rule changes, read [docs/rule
 
 For a rule change, edit its `.grit` file and add fixtures that demonstrate the problem and nearby valid cases. Test the diagnostic's location and severity as well as whether it appears. Explain the matched pattern, its consequence, and the fix in complete sentences. Preserve conditions and exceptions that affect the rewrite.
 
-For a new rule, register it in the appropriate presets and the root `biome.jsonc`. Preset plugin paths use `./node_modules/@catenarycloud/linteffect/rules/`. The CLI reads those files from the package and loads their contents into the WASM memory filesystem for trial runs. Check both installed-project use and CLI use after configuration changes.
+For a new rule, register it in the appropriate presets and `configs/full.jsonc`, then run `yarn projen` to update `biome.local.jsonc`. Preset plugin paths use `./node_modules/@catenarycloud/linteffect/rules/`. The CLI reads those files from the package and loads their contents into the WASM memory filesystem for trial runs. Check both installed-project use and CLI use after configuration changes.
 
 Edit `.projenrc.ts` for generated package settings, then run `yarn projen`. Review the generated diff before you stage it. `package.json`, `.projen/`, and generated workflow files receive their settings from this source. Release Please manages release version and changelog updates.
 
@@ -51,6 +53,10 @@ Use the Yarn version declared in `package.json`. Run these commands from the rep
 | `yarn install --immutable` | Install dependencies from the lockfile. |
 | `yarn test` | Run the rule and runtime tests, then the project typecheck. |
 | `yarn typecheck` | Check project code and tests with `tsconfig.json`, also used by editors. |
+| `yarn lint` | Check implementation code with the installed dev package. Honors `BIOME_CONFIG_PATH`. |
+| `yarn lint:dev` | Explicitly check with the installed dev package. Accepts paths and Biome flags. |
+| `yarn lint:local` | Check with the checkout's current rules. Accepts paths and Biome flags. |
+| `BIOME_CONFIG_PATH=biome.local.jsonc yarn test` | Run development checks with the checkout's rules throughout. |
 | `yarn compile` | Compile the Effect CLI and Biome service for Node.js. |
 | `yarn vitest run tests/specs.test.ts` | Run all fixtures in `tests/specs/`. |
 | `yarn projen` | Regenerate project files from `.projenrc.ts`. |
@@ -59,6 +65,8 @@ Use the Yarn version declared in `package.json`. Run these commands from the rep
 | `node bin/linteffect.mjs guide --print` | Print the local copy of the consumer guide. |
 
 For rule changes, run the relevant tests and then the full suite. For package or workflow changes, run the build and review its generated files. Documentation changes need a prose and link review; use `git diff --check` to check whitespace.
+
+The installed dev release is locked in `yarn.lock`. Update it with `yarn up @catenarycloud/linteffect@dev`. Compare published and local diagnostics during rule development. Do not suppress findings or change valid code solely to accommodate a published matcher bug.
 
 ## Releases
 

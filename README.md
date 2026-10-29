@@ -119,7 +119,18 @@ The [guide](./docs/linting.md) explains the diagnostics and how to fix the code.
 
 Clone this repository and install its development dependencies with `yarn install`. Run `yarn test` to check the rules and `yarn build` to regenerate project files, run the tests, and create the npm archive.
 
-`yarn lint` checks implementation code with this checkout's Grit rules. It also runs before tests and builds. Fixture source files stay outside this check because they contain deliberate violations.
+`yarn lint` checks implementation code with the installed `@catenarycloud/linteffect@dev` package. `yarn lint:dev` selects it explicitly. Yarn locks the installed release; run `yarn up @catenarycloud/linteffect@dev` to update it.
+
+`yarn lint:local` checks the same files with this checkout's rules. Both configurations share formatting, import organization, recommended Biome rules, and Git ignore settings. Fixture source files stay outside these checks because they contain deliberate violations. Pass a path to focus either check:
+
+```sh
+yarn lint:dev src/cli.ts
+yarn lint:local src/cli.ts
+```
+
+Tests and builds run `yarn lint`. To use the checkout's rules throughout a development run, set `BIOME_CONFIG_PATH=biome.local.jsonc`, for example `BIOME_CONFIG_PATH=biome.local.jsonc yarn test`. The published package can report findings that have already been fixed in the checkout; compare both commands before changing code to satisfy a diagnostic.
+
+`.projenrc.ts` generates both configurations and their shared `biome.base.jsonc`. It derives the local plugin list from `configs/full.jsonc`.
 
 Add rule test cases using the [fixture layout and commands](tests/specs/README.md).
 
