@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst nestedFlatmapsValue = Effect.flatMap(Effect.succeed(1), (n) =>\n  Effect.flatMap(Effect.succeed(n), (m) => Effect.succeed(m)),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Combine nested Effect.flatMap calls into one pipeline. The reader must follow separate callback bodies to understand the dependent steps and their execution order. Build shared inputs once with Effect.all or Effect.map, then pass them through the dependent steps in order.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine nested Effect.flatMap calls into one pipeline. The reader must follow separate callback bodies to understand the dependent steps and their execution order. Build shared inputs once with Effect.all or Effect.map, then pass them through the dependent steps in order."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-flatmap-ladder/composition/invalid.ts"
+          },
+          "span": [
+            34,
+            167
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 1,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

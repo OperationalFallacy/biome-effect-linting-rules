@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\nconst flatmapSequenceValue = Effect.succeed(1).pipe(\n  Effect.flatMap((n) => Effect.succeed(n)),\n  Effect.flatMap((m) => Effect.succeed(m)),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}
