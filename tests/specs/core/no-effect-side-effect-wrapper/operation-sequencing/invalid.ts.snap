@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, pipe } from \"effect\";\n\ndeclare const invalidate: (key: readonly string[]) => Effect.Effect<void>;\ndeclare const setReady: Effect.Effect<void>;\ndeclare const nextStep: Effect.Effect<string>;\n\nconst invalidAsWrapper = Effect.as(\n  Effect.sync(() => {\n    console.info(\"ready\");\n  }),\n  \"ready\",\n);\n\nconst invalidAndThenWrapper = Effect.andThen(invalidate([\"books\"]), nextStep);\n\nconst invalidNestedSetStateWrapper = Effect.andThen(\n  Effect.sync(() => {\n    setState({ ready: true });\n  }),\n  setReady,\n);\n\ndeclare function setState(value: { readonly ready: boolean }): void;\n\nconst logResultReplacementValue = Effect.as(Effect.log(\"saved\"), 1);\n\nconst explicitContinuationValue = Effect.log(\"saved\").pipe(Effect.andThen(() => Effect.succeed(1)));\n\ndeclare const loadState: Effect.Effect<readonly string[]>;\ndeclare const publishState: Effect.Effect<void>;\ndeclare const invalidateCatalog: Effect.Effect<void>;\n\nconst namedEffectSequence = Effect.andThen(loadState, invalidateCatalog);\n\n/** Correctly sequences state publication and invalidation with Effect.andThen. */\nconst continuousSequence = loadState.pipe(\n  Effect.andThen(() => publishState),\n  Effect.andThen(invalidateCatalog),\n);\n",
+  "input": "import { Effect } from \"effect\";\n\ninterface StateActions {\n  readonly invalidate: (keys: ReadonlyArray<string>) => Effect.Effect<void>;\n  readonly next: Effect.Effect<string>;\n  readonly setState: (state: { readonly ready: boolean }) => void;\n  readonly setReady: Effect.Effect<void>;\n  readonly load: Effect.Effect<ReadonlyArray<string>>;\n  readonly publish: Effect.Effect<void>;\n  readonly invalidateCatalog: Effect.Effect<void>;\n}\n\n/**\n * Questionably hides result selection in an Effect.as wrapper around logging.\n * The operation returns its input after the observation completes.\n */\nexport const report = Effect.fn(\"report\")((message: string) =>\n  Effect.as(Effect.logInfo(message), message),\n);\nexport const savedCount = Effect.fn(\"savedCount\")((count: number) =>\n  Effect.as(Effect.logInfo(\"Saved count\", count), count),\n);\n\n/**\n * Incorrectly nests an invalidation inside data-first sequencing arguments.\n * The next operation depends on that invalidation completing first.\n */\nexport const continueAfterInvalidate = Effect.fn(\"continueAfterInvalidate\")(\n  ({ invalidate, next }: StateActions) =>\n    Effect.andThen(invalidate([\"catalog\"]), next),\n);\n\n/**\n * Incorrectly hides a native state update inside sequencing arguments.\n * Its order relative to the following Effect belongs in an explicit pipeline.\n */\nexport const markReady = Effect.fn(\"markReady\")(\n  ({ setState, setReady }: StateActions) =>\n    Effect.andThen(\n      Effect.sync(() => setState({ ready: true })),\n      setReady,\n    ),\n);\n\n/**\n * Correctly composes named operations whose identities already describe their work.\n */\nexport const invalidateAfterLoad = Effect.fn(\"invalidateAfterLoad\")(\n  ({ load, invalidateCatalog }: StateActions) =>\n    Effect.andThen(load, invalidateCatalog),\n);\n\n/**\n * Correctly sequences state publication and invalidation in one pipeline.\n */\nexport const publishLoaded = Effect.fn(\"publishLoaded\")(\n  ({ load, publish, invalidateCatalog }: StateActions) =>\n    load.pipe(\n      Effect.andThen(() => publish),\n      Effect.andThen(() => invalidateCatalog),\n    ),\n);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,66 +23,8 @@
             "file": "/project/core/no-effect-side-effect-wrapper/operation-sequencing/invalid.ts"
           },
           "span": [
-            233,
-            311
-          ],
-          "sourceCode": null
-        },
-        "tags": [],
-        "source": null
-      },
-      {
-        "category": "plugin",
-        "severity": "error",
-        "description": "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen or Effect.flatMap to continue. Preserve the result the caller needs.",
-        "message": [
-          {
-            "elements": [],
-            "content": "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen or Effect.flatMap to continue. Preserve the result the caller needs."
-          }
-        ],
-        "advices": {
-          "advices": []
-        },
-        "verboseAdvices": {
-          "advices": []
-        },
-        "location": {
-          "path": {
-            "file": "/project/core/no-effect-side-effect-wrapper/operation-sequencing/invalid.ts"
-          },
-          "span": [
-            344,
-            391
-          ],
-          "sourceCode": null
-        },
-        "tags": [],
-        "source": null
-      },
-      {
-        "category": "plugin",
-        "severity": "error",
-        "description": "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen or Effect.flatMap to continue. Preserve the result the caller needs.",
-        "message": [
-          {
-            "elements": [],
-            "content": "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen or Effect.flatMap to continue. Preserve the result the caller needs."
-          }
-        ],
-        "advices": {
-          "advices": []
-        },
-        "verboseAdvices": {
-          "advices": []
-        },
-        "location": {
-          "path": {
-            "file": "/project/core/no-effect-side-effect-wrapper/operation-sequencing/invalid.ts"
-          },
-          "span": [
-            431,
-            519
+            655,
+            698
           ],
           "sourceCode": null
         },
@@ -110,8 +52,66 @@
             "file": "/project/core/no-effect-side-effect-wrapper/operation-sequencing/invalid.ts"
           },
           "span": [
-            626,
-            659
+            774,
+            828
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen or Effect.flatMap to continue. Preserve the result the caller needs.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen or Effect.flatMap to continue. Preserve the result the caller needs."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-side-effect-wrapper/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            1111,
+            1156
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen or Effect.flatMap to continue. Preserve the result the caller needs.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen or Effect.flatMap to continue. Preserve the result the caller needs."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-side-effect-wrapper/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            1418,
+            1507
           ],
           "sourceCode": null
         },

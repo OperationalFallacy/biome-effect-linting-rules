@@ -15,6 +15,8 @@ The preset must register the rule from `rules/<rule>.grit`. Separate scenarios b
 
 Define each example's inputs, schemas, and dependencies. Use `/** ... */` comments that identify correct, incorrect, or questionable usage and explain the composition choice directly. See the [fixture writing guidance](../../docs/rule-guidance.md#write-fixtures-as-learning-examples).
 
+Fixture loading requires a nonempty `/** ... */` comment. Review the explanations and paired behavior when you change a fixture.
+
 Give parser edge cases separate variants. An invalid fixture may use an obsolete API to demonstrate a migration; ordinary examples should not depend on undeclared globals.
 
 Use generic domains and invented data. Reproduce the code shape behind application feedback without private source, identifiers, or records.

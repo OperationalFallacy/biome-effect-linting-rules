@@ -1,5 +1,5 @@
 {
-  "input": "import * as Effect from \"effect/Effect\";\n\nconst addCount = Effect.bind(\"count\", read);\n",
+  "input": "import * as Effect from \"effect/Effect\";\n\n/**\n * Questionably exposes a record-building fragment from an Effect submodule.\n * Callers must supply the intermediate record that the builder extends.\n */\nexport const addCount = Effect.bind(\"count\", () => Effect.succeed(3));\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-effect-bind/import-scope/invalid-effect-submodule.ts"
           },
           "span": [
-            59,
-            85
+            224,
+            269
           ],
           "sourceCode": null
         },

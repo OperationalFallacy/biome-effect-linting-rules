@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, pipe } from \"effect\";\n\nfunction load() {\n  try {\n    return read();\n  } catch (error) {\n    return recover(error);\n  }\n}\n\nconst value = Effect.try({ try: read, catch: (cause) => cause }).pipe(\n  Effect.catch(() => Effect.succeed(0)),\n);\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Incorrectly catches synchronous decoder exceptions inside an Effect operation.\n * The failures never enter the typed error channel for recovery through composition.\n */\nexport const readCount = Effect.fn(\"readCount\")(function* (text: string) {\n  try {\n    return Schema.decodeUnknownSync(Schema.Number)(JSON.parse(text));\n  } catch {\n    return 0;\n  }\n});\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-try-catch/error-recovery/invalid.ts"
           },
           "span": [
-            60,
-            135
+            295,
+            400
           ],
           "sourceCode": null
         },

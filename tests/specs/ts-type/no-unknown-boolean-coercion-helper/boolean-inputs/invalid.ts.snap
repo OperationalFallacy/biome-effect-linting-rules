@@ -1,5 +1,5 @@
 {
-  "input": "import { Match, pipe, Schema } from \"effect\";\n\nconst manualBooleanInputValue = Match.value(input).pipe(\n  Match.when(\n    (n) => typeof n === \"boolean\",\n    (n) => n,\n  ),\n  Match.orElse(() => null),\n);\n\nconst decodedBooleanValue = Schema.decodeUnknownEffect(Schema.Boolean)(input);\n",
+  "input": "import { Match } from \"effect\";\n\n/**\n * Incorrectly converts malformed boolean input into a null sentinel.\n * Rejection loses the structured failure information needed by Effect callers.\n */\nexport const decodeEnabled = (input: unknown) =>\n  Match.value(input).pipe(\n    Match.when(\n      (value: unknown): value is boolean => typeof value === \"boolean\",\n      (value) => value,\n    ),\n    Match.orElse(() => null),\n  );\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/ts-type/no-unknown-boolean-coercion-helper/boolean-inputs/invalid.ts"
           },
           "span": [
-            129,
-            151
+            327,
+            353
           ],
           "sourceCode": null
         },

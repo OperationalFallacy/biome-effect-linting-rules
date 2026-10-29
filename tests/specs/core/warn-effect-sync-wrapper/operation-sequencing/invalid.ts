@@ -1,5 +1,13 @@
 import { Effect } from "effect";
 
-const opaqueSyncCallValue = Effect.sync(() => update());
+interface CounterStore {
+  readonly update: () => Effect.Effect<number>;
+}
 
-const namedEffectOperationValue = Effect.log("updated");
+/**
+ * Questionably wraps an already-effectful update in Effect.sync. Running the
+ * outer effect only constructs the update instead of executing it.
+ */
+export const increment = Effect.fn("increment")((store: CounterStore) =>
+  Effect.sync(() => store.update()),
+);

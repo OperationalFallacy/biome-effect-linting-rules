@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\ninterface CounterSource {\n  subscribe(listener: (value: number) => void): () => void;\n}\n\nfunction registerWithAsync(source: CounterSource) {\n  return Effect.async((resume) => {\n    const unsubscribe = source.subscribe((value) => {\n      resume(Effect.succeed(value));\n    });\n    return Effect.sync(unsubscribe);\n  });\n}\n\nfunction registerWithGenericAsync(source: CounterSource) {\n  return Effect.async<number>((resume) => {\n    const unsubscribe = source.subscribe((value) => {\n      resume(Effect.succeed(value));\n    });\n    return Effect.sync(unsubscribe);\n  });\n}\n",
+  "input": "import { Effect } from \"effect\";\n\ninterface CounterSource {\n  readOnce(listener: (value: number) => void): () => void;\n}\n\ninterface ResumeCount {\n  (value: Effect.Effect<number>): void;\n}\n\n/**\n * Incorrectly uses the obsolete Effect.async constructor for a callback bridge.\n * The one-shot source supplies a cancellation function for interrupted reads.\n */\nexport const nextCount = (source: CounterSource) =>\n  Effect.async((resume: ResumeCount) => {\n    const cancel = source.readOnce((value) => resume(Effect.succeed(value)));\n    return Effect.sync(cancel);\n  });\n\nexport const nextCountGeneric = (source: CounterSource) =>\n  Effect.async<number>((resume: ResumeCount) => {\n    const cancel = source.readOnce((value) => resume(Effect.succeed(value)));\n    return Effect.sync(cancel);\n  });\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-effect-async/registration/invalid.ts"
           },
           "span": [
-            184,
-            351
+            411,
+            565
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/core/no-effect-async/registration/invalid.ts"
           },
           "span": [
-            424,
-            599
+            629,
+            791
           ],
           "sourceCode": null
         },

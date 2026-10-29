@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\n{\n  const yieldedGenerator = Effect.gen(function* () {\n    return yield* Effect.gen(function* () {\n      return 1;\n    });\n  });\n}\n\n{\n  const localGeneratorStep = Effect.gen(function* () {\n    const fragment = Effect.gen(function* () {\n      return 1;\n    });\n    return yield* fragment;\n  });\n}\n\n{\n  const apiWithIntermediateGenerator = Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      const fragment = Effect.gen(function* () {\n        return 1;\n      });\n      return yield* fragment;\n    });\n    return { read };\n  });\n}\n\n{\n  const apiWithShadowedRead = Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      const read = Effect.gen(function* () {\n        return 1;\n      });\n      return yield* read;\n    });\n    return { read };\n  });\n}\n\n{\n  const nestedApiObject = Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      return 1;\n    });\n    return { nested: { read } };\n  });\n}\n\n{\n  const exposedGenerator = Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      return 1;\n    });\n    return { read };\n  });\n}\n\n{\n  const renamedGenerator = Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      return 1;\n    });\n    return { load: read };\n  });\n}\n\n{\n  const exposedFunction = Effect.gen(function* () {\n    const read = Effect.fn(\"read\")(function* () {\n      return 1;\n    });\n    return { read };\n  });\n}\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst decodeCount = Schema.decodeUnknownEffect(Schema.Int);\n\n/**\n * Incorrectly nests a decoding generator inside another generator.\n * One operation's sequence is spread across two bodies.\n */\nexport const readCount = (input: unknown) =>\n  Effect.gen(function* () {\n    return yield* Effect.gen(function* () {\n      return yield* decodeCount(input);\n    });\n  });\n\n/**\n * Incorrectly names a nested generator only to yield it in the outer operation.\n */\nexport const readLocalCount = (input: unknown) =>\n  Effect.gen(function* () {\n    const fragment = Effect.gen(function* () {\n      return yield* decodeCount(input);\n    });\n    return yield* fragment;\n  });\n\n/**\n * Incorrectly stages a nested generator inside an exposed API operation.\n * Returning the outer read operation does not combine its internal fragments.\n */\nexport const makeApi = (input: unknown) =>\n  Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      const fragment = Effect.gen(function* () {\n        return yield* decodeCount(input);\n      });\n      return yield* fragment;\n    });\n    return { read };\n  });\n\n/**\n * Incorrectly hides an intermediate generator behind a shadowed operation name.\n */\nexport const makeShadowedApi = (input: unknown) =>\n  Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      const read = Effect.gen(function* () {\n        return yield* decodeCount(input);\n      });\n      return yield* read;\n    });\n    return { read };\n  });\n\n/**\n * Questionably returns a locally staged generator behind a nested API wrapper.\n * Callers must traverse the wrapper to reach the operation.\n */\nexport const makeNestedApi = (input: unknown) =>\n  Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      return yield* decodeCount(input);\n    });\n    return { nested: { read } };\n  });\n\n/**\n * Correctly exposes a complete generator as a direct API operation.\n */\nexport const makeDirectApi = (input: unknown) =>\n  Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      return yield* decodeCount(input);\n    });\n    return { read };\n  });\n\n/**\n * Correctly exposes a complete operation through an explicit API member name.\n */\nexport const makeRenamedApi = (input: unknown) =>\n  Effect.gen(function* () {\n    const read = Effect.gen(function* () {\n      return yield* decodeCount(input);\n    });\n    return { load: read };\n  });\n\n/**\n * Correctly exposes an Effect.fn operation through its service API.\n */\nexport const makeCallableApi = (input: unknown) =>\n  Effect.gen(function* () {\n    const read = Effect.fn(\"read\")(function* () {\n      return yield* decodeCount(input);\n    });\n    return { read };\n  });\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-nested-effect-gen/service-operations/invalid.ts"
           },
           "span": [
-            107,
-            155
+            327,
+            399
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/core/no-nested-effect-gen/service-operations/invalid.ts"
           },
           "span": [
-            244,
-            292
+            596,
+            668
           ],
           "sourceCode": null
         },
@@ -81,8 +81,8 @@
             "file": "/project/core/no-nested-effect-gen/service-operations/invalid.ts"
           },
           "span": [
-            464,
-            516
+            1003,
+            1079
           ],
           "sourceCode": null
         },
@@ -110,8 +110,8 @@
             "file": "/project/core/no-nested-effect-gen/service-operations/invalid.ts"
           },
           "span": [
-            706,
-            758
+            1377,
+            1453
           ],
           "sourceCode": null
         },
@@ -139,8 +139,8 @@
             "file": "/project/core/no-nested-effect-gen/service-operations/invalid.ts"
           },
           "span": [
-            895,
-            943
+            1760,
+            1832
           ],
           "sourceCode": null
         },

@@ -1,39 +1,62 @@
-import { Effect, pipe } from "effect";
+import { Effect } from "effect";
 
-declare const invalidate: (key: readonly string[]) => Effect.Effect<void>;
-declare const setReady: Effect.Effect<void>;
-declare const nextStep: Effect.Effect<string>;
+interface StateActions {
+  readonly invalidate: (keys: ReadonlyArray<string>) => Effect.Effect<void>;
+  readonly next: Effect.Effect<string>;
+  readonly setState: (state: { readonly ready: boolean }) => void;
+  readonly setReady: Effect.Effect<void>;
+  readonly load: Effect.Effect<ReadonlyArray<string>>;
+  readonly publish: Effect.Effect<void>;
+  readonly invalidateCatalog: Effect.Effect<void>;
+}
 
-const invalidAsWrapper = Effect.as(
-  Effect.sync(() => {
-    console.info("ready");
-  }),
-  "ready",
+/**
+ * Questionably hides result selection in an Effect.as wrapper around logging.
+ * The operation returns its input after the observation completes.
+ */
+export const report = Effect.fn("report")((message: string) =>
+  Effect.as(Effect.logInfo(message), message),
+);
+export const savedCount = Effect.fn("savedCount")((count: number) =>
+  Effect.as(Effect.logInfo("Saved count", count), count),
 );
 
-const invalidAndThenWrapper = Effect.andThen(invalidate(["books"]), nextStep);
-
-const invalidNestedSetStateWrapper = Effect.andThen(
-  Effect.sync(() => {
-    setState({ ready: true });
-  }),
-  setReady,
+/**
+ * Incorrectly nests an invalidation inside data-first sequencing arguments.
+ * The next operation depends on that invalidation completing first.
+ */
+export const continueAfterInvalidate = Effect.fn("continueAfterInvalidate")(
+  ({ invalidate, next }: StateActions) =>
+    Effect.andThen(invalidate(["catalog"]), next),
 );
 
-declare function setState(value: { readonly ready: boolean }): void;
+/**
+ * Incorrectly hides a native state update inside sequencing arguments.
+ * Its order relative to the following Effect belongs in an explicit pipeline.
+ */
+export const markReady = Effect.fn("markReady")(
+  ({ setState, setReady }: StateActions) =>
+    Effect.andThen(
+      Effect.sync(() => setState({ ready: true })),
+      setReady,
+    ),
+);
 
-const logResultReplacementValue = Effect.as(Effect.log("saved"), 1);
+/**
+ * Correctly composes named operations whose identities already describe their work.
+ */
+export const invalidateAfterLoad = Effect.fn("invalidateAfterLoad")(
+  ({ load, invalidateCatalog }: StateActions) =>
+    Effect.andThen(load, invalidateCatalog),
+);
 
-const explicitContinuationValue = Effect.log("saved").pipe(Effect.andThen(() => Effect.succeed(1)));
-
-declare const loadState: Effect.Effect<readonly string[]>;
-declare const publishState: Effect.Effect<void>;
-declare const invalidateCatalog: Effect.Effect<void>;
-
-const namedEffectSequence = Effect.andThen(loadState, invalidateCatalog);
-
-/** Correctly sequences state publication and invalidation with Effect.andThen. */
-const continuousSequence = loadState.pipe(
-  Effect.andThen(() => publishState),
-  Effect.andThen(invalidateCatalog),
+/**
+ * Correctly sequences state publication and invalidation in one pipeline.
+ */
+export const publishLoaded = Effect.fn("publishLoaded")(
+  ({ load, publish, invalidateCatalog }: StateActions) =>
+    load.pipe(
+      Effect.andThen(() => publish),
+      Effect.andThen(() => invalidateCatalog),
+    ),
 );

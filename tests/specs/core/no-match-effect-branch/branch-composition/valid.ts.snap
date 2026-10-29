@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, Match } from \"effect\";\n\nconst label = Match.value(state).pipe(\n  Match.when({ _tag: \"Ready\" }, (ready) => ready.name),\n  Match.orElse(() => \"Loading\"),\n);\n\nconst display = Effect.logInfo(label);\n",
+  "input": "import { Effect, Match } from \"effect\";\n\n/**\n * Correctly completes pure value selection before constructing the Effect.\n * The operation has one continuation after the decision.\n */\nexport const chooseLabel = Effect.fn(\"chooseLabel\")((ready: boolean) => {\n  const label = Match.value(ready).pipe(\n    Match.when(true, () => \" Ready \".trim()),\n    Match.orElse(() => \"Loading\"),\n  );\n  return Effect.succeed(label);\n});\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

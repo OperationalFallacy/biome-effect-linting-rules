@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, Match, pipe } from \"effect\";\n\nconst emptyOperationValue = Match.value(true).pipe(\n  Match.when(true, () => Effect.void),\n  Match.orElse(() => task),\n);\n\nconst domainChoicesValue = Match.value(true).pipe(\n  Match.when(true, () => 1),\n  Match.orElse(() => 0),\n);\n",
+  "input": "import { Effect, Match } from \"effect\";\n\n/**\n * Incorrectly models optional work as a Match branch returning Effect.void.\n * This turns the decision to skip work into an empty branch operation.\n */\nexport const saveWhenEnabled = Effect.fn(\"saveWhenEnabled\")(\n  (enabled: boolean) =>\n    Match.value(enabled).pipe(\n      Match.when(false, () => Effect.void),\n      Match.orElse(() => Effect.logInfo(\"Saved settings\")),\n    ),\n);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-match-void-branch/optional-work/invalid.ts"
           },
           "span": [
-            101,
-            136
+            320,
+            356
           ],
           "sourceCode": null
         },

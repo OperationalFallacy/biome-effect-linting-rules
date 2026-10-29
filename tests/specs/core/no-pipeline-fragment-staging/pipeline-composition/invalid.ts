@@ -1,60 +1,37 @@
 import { Option, pipe } from "effect";
 
-const pipelineFragmentReturnResolveBookSlug = (
-  querySlug: string | readonly string[] | undefined,
-  asPath: string,
-): Option.Option<string> => {
-  const symbolFromQuery = pipe(
-    Option.fromNullishOr(querySlug),
+type QueryCode = string | ReadonlyArray<string> | undefined;
+
+/**
+ * Incorrectly stages the producer before its returned pipeline. The caller's
+ * selection and normalization are split across declarations in one operation.
+ */
+export function resolveBookCode(query: QueryCode, path: string) {
+  const fromQuery = pipe(
+    Option.fromNullishOr(query),
     Option.filter((value): value is string => typeof value === "string"),
   );
-  const symbolFromPath = pipe(
-    Option.fromNullishOr(asPath.split("?")[0]),
-    Option.flatMap((path) => Option.fromNullishOr(path.match(/^\/books\/([^/]+)$/)?.[1])),
-  );
-
   return pipe(
-    symbolFromQuery,
-    Option.orElse(() => symbolFromPath),
-    Option.map((value) => decodeURIComponent(value).toUpperCase()),
-  );
-};
-
-function pipelineFragmentLoad() {
-  const staged = pipe(input, Option.fromNullishOr);
-  return pipe(
-    staged,
-    Option.map((n) => n),
+    fromQuery,
+    Option.orElse(() =>
+      Option.fromNullishOr(path.match(/^\/books\/([A-Za-z0-9-]+)$/)?.[1]),
+    ),
+    Option.map((code) => code.trim().toUpperCase()),
   );
 }
 
-function completePipelineLoad() {
+/**
+ * Incorrectly stages an optional input before its normalization pipeline.
+ */
+export function readCode(input: string | undefined) {
+  const candidate = pipe(input, Option.fromNullishOr);
   return pipe(
-    input,
-    Option.fromNullishOr,
-    Option.map((n) => n),
+    candidate,
+    Option.map((code) => code.trim().toUpperCase()),
   );
 }
 
-type RouteParts = {
-  readonly path: string;
-  readonly query: string | readonly string[] | undefined;
-};
-
-const routeParts = (
-  querySlug: string | readonly string[] | undefined,
-  asPath: string,
-): RouteParts => ({
-  path: asPath.split("?")[0] ?? "",
-  query: querySlug,
-});
-
-const pipelineFinalDomainValueResolveBookSlug = (
-  querySlug: string | readonly string[] | undefined,
-  asPath: string,
-): Option.Option<string> =>
-  pipe(
-    Option.fromNullishOr(routeParts(querySlug, asPath).query),
-    Option.filter((value): value is string => typeof value === "string"),
-    Option.map((value) => decodeURIComponent(value).toUpperCase()),
-  );
+/**
+ * Correctly extracts a complete route representation as a domain value.
+ */
+export const routeParts = (query: QueryCode, path: string) => ({ query, path });

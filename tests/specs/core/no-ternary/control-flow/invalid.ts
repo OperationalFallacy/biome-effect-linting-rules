@@ -1,5 +1,15 @@
 import { Effect } from "effect";
 
-const valueTernaryValue = flag ? 1 : 0;
+/**
+ * Questionably uses a ternary for a value-pipeline decision. Match expresses
+ * the alternatives through the same composition style as subsequent steps.
+ */
+export const selectLabel = (enabled: boolean) =>
+  enabled ? "Enabled" : "Disabled";
 
-const deferredDecisionValue = Effect.suspend(() => Effect.succeed(flag ? 1 : 0));
+/**
+ * Correctly defers a decision inside Effect.suspend. The condition is read
+ * each time the effect executes.
+ */
+export const readDeferredLabel = (state: { enabled: boolean }) =>
+  Effect.suspend(() => Effect.succeed(state.enabled ? "Enabled" : "Disabled"));

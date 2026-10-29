@@ -1,5 +1,5 @@
 {
-  "input": "const response = {\n  status: 400,\n  body: {\n    type: \"ValidationFailure\",\n    ...errorFields(cause),\n  },\n};\n",
+  "input": "const errorFields = (cause: Error) => ({ message: cause.message });\n\n/**\n * Incorrectly splits a nested response body across a fragment helper and its\n * parent object. The body declaration hides part of its own payload.\n */\nexport const response = (cause: Error) => ({\n  status: 400,\n  body: { type: \"ValidationFailure\", ...errorFields(cause) },\n});\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-fragmented-const-assembly/member-scope/invalid.ts"
           },
           "span": [
-            42,
-            105
+            293,
+            345
           ],
           "sourceCode": null
         },

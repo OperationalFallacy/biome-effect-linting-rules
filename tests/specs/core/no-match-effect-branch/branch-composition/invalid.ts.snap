@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect, Match, pipe } from \"effect\";\n\nconst branchSequenceValue = Match.value(1).pipe(\n  Match.when(1, () => Effect.succeed(1).pipe(Effect.map((n) => n + 1))),\n  Match.orElse(() => Effect.succeed(0)),\n);\n\nconst selectedValuesValue = Match.value(1).pipe(\n  Match.when(1, () => 2),\n  Match.orElse(() => 0),\n);\n",
+  "input": "import { Effect, Match } from \"effect\";\n\n/**\n * Incorrectly builds branch-specific Effect pipelines for a pure selection.\n * Each branch introduces another operation around a value transformation.\n */\nexport const chooseLabel = Effect.fn(\"chooseLabel\")((ready: boolean) =>\n  Match.value(ready).pipe(\n    Match.when(true, () =>\n      Effect.succeed(\" Ready \").pipe(Effect.map((label) => label.trim())),\n    ),\n    Match.orElse(() => Effect.succeed(\"Loading\")),\n  ),\n);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-match-effect-branch/branch-composition/invalid.ts"
           },
           "span": [
-            75,
-            211
+            275,
+            463
           ],
           "sourceCode": null
         },

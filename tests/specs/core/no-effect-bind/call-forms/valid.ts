@@ -1,9 +1,10 @@
-import { Effect } from "effect";
+import { Effect, Schema } from "effect";
 
-const dependent = Effect.succeed(1).pipe(Effect.flatMap((count) => Effect.succeed(count + 1)));
-const directYields = Effect.gen(function* () {
-  const count = yield* read;
-  return count + 1;
+/**
+ * Correctly reads dependent values through direct yields and constructs the
+ * result record once. The operation retains the decoder's failure channel.
+ */
+export const readCount = Effect.fn("readCount")(function* (input: unknown) {
+  const count = yield* Schema.decodeUnknownEffect(Schema.Int)(input);
+  return { label: "Counter", count };
 });
-const namedResult = task.pipe(Effect.bindTo("count"));
-const unrelatedBind = other.bind("count", read);

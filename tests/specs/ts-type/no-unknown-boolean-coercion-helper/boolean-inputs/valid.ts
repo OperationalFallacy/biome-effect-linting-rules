@@ -1,4 +1,7 @@
 import { Schema } from "effect";
 
-const Input = Schema.Struct({ enabled: Schema.Boolean });
-const decodeInput = Schema.decodeUnknownEffect(Input);
+/**
+ * Correctly decodes boolean input through Schema. Malformed input produces
+ * a typed failure that callers can recover from through Effect composition.
+ */
+export const decodeEnabled = Schema.decodeUnknownEffect(Schema.Boolean);

@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\ninterface CounterSource {\n  subscribe(listener: (value: number) => void): () => void;\n}\n\nfunction registerWithCallback(source: CounterSource) {\n  return Effect.callback<number>((resume) => {\n    const unsubscribe = source.subscribe((value) => {\n      resume(Effect.succeed(value));\n    });\n    return Effect.sync(unsubscribe);\n  });\n}\n",
+  "input": "import { Effect } from \"effect\";\n\ninterface CounterSource {\n  readOnce(listener: (value: number) => void): () => void;\n}\n\n/**\n * Correctly bridges a one-shot callback with Effect.callback. The returned\n * cleanup Effect cancels the pending native read on interruption.\n */\nexport const nextCount = (source: CounterSource) =>\n  Effect.callback<number>((resume) => {\n    const cancel = source.readOnce((value) => resume(Effect.succeed(value)));\n    return Effect.sync(cancel);\n  });\n\nexport const nextCountGeneric = nextCount;\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

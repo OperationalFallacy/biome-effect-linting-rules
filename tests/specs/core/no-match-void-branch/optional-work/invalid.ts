@@ -1,11 +1,13 @@
-import { Effect, Match, pipe } from "effect";
+import { Effect, Match } from "effect";
 
-const emptyOperationValue = Match.value(true).pipe(
-  Match.when(true, () => Effect.void),
-  Match.orElse(() => task),
-);
-
-const domainChoicesValue = Match.value(true).pipe(
-  Match.when(true, () => 1),
-  Match.orElse(() => 0),
+/**
+ * Incorrectly models optional work as a Match branch returning Effect.void.
+ * This turns the decision to skip work into an empty branch operation.
+ */
+export const saveWhenEnabled = Effect.fn("saveWhenEnabled")(
+  (enabled: boolean) =>
+    Match.value(enabled).pipe(
+      Match.when(false, () => Effect.void),
+      Match.orElse(() => Effect.logInfo("Saved settings")),
+    ),
 );

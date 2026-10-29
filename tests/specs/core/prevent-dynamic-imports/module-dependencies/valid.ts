@@ -1,4 +1,8 @@
+import { randomUUID } from "node:crypto";
 import { Effect } from "effect";
-import { readProfile } from "./profile";
 
-const loadProfile = Effect.fn("loadProfile")(() => readProfile);
+/**
+ * Correctly declares the native dependency at module scope and defers its
+ * invocation with Effect.sync. The operation's dependency is visible up front.
+ */
+export const createId = Effect.fn("createId")(() => Effect.sync(randomUUID));

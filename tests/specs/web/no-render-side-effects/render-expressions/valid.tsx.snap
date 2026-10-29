@@ -1,5 +1,5 @@
 {
-  "input": "import { useAtomValue } from \"@effect/atom-react\";\n\nexport function Profile() {\n  const profile = useAtomValue(profileAtom);\n  return <span>{profile.name}</span>;\n}\n",
+  "input": "import { Match } from \"effect\";\n\ntype LabelProps = {\n  readonly ready: boolean;\n  readonly onReport: (message: string) => void;\n};\n\n/**\n * Correctly keeps rendering pure and performs the action from an event handler.\n * Choosing display text does not change application state.\n */\nexport function Label({ ready, onReport }: LabelProps) {\n  const label = Match.value(ready).pipe(\n    Match.when(true, () => \"Ready\"),\n    Match.orElse(() => \"Waiting\"),\n  );\n  return (\n    <button type=\"button\" disabled={!ready} onClick={() => onReport(\"Ready\")}>\n      {label}\n    </button>\n  );\n}\n",
   "result": {
     "diagnostics": [],
     "errors": 0,

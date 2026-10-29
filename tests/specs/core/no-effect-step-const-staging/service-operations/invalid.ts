@@ -10,53 +10,52 @@ interface WorkStore {
   readonly saveItems: (items: string) => Effect.Effect<void>;
 }
 
-declare const workStore: WorkStore;
-
-const makeWorkOperations = () =>
+/**
+ * Correctly exposes complete workflows through the returned API. Query effects
+ * and callable operations each describe the complete work their caller requests.
+ */
+export const makeWorkOperations = (store: WorkStore) =>
   Effect.gen(function* () {
     const resetWork = Effect.gen(function* () {
-      yield* workStore.clearPending;
-      yield* workStore.clearCompleted;
-      yield* workStore.invalidateSummary;
+      yield* store.clearPending;
+      yield* store.clearCompleted;
+      yield* store.invalidateSummary;
     });
-    const prepare = workStore.loadItems.pipe(Effect.flatMap(workStore.prepareItems));
+    const prepare = store.loadItems.pipe(Effect.flatMap(store.prepareItems));
     const load = pipe(
-      workStore.loadItems,
-      Effect.map((items) => items),
+      store.loadItems,
+      Effect.map((items) => items.trim()),
     );
     const refresh = Effect.fnUntraced(function* () {
-      const items = yield* workStore.fetchItems;
-      yield* workStore.saveItems(items);
+      const items = yield* store.fetchItems;
+      yield* store.saveItems(items);
       return items;
     });
     const reload = Effect.fn(function* () {
-      return yield* workStore.fetchItems;
+      return yield* store.fetchItems;
     });
     const tracedReload = Effect.fn("reload")(function* () {
-      return yield* workStore.fetchItems;
+      return yield* store.fetchItems;
     });
-
     return { resetWork, prepare, load, refresh, reload, tracedReload };
   });
 
-makeWorkOperations satisfies () => Effect.Effect<{
-  readonly resetWork: Effect.Effect<void>;
-  readonly prepare: Effect.Effect<string>;
-  readonly load: Effect.Effect<string>;
-  readonly refresh: () => Effect.Effect<string>;
-  readonly reload: () => Effect.Effect<string>;
-  readonly tracedReload: () => Effect.Effect<string>;
-}>;
-
-const makeOperations = () =>
+/**
+ * Incorrectly stages clock reads before exposed queries and inside an operation.
+ * The API members need continuous pipelines within their own operation bodies.
+ */
+export const makeTimeOperations = () =>
   Effect.gen(function* () {
-    const staged = Effect.succeed(1);
+    const staged = Effect.clockWith((clock) => clock.currentTimeMillis);
     const run = Effect.gen(function* () {
-      const parsed = Effect.succeed(2);
-      const evaluated = parsed.pipe(Effect.map((value) => value + 1));
-      return yield* evaluated;
+      const read = Effect.clockWith((clock) => clock.currentTimeMillis);
+      const formatted = read.pipe(
+        Effect.map((time) => new Date(time).toISOString()),
+      );
+      return yield* formatted;
     });
-    const load = staged.pipe(Effect.map((value) => value + 1));
-
+    const load = staged.pipe(
+      Effect.map((time) => new Date(time).toISOString()),
+    );
     return { run, load };
   });

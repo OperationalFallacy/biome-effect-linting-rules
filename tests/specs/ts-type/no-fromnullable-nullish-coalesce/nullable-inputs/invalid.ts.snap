@@ -1,5 +1,5 @@
 {
-  "input": "import { Option } from \"effect\";\n\nconst nullFallback = Option.fromNullishOr(input ?? null);\nconst undefinedFallback = Option.fromNullishOr(input ?? undefined);\nconst direct = Option.fromNullishOr(input);\n",
+  "input": "import { Option } from \"effect\";\n\n/**\n * Unnecessarily normalizes nullish values before Option.fromNullishOr.\n * The fallback repeats the conversion that already represents absence.\n */\nexport const asName = (input: string | null | undefined) =>\n  Option.fromNullishOr(input ?? null);\nexport const asNameWithUndefined = (input: string | null | undefined) =>\n  Option.fromNullishOr(input ?? undefined);\n\n/**\n * Correctly converts a nullable input directly into an Option.\n */\nexport const directName = (input: string | null | undefined) =>\n  Option.fromNullishOr(input);\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/ts-type/no-fromnullable-nullish-coalesce/nullable-inputs/invalid.ts"
           },
           "span": [
-            55,
-            90
+            248,
+            283
           ],
           "sourceCode": null
         },
@@ -52,8 +52,8 @@
             "file": "/project/ts-type/no-fromnullable-nullish-coalesce/nullable-inputs/invalid.ts"
           },
           "span": [
-            118,
-            158
+            360,
+            400
           ],
           "sourceCode": null
         },

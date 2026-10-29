@@ -1,5 +1,5 @@
 {
-  "input": "import { Effect } from \"effect\";\n\nfunction valueBranchChoose(flag) {\n  if (flag) {\n    return 1;\n  }\n  return 0;\n}\n\nconst operationBranchChoose = Effect.fn(\"choose\")(function* (flag) {\n  if (flag) {\n    return 1;\n  }\n  return 0;\n});\n",
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Questionably splits a pure value selection across imperative return paths.\n * A Match expression can represent the decision as one composable value.\n */\nexport function selectLabel(enabled: boolean) {\n  if (enabled) {\n    return \"Enabled\";\n  }\n  return \"Disabled\";\n}\n\n/**\n * Correctly keeps a conditional yield inside a named Effect operation.\n * The decision runs when the operation executes.\n */\nexport const logWhenEnabled = Effect.fn(\"logWhenEnabled\")(function* (\n  enabled: boolean,\n) {\n  if (enabled) {\n    yield* Effect.logInfo(\"Enabled\");\n  }\n});\n",
   "result": {
     "diagnostics": [
       {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-if-statement/control-flow/invalid.ts"
           },
           "span": [
-            75,
-            79
+            248,
+            255
           ],
           "sourceCode": null
         },

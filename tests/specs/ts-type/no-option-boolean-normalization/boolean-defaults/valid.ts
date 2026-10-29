@@ -1,8 +1,17 @@
-import { Schema } from "effect";
+import { Effect, Schema } from "effect";
 
 const Settings = Schema.Struct({
   enabled: Schema.optionalKey(Schema.Boolean).pipe(
-    Schema.withDecodingDefaultKey(() => false),
+    Schema.withDecodingDefaultKey(Effect.succeed(false)),
   ),
 });
-const decodeSettings = Schema.decodeUnknownEffect(Settings);
+
+/**
+ * Correctly defines the boolean default in the schema. Decoding applies the
+ * same validation and absence policy before the operation uses the value.
+ */
+export const decodeEnabled = Effect.fn("decodeEnabled")((input: unknown) =>
+  Schema.decodeUnknownEffect(Settings)(input).pipe(
+    Effect.map((settings) => settings.enabled),
+  ),
+);

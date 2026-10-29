@@ -1,4 +1,14 @@
 import * as Value from "effect/Data";
 
-const cellKey = (row: number, column: number) => [row, column];
-const cells = new Map<ReturnType<typeof cellKey>, string>();
+class Cell extends Value.Class<{
+  readonly row: number;
+  readonly column: number;
+}> {}
+
+/**
+ * Questionably uses structural coordinate values as native Map keys.
+ * A reconstructed equal coordinate has a different native object identity.
+ */
+export const cells = new Map<Cell, string>([
+  [new Cell({ row: 0, column: 1 }), "occupied"],
+]);
