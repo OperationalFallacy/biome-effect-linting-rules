@@ -53,6 +53,7 @@ Use the Yarn version declared in `package.json`. Run these commands from the rep
 | `yarn install --immutable` | Install dependencies from the lockfile. |
 | `yarn test` | Run the rule and runtime tests, then the project typecheck. |
 | `yarn typecheck` | Check project code and tests with `tsconfig.json`, also used by editors. |
+| `yarn effect:diagnostics` | Report the Effect Language Service's type-aware diagnostics. |
 | `yarn lint` | Check implementation code with the installed dev package. Honors `BIOME_CONFIG_PATH`. |
 | `yarn lint:dev` | Explicitly check with the installed dev package. Accepts paths and Biome flags. |
 | `yarn lint:local` | Check with the checkout's current rules. Accepts paths and Biome flags. |
@@ -67,6 +68,8 @@ Use the Yarn version declared in `package.json`. Run these commands from the rep
 For rule changes, run the relevant tests and then the full suite. For package or workflow changes, run the build and review its generated files. Documentation changes need a prose and link review; use `git diff --check` to check whitespace.
 
 The installed dev release is locked in `yarn.lock`. Update it with `yarn up @catenarycloud/linteffect@dev`. Compare published and local diagnostics during rule development. Do not suppress findings or change valid code solely to accommodate a published matcher bug.
+
+`tsconfig.json` configures the Effect Language Service. The compile and typecheck tasks apply its compiler patch before they run TypeScript. The workspace compiler and editor use that configuration. Effect errors fail compilation; warnings and suggestions remain visible. Repair the service composition or implementation that caused a diagnostic. Do not widen Effect channels or add casts to hide it.
 
 ## Releases
 

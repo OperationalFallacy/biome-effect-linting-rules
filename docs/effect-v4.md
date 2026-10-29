@@ -1,6 +1,6 @@
 # Effect v4 migration
 
-This release targets Effect 4.0.6 only. Version 0.0.9 is the final Effect v3 release.
+This release targets Effect 4. Version 0.0.9 is the final Effect v3 release.
 
 ## Rule changes
 

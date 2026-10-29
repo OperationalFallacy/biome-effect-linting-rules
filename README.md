@@ -8,7 +8,7 @@
 
 The rules identify anti-patterns such as nested `Effect.gen` blocks and consecutive operations written with `Effect.all`. Each diagnostic explains the pattern and suggests how to rewrite the code.
 
-The rules target Effect 4.0.6. Version 0.0.9 is the final release for Effect v3. Read the [migration notes](docs/effect-v4.md) for the changes.
+The rules target Effect 4. Version 0.0.9 is the final release for Effect v3. Read the [migration notes](docs/effect-v4.md) for the changes.
 
 You can use the full rule set or choose a smaller preset. Start with a smaller preset to introduce the rules to an established project.
 
@@ -131,6 +131,8 @@ yarn lint:local src/cli.ts
 Tests and builds run `yarn lint`. To use the checkout's rules throughout a development run, set `BIOME_CONFIG_PATH=biome.local.jsonc`, for example `BIOME_CONFIG_PATH=biome.local.jsonc yarn test`. The published package can report findings that have already been fixed in the checkout; compare both commands before changing code to satisfy a diagnostic.
 
 `.projenrc.ts` generates both configurations and their shared `biome.base.jsonc`. It derives the local plugin list from `configs/full.jsonc`.
+
+The Effect Language Service adds type-aware diagnostics in editors and `yarn typecheck`. The compile and typecheck tasks apply its compiler patch before they run TypeScript. The editor settings select the workspace compiler. `yarn effect:diagnostics` reports Effect findings separately. Errors fail the typecheck; warnings and suggestions remain visible without blocking it. Biome checks the project's syntax conventions, while the language service checks Effect usage and boolean conditions.
 
 Add rule test cases using the [fixture layout and commands](tests/specs/README.md).
 
