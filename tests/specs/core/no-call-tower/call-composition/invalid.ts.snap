@@ -5,11 +5,11 @@
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply the subsequent steps with pipe, Effect.flatMap, or Effect.andThen.",
+        "description": "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply dependent steps with pipe, Effect.flatMap, or Effect.andThen. Preserve effectful conditions, scoped acquisition, and finalizers.",
         "message": [
           {
             "elements": [],
-            "content": "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply the subsequent steps with pipe, Effect.flatMap, or Effect.andThen."
+            "content": "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply dependent steps with pipe, Effect.flatMap, or Effect.andThen. Preserve effectful conditions, scoped acquisition, and finalizers."
           }
         ],
         "advices": {
@@ -34,40 +34,11 @@
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply the subsequent steps with pipe, Effect.flatMap, or Effect.andThen.",
+        "description": "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply dependent steps with pipe, Effect.flatMap, or Effect.andThen. Preserve effectful conditions, scoped acquisition, and finalizers.",
         "message": [
           {
             "elements": [],
-            "content": "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply the subsequent steps with pipe, Effect.flatMap, or Effect.andThen."
-          }
-        ],
-        "advices": {
-          "advices": []
-        },
-        "verboseAdvices": {
-          "advices": []
-        },
-        "location": {
-          "path": {
-            "file": "/project/core/no-call-tower/call-composition/invalid.ts"
-          },
-          "span": [
-            134,
-            191
-          ],
-          "sourceCode": null
-        },
-        "tags": [],
-        "source": null
-      },
-      {
-        "category": "plugin",
-        "severity": "error",
-        "description": "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply the subsequent steps with pipe, Effect.flatMap, or Effect.andThen.",
-        "message": [
-          {
-            "elements": [],
-            "content": "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply the subsequent steps with pipe, Effect.flatMap, or Effect.andThen."
+            "content": "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply dependent steps with pipe, Effect.flatMap, or Effect.andThen. Preserve effectful conditions, scoped acquisition, and finalizers."
           }
         ],
         "advices": {
@@ -90,7 +61,7 @@
         "source": null
       }
     ],
-    "errors": 3,
+    "errors": 2,
     "warnings": 0,
     "infos": 0,
     "parseErrors": 0,

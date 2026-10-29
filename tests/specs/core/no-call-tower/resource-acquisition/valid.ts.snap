@@ -1,0 +1,11 @@
+{
+  "input": "import { open } from \"node:fs/promises\";\nimport { Effect } from \"effect\";\n\n/**\n * Correctly supplies acquisition and release to Effect.acquireRelease.\n * The acquired resource remains attached to the caller's scope.\n */\nexport const acquireController = Effect.fn(\"acquireController\")(() =>\n  Effect.acquireRelease(\n    Effect.sync(() => new AbortController()),\n    (controller) => Effect.sync(() => controller.abort()),\n  ),\n);\n\n/**\n * Correctly closes a scoped acquisition with Effect.scoped around a generator.\n * Only the observed state leaves the scope, not the resource itself.\n */\nexport const isControllerActive = Effect.scoped(\n  Effect.gen(function* () {\n    const controller = yield* acquireController();\n    return !controller.signal.aborted;\n  }),\n);\n\n/**\n * Correctly brackets file reading with Effect.acquireUseRelease.\n * The operation returns the text and closes the handle on success or failure.\n */\nexport const readTextFile = Effect.fn(\"readTextFile\")((file: string) =>\n  Effect.acquireUseRelease(\n    Effect.tryPromise(() => open(file, \"r\")),\n    (handle) => Effect.tryPromise(() => handle.readFile(\"utf8\")),\n    (handle) => Effect.tryPromise(() => handle.close()),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

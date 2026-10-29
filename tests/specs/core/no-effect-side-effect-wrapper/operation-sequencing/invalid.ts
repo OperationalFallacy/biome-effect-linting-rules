@@ -32,7 +32,8 @@ declare const invalidateCatalog: Effect.Effect<void>;
 
 const namedEffectSequence = Effect.andThen(loadState, invalidateCatalog);
 
-const continuousTap = loadState.pipe(
-  Effect.tap(() => publishState),
+/** Correctly sequences state publication and invalidation with Effect.andThen. */
+const continuousSequence = loadState.pipe(
+  Effect.andThen(() => publishState),
   Effect.andThen(invalidateCatalog),
 );
