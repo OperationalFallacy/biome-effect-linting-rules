@@ -149,6 +149,75 @@ describe("Effect CLI", () => {
       }).pipe(Effect.scoped),
     ));
 
+  it("It allows file symlinks and skips directory symlinks", () =>
+    runtime.runPromise(
+      Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem;
+        const path = yield* Path.Path;
+        const directory = yield* fs.makeTempDirectoryScoped();
+        const source = path.join(directory, "src");
+        yield* fs.makeDirectory(source);
+        yield* fs.writeFileString(path.join(source, "valid.ts"), "export {};");
+        yield* fs.symlink(
+          path.join(source, "valid.ts"),
+          path.join(source, "alias.ts"),
+        );
+        yield* fs.symlink(source, path.join(source, "cycle"));
+        const result = yield* run(["check", "src", "--preset=core"], directory);
+        expect(result.status, result.stderr).toBe(0);
+        expect(result.stdout).toBe("Checked 2 files. Found 0 diagnostics.\n");
+      }).pipe(Effect.scoped),
+    ));
+
+  it("It catches file errors in breadth-first traversal order", () =>
+    runtime.runPromise(
+      Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem;
+        const path = yield* Path.Path;
+        const directory = yield* fs.makeTempDirectoryScoped();
+        yield* fs.makeDirectory(path.join(directory, "src", "a"), {
+          recursive: true,
+        });
+        yield* fs.writeFileString(
+          path.join(directory, "src", "root.ts"),
+          'throw new Error("Rejected");',
+        );
+        yield* fs.writeFileString(
+          path.join(directory, "src", "a", "child.ts"),
+          'throw new Error("Rejected");',
+        );
+        const result = yield* run(["check", "src", "--preset=core"], directory);
+        expect(result.status).toBe(1);
+        expect(result.stderr).toContain("src/root.ts");
+        expect(result.stderr).toContain("src/a/child.ts");
+        expect(result.stderr.indexOf("src/root.ts")).toBeLessThan(
+          result.stderr.indexOf("src/a/child.ts"),
+        );
+      }).pipe(Effect.scoped),
+    ));
+
+  it("It catches files larger than the engine limit", () =>
+    runtime.runPromise(
+      Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem;
+        const path = yield* Path.Path;
+        const directory = yield* fs.makeTempDirectoryScoped();
+        yield* fs.writeFileString(
+          path.join(directory, "large.ts"),
+          " ".repeat(1048577),
+        );
+        const result = yield* run(
+          ["check", "large.ts", "--preset=core"],
+          directory,
+        );
+        expect(result.status).toBe(1);
+        expect(result.stderr).toContain(
+          "File exceeds Biome's maximum file size.",
+        );
+        expect(result.stdout).toBe("Checked 0 files. Found 1 diagnostic.\n");
+      }).pipe(Effect.scoped),
+    ));
+
   it.each([
     { name: "missing targets", args: ["check", "missing.ts"] },
     {

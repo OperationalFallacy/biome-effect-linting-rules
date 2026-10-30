@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Effect.sync treats a thrown exception as a defect. Use Effect.fail when\n * callers are expected to recover from the rejection through the typed error\n * channel.\n */\nexport const reject = Effect.sync(() => { throw new Error(\"Rejected\"); });\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent this failure in the Effect error channel so callers can compose recovery.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent this failure in the Effect error channel so callers can compose recovery."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-throw-statement/failures/invalid.ts"
+          },
+          "span": [
+            249,
+            277
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

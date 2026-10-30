@@ -12,6 +12,8 @@ Repeated diagnostics in a large method call for a review of its structure. A wra
 
 ## Composition and state
 
+Compose decisions, iteration, and state changes with Effect and collection APIs. The core preset reports imperative JavaScript syntax even inside Effect operations.
+
 Keep related Effect steps in execution order in a pipeline or one `Effect.gen`. Sequence dependent effects with `Effect.flatMap` or `Effect.andThen`, and use `Effect.all` to collect results. This package reserves `Effect.tap` for logging that retains the preceding result.
 
 Define complete service operations, then return them through the service API, for example `return { readCount, resetCount }`. Reusable Effect values, pipelines, and functions built with `Effect.fn` or `Effect.fnUntraced` are valid API members. Keep their inferred result, error, and dependency types. Inline intermediate Effect constants inside each operation so its sequence stays together. The rule still checks intermediate steps inside each API operation.
@@ -20,13 +22,13 @@ The `no-effect-step-const-staging` rule recognizes declarations exposed as direc
 
 See the [service operation examples](service-effect-operations.md) for allowed API members and intermediate steps that still require changes.
 
-Use ordinary control flow inside `Effect.gen`, `Effect.fn`, or `Effect.fnUntraced` to express decisions in execution order. Use `Match.value`, `Option.match`, or `Result.match` for decisions outside those operations. Compute selected values before you construct an object from them. Keep callback blocks when local bindings or multiple steps improve readability.
+Use `Match.value`, `Option.match`, or `Result.match` instead of ternaries. Compute selected values before you construct an object from them. Keep callback blocks when local bindings or multiple steps improve readability.
 
 ### Conditional Effect work
 
 A callback can contain a pipeline that computes a different value from the enclosing pipeline. Keep that computation local. Combine pipelines when one pipeline's result feeds directly into another.
 
-For optional Effect work, put the condition and its dependent yield in one operation. This form skips the write when disabled and defers both the decision and the write until execution:
+Use `Effect.when` for optional Effect work. Its Effect-valued condition runs before the selected operation:
 
 ```ts
 import { Effect } from "effect";
@@ -35,14 +37,12 @@ interface Writer {
   readonly write: Effect.Effect<void>;
 }
 
-export const writeWhen = Effect.fn("writeWhen")(function* (enabled: boolean, writer: Writer) {
-  if (enabled) {
-    yield* writer.write;
-  }
-});
+export const writeWhen = Effect.fn("writeWhen")((enabled: boolean, writer: Writer) =>
+  writer.write.pipe(Effect.when(Effect.succeed(enabled)), Effect.asVoid),
+);
 ```
 
-Use `Match` to select pure values. A `Match` branch that returns `Effect.void` is a decision to skip Effect work, so use a conditional yield instead.
+Use `Match` to select pure values and `Effect.when` to select optional Effect work.
 
 ### Dependency assembly
 

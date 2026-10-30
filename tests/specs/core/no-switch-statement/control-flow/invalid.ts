@@ -3,8 +3,9 @@ import { Effect, Match } from "effect";
 type Phase = "ready" | "loading" | "failed";
 
 /**
- * Questionably splits pure value selection across switch return paths.
- * Match can express the complete selection as one value.
+ * Match.when narrows the phase within its callback. Match.orElse receives the
+ * phases that earlier branches did not handle, so the fallback participates in
+ * the same typed decision.
  */
 export const describePhase = (phase: Phase) => {
   switch (phase) {
@@ -27,7 +28,8 @@ export function isReady(phase: Phase) {
 }
 
 /**
- * Correctly uses Match for pure value selection.
+ * A phase description can remain a pure function. Effect.sync can defer that
+ * function when an operation needs to compute the description during execution.
  */
 export const describeMatched = (phase: Phase) =>
   Match.value(phase).pipe(
@@ -37,8 +39,8 @@ export const describeMatched = (phase: Phase) =>
   );
 
 /**
- * Correctly keeps branching inside a named Effect operation.
- * The branch executes when the operation runs.
+ * Keep the phase selection pure and reuse it from Effect.sync. Effect.fn can
+ * then supply tracing for the complete operation.
  */
 export const describeOperation = Effect.fn("describeOperation")(function* (
   phase: Phase,

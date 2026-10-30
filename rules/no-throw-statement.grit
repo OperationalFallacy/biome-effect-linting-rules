@@ -1,0 +1,9 @@
+language js(typescript, jsx)
+
+JsThrowStatement() as $violation where {
+    register_diagnostic(
+        span = $violation,
+        message = "Represent this failure in the Effect error channel so callers can compose recovery.",
+        severity = "error"
+    )
+}

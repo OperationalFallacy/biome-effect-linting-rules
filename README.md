@@ -8,7 +8,7 @@
 
 The rules identify anti-patterns such as nested `Effect.gen` blocks and consecutive operations written with `Effect.all`. Each diagnostic explains the pattern and suggests how to rewrite the code.
 
-The rules target Effect 4. Version 0.0.9 is the final release for Effect v3. Read the [migration notes](docs/effect-v4.md) for the changes.
+The rules target Effect 4. Version 0.0.9 is the final release for Effect v3.
 
 You can use the full rule set or choose a smaller preset. Start with a smaller preset to introduce the rules to an established project.
 

@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Effect.forEach is sequential by default. Set discard to true when the\n * operation returns void, so the traversal does not collect an unused array\n * of write results.\n */\nexport const writeAll = Effect.fn(\"writeAll\")((values: ReadonlyArray<number>, write: (value: number) => Effect.Effect<void, Error>) =>\n  Effect.forEach(values, write, { discard: true }),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,6 +1,6 @@
 /**
- * Correctly uses ordinary branching in a module outside Effect composition.
- * The function has no effectful operation or service dependencies.
+ * Match.value accepts plain domain values and needs no Effect runtime. A phase
+ * description can stay pure until an Effect operation needs to use its result.
  */
 export const describePhase = (phase: "ready" | "loading" | "failed") => {
   switch (phase) {

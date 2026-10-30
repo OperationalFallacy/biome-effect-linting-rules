@@ -1,0 +1,19 @@
+language js(typescript, jsx)
+
+or {
+    JsVariableDeclaration() as $declaration where {
+        $declaration <: r"(?s)(?:let|var)\s.*"
+    },
+    JsAssignmentExpression(),
+    JsPreUpdateExpression(),
+    JsPostUpdateExpression(),
+    JsUnaryExpression() as $deletion where {
+        $deletion <: r"(?s)delete\b.*"
+    }
+} as $violation where {
+    register_diagnostic(
+        span = $violation,
+        message = "Represent state changes through immutable values or Effect state operations. Keep each transition explicit.",
+        severity = "error"
+    )
+}

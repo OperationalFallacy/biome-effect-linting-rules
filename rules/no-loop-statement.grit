@@ -1,0 +1,15 @@
+language js(typescript, jsx)
+
+or {
+    JsForStatement(),
+    JsForInStatement(),
+    JsForOfStatement(),
+    JsWhileStatement(),
+    JsDoWhileStatement()
+} as $violation where {
+    register_diagnostic(
+        span = $violation,
+        message = "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup.",
+        severity = "error"
+    )
+}
