@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.0-dev.5](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.4...v0.1.0-dev.5) (2026-10-30)
+
+
+### Features
+
+* enforce declarative Effect control flow ([f7ed5d9](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/f7ed5d9c390c2b950699a19e337a26511da05522))
+* enforce declarative Effect control flow ([5074a78](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/5074a78ce434a48fcb148d5d626fe54a938adc11))
+
 ## [0.1.0-dev.4](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.3...v0.1.0-dev.4) (2026-10-29)
 
 ### Fixture documentation and validation
