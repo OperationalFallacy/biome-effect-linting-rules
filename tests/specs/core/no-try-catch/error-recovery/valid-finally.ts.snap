@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Effect.ensuring runs close as a finalizer when use completes or fails. The\n * finalizer also runs if the operation is interrupted.\n */\nexport const useResource = Effect.fn(\"useResource\")((use: () => number, close: () => void) =>\n  Effect.sync(use).pipe(Effect.ensuring(Effect.sync(close))),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

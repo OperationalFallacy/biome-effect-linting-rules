@@ -1,0 +1,41 @@
+{
+  "input": "/**\n * Match.value accepts plain domain values and needs no Effect runtime. A phase\n * description can stay pure until an Effect operation needs to use its result.\n */\nexport const describePhase = (phase: \"ready\" | \"loading\" | \"failed\") => {\n  switch (phase) {\n    case \"ready\":\n      return \"Ready\";\n    case \"loading\":\n      return \"Loading\";\n    default:\n      return \"Failed\";\n  }\n};\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-switch-statement/non-effect-code/invalid.ts"
+          },
+          "span": [
+            244,
+            384
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

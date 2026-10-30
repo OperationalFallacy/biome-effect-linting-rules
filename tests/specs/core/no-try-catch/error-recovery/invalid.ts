@@ -1,8 +1,9 @@
 import { Effect, Schema } from "effect";
 
 /**
- * Incorrectly catches synchronous decoder exceptions inside an Effect operation.
- * The failures never enter the typed error channel for recovery through composition.
+ * Effect.try captures exceptions from JSON.parse as typed failures. Chain the
+ * schema decoder with Effect.flatMap so one Effect.catch can recover from
+ * either failure.
  */
 export const readCount = Effect.fn("readCount")(function* (text: string) {
   try {

@@ -1,8 +1,8 @@
 import { Effect, Match } from "effect";
 
 /**
- * Correctly expresses pure value selection with Match. The selected value
- * can continue through a pipeline without separate return paths.
+ * Match invokes only the selected branch callback. Each branch returns the
+ * label that subsequent transformations will receive.
  */
 export const selectLabel = (enabled: boolean) =>
   Match.value(enabled).pipe(
@@ -11,13 +11,12 @@ export const selectLabel = (enabled: boolean) =>
   );
 
 /**
- * Correctly keeps a conditional yield inside a named Effect operation.
- * The decision runs when the operation executes.
+ * Effect.when returns None when its condition succeeds with false. A failed
+ * condition remains a failure, so callers can distinguish a skipped log from a
+ * failed condition.
  */
 export const logWhenEnabled = Effect.fn("logWhenEnabled")(function* (
   enabled: boolean,
 ) {
-  if (enabled) {
-    yield* Effect.logInfo("Enabled");
-  }
+  yield* Effect.logInfo("Enabled").pipe(Effect.when(Effect.succeed(enabled)));
 });

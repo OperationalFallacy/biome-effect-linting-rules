@@ -1,15 +1,15 @@
 {
-  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Incorrectly catches synchronous decoder exceptions inside an Effect operation.\n * The failures never enter the typed error channel for recovery through composition.\n */\nexport const readCount = Effect.fn(\"readCount\")(function* (text: string) {\n  try {\n    return Schema.decodeUnknownSync(Schema.Number)(JSON.parse(text));\n  } catch {\n    return 0;\n  }\n});\n",
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Effect.try captures exceptions from JSON.parse as typed failures. Chain the\n * schema decoder with Effect.flatMap so one Effect.catch can recover from\n * either failure.\n */\nexport const readCount = Effect.fn(\"readCount\")(function* (text: string) {\n  try {\n    return Schema.decodeUnknownSync(Schema.Number)(JSON.parse(text));\n  } catch {\n    return 0;\n  }\n});\n",
   "result": {
     "diagnostics": [
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Represent recoverable failures in the Effect error type instead of a try/catch block. The block handles thrown exceptions separately from the operation's typed errors. Handle those errors through Effect error combinators in the pipeline and preserve the original recovery behavior. Keep resource cleanup attached to the operation.",
+        "description": "Compose failure recovery and cleanup through Effect. Preserve the original failure behavior and finalizers.",
         "message": [
           {
             "elements": [],
-            "content": "Represent recoverable failures in the Effect error type instead of a try/catch block. The block handles thrown exceptions separately from the operation's typed errors. Handle those errors through Effect error combinators in the pipeline and preserve the original recovery behavior. Keep resource cleanup attached to the operation."
+            "content": "Compose failure recovery and cleanup through Effect. Preserve the original failure behavior and finalizers."
           }
         ],
         "advices": {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-try-catch/error-recovery/invalid.ts"
           },
           "span": [
-            295,
-            400
+            300,
+            405
           ],
           "sourceCode": null
         },

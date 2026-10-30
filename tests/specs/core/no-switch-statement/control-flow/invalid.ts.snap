@@ -1,15 +1,15 @@
 {
-  "input": "import { Effect, Match } from \"effect\";\n\ntype Phase = \"ready\" | \"loading\" | \"failed\";\n\n/**\n * Questionably splits pure value selection across switch return paths.\n * Match can express the complete selection as one value.\n */\nexport const describePhase = (phase: Phase) => {\n  switch (phase) {\n    case \"ready\":\n      return \"Ready\";\n    case \"loading\":\n      return \"Loading\";\n    default:\n      return \"Failed\";\n  }\n};\n\nexport function isReady(phase: Phase) {\n  switch (phase) {\n    case \"ready\":\n      return true;\n    default:\n      return false;\n  }\n}\n\n/**\n * Correctly uses Match for pure value selection.\n */\nexport const describeMatched = (phase: Phase) =>\n  Match.value(phase).pipe(\n    Match.when(\"ready\", () => \"Ready\"),\n    Match.when(\"loading\", () => \"Loading\"),\n    Match.orElse(() => \"Failed\"),\n  );\n\n/**\n * Correctly keeps branching inside a named Effect operation.\n * The branch executes when the operation runs.\n */\nexport const describeOperation = Effect.fn(\"describeOperation\")(function* (\n  phase: Phase,\n) {\n  switch (phase) {\n    case \"ready\":\n      return \"Ready\";\n    case \"loading\":\n      return \"Loading\";\n    default:\n      return \"Failed\";\n  }\n});\n",
+  "input": "import { Effect, Match } from \"effect\";\n\ntype Phase = \"ready\" | \"loading\" | \"failed\";\n\n/**\n * Match.when narrows the phase within its callback. Match.orElse receives the\n * phases that earlier branches did not handle, so the fallback participates in\n * the same typed decision.\n */\nexport const describePhase = (phase: Phase) => {\n  switch (phase) {\n    case \"ready\":\n      return \"Ready\";\n    case \"loading\":\n      return \"Loading\";\n    default:\n      return \"Failed\";\n  }\n};\n\nexport function isReady(phase: Phase) {\n  switch (phase) {\n    case \"ready\":\n      return true;\n    default:\n      return false;\n  }\n}\n\n/**\n * A phase description can remain a pure function. Effect.sync can defer that\n * function when an operation needs to compute the description during execution.\n */\nexport const describeMatched = (phase: Phase) =>\n  Match.value(phase).pipe(\n    Match.when(\"ready\", () => \"Ready\"),\n    Match.when(\"loading\", () => \"Loading\"),\n    Match.orElse(() => \"Failed\"),\n  );\n\n/**\n * Keep the phase selection pure and reuse it from Effect.sync. Effect.fn can\n * then supply tracing for the complete operation.\n */\nexport const describeOperation = Effect.fn(\"describeOperation\")(function* (\n  phase: Phase,\n) {\n  switch (phase) {\n    case \"ready\":\n      return \"Ready\";\n    case \"loading\":\n      return \"Loading\";\n    default:\n      return \"Failed\";\n  }\n});\n",
   "result": {
     "diagnostics": [
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow.",
+        "description": "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together.",
         "message": [
           {
             "elements": [],
-            "content": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow."
+            "content": "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together."
           }
         ],
         "advices": {
@@ -23,8 +23,8 @@
             "file": "/project/core/no-switch-statement/control-flow/invalid.ts"
           },
           "span": [
-            276,
-            416
+            333,
+            473
           ],
           "sourceCode": null
         },
@@ -34,11 +34,11 @@
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow.",
+        "description": "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together.",
         "message": [
           {
             "elements": [],
-            "content": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow."
+            "content": "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together."
           }
         ],
         "advices": {
@@ -52,8 +52,37 @@
             "file": "/project/core/no-switch-statement/control-flow/invalid.ts"
           },
           "span": [
-            463,
-            553
+            520,
+            610
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-switch-statement/control-flow/invalid.ts"
+          },
+          "span": [
+            1216,
+            1356
           ],
           "sourceCode": null
         },
@@ -61,7 +90,7 @@
         "source": null
       }
     ],
-    "errors": 2,
+    "errors": 3,
     "warnings": 0,
     "infos": 0,
     "parseErrors": 0,
