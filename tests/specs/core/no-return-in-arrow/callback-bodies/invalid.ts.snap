@@ -1,0 +1,41 @@
+{
+  "input": "const names = [\"Ada\", \"Grace\"];\n\n/**\n * Unnecessarily wraps a single callback expression in a block and return\n * statement. The extra control-flow syntax obscures a direct transformation.\n */\nexport const searchTerms = names.map((name) => {\n  return name.toLowerCase();\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "information",
+        "description": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-in-arrow/callback-bodies/invalid.ts"
+          },
+          "span": [
+            244,
+            270
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 1,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

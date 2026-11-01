@@ -24,7 +24,7 @@ or {
 } where {
     register_diagnostic(
         span = $violation,
-        message = "Update state through its model and field operations instead of raw object copies or record rebuilds. Raw copies separate field changes from the model's construction and validation rules. Use Record.set, Record.modify, or Record.remove inside Struct.evolve, and reconstruct models with their schema constructors, such as Schema.make or a field's make method. Use Schema encoding and decoding for serialized data instead of raw JSON calls. Follow docs/linting.md for the full procedure.",
+        message = "Update state through its model and field operations instead of raw object copies or record rebuilds. Raw copies separate field changes from the model's construction and validation rules. Use Record.set, Record.modify, or Record.remove inside Struct.evolve, and reconstruct models with their schema constructors, such as Model.make or a field schema's make method. Use Schema.encodeEffect and Schema.decodeUnknownEffect with Schema.fromJsonString for serialized data instead of raw JSON calls. Follow docs/linting.md for the full procedure.",
         severity = "error"
     )
 }

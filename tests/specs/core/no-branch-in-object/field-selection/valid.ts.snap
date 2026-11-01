@@ -1,0 +1,11 @@
+{
+  "input": "import { Result } from \"effect\";\n\n/**\n * Correctly selects the field value before constructing the result object.\n * The object declaration describes the result's structure directly.\n */\nexport const summarize = (result: Result.Result<number, string>) => {\n  const count = Result.match(result, {\n    onSuccess: (count) => count,\n    onFailure: () => 0,\n  });\n  return { count };\n};\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

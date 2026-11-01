@@ -1,0 +1,11 @@
+{
+  "input": "import { Schema } from \"effect\";\n\n/**\n * Correctly places validation in Schema.makeFilter. A schema predicate describes\n * an input constraint, and its block body is valid for this callback API.\n */\nconst DisplayName = Schema.String.check(\n  Schema.makeFilter((name) => {\n    return name.trim().length > 0;\n  }),\n);\n\nexport const decodeDisplayName = Schema.decodeUnknownEffect(DisplayName);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

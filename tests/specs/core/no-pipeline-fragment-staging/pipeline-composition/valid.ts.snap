@@ -1,0 +1,11 @@
+{
+  "input": "import { Option, pipe } from \"effect\";\n\ntype QueryCode = string | ReadonlyArray<string> | undefined;\n\n/**\n * Correctly composes the producer, fallback, and normalization in one pipeline.\n * The query takes precedence and the path is inspected only when needed.\n */\nexport const resolveBookCode = (query: QueryCode, path: string) =>\n  pipe(\n    Option.fromNullishOr(query),\n    Option.filter((value): value is string => typeof value === \"string\"),\n    Option.orElse(() =>\n      Option.fromNullishOr(path.match(/^\\/books\\/([A-Za-z0-9-]+)$/)?.[1]),\n    ),\n    Option.map((code) => code.trim().toUpperCase()),\n  );\n\n/**\n * Correctly continues normalization from the optional input in one pipeline.\n */\nexport const readCode = (input: string | undefined) =>\n  pipe(\n    input,\n    Option.fromNullishOr,\n    Option.map((code) => code.trim().toUpperCase()),\n  );\n\n/**\n * Correctly extracts a complete route representation as a domain value.\n */\nexport const routeParts = (query: QueryCode, path: string) => ({ query, path });\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

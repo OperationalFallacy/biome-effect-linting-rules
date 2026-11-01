@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Effect.try captures exceptions from JSON.parse as typed failures. Chain the\n * schema decoder with Effect.flatMap so one Effect.catch can recover from\n * either failure.\n */\nexport const readCount = Effect.fn(\"readCount\")(function* (text: string) {\n  try {\n    return Schema.decodeUnknownSync(Schema.Number)(JSON.parse(text));\n  } catch {\n    return 0;\n  }\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Compose failure recovery and cleanup through Effect. Preserve the original failure behavior and finalizers.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Compose failure recovery and cleanup through Effect. Preserve the original failure behavior and finalizers."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-try-catch/error-recovery/invalid.ts"
+          },
+          "span": [
+            300,
+            405
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

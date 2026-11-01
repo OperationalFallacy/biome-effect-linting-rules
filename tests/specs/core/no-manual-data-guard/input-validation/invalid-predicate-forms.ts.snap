@@ -1,0 +1,70 @@
+{
+  "input": "/**\n * Questionably duplicates primitive validation in a function predicate.\n * The boolean result discards the decoder's structured failure information.\n */\nexport function isEnabled(input: unknown): input is boolean {\n  return typeof input === \"boolean\";\n}\n\n/**\n * Questionably keeps structural validation in an object's guard method.\n * Each caller must combine the guard result with its own rejection handling.\n */\nexport const candidate = {\n  hasName(input: unknown): input is { readonly name: string } {\n    return (\n      typeof input === \"object\" &&\n      input !== null &&\n      \"name\" in input &&\n      typeof input.name === \"string\"\n    );\n  },\n};\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Decode unknown input with the model's Schema instead of a hand-written type predicate. TypeScript trusts the predicate's declared type. It does not verify those tests against the model. Use the decoded value in service logic and typed Match patterns for subsequent decisions. Predicates over known typed unions and nominal class identity checks remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Decode unknown input with the model's Schema instead of a hand-written type predicate. TypeScript trusts the predicate's declared type. It does not verify those tests against the model. Use the decoded value in service logic and typed Match patterns for subsequent decisions. Predicates over known typed unions and nominal class identity checks remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-manual-data-guard/input-validation/invalid-predicate-forms.ts"
+          },
+          "span": [
+            201,
+            217
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Decode unknown input with the model's Schema instead of a hand-written type predicate. TypeScript trusts the predicate's declared type. It does not verify those tests against the model. Use the decoded value in service logic and typed Match patterns for subsequent decisions. Predicates over known typed unions and nominal class identity checks remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Decode unknown input with the model's Schema instead of a hand-written type predicate. TypeScript trusts the predicate's declared type. It does not verify those tests against the model. Use the decoded value in service logic and typed Match patterns for subsequent decisions. Predicates over known typed unions and nominal class identity checks remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-manual-data-guard/input-validation/invalid-predicate-forms.ts"
+          },
+          "span": [
+            473,
+            507
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

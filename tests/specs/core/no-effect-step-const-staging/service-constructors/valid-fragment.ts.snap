@@ -1,0 +1,11 @@
+{
+  "input": "import { Context, Effect, Layer, Ref } from \"effect\";\n\ninterface CounterApi {\n  readonly read: Effect.Effect<number>;\n}\n\nexport class Counter extends Context.Service<Counter, CounterApi>()(\n  \"example/Counter\",\n) {}\n\n/**\n * Correctly composes dependent initialization inside the service constructor.\n * The layer receives the completed construction effect.\n */\nconst makeCounter = Effect.gen(function* () {\n  const count = yield* Ref.make(0);\n  const initial = yield* Ref.get(count).pipe(\n    Effect.map((value) => ({ value })),\n  );\n  return { read: Effect.succeed(initial.value) };\n});\n\nexport const counterLayer = Layer.effect(Counter, makeCounter);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

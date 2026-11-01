@@ -1,0 +1,11 @@
+{
+  "input": "import { Match } from \"effect\";\n\ntype State = { readonly _tag: \"Ready\"; readonly value: string } | {\n  readonly _tag: \"Pending\";\n};\n\n/**\n * Correctly expresses value selection directly with Match. The selected value\n * needs no wrapper function or additional invocation.\n */\nexport const selectLabel = (state: State) =>\n  Match.value(state).pipe(\n    Match.when({ _tag: \"Ready\" }, (ready) => ready.value),\n    Match.orElse(() => \"Pending\"),\n  );\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

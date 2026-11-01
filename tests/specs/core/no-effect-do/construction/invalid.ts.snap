@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Questionably starts result construction with Effect.Do. The builder adds\n * record assembly to the sequence of dependent operations.\n */\nexport const readCount = Effect.fn(\"readCount\")((input: unknown) =>\n  Effect.Do.pipe(\n    Effect.bind(\"count\", () => Schema.decodeUnknownEffect(Schema.Int)(input)),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace the Effect.Do builder with a pipeline or one Effect.gen. Each step adds fields to an intermediate object, so the reader must track that object to understand the operation. Keep the steps in execution order and pass each result to the work that uses it.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace the Effect.Do builder with a pipeline or one Effect.gen. Each step adds fields to an intermediate object, so the reader must track that object to understand the operation. Keep the steps in execution order and pass each result to the work that uses it."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-do/construction/invalid.ts"
+          },
+          "span": [
+            256,
+            265
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

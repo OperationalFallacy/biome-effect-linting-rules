@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Option } from \"effect\";\n\n/**\n * Questionably normalizes an optional boolean inside the operation.\n * The default policy is separate from input validation and can drift between callers.\n */\nexport const decodeEnabled = Effect.fn(\"decodeEnabled\")(\n  (input: { readonly enabled?: boolean }) =>\n    Effect.succeed(\n      Option.match(Option.fromNullishOr(input.enabled), {\n        onSome: (flag) => flag === true,\n        onNone: () => false,\n      }),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Define this boolean's default in its Schema. Repeated Option.match conversions inside services spread the default policy across operations. Decode the input once and use the decoded boolean. Keep Some(true) as true, Some(false) as false, and None as false.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Define this boolean's default in its Schema. Repeated Option.match conversions inside services spread the default policy across operations. Decode the input once and use the decoded boolean. Keep Some(true) as true, Some(false) as false, and None as false."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-option-boolean-normalization/boolean-defaults/invalid.ts"
+          },
+          "span": [
+            334,
+            464
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

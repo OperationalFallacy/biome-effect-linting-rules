@@ -1,0 +1,68 @@
+{
+  "$schema": "./node_modules/@effect/language-service/schema.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": [
+      "node"
+    ],
+    "allowJs": true,
+    "allowImportingTsExtensions": true,
+    "checkJs": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "diagnosticSeverity": {
+          "globalDateInEffect": "error",
+          "globalDate": "warning",
+          "globalErrorInEffectCatch": "warning",
+          "globalFetch": "warning",
+          "globalFetchInEffect": "error",
+          "globalRandom": "error",
+          "globalRandomInEffect": "error",
+          "globalTimers": "error",
+          "globalTimersInEffect": "error",
+          "globalConsole": "warning",
+          "globalConsoleInEffect": "error",
+          "catchAllToMapError": "warning",
+          "anyUnknownInErrorContext": "error",
+          "layerMergeAllWithDependencies": "error",
+          "nodeBuiltinImport": "error",
+          "preferSchemaOverJson": "error",
+          "cryptoRandomUUID": "warning",
+          "cryptoRandomUUIDInEffect": "warning",
+          "deterministicKeys": "warning",
+          "effectDoNotation": "warning",
+          "newPromise": "warning",
+          "nestedEffectGenYield": "warning",
+          "strictBooleanExpressions": "error",
+          "asyncFunction": "error",
+          "tryCatchInEffectGen": "error"
+        },
+        "barrelImportPackages": ["effect", "@effect/*"],
+        "includeSuggestionsInTsc": true,
+        "ignoreEffectWarningsInTscExitCode": true,
+        "ignoreEffectSuggestionsInTscExitCode": true
+      }
+    ]
+  },
+  "include": [
+    ".projenrc.ts",
+    "bin/**/*.mjs",
+    "scripts/**/*.ts",
+    "src/**/*.ts",
+    "vitest.config.mts",
+    "tests/support/**/*.ts",
+    "tests/**/*.test.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "refs",
+    ".local"
+  ]
+}

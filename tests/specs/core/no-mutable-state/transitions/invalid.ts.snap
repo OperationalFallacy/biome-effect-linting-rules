@@ -1,0 +1,70 @@
+{
+  "input": "/**\n * Array.reduce passes each subtotal to the next callback and returns the final\n * subtotal. Use that accumulator to keep the sum in the transformation instead\n * of coordinating updates through a captured variable.\n */\nexport function sum(values: ReadonlyArray<number>) {\n  let total = 0;\n  values.forEach((value) => { total += value; });\n  return total;\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-mutable-state/transitions/invalid.ts"
+          },
+          "span": [
+            279,
+            292
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-mutable-state/transitions/invalid.ts"
+          },
+          "span": [
+            324,
+            338
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

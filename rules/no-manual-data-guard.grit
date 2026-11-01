@@ -1,8 +1,8 @@
 language js(typescript, jsx)
 
-// Performance: warm full-tree linting adds about 0.05 ms per TypeScript file,
+// Performance: this plugin adds about 0.05 ms per TypeScript file to a warm full-tree Biome run,
 // typically 5-10% over the same Biome run without this plugin. Rebenchmark
-// before adding more whole-function `within` or `contains` traversals.
+// before you add more whole-function `within` or `contains` traversals.
 or {
 	TsPredicateReturnType() as $predicate where {
 		$predicate <: within JsArrowFunctionExpression() as $function
@@ -31,5 +31,5 @@ or {
 	},
 	$predicate <: contains JsReferenceIdentifier() as $name,
 	$function <: not contains JsInstanceofExpression(),
-	register_diagnostic(span=$predicate, message="Decode unknown input with the model's Schema instead of a hand-written type predicate. TypeScript trusts the predicate's declared type without checking that its tests satisfy the model. Use the decoded value in service logic and typed Match patterns for subsequent decisions. Typed union narrowing and nominal class identity checks remain valid.", severity="error")
+	register_diagnostic(span=$predicate, message="Decode unknown input with the model's Schema instead of a hand-written type predicate. TypeScript trusts the predicate's declared type. It does not verify those tests against the model. Use the decoded value in service logic and typed Match patterns for subsequent decisions. Predicates over known typed unions and nominal class identity checks remain valid.", severity="error")
 }

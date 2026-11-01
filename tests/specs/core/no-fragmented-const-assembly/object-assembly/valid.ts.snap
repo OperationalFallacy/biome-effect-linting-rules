@@ -1,0 +1,11 @@
+{
+  "input": "import { Data, Option, Schema } from \"effect\";\n\n/**\n * Correctly constructs the complete response at one site. The field definitions\n * describe the result without a fragment-producing helper.\n */\nexport const toResponse = (error: Error) => ({\n  kind: \"Failure\",\n  message: error.message,\n});\nexport const toTracedResponse = (error: Error) => ({\n  message: error.message,\n  trace: Option.fromNullishOr(error.stack).pipe(\n    Option.map((stack) => stack.split(\"\\n\")),\n  ),\n});\n\nclass ReadFailure extends Schema.TaggedError<ReadFailure>()(\"ReadFailure\", {\n  operation: Schema.String,\n  reason: Schema.String,\n  cause: Schema.Unknown,\n}) {}\n\n/**\n * Correctly supplies the complete error payload to its schema constructor.\n */\nexport const toReadFailure = (operation: string, cause: unknown) =>\n  new ReadFailure({ operation, reason: \"Read failed\", cause });\n\ntype FailureKind = Data.TaggedEnum<{ Read: { readonly operation: string } }>;\nconst FailureKind = Data.taggedEnum<FailureKind>();\n\n/**\n * Correctly exposes a complete tagged constructor as a reusable domain operation.\n */\nexport const readFailureKind = FailureKind.Read;\n\ninterface ErrorView {\n  readonly message: string;\n}\n\n/**\n * Correctly defines a complete typed projection.\n */\nexport const projectError = (error: Error): ErrorView => ({\n  message: error.message,\n});\n\n/**\n * Correctly exposes a complete schema decoder as a reusable operation.\n */\nexport const decodeErrorView = Schema.decodeUnknownEffect(\n  Schema.Struct({ message: Schema.String }),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

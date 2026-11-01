@@ -1,0 +1,41 @@
+{
+  "input": "import { createElement, useState } from \"react\";\n\n/**\n * Questionably owns the canonical count in a component-local hook.\n * Other views cannot subscribe to the value updated by this button.\n */\nexport function Count() {\n  const [count, setCount] = useState(0);\n  return createElement(\n    \"button\",\n    {\n      type: \"button\",\n      onClick: () => setCount((current) => current + 1),\n    },\n    count,\n  );\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use @effect/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use @effect/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/state-subscriptions/invalid.ts"
+          },
+          "span": [
+            249,
+            257
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Incorrectly nests Effect.map around an acquisition step. The acquisition's\n * dependent transformations need their own pipeline in execution order.\n */\nexport const acquireSession = Effect.fn(\"acquireSession\")(() =>\n  Effect.acquireRelease(\n    Effect.map(\n      Effect.sync(() => new AbortController()),\n      (controller) => ({ controller }),\n    ),\n    (session) => Effect.sync(() => session.controller.abort()),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply dependent steps with pipe, Effect.flatMap, or Effect.andThen. Preserve effectful conditions, scoped acquisition, and finalizers.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply dependent steps with pipe, Effect.flatMap, or Effect.andThen. Preserve effectful conditions, scoped acquisition, and finalizers."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-call-tower/resource-acquisition/invalid-fragment.ts"
+          },
+          "span": [
+            286,
+            391
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

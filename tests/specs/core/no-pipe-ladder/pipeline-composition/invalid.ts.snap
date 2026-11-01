@@ -1,0 +1,70 @@
+{
+  "input": "import { Array as Arr, Effect, pipe } from \"effect\";\n\nconst amounts = [12, 8, 5];\nconst sum = (values: ReadonlyArray<number>) =>\n  Arr.reduce(values, 0, (total, value) => total + value);\nconst format = (total: number) => `$${total.toFixed(2)}`;\n\n/**\n * Incorrectly nests or chains pipe calls to compose one sequence of\n * transformations. Each extra pipe splits the same data flow across expressions.\n */\nexport const receipt = pipe(pipe(amounts, sum), format);\nexport const receiptEffect = Effect.succeed(amounts)\n  .pipe(Effect.map(sum))\n  .pipe(Effect.map(format));\n\n/**\n * Correctly places consecutive transformations in one pipe call.\n */\nexport const directReceipt = pipe(amounts, sum, format);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine directly chained pipe calls into one pipeline. The output of the inner pipeline is the input of the outer pipeline, so keep those steps together in execution order. Pipelines inside callbacks can compute separate values and do not need to merge with the enclosing pipeline.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine directly chained pipe calls into one pipeline. The output of the inner pipeline is the input of the outer pipeline, so keep those steps together in execution order. Pipelines inside callbacks can compute separate values and do not need to merge with the enclosing pipeline."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-pipe-ladder/pipeline-composition/invalid.ts"
+          },
+          "span": [
+            433,
+            451
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Combine directly chained pipe calls into one pipeline. The output of the inner pipeline is the input of the outer pipeline, so keep those steps together in execution order. Pipelines inside callbacks can compute separate values and do not need to merge with the enclosing pipeline.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Combine directly chained pipe calls into one pipeline. The output of the inner pipeline is the input of the outer pipeline, so keep those steps together in execution order. Pipelines inside callbacks can compute separate values and do not need to merge with the enclosing pipeline."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-pipe-ladder/pipeline-composition/invalid.ts"
+          },
+          "span": [
+            491,
+            539
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

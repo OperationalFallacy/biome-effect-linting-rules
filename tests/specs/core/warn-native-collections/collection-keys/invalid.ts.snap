@@ -1,0 +1,244 @@
+{
+  "input": "import { Data, HashMap, HashSet } from \"effect\";\n\nclass Key extends Data.Class<{ readonly id: string }> {}\n\n/**\n * Questionably uses native collections for value-object keys. A fresh equal\n * key has a different object identity, so a native lookup misses the stored entry.\n */\nexport const byDomainKey = new Map<Key, string>([\n  [new Key({ id: \"guest-1\" }), \"Mira\"],\n]);\nexport const selectedDomainKeys = new Set<Key>([new Key({ id: \"guest-1\" })]);\n\n/**\n * Questionably uses reconstructed record keys with native Map and Set.\n * The logical identity comes from the fields of each key.\n */\nconst itemKey = (group: string, id: number) => ({ group, id });\nexport const items = new Map<ReturnType<typeof itemKey>, string>([\n  [itemKey(\"catalog\", 3), \"Mira\"],\n]);\nexport const selectedItems = new Set<ReturnType<typeof itemKey>>([\n  itemKey(\"catalog\", 3),\n]);\n\n/**\n * Questionably keys a native Map by reconstructed coordinate arrays.\n * Equal row and column values do not identify the same native key instance.\n */\nconst cellKey = (row: number, column: number): readonly [number, number] => [\n  row,\n  column,\n];\nexport const cells = new Map<ReturnType<typeof cellKey>, string>([\n  [cellKey(0, 1), \"occupied\"],\n]);\n\n/**\n * Questionably uses qualified native constructors for record-valued keys.\n * Constructor qualification preserves the same reference-equality behavior.\n */\nconst qualifiedKey = (id: string) => ({ id });\nexport const qualifiedIndex = new globalThis.Map<\n  ReturnType<typeof qualifiedKey>,\n  number\n>([[qualifiedKey(\"guest-1\"), 3]]);\nexport const qualifiedSelection = new globalThis.Set<\n  ReturnType<typeof qualifiedKey>\n>([qualifiedKey(\"guest-1\")]);\n\n/**\n * Questionably treats plain record keys as stable native identities.\n */\nconst plainKey = (id: string) => ({ id });\nexport const plainIndex = new Map<ReturnType<typeof plainKey>, number>([\n  [plainKey(\"guest-1\"), 3],\n]);\n\n/**\n * Correctly uses Effect collections for record keys that require value equality.\n */\nexport const structuralIndex = HashMap.make([itemKey(\"catalog\", 3), \"Mira\"]);\nexport const structuralSelection = HashSet.make(itemKey(\"catalog\", 3));\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
+          },
+          "span": [
+            304,
+            369
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
+          },
+          "span": [
+            405,
+            447
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
+          },
+          "span": [
+            674,
+            757
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
+          },
+          "span": [
+            788,
+            853
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
+          },
+          "span": [
+            1130,
+            1209
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
+          },
+          "span": [
+            1449,
+            1546
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
+          },
+          "span": [
+            1582,
+            1664
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-native-collections/collection-keys/invalid.ts"
+          },
+          "span": [
+            1814,
+            1891
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 8,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

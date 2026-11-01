@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Match } from \"effect\";\n\n/**\n * Effect.sync evaluates the projection each time the returned Effect runs.\n * Match supplies plain numbers to the array callback, so the elements remain\n * values rather than Effects that would need another traversal to execute.\n */\nexport const clamp = Effect.fn(\"clamp\")((values: ReadonlyArray<number>) =>\n  Effect.sync(() => values.map((value) => Match.value(value).pipe(\n    Match.when((number) => number < 0, () => 0),\n    Match.orElse((number) => number),\n  ))),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

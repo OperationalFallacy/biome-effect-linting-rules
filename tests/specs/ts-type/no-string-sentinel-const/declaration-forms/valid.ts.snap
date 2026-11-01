@@ -1,0 +1,11 @@
+{
+  "input": "import { Data } from \"effect\";\n\ntype LoadState = Data.TaggedEnum<{\n  Loading: {};\n  Ready: { readonly count: number };\n}>;\nconst LoadState = Data.taggedEnum<LoadState>();\ntype RequestPhase = Data.TaggedEnum<{ Pending: {} }>;\nconst RequestPhase = Data.taggedEnum<RequestPhase>();\ntype RequestOutcome = Data.TaggedEnum<{ Failed: { readonly cause: Error } }>;\nconst RequestOutcome = Data.taggedEnum<RequestOutcome>();\ntype RetryStatus = Data.TaggedEnum<{ Scheduled: { readonly delay: number } }>;\nconst RetryStatus = Data.taggedEnum<RetryStatus>();\n\n/**\n * Correctly keeps workflow states and their data in tagged domain values.\n * The representation is consistent across typed, exported, and grouped declarations.\n */\nconst status = LoadState.Ready({ count: 3 });\nconst loadState: LoadState = LoadState.Loading();\nexport const requestPhase = RequestPhase.Pending();\nconst request_outcome = RequestOutcome.Failed({\n    cause: new Error(\"Request failed\"),\n  }),\n  retryStatus = RetryStatus.Scheduled({ delay: 100 });\n\nexport const states = {\n  status,\n  loadState,\n  requestPhase,\n  request_outcome,\n  retryStatus,\n};\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

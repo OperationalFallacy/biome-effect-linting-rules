@@ -1,0 +1,20 @@
+language js(typescript, jsx)
+
+`Layer.effect($key, $make)` as $call where {
+    or {
+        $key <: `this`,
+        $make <: `this.make`
+    },
+    $call <: within JsPropertyClassMember(modifiers = $modifiers) as $field where {
+        $modifiers <: contains JsStaticModifier()
+    } until or { JsFunctionExpression(), JsArrowFunctionExpression(), JsClassDeclaration(), JsClassExpression() },
+    $field <: within JsClassDeclaration(id = $class, extends_clause = $extends) where {
+        $extends <: contains `Context.Service`
+    } until or { JsClassDeclaration(), JsClassExpression() },
+    $message = join(list = ["Use ", $class, " and ", $class, ".make in this static Layer.effect declaration instead of this. This package requires explicit class references for readability. Effect supports the shorthand, but the explicit form identifies the service key and construction Effect at the declaration."], separator = ""),
+    register_diagnostic(
+        span = $call,
+        message = $message,
+        severity = "error"
+    )
+}

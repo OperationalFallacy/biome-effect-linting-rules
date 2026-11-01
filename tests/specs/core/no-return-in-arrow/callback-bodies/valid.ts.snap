@@ -1,0 +1,11 @@
+{
+  "input": "const names = [\"Ada\", \"Grace\"];\n\n/**\n * Correctly uses an expression callback for a single transformation.\n */\nexport const searchTerms = names.map((name) => name.toLowerCase());\n\n/**\n * Correctly uses a block callback when a local declaration needs its own scope.\n */\nexport const labels = names.map((input) => {\n  const name = input.trim();\n  return name.toUpperCase();\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

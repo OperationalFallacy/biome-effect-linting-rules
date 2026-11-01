@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * Correctly reads dependent values through direct yields and constructs the\n * result record once. The operation retains the decoder's failure channel.\n */\nexport const readCount = Effect.fn(\"readCount\")(function* (input: unknown) {\n  const count = yield* Schema.decodeUnknownEffect(Schema.Int)(input);\n  return { label: \"Counter\", count };\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

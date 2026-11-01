@@ -1,0 +1,11 @@
+{
+  "input": "import { Config, Effect } from \"effect\";\n\n/**\n * Correctly exports a reusable configuration query as a public operation.\n * The query reads through the runtime's configuration provider.\n */\nexport const readRegion = Config.String(\"REGION\").pipe(\n  Config.withDefault(\"local\"),\n  Effect.map((region) => region.toUpperCase()),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

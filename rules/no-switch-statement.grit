@@ -1,13 +1,9 @@
-file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
-    },
-    $body <: contains JsSwitchStatement() as $switch,
+language js(typescript, jsx)
+
+JsSwitchStatement() as $violation where {
     register_diagnostic(
-        span = $switch,
-        message = "Replace the switch statement with Match.value, Option.match, Either.match, or Effect.if. Separate case bodies split the operation into branch-local sequences. Select the result first, then continue in one Effect pipeline. Preserve every case and its behavior.",
+        span = $violation,
+        message = "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together.",
         severity = "error"
     )
 }

@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\ninterface CounterStore {\n  readonly update: () => Effect.Effect<number>;\n}\n\n/**\n * Questionably wraps an already-effectful update in Effect.sync. Running the\n * outer effect only constructs the update instead of executing it.\n */\nexport const increment = Effect.fn(\"increment\")((store: CounterStore) =>\n  Effect.sync(() => store.update()),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Make the wrapped operation explicit in the Effect pipeline. A generic Effect.sync callback hides the call's role among the other steps. Use Effect log functions for logs and give updates or other operations a clear pipeline step. Preserve deferred execution and failure behavior through the rewrite.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Make the wrapped operation explicit in the Effect pipeline. A generic Effect.sync callback hides the call's role among the other steps. Use Effect log functions for logs and give updates or other operations a clear pipeline step. Preserve deferred execution and failure behavior through the rewrite."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-effect-sync-wrapper/operation-sequencing/invalid.ts"
+          },
+          "span": [
+            339,
+            372
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 1,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,17 +1,21 @@
 language js(typescript, jsx)
 
 file($body) where {
-    $body <: contains `"@vanilla-extract/css"`,
-    or {
-        $body <: contains `const $value = style($definition)`,
-        $body <: contains `export const $value = style($definition)`,
-        $body <: contains `const $value = styleVariants($definition)`,
-        $body <: contains `export const $value = styleVariants($definition)`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".@vanilla-extract/css."
     },
-    $body <: contains `export const $name = $value;` as $exportAlias,
-    register_diagnostic(
-        span = $exportAlias,
-        message = "Export the generated class under one name that describes its role. A second exported name lets consumers refer to the same styles through different names. Remove the alias and update consumers to use the chosen name. Define variants in the Vanilla Extract declaration.",
-        severity = "error"
-    )
+    $body <: contains bubble `export const $name = $value;` as $exportAlias where {
+        $exportAlias <: within JsModule() as $module,
+        or {
+            $module <: contains `const $value = style($definition)`,
+            $module <: contains `export const $value = style($definition)`,
+            $module <: contains `const $value = styleVariants($definition)`,
+            $module <: contains `export const $value = styleVariants($definition)`
+        },
+        register_diagnostic(
+            span = $exportAlias,
+            message = "Export the generated class under one name that describes its role. A second exported name lets consumers refer to the same styles through different names. Remove the alias and update consumers to use the chosen name. Define variants in the Vanilla Extract declaration.",
+            severity = "error"
+        )
+    }
 }

@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema, pipe } from \"effect\";\n\nconst Book = Schema.Struct({ title: Schema.NonEmptyString, pages: Schema.Int });\nconst books = [\n  { title: \"Garden Notes\", pages: 118 },\n  { title: \"Night Ferry\", pages: 331 },\n];\n\n/**\n * Correctly uses expression callbacks for direct projections in collection\n * methods and Effect combinators.\n */\nexport const titles = books.map((book) => book.title);\nexport const summaries = books.map((book): string =>\n  `${book.title}: ${book.pages} pages`,\n);\nexport const pageCounts = books.map((book) => book.pages);\n\nexport const decodeTitle = (input: unknown) =>\n  Effect.map(Schema.decodeUnknownEffect(Book)(input), (book) => book.title);\n\nexport const bookCount = pipe(books, (items) => items.length);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

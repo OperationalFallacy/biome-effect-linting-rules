@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst Profile = Schema.Struct({ displayName: Schema.NonEmptyString });\n\n/**\n * Incorrectly nests Effect.map around another Effect call. The outer syntax\n * presents the final transformation before the operation that supplies its value.\n */\nexport const displayName = Effect.fn(\"displayName\")((text: string) =>\n  Effect.map(\n    Effect.flatMap(\n      Effect.try(() => JSON.parse(text)),\n      Schema.decodeUnknownEffect(Profile),\n    ),\n    (profile) => profile.displayName,\n  ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Put nested Effect calls into one pipeline in execution order. The reader must work from the inner call outward to reconstruct the sequence. Compute the required inputs first, then connect the dependent Effect steps in the same pipeline.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Put nested Effect calls into one pipeline in execution order. The reader must work from the inner call outward to reconstruct the sequence. Compute the required inputs first, then connect the dependent Effect steps in the same pipeline."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-nested-effect-call/call-composition/invalid.ts"
+          },
+          "span": [
+            354,
+            519
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

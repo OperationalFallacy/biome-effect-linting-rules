@@ -19,6 +19,10 @@
 /.yarn/plugins/**/* binary
 /.yarn/releases/* binary
 /.yarnrc.yml linguist-generated
+/biome.base.jsonc linguist-generated linguist-language=JSON-with-Comments
+/biome.jsonc linguist-generated linguist-language=JSON-with-Comments
+/biome.local.jsonc linguist-generated linguist-language=JSON-with-Comments
 /LICENSE linguist-generated
 /package.json linguist-generated
+/tests/runtime/native-parity/unicode-crlf.ts -text whitespace=cr-at-eol
 /yarn.lock linguist-generated

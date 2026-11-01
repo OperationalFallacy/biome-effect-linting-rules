@@ -1,14 +1,25 @@
 file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
     $body <: contains bubble `Effect.gen(function* () { $outer })` where {
-        $outer <: contains `Effect.gen($_)` as $nested,
+        $outer <: contains `Effect.gen($_)` as $nested until JsFunctionExpression(),
+        $nested <: not within or {
+            `const $name = $nested;` as $statement,
+            `const $name: $type = $nested;` as $statement
+        } where {
+            $statement <: within JsFunctionBody(statements = $statements) where {
+                $statements <: [..., $statement, ...],
+                $statements <: [..., `return { $members }`, ...],
+                $members <: [..., or {
+                    JsShorthandPropertyObjectMember(name = $name),
+                    JsPropertyObjectMember(value = $name)
+                }, ...]
+            } until or { JsFunctionBody(), JsBlockStatement() }
+        },
         register_diagnostic(
             span = $nested,
-            message = "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together and preserve dependencies, failure handling, and cleanup.",
+            message = "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together. Preserve dependencies, error propagation and recovery, and resource cleanup.",
             severity = "error"
         )
     }

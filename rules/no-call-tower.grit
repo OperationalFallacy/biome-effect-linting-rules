@@ -1,19 +1,18 @@
 language js(typescript, jsx)
 
-or {
-    `Effect.$outer($first)` as $call where {
-        $first <: `Effect.$inner($innerArgs)`
+JsCallExpression(callee = `Effect.$outer`, arguments = JsCallArguments(args = $arguments)) as $call where {
+    $arguments <: [..., JsCallExpression(callee = `Effect.$inner`), ...],
+    $inner <: not or { `fn`, `fnUntraced`, `fnUntracedEager` },
+    $outer <: not or {
+        `fn`, `fnUntraced`, `fnUntracedEager`,
+        `when`, `acquireRelease`, `acquireUseRelease`, `scoped`,
+        `runSync`, `runSyncWith`, `runSyncExit`, `runSyncExitWith`,
+        `runPromise`, `runPromiseWith`, `runPromiseExit`, `runPromiseExitWith`,
+        `runFork`, `runForkWith`
     },
-    `Effect.$outer($first, $second)` as $call where {
-        or {
-            $first <: `Effect.$inner($innerArgs)`,
-            $second <: `Effect.$inner($innerArgs)`
-        }
-    }
-} where {
     register_diagnostic(
         span = $call,
-        message = "Replace nested Effect calls with a pipeline in execution order. Passing one Effect call directly into another makes the reader work through nested arguments to follow the sequence. Start the pipeline with the inner Effect and apply the subsequent steps with pipe, Effect.flatMap, or Effect.andThen.",
+        message = "Replace nested Effect calls with a pipeline in execution order. A call that takes another Effect call as an argument requires the reader to reconstruct the sequence from nested arguments. Start the pipeline with the inner Effect, then apply dependent steps with pipe, Effect.flatMap, or Effect.andThen. Preserve effectful conditions, scoped acquisition, and finalizers.",
         severity = "error"
     )
 }

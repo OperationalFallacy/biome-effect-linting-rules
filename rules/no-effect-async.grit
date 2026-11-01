@@ -1,16 +1,13 @@
-file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
-    },
-    or {
-        $body <: contains `Effect.async($args)` as $async,
-        $body <: contains `Effect.async<$types>($args)` as $async
+language js(typescript, jsx)
+
+JsCallExpression(callee = `Effect.async`) as $async where {
+    $async <: within JsModule() as $body,
+    $body <: contains bubble JsModuleSource() as $moduleSource where {
+        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     },
     register_diagnostic(
         span = $async,
-        message = "Replace Effect.async with a managed callback integration. Callback registration requires cancellation and cleanup to remain connected to setup. Use Stream for event sequences or an acquire/use/release operation for a resource. Keep registration, interruption handling, and cleanup in that managed lifetime.",
+        message = "Replace Effect.async with Effect.callback. Effect.callback registers asynchronous work and resumes the operation through a callback. Keep registration inside the callback and return its cleanup Effect to release resources on interruption. Use Stream for a sequence of events and acquire/release for resource lifetimes.",
         severity = "error"
     )
 }

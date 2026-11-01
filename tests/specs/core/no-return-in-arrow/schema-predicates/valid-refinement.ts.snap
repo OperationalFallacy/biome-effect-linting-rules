@@ -1,0 +1,11 @@
+{
+  "input": "import { Schema } from \"effect\";\n\n/**\n * Correctly uses a type predicate in Schema.refine so validation narrows the\n * decoded type. The explicit predicate return type expresses that refinement.\n */\nconst ItemId = Schema.String.pipe(\n  Schema.refine((value): value is `item:${string}` => {\n    return value.startsWith(\"item:\");\n  }),\n);\n\nexport type ItemId = typeof ItemId.Type;\nexport const decodeItemId = Schema.decodeUnknownEffect(ItemId);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Match } from \"effect\";\n\ntype Phase = \"ready\" | \"loading\" | \"failed\";\n\n/**\n * Match.when narrows the input for its branch. Match.orElse supplies the\n * fallback for the remaining phases, and the whole decision returns one value.\n */\nexport const describePhase = (phase: Phase) =>\n  Match.value(phase).pipe(\n    Match.when(\"ready\", () => \"Ready\"),\n    Match.when(\"loading\", () => \"Loading\"),\n    Match.orElse(() => \"Failed\"),\n  );\n\nexport const isReady = (phase: Phase) =>\n  Match.value(phase).pipe(\n    Match.when(\"ready\", () => true),\n    Match.orElse(() => false),\n  );\n\nexport const describeMatched = describePhase;\n\n/**\n * Effect.sync invokes the pure phase description each time the operation runs.\n * Effect.fn records the operation name for tracing.\n */\nexport const describeOperation = Effect.fn(\"describeOperation\")((phase: Phase) =>\n  Effect.sync(() => describePhase(phase)),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

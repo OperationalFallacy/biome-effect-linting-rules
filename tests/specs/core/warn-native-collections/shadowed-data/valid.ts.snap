@@ -1,0 +1,11 @@
+{
+  "input": "import { Data } from \"effect\";\n\nexport const defaultData = Data;\n\n/**\n * Correctly uses a supplied scalar-producing API as a native collection key\n * factory. The local Data parameter's struct method returns a string.\n */\nexport function makeIndex(Data: { struct: (input: string) => string }) {\n  const scalarKey = (input: string) => Data.struct(input);\n  const index = new Map<ReturnType<typeof scalarKey>, number>();\n  return { index, key: scalarKey };\n}\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

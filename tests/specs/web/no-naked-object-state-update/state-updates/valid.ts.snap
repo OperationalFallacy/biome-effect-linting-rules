@@ -1,0 +1,11 @@
+{
+  "input": "import { Array as Arr, Option, Record, Ref, Schema, Struct } from \"effect\";\n\nconst Shelf = Schema.Struct({\n  books: Schema.Record(Schema.String, Schema.Number),\n});\ntype Shelf = typeof Shelf.Type;\n\n/**\n * Correctly describes the field change with Record.set and Struct.evolve.\n * The field schema reconstructs the record before Ref commits the new state.\n */\nexport const addByField = (shelf: Ref.Ref<Shelf>, isbn: string) =>\n  Ref.update(\n    shelf,\n    Struct.evolve({\n      books: (books) => Shelf.fields.books.make(Record.set(books, isbn, 1)),\n    }),\n  );\nexport const addBySpread = addByField;\nexport const addByEntries = addByField;\nexport const addByAssign = addByField;\n\ntype Book = { readonly isbn?: string | null; readonly title: string };\n\n/**\n * Correctly constructs a complete index from source models. Missing identifiers\n * contribute no entry to the newly constructed domain value.\n */\nexport const indexBooks = (books: ReadonlyArray<Book>) =>\n  Object.fromEntries(\n    Arr.flatMap(books, (book) =>\n      Option.match(Option.fromNullishOr(book.isbn), {\n        onNone: () => [],\n        onSome: (isbn): ReadonlyArray<readonly [string, Book]> => [\n          [isbn, book],\n        ],\n      }),\n    ),\n  );\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

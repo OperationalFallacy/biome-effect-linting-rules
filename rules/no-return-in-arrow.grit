@@ -1,55 +1,14 @@
 language js(typescript, jsx)
 
-or {
-    `$callee(($params) => { $block })` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
+JsCallExpression(callee = $callee, arguments = JsCallArguments(args = $args)) where {
+    $args <: [..., JsArrowFunctionExpression(body = JsFunctionBody(statements = [`return $value` as $ret])), ...],
+    $callee <: not or {
+        `Schema.makeFilter`, `Schema.refine`, `Schema.declare`,
+        `S.makeFilter`, `S.refine`, `S.declare`
     },
-    `$callee(($params): $return => { $block })` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
-    },
-    `$callee($param => { $block })` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
-    },
-    `$callee($before, ($params) => { $block })` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
-    },
-    `$callee($before, ($params): $return => { $block })` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
-    },
-    `$callee($before, $param => { $block })` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
-    },
-    `$callee($before, ($params) => { $block }, $after)` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
-    },
-    `$callee($before, ($params): $return => { $block }, $after)` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
-    },
-    `$callee($before, $param => { $block }, $after)` as $call where {
-        $callee <: not `S.filter`,
-        $callee <: not `Schema.filter`,
-        $block <: contains `return $value` as $ret
-    }
-} where {
     register_diagnostic(
         span = $ret,
-        message = "Use expression callbacks for single transformations. An explicit return adds unnecessary structure around a single result. Review collection operations as part of the rewrite, including the use of HashMap.set instead of repeated native Map copies. Retain blocks for useful local bindings and multiple steps. Preserve those steps rather than moving them into a wrapper to remove the return.",
+        message = "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps.",
         severity = "info"
     )
 }

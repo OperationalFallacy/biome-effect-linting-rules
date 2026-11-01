@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst LineItem = Schema.Struct({\n  unitPrice: Schema.Number,\n  quantity: Schema.Int,\n});\n\n/**\n * Correctly composes parsing and dependent transformations in one pipeline.\n * The pipeline presents the work in execution order and propagates failures.\n */\nexport const formatTotal = Effect.fn(\"formatTotal\")((text: string) =>\n  Effect.try(() => JSON.parse(text)).pipe(\n    Effect.flatMap(Schema.decodeUnknownEffect(LineItem)),\n    Effect.map((item) => item.unitPrice * item.quantity),\n    Effect.map((total) => `$${total.toFixed(2)}`),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

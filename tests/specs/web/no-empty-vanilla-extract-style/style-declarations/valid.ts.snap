@@ -1,0 +1,11 @@
+{
+  "input": "import { style } from \"@vanilla-extract/css\";\n\n/**\n * Correctly gives the heading class a concrete role by resetting its margin.\n */\nexport const heading = style({ margin: 0 });\nexport const panel = style({ margin: 0 });\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

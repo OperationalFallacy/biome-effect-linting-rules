@@ -1,6 +1,26 @@
 {
   "dependencies": [
     {
+      "name": "@biomejs/biome",
+      "version": "2.6.3",
+      "type": "build"
+    },
+    {
+      "name": "@catenarycloud/linteffect",
+      "version": "dev",
+      "type": "build"
+    },
+    {
+      "name": "@effect/language-service",
+      "version": "0.87.5",
+      "type": "build"
+    },
+    {
+      "name": "@types/node",
+      "version": "^24",
+      "type": "build"
+    },
+    {
       "name": "commit-and-tag-version",
       "version": "^12",
       "type": "build"
@@ -8,11 +28,6 @@
     {
       "name": "constructs",
       "version": "^10.0.0",
-      "type": "build"
-    },
-    {
-      "name": "effect",
-      "version": "^3.21.2",
       "type": "build"
     },
     {
@@ -30,13 +45,28 @@
       "type": "build"
     },
     {
-      "name": "vitest",
-      "version": "^4.1.1",
+      "name": "vite",
+      "version": "^8",
       "type": "build"
     },
     {
-      "name": "@biomejs/biome",
-      "version": "^2.5.4",
+      "name": "vitest",
+      "version": "^5.0.5",
+      "type": "build"
+    },
+    {
+      "name": "@biomejs/wasm-nodejs",
+      "version": "2.6.3",
+      "type": "runtime"
+    },
+    {
+      "name": "@effect/platform-node-shared",
+      "version": "4.1.0",
+      "type": "runtime"
+    },
+    {
+      "name": "effect",
+      "version": "4.1.0",
       "type": "runtime"
     }
   ],

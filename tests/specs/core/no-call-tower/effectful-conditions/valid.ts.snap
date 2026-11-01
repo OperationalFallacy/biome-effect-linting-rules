@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Correctly exposes a reusable logging effect for conditional operations.\n */\nexport const reportReady = Effect.logInfo(\"Ready\");\n\n/**\n * Correctly supplies an effectful condition to Effect.when. The condition reads\n * mutable state when the operation runs, not when the operation is constructed.\n */\nexport const reportWhenReady = Effect.fn(\"reportWhenReady\")(\n  (state: { ready: boolean }) =>\n    reportReady.pipe(Effect.when(Effect.sync(() => state.ready))),\n);\n\n/**\n * Correctly supplies an Effect-valued condition in data-first Effect.when.\n */\nexport const reportWhenReadyDirect = Effect.fn(\"reportWhenReadyDirect\")(\n  (state: { ready: boolean }) =>\n    Effect.when(\n      reportReady,\n      Effect.sync(() => state.ready),\n    ),\n);\n\n/**\n * Correctly lifts an immutable condition into the Effect accepted by Effect.when.\n */\nexport const reportWhenEnabled = Effect.fn(\"reportWhenEnabled\")(\n  (enabled: boolean) => reportReady.pipe(Effect.when(Effect.succeed(enabled))),\n);\n\n/**\n * Correctly supplies both effects inline to data-first Effect.when.\n * This form is supported directly by Effect v4.\n */\nexport const reportWhenEnabledDirect = Effect.fn(\"reportWhenEnabledDirect\")(\n  (enabled: boolean) =>\n    Effect.when(Effect.logInfo(\"Ready\"), Effect.succeed(enabled)),\n);\n\n/**\n * Correctly composes a state read and its transformation in a pipeline.\n * Effect.when evaluates the condition before it runs that pipeline.\n */\nexport const readWhenReady = Effect.fn(\"readWhenReady\")(\n  (state: { ready: boolean; message: string }) =>\n    Effect.sync(() => state.message).pipe(\n      Effect.map((message) => message.trim()),\n      Effect.when(Effect.sync(() => state.ready)),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

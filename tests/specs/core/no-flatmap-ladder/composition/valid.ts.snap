@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst Guest = Schema.Struct({ name: Schema.NonEmptyString });\n\n/**\n * Correctly composes dependent effects in a pipeline. Effect.tap adds logging\n * while preserving the pipeline's success value.\n */\nexport const greet = Effect.fn(\"greet\")((input: unknown) =>\n  Schema.decodeUnknownEffect(Guest)(input).pipe(\n    Effect.map((guest) => guest.name),\n    Effect.tap((name) => Effect.logInfo(`Hello, ${name}`)),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

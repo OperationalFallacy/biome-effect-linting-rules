@@ -1,0 +1,41 @@
+{
+  "input": "import { style } from \"@vanilla-extract/css\";\n\n/**\n * Questionably creates a heading class with no styling role. Its declaration\n * adds another dependency for consumers without defining a visual property.\n */\nexport const heading = style({});\n\n/**\n * Correctly gives a class a concrete role by resetting its default margin.\n */\nexport const panel = style({ margin: 0 });\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Define the element's styles or remove the empty style declaration and its className use. An empty generated class lets consumers depend on a style name before the styles exist. Complete the style definition with the project's design tokens, then export the class.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Define the element's styles or remove the empty style declaration and its className use. An empty generated class lets consumers depend on a style name before the styles exist. Complete the style definition with the project's design tokens, then export the class."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-empty-vanilla-extract-style/style-declarations/invalid.ts"
+          },
+          "span": [
+            233,
+            242
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

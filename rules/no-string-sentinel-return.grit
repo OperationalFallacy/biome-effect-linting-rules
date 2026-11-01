@@ -1,9 +1,10 @@
 language js(typescript, jsx)
 
-`Effect.succeed("$_")` as $sentinel where {
+`Effect.succeed($value)` as $sentinel where {
+    $value <: JsStringLiteralExpression(),
     register_diagnostic(
         span = $sentinel,
-        message = "Return an explicit domain outcome instead of a string status through Effect.succeed. String status tokens make callers interpret text to determine what happened. Use the operation's domain result, Option, Either, or a tagged union so callers handle each outcome explicitly. Keep actual text results distinct from status tokens.",
+        message = "Return an explicit domain outcome instead of a string status through Effect.succeed. String status tokens make callers interpret text to determine what happened. Use the operation's domain result, Option, Result, or a tagged union so callers handle each outcome explicitly. Keep actual text results distinct from status tokens.",
         severity = "error"
     )
 }

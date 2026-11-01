@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Use Match for the per-element decision and keep Effect.sync around the whole\n * projection. Each execution then recomputes the array without constructing an\n * Effect for every element.\n */\nexport const clamp = Effect.fn(\"clamp\")((values: ReadonlyArray<number>) =>\n  Effect.sync(() => values.map((value) => value < 0 ? 0 : value)),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace this ternary with Match.value, Option.match, or Result.match. Keep the selected value and its dependent steps together.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace this ternary with Match.value, Option.match, or Result.match. Keep the selected value and its dependent steps together."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-ternary/projection/invalid.ts"
+          },
+          "span": [
+            348,
+            369
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

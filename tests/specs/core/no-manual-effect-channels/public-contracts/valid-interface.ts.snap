@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Ref } from \"effect\";\n\n/**\n * Correctly declares Effect channels in a public interface. The factory uses\n * satisfies to check the implementation without replacing its inferred type.\n */\nexport interface CounterApi {\n  readonly read: Effect.Effect<number>;\n  readonly increment: Effect.Effect<number>;\n}\n\nexport const makeCounter = Effect.fn(\"makeCounter\")(function* () {\n  const count = yield* Ref.make(0);\n  const read = Ref.get(count);\n  const increment = Ref.updateAndGet(count, (value) => value + 1);\n\n  return { read, increment } satisfies CounterApi;\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

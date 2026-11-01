@@ -1,0 +1,41 @@
+{
+  "input": "import { pipe } from \"effect\";\n\nconst formatCurrency = (value: number) => `$${value.toFixed(2)}`;\nconst addLabel = (value: string) => `Total: ${value}`;\n\n/**\n * Unnecessarily nests immediately invoked callbacks to pass intermediate\n * values between transformations. Each function adds a scope to the same data flow.\n */\nexport const describeTotal = (price: number, quantity: number) =>\n  ((subtotal: number) =>\n    ((formatted: string) => addLabel(formatted))(formatCurrency(subtotal)))(\n    price * quantity,\n  );\n\n/**\n * Correctly composes transformations in one pipeline.\n */\nexport const describeValue = (value: number) =>\n  pipe(value, formatCurrency, addLabel);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace nested immediately invoked functions with local values and one pipeline. The nested function bodies make the operation's execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue the operation after that decision.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace nested immediately invoked functions with local values and one pipeline. The nested function bodies make the operation's execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue the operation after that decision."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-arrow-ladder/value-composition/invalid.ts"
+          },
+          "span": [
+            416,
+            486
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

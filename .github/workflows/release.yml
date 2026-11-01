@@ -9,6 +9,7 @@ on:
   workflow_dispatch: {}
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  BIOME_CONFIG_PATH: biome.local.jsonc
 jobs:
   release_please:
     if: github.ref_name == 'master'

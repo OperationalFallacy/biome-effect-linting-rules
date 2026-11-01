@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst Book = Schema.Struct({ title: Schema.String });\nconst BookJson = Schema.fromJsonString(Book);\nconst encodeBook = Schema.encodeEffect(BookJson);\ninterface Storage {\n  readonly write: (payload: string) => Effect.Effect<void>;\n  readonly read: Effect.Effect<string>;\n}\n\n/**\n * Correctly serializes model data through schema codecs. Malformed stored data\n * now produces a typed decoding failure instead of an unchecked value or throw.\n * Both writes retain their order around the storage read.\n */\nexport const copyBook = Effect.fn(\"copyBook\")(\n  (book: typeof Book.Type, storage: Storage) =>\n    Effect.gen(function* () {\n      yield* encodeBook(book).pipe(\n        Effect.flatMap((payload) => storage.write(payload)),\n      );\n      const raw = yield* storage.read;\n      const decoded = yield* decodeBook(raw);\n      yield* encodeBook(decoded).pipe(\n        Effect.flatMap((payload) => storage.write(payload)),\n      );\n    }),\n);\n\n/**\n * Correctly decodes the complete model with a typed failure channel.\n */\nexport const decodeBook = Schema.decodeUnknownEffect(BookJson);\nexport const decodeCheckedBook = decodeBook;\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

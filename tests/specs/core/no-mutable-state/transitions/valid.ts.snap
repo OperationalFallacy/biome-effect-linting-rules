@@ -1,0 +1,11 @@
+{
+  "input": "import { Array as Arr } from \"effect\";\n\n/**\n * Effect's Array.reduce passes the index after the accumulator and current\n * item. Each callback returns the next accumulator, so a rewrite must preserve\n * that argument order.\n */\nexport const sum = (values: ReadonlyArray<number>) =>\n  Arr.reduce(values, 0, (total, value) => total + value);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

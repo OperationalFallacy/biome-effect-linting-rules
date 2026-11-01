@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\nimport { Atom, AtomRegistry } from \"effect/reactivity\";\n\nexport const counter = Atom.make(0);\n\n/**\n * Correctly exposes direct Atom operations. Executing each Effect performs\n * its read, state change, or refresh through the required registry service.\n */\nexport const readCount = Atom.get(counter);\nexport const setCount = Atom.set(counter, 1);\nexport const increment = Atom.update(counter, (count) => count + 1);\nexport const takeAndIncrement = Atom.modify(counter, (count) => [\n  count,\n  count + 1,\n]);\nexport const refresh = Atom.refresh(counter);\n\n/**\n * Correctly defers synchronous registry instance methods and exposes disposal\n * for the registry that the factory owns.\n */\nexport const makeRegistryOperations = () => {\n  const registry = AtomRegistry.make();\n  return {\n    read: Effect.sync(() => registry.get(counter)),\n    write: Effect.sync(() => {\n      registry.set(counter, 1);\n    }),\n    dispose: () => registry.dispose(),\n  };\n};\n\n/**\n * Correctly creates an owned atom in a deferred factory and returns its reader.\n */\nexport const makeReader = Effect.sync(() => {\n  const localCounter = Atom.make(0);\n  return () => Atom.get(localCounter);\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

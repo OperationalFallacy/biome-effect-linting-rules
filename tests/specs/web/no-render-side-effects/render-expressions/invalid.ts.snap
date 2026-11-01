@@ -1,0 +1,41 @@
+{
+  "input": "import { Match } from \"effect\";\nimport { createElement } from \"react\";\n\ntype LabelProps = {\n  readonly ready: boolean;\n  readonly onReport: (message: string) => void;\n};\n\n/**\n * Incorrectly reports state during rendering. React can render the component\n * repeatedly, so the callback runs without a user action and may run again.\n */\nexport function Label({ ready, onReport }: LabelProps) {\n  Match.value(ready).pipe(\n    Match.when(true, () => onReport(\"Ready\")),\n    Match.orElse(() => undefined),\n  );\n  const label = Match.value(ready).pipe(\n    Match.when(true, () => \"Ready\"),\n    Match.orElse(() => \"Waiting\"),\n  );\n  return createElement(\"button\", { type: \"button\", disabled: !ready }, label);\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Return the Match result as an expression and move updates or other work out of render. A Match used as a statement runs its selected callback immediately. A render function executes that callback as part of render. Keep render expressions pure and perform the work through an Effect runtime action or event handler.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Return the Match result as an expression and move updates or other work out of render. A Match used as a statement runs its selected callback immediately. A render function executes that callback as part of render. Keep render expressions pure and perform the work through an Effect runtime action or event handler."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-render-side-effects/render-expressions/invalid.ts"
+          },
+          "span": [
+            393,
+            504
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

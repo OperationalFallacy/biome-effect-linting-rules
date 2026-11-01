@@ -1,0 +1,70 @@
+{
+  "input": "import { Effect, Match } from \"effect\";\n\n/**\n * Questionably reports domain outcomes through string tokens. Callers must\n * interpret text before they can decide how to handle the result.\n */\nexport const summarize = Effect.fn(\"summarize\")(\n  (rows: ReadonlyArray<unknown>) =>\n    Match.value(rows.length).pipe(\n      Match.when(0, () => Effect.succeed(\"empty\")),\n      Match.orElse(() => Effect.succeed(\"ready\")),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Return an explicit domain outcome instead of a string status through Effect.succeed. String status tokens make callers interpret text to determine what happened. Use the operation's domain result, Option, Result, or a tagged union so callers handle each outcome explicitly. Keep actual text results distinct from status tokens.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Return an explicit domain outcome instead of a string status through Effect.succeed. String status tokens make callers interpret text to determine what happened. Use the operation's domain result, Option, Result, or a tagged union so callers handle each outcome explicitly. Keep actual text results distinct from status tokens."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-string-sentinel-return/operation-outcomes/invalid.ts"
+          },
+          "span": [
+            338,
+            361
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Return an explicit domain outcome instead of a string status through Effect.succeed. String status tokens make callers interpret text to determine what happened. Use the operation's domain result, Option, Result, or a tagged union so callers handle each outcome explicitly. Keep actual text results distinct from status tokens.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Return an explicit domain outcome instead of a string status through Effect.succeed. String status tokens make callers interpret text to determine what happened. Use the operation's domain result, Option, Result, or a tagged union so callers handle each outcome explicitly. Keep actual text results distinct from status tokens."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-string-sentinel-return/operation-outcomes/invalid.ts"
+          },
+          "span": [
+            389,
+            412
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

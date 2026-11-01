@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst Profile = Schema.Struct({ displayName: Schema.NonEmptyString });\n\n/**\n * Correctly composes dependent effects in a pipeline. The decoder and projection\n * follow the parser in execution order.\n */\nexport const displayName = Effect.fn(\"displayName\")((text: string) =>\n  Effect.try(() => JSON.parse(text)).pipe(\n    Effect.flatMap(Schema.decodeUnknownEffect(Profile)),\n    Effect.map((profile) => profile.displayName),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

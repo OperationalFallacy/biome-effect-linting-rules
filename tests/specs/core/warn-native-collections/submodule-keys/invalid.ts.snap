@@ -1,0 +1,41 @@
+{
+  "input": "import * as Value from \"effect/Data\";\n\nclass Cell extends Value.Class<{\n  readonly row: number;\n  readonly column: number;\n}> {}\n\n/**\n * Questionably uses structural coordinate values as native Map keys.\n * A reconstructed equal coordinate has a different native object identity.\n */\nexport const cells = new Map<Cell, string>([\n  [new Cell({ row: 0, column: 1 }), \"occupied\"],\n]);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-native-collections/submodule-keys/invalid.ts"
+          },
+          "span": [
+            305,
+            380
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 1,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

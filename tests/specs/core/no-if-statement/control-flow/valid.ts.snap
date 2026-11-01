@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Match } from \"effect\";\n\n/**\n * Match invokes only the selected branch callback. Each branch returns the\n * label that subsequent transformations will receive.\n */\nexport const selectLabel = (enabled: boolean) =>\n  Match.value(enabled).pipe(\n    Match.when(true, () => \"Enabled\"),\n    Match.orElse(() => \"Disabled\"),\n  );\n\n/**\n * Effect.when returns None when its condition succeeds with false. A failed\n * condition remains a failure, so callers can distinguish a skipped log from a\n * failed condition.\n */\nexport const logWhenEnabled = Effect.fn(\"logWhenEnabled\")(function* (\n  enabled: boolean,\n) {\n  yield* Effect.logInfo(\"Enabled\").pipe(Effect.when(Effect.succeed(enabled)));\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

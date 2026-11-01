@@ -1,0 +1,41 @@
+{
+  "input": "const errorFields = (cause: Error) => ({ message: cause.message });\n\n/**\n * Incorrectly splits a nested response body across a fragment helper and its\n * parent object. The body declaration hides part of its own payload.\n */\nexport const response = (cause: Error) => ({\n  status: 400,\n  body: { type: \"ValidationFailure\", ...errorFields(cause) },\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Construct the complete domain object in one place. Helper-produced fragments make the reader inspect several functions to understand the payload. Keep validation, value selection, and construction together, or use a domain constructor whose signature describes the complete result. Extract complete operations rather than payload fragments.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Construct the complete domain object in one place. Helper-produced fragments make the reader inspect several functions to understand the payload. Keep validation, value selection, and construction together, or use a domain constructor whose signature describes the complete result. Extract complete operations rather than payload fragments."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-fragmented-const-assembly/member-scope/invalid.ts"
+          },
+          "span": [
+            293,
+            345
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

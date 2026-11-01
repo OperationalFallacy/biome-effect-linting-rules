@@ -1,16 +1,9 @@
-file($body) where {
-    or {
-        $body <: contains `"effect"`,
-        $body <: contains bubble `import "effect/$module"`,
-        $body <: contains `"@effect-atom/atom-react"`
-    },
-    or {
-        $body <: contains `if ($cond) { $_ }`,
-        $body <: contains `if ($cond) $_`
-    },
+language js(typescript, jsx)
+
+JsIfStatement() as $violation where {
     register_diagnostic(
-        span = $cond,
-        message = "Replace the if statement with an explicit decision in the Effect flow. Separate branch bodies split the operation's sequence. Select the result with Match.value, Option.match, Either.match, or Effect.if, then continue in one pipeline. Preserve the original conditions and branch behavior.",
+        span = $violation,
+        message = "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together.",
         severity = "error"
     )
 }

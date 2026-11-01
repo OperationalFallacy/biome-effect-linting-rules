@@ -1,0 +1,41 @@
+{
+  "input": "import { Array as Arr } from \"effect\";\n\nconst names = [\" Mira \", \"Owen\"];\n\n/**\n * Questionably uses a named function with a single return for a transformation.\n * An expression callback can state the transformation directly at the call site.\n */\nexport const trimmed = names.map(function trim(name) {\n  return name.trim();\n});\n\n/**\n * Correctly retains a function body with a local normalized value.\n * The callback performs separate steps inside its own scope.\n */\nexport const labels = Arr.map(names, function normalize(name) {\n  const normalized = name.trim();\n  return normalized.toUpperCase();\n});\n\n/**\n * Correctly retains a function that reads its own arguments. An arrow callback\n * would capture the enclosing function's arguments instead.\n */\nexport const originalNames = names.map(function current(_name) {\n  return arguments[0];\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "information",
+        "description": "Use an expression callback for this single transformation. The callback contains only a return statement. Keep function expressions when callers require constructor semantics, dynamic this, or arguments. Keep block callbacks for local bindings and multiple steps.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use an expression callback for this single transformation. The callback contains only a return statement. Keep function expressions when callers require constructor semantics, dynamic this, or arguments. Keep block callbacks for local bindings and multiple steps."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-in-callback/callback-bodies/invalid.ts"
+          },
+          "span": [
+            303,
+            322
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 1,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,5 +1,89 @@
 # Changelog
 
+## [0.1.0](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.9...v0.1.0) (2026-11-01)
+
+This release targets Effect 4. Version 0.0.9 is the final Effect v3 release.
+
+The core preset reports imperative JavaScript control flow and explicit mutation, including inside Effect operations. The CLI requires Node.js 24 or newer.
+
+## [0.1.0-dev.5](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.4...v0.1.0-dev.5) (2026-10-30)
+
+
+### Features
+
+* enforce declarative Effect control flow ([f7ed5d9](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/f7ed5d9c390c2b950699a19e337a26511da05522))
+* enforce declarative Effect control flow ([5074a78](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/5074a78ce434a48fcb148d5d626fe54a938adc11))
+
+## [0.1.0-dev.4](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.3...v0.1.0-dev.4) (2026-10-29)
+
+### Fixture documentation and validation
+
+All 158 rule fixtures now include documentation. The examples define their dependencies and explain the composition choices. Fixture loading rejects source files without a documentation comment.
+
+The test suite passes all 208 tests. Strict typechecking passes for the 157 ordinary fixtures. One migration fixture deliberately uses the obsolete Effect.async API.
+
+The packaged rules and CLI are unchanged from 0.1.0-dev.3.
+
+## [0.1.0-dev.3](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.2...v0.1.0-dev.3) (2026-10-29)
+
+
+### Bug Fixes
+
+* align operation composition with Effect v4 APIs ([d8a6b54](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/d8a6b5466d2189956c629e4077d98bb262cecb5f))
+* align operation composition with Effect v4 APIs ([afeee88](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/afeee88b1484f915271ab47f6b67d7c4c43b9e72))
+
+## [0.1.0-dev.2](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.1...v0.1.0-dev.2) (2026-10-29)
+
+
+### Bug Fixes
+
+* avoid repeated module scans in cast and stylesheet matchers ([8a8c9f4](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/8a8c9f472b2b2ea0c25f4dc835e9339757b8034d))
+* calibrate Effect v4 composition matchers and regressions ([656e142](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/656e142b59e99fc3a1693bfd72b6400ad78420c3))
+* calibrate Effect v4 composition matchers with regressions ([361a780](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/361a7802a11b0c60d133ce1de2d8b11a3a11e144))
+
+
+### Performance Improvements
+
+* avoid repeated module scans for unrelated declarations ([62fc99a](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/62fc99a0f68e7983f3980e76c62c86342d84f30c))
+
+## [0.1.0-dev.1](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.0...v0.1.0-dev.1) (2026-10-29)
+
+
+### Features
+
+* replace custom CLI with native Effect commands and scoped Biome ([aa5c958](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/aa5c95848b9a283ec8a19fd1eccacba4510e97d2))
+* ship native Effect CLI and fixture-based rule testing ([f99d9ff](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/f99d9ff2f49fbf95fa6f99b372c7ea99733df023))
+* ship native Effect CLI and fixture-based rule testing ([f99d9ff](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/f99d9ff2f49fbf95fa6f99b372c7ea99733df023))
+
+
+### Bug Fixes
+
+* clarify service layers and preserve callback semantics ([022a877](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/022a87748203c96cb92481eaa23af15c0c9b0ff4))
+* compile Effect CLI modules for installed Node packages ([762b1af](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/762b1afcc20635961d93f96372a570b67b40fc20))
+* complete Effect-native tooling and pass release checks ([3283361](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/3283361d55d99dd5f3ff02bff7c3beb67a98d704))
+* distinguish status constants from ordinary text ([a41c0aa](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/a41c0aac14ddc3c53c1368ddbec697920ff183fe))
+* match only direct object spreads in fragment assembly rule ([a1ced38](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/a1ced38d215783ca93868ef2cfe8fe14bb035fe4))
+* preserve repeated matches and import scope in Effect rules ([628f963](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/628f963ab1625d94fe45212894b47ea45af4594e))
+* restrict expression callback advice to single return bodies ([4410d13](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/4410d13f6d52941d557988591e6c2fba48f023df))
+
+## [0.1.0-dev.0](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.9...v0.1.0-dev.0) (2026-10-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate dev rules to Effect v4
+* finish Effect v4 rules and sanitize public examples
+
+### Features
+
+* finish Effect v4 rules and sanitize public examples ([fede562](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/fede5626b2bf3b2ec914ff7bf5e37e93de3fbb3a))
+* migrate dev rules to Effect v4 ([28c95f0](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/28c95f0145e379f0cdc8cd83d3f90a4b27438bf4))
+
+
+### Miscellaneous Chores
+
+* **dev:** prepare Effect v4 prerelease ([3b5e9aa](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/3b5e9aaa42c3ec78dbd05ee87a4f87fe07a10c2c))
+
 ## [0.0.9](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.8...v0.0.9) (2026-10-21)
 
 

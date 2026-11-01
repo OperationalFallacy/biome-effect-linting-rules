@@ -1,0 +1,11 @@
+{
+  "input": "import { Data, Effect, Match } from \"effect\";\n\nclass Ready extends Data.TaggedClass(\"Ready\")<{ readonly count: number }> {}\nclass Empty extends Data.TaggedClass(\"Empty\") {}\n\n/**\n * Correctly returns a tagged domain outcome with its associated data.\n * The caller can distinguish an empty result from a completed count explicitly.\n */\nexport const summarize = Effect.fn(\"summarize\")(\n  (rows: ReadonlyArray<unknown>) => {\n    const outcome = Match.value(rows.length).pipe(\n      Match.when(0, () => new Empty()),\n      Match.orElse((count) => new Ready({ count })),\n    );\n    return Effect.succeed(outcome);\n  },\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

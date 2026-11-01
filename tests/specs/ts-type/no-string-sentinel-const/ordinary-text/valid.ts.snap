@@ -1,0 +1,11 @@
+{
+  "input": "/**\n * Correctly uses strings for configuration paths, versions, schedules, and\n * display text. Each value has a textual domain meaning.\n */\nexport const yarnVersion = \"4.6.0\";\nexport const packageManifestPath = \"package.json\";\nexport const upgradeSchedule = \"0 0 * * 1,4\";\nexport const label = \"Ready\";\nexport const statusPage = \"/status\";\nexport const estate = \"Seaside\";\nexport const stateDirectory = \".state\";\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

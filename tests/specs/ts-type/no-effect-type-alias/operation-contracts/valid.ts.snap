@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Ref } from \"effect\";\n\n/**\n * Correctly infers the named operation's channels from its implementation.\n * The operation's type follows the effect it returns.\n */\nexport const readCount = Effect.fn(\"readCount\")((counter: Ref.Ref<number>) =>\n  Ref.get(counter),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}
