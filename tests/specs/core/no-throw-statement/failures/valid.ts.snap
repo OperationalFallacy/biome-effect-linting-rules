@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Effect.fail declares the rejection in the operation's error type.\n * Effect.catch can then recover from it with another Effect.\n */\nexport const reject = Effect.fail(new Error(\"Rejected\"));\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

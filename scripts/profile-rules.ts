@@ -57,14 +57,12 @@ const command = Command.make(
       );
     });
 
-    if (selected.length === 0) {
-      return yield* new ProfileError({
-        message: "No matching rules selected.",
-      });
-    }
-    if (files.length === 0) {
-      return yield* new ProfileError({ message: "No supported files found." });
-    }
+    yield* Effect.fail(
+      new ProfileError({ message: "No matching rules selected." }),
+    ).pipe(Effect.when(Effect.succeed(selected.length === 0)));
+    yield* Effect.fail(
+      new ProfileError({ message: "No supported files found." }),
+    ).pipe(Effect.when(Effect.succeed(files.length === 0)));
 
     /** Reports elapsed analysis time and lint status for one selection of plugins. */
     const profile = Effect.fn("profile")(function* (
@@ -102,18 +100,22 @@ const command = Command.make(
     });
 
     yield* Console.log("rule\tstatus\telapsed_ms");
-    if (request.each) {
-      yield* Effect.forEach(selected, (plugin) =>
-        profile(path.basename(plugin.path, ".grit"), [plugin]),
-      );
-      return;
-    }
-
-    yield* profile(
-      Arr.map(selected, (plugin) => path.basename(plugin.path, ".grit")).join(
-        ",",
+    yield* Match.value(request.each).pipe(
+      Match.when(true, () =>
+        Effect.forEach(
+          selected,
+          (plugin) => profile(path.basename(plugin.path, ".grit"), [plugin]),
+          { discard: true },
+        ),
       ),
-      selected,
+      Match.orElse(() =>
+        profile(
+          Arr.map(selected, (plugin) =>
+            path.basename(plugin.path, ".grit"),
+          ).join(","),
+          selected,
+        ),
+      ),
     );
   }),
 );

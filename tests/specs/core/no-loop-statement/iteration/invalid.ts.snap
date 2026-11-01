@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Effect.forEach sequences write Effects in input order by default and stops\n * at the first failure. Preserve both properties when you compose this\n * traversal, since a later write may depend on an earlier one.\n */\nexport const writeAll = Effect.fn(\"writeAll\")((values: ReadonlyArray<number>, write: (value: number) => Effect.Effect<void, Error>) =>\n  Effect.gen(function* () {\n    for (const value of values) { yield* write(value); }\n  }),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-loop-statement/iteration/invalid.ts"
+          },
+          "span": [
+            423,
+            475
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

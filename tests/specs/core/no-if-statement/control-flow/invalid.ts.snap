@@ -1,15 +1,15 @@
 {
-  "input": "import { Effect } from \"effect\";\n\n/**\n * Questionably splits a pure value selection across imperative return paths.\n * A Match expression can represent the decision as one composable value.\n */\nexport function selectLabel(enabled: boolean) {\n  if (enabled) {\n    return \"Enabled\";\n  }\n  return \"Disabled\";\n}\n\n/**\n * Correctly keeps a conditional yield inside a named Effect operation.\n * The decision runs when the operation executes.\n */\nexport const logWhenEnabled = Effect.fn(\"logWhenEnabled\")(function* (\n  enabled: boolean,\n) {\n  if (enabled) {\n    yield* Effect.logInfo(\"Enabled\");\n  }\n});\n",
+  "input": "import { Effect } from \"effect\";\n\n/**\n * Match invokes only the selected branch callback and returns its value. Use\n * that result as the input to later transformations in the value pipeline.\n */\nexport function selectLabel(enabled: boolean) {\n  if (enabled) {\n    return \"Enabled\";\n  }\n  return \"Disabled\";\n}\n\n/**\n * Use Effect.when to compose the condition with the log. An Effect-valued\n * condition keeps any reads or failures in the same execution as the selected\n * work.\n */\nexport const logWhenEnabled = Effect.fn(\"logWhenEnabled\")(function* (\n  enabled: boolean,\n) {\n  if (enabled) {\n    yield* Effect.logInfo(\"Enabled\");\n  }\n});\n",
   "result": {
     "diagnostics": [
       {
         "category": "plugin",
         "severity": "error",
-        "description": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow.",
+        "description": "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together.",
         "message": [
           {
             "elements": [],
-            "content": "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow."
+            "content": "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together."
           }
         ],
         "advices": {
@@ -23,8 +23,37 @@
             "file": "/project/core/no-if-statement/control-flow/invalid.ts"
           },
           "span": [
-            248,
-            255
+            246,
+            286
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-if-statement/control-flow/invalid.ts"
+          },
+          "span": [
+            578,
+            634
           ],
           "sourceCode": null
         },
@@ -32,7 +61,7 @@
         "source": null
       }
     ],
-    "errors": 1,
+    "errors": 2,
     "warnings": 0,
     "infos": 0,
     "parseErrors": 0,

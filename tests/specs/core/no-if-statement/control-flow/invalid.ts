@@ -1,8 +1,8 @@
 import { Effect } from "effect";
 
 /**
- * Questionably splits a pure value selection across imperative return paths.
- * A Match expression can represent the decision as one composable value.
+ * Match invokes only the selected branch callback and returns its value. Use
+ * that result as the input to later transformations in the value pipeline.
  */
 export function selectLabel(enabled: boolean) {
   if (enabled) {
@@ -12,8 +12,9 @@ export function selectLabel(enabled: boolean) {
 }
 
 /**
- * Correctly keeps a conditional yield inside a named Effect operation.
- * The decision runs when the operation executes.
+ * Use Effect.when to compose the condition with the log. An Effect-valued
+ * condition keeps any reads or failures in the same execution as the selected
+ * work.
  */
 export const logWhenEnabled = Effect.fn("logWhenEnabled")(function* (
   enabled: boolean,

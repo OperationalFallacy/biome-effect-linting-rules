@@ -3,8 +3,8 @@ import { Effect, Match } from "effect";
 type Phase = "ready" | "loading" | "failed";
 
 /**
- * Correctly expresses a pure selection with Match. The result can continue
- * into later transformations as a value.
+ * Match.when narrows the input for its branch. Match.orElse supplies the
+ * fallback for the remaining phases, and the whole decision returns one value.
  */
 export const describePhase = (phase: Phase) =>
   Match.value(phase).pipe(
@@ -22,18 +22,9 @@ export const isReady = (phase: Phase) =>
 export const describeMatched = describePhase;
 
 /**
- * Correctly keeps branching inside a named Effect operation.
- * The branch executes when the operation runs.
+ * Effect.sync invokes the pure phase description each time the operation runs.
+ * Effect.fn records the operation name for tracing.
  */
-export const describeOperation = Effect.fn("describeOperation")(function* (
-  phase: Phase,
-) {
-  switch (phase) {
-    case "ready":
-      return "Ready";
-    case "loading":
-      return "Loading";
-    default:
-      return "Failed";
-  }
-});
+export const describeOperation = Effect.fn("describeOperation")((phase: Phase) =>
+  Effect.sync(() => describePhase(phase)),
+);

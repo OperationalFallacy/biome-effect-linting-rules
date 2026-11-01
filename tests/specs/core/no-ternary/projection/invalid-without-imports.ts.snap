@@ -1,0 +1,41 @@
+{
+  "input": "/**\n * Match is a pure value transformation and needs no Effect runtime. Use it for\n * value decisions in ordinary collection callbacks as well as Effect operations.\n */\nexport const clamp = (values: ReadonlyArray<number>) =>\n  values.map((value) => value < 0 ? 0 : value);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Replace this ternary with Match.value, Option.match, or Result.match. Keep the selected value and its dependent steps together.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Replace this ternary with Match.value, Option.match, or Result.match. Keep the selected value and its dependent steps together."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-ternary/projection/invalid-without-imports.ts"
+          },
+          "span": [
+            250,
+            271
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

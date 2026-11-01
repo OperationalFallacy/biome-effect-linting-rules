@@ -1,0 +1,186 @@
+{
+  "input": "/**\n * Ref.modify computes an operation result and the next state in one atomic\n * update. Use it when Effect fibers need to coordinate a shared counter.\n */\nexport function advance(counter: { value: number; label?: string }) {\n  var first = counter.value;\n  let second = first;\n  second = first + 1;\n  counter.value++;\n  ++counter.value;\n  delete counter.label;\n  return second;\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-mutable-state/transitions/invalid-syntax.ts"
+          },
+          "span": [
+            230,
+            255
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-mutable-state/transitions/invalid-syntax.ts"
+          },
+          "span": [
+            259,
+            277
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-mutable-state/transitions/invalid-syntax.ts"
+          },
+          "span": [
+            281,
+            299
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-mutable-state/transitions/invalid-syntax.ts"
+          },
+          "span": [
+            303,
+            318
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-mutable-state/transitions/invalid-syntax.ts"
+          },
+          "span": [
+            322,
+            337
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent state changes through immutable values or Effect state operations. Keep each transition explicit."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-mutable-state/transitions/invalid-syntax.ts"
+          },
+          "span": [
+            341,
+            361
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 6,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

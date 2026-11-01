@@ -1,6 +1,5 @@
-import { Effect, FileSystem, Schema } from "effect";
+import { Array as Arr, Effect, FileSystem, Option, Schema } from "effect";
 import { JsonFile, JsonPatch, javascript, ReleasableCommits } from "projen";
-import type { JobStep } from "projen/lib/github/workflows-model";
 import { YarnNodeLinker } from "projen/lib/javascript";
 import { ReleaseTrigger } from "projen/lib/release";
 
@@ -11,16 +10,34 @@ const synthesize = Effect.fn("synthesize")(function* () {
   const yarnVersion = "4.6.0";
   const upgradeSchedule = "0 0 * * 1,4";
   const packageManifestPath = "package.json";
-  const currentPackageVersion = (yield* fs.exists(packageManifestPath))
-    ? (yield* Schema.decodeUnknownEffect(
-        Schema.fromJsonString(Schema.Struct({ version: Schema.String })),
-      )(yield* fs.readFileString(packageManifestPath))).version
-    : "0.0.0";
+  const currentPackageVersion = yield* fs
+    .readFileString(packageManifestPath)
+    .pipe(
+      Effect.flatMap(
+        Schema.decodeUnknownEffect(
+          Schema.fromJsonString(Schema.Struct({ version: Schema.String })),
+        ),
+      ),
+      Effect.when(fs.exists(packageManifestPath)),
+      Effect.map(
+        Option.match({
+          onNone: () => "0.0.0",
+          onSome: ({ version }) => version,
+        }),
+      ),
+    );
 
   const project = new javascript.NodeProject({
     authorName: "Roman Naumenko",
     authorEmail: "hi@catenary.cloud",
     defaultReleaseBranch: "master",
+    depsUpgradeOptions: {
+      workflowOptions: {
+        schedule: javascript.UpgradeDependenciesSchedule.expressions([
+          upgradeSchedule,
+        ]),
+      },
+    },
     description:
       "Biome Grit rules for declarative Effect TypeScript composition and repository-wide style consistency.",
     deps: [
@@ -68,6 +85,12 @@ const synthesize = Effect.fn("synthesize")(function* () {
     repository:
       "https://github.com/OperationalFallacy/biome-effect-linting-rules.git",
     workflowNodeVersion: "24.11.1",
+    workflowBootstrapSteps: [
+      {
+        name: "Install Specific Yarn Version",
+        run: `corepack enable && corepack prepare yarn@${yarnVersion} --activate`,
+      },
+    ],
     yarnBerryOptions: {
       version: yarnVersion,
       zeroInstalls: false,
@@ -261,118 +284,74 @@ const synthesize = Effect.fn("synthesize")(function* () {
 
   project.defaultTask?.reset("tsx .projenrc.ts");
 
-  if (project.github !== undefined) {
-    const buildWorkflow = project.github.workflows.find(
-      (workflow) => workflow.name === "build",
-    );
-    const upgradeWorkflows = project.github.workflows.filter((workflow) =>
-      workflow.name.startsWith("upgrade-"),
-    );
+  Option.fromNullishOr(project.github).pipe(
+    Option.match({
+      onNone: () => undefined,
+      onSome: (github) => {
+        const buildWorkflow = github.workflows.find(
+          (workflow) => workflow.name === "build",
+        );
+        const upgradeWorkflows = github.workflows.filter((workflow) =>
+          workflow.name.startsWith("upgrade-"),
+        );
 
-    const corepackStep = {
-      name: "Install Specific Yarn Version",
-      run: `corepack enable && corepack prepare yarn@${yarnVersion} --activate`,
-    };
+        Option.fromNullishOr(buildWorkflow).pipe(
+          Option.match({
+            onNone: () => undefined,
+            onSome: (workflow) => {
+              workflow.file?.patch(
+                JsonPatch.add(
+                  "/jobs/build/env/BIOME_CONFIG_PATH",
+                  "biome.local.jsonc",
+                ),
+                JsonPatch.add("/on/workflow_dispatch/inputs", {
+                  repository: {
+                    description:
+                      "Repository to check out, for example owner/repo",
+                    required: false,
+                    type: "string",
+                  },
+                  ref: {
+                    description: "Branch, tag, or SHA to check out",
+                    required: false,
+                    type: "string",
+                  },
+                }),
+                JsonPatch.replace("/jobs/build/permissions/contents", "read"),
+                JsonPatch.replace(
+                  "/jobs/build/steps/0/with/ref",
+                  `\${{ github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name) || github.event.pull_request.head.ref }}`,
+                ),
+                JsonPatch.replace(
+                  "/jobs/build/steps/0/with/repository",
+                  `\${{ github.event_name == 'workflow_dispatch' && (inputs.repository || github.repository) || github.event.pull_request.head.repo.full_name }}`,
+                ),
+                JsonPatch.add(
+                  "/jobs/build/steps/2/with/package-manager-cache",
+                  false,
+                ),
+                JsonPatch.replace(
+                  "/jobs/self-mutation/if",
+                  "always() && github.event_name == 'pull_request' && needs.build.outputs.self_mutation_happened && github.event.pull_request.head.repo.full_name == github.repository",
+                ),
+              );
+            },
+          }),
+        );
 
-    const getJobSteps = (job: { steps?: unknown }): JobStep[] => {
-      const rawSteps = job.steps;
-      return typeof rawSteps === "function"
-        ? (rawSteps as () => JobStep[])()
-        : ((rawSteps as JobStep[]) ?? []);
-    };
-
-    if (buildWorkflow !== undefined) {
-      buildWorkflow.file?.patch(
-        JsonPatch.add("/jobs/build/env/BIOME_CONFIG_PATH", "biome.local.jsonc"),
-        JsonPatch.add("/on/workflow_dispatch/inputs", {
-          repository: {
-            description: "Repository to check out, for example owner/repo",
-            required: false,
-            type: "string",
-          },
-          ref: {
-            description: "Branch, tag, or SHA to check out",
-            required: false,
-            type: "string",
-          },
-        }),
-        JsonPatch.replace("/jobs/build/permissions/contents", "read"),
-        JsonPatch.replace(
-          "/jobs/build/steps/0/with/ref",
-          `\${{ github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name) || github.event.pull_request.head.ref }}`,
-        ),
-        JsonPatch.replace(
-          "/jobs/build/steps/0/with/repository",
-          `\${{ github.event_name == 'workflow_dispatch' && (inputs.repository || github.repository) || github.event.pull_request.head.repo.full_name }}`,
-        ),
-        JsonPatch.add("/jobs/build/steps/2/with/package-manager-cache", false),
-        JsonPatch.replace(
-          "/jobs/self-mutation/if",
-          "always() && github.event_name == 'pull_request' && needs.build.outputs.self_mutation_happened && github.event.pull_request.head.repo.full_name == github.repository",
-        ),
-      );
-      const buildJob = buildWorkflow.getJob("build");
-      if (buildJob !== undefined && "steps" in buildJob) {
-        const buildSteps = getJobSteps(buildJob);
-        buildWorkflow.updateJob("build", {
-          ...buildJob,
-          steps: [buildSteps[0], corepackStep, ...buildSteps.slice(1)],
+        Arr.forEach(upgradeWorkflows, (upgradeWorkflow) => {
+          upgradeWorkflow.file?.patch(
+            JsonPatch.add(
+              "/jobs/upgrade/steps/2/with/package-manager-cache",
+              false,
+            ),
+          );
         });
-      }
-    }
-
-    for (const upgradeWorkflow of upgradeWorkflows) {
-      const upgradeJob = upgradeWorkflow.getJob("upgrade");
-      if (upgradeJob !== undefined && "steps" in upgradeJob) {
-        const upgradeSteps = getJobSteps(upgradeJob);
-        upgradeWorkflow.updateJob("upgrade", {
-          ...upgradeJob,
-          steps: [upgradeSteps[0], corepackStep, ...upgradeSteps.slice(1)],
-        });
-      }
-    }
-  }
+      },
+    }),
+  );
 
   project.synth();
-
-  const upgradeWorkflowPath = ".github/workflows/upgrade-master.yml";
-  const upgradeWorkflowFile = (yield* fs.exists(upgradeWorkflowPath))
-    ? yield* fs.readFileString(upgradeWorkflowPath)
-    : undefined;
-
-  const rewrittenUpgradeWorkflow = upgradeWorkflowFile
-    ?.replace(`    - cron: 0 0 * * *`, `    - cron: ${upgradeSchedule}`)
-    .replace(
-      `      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          ref: master
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 24.11.1`,
-      `      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          ref: master
-      - name: Install Specific Yarn Version
-        run: corepack enable && corepack prepare yarn@${yarnVersion} --activate
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 24.11.1
-          package-manager-cache: false`,
-    );
-
-  if (
-    rewrittenUpgradeWorkflow !== undefined &&
-    rewrittenUpgradeWorkflow.length > 0 &&
-    rewrittenUpgradeWorkflow !== upgradeWorkflowFile
-  ) {
-    yield* fs.chmod(upgradeWorkflowPath, 0o644);
-    yield* fs.writeFileString(upgradeWorkflowPath, rewrittenUpgradeWorkflow);
-    yield* fs.chmod(upgradeWorkflowPath, 0o444);
-  }
 
   const releaseWorkflowPath = ".github/workflows/release.yml";
   const releasePleaseWorkflow = `# ~~ Generated by projen. To modify, edit .projenrc.js and run "npx projen".

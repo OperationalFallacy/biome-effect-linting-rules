@@ -1,0 +1,157 @@
+{
+  "input": "/**\n * Effect.forEach traverses sequentially unless concurrency is requested. For\n * condition-driven work, an Effect repetition combinator must also preserve\n * whether the first step runs before the condition is checked.\n */\nexport function visit(values: ReadonlyArray<number>, record: Readonly<Record<string, number>>, emit: (value: unknown) => void, ready: () => boolean) {\n  for (let index = 0; index < values.length; index++) { emit(values[index]); }\n  for (const key in record) { emit(record[key]); }\n  while (ready()) { emit(\"next\"); }\n  do { emit(\"first\"); } while (ready());\n}\nexport async function consume(values: AsyncIterable<number>, emit: (value: number) => void) {\n  for await (const value of values) { emit(value); }\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-loop-statement/iteration/invalid-syntax.ts"
+          },
+          "span": [
+            380,
+            456
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-loop-statement/iteration/invalid-syntax.ts"
+          },
+          "span": [
+            459,
+            507
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-loop-statement/iteration/invalid-syntax.ts"
+          },
+          "span": [
+            510,
+            543
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-loop-statement/iteration/invalid-syntax.ts"
+          },
+          "span": [
+            546,
+            584
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-loop-statement/iteration/invalid-syntax.ts"
+          },
+          "span": [
+            683,
+            733
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 5,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

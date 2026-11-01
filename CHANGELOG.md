@@ -1,36 +1,28 @@
 # Changelog
 
-## [0.1.0](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.9...v0.1.0) (2026-10-29)
+## [0.1.0](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.9...v0.1.0) (2026-11-01)
 
-### Effect v4 support
+This release targets Effect 4. Version 0.0.9 is the final Effect v3 release.
 
-This release updates the lint rules for use with Effect v4. The rules target codebases with strict reliability requirements, such as tradedal.
+The core preset reports imperative JavaScript control flow and explicit mutation, including inside Effect operations. The CLI requires Node.js 24 or newer.
 
-### CLI
+## [0.1.0-dev.5](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.4...v0.1.0-dev.5) (2026-10-30)
 
-The CLI requires Node.js 24 or newer. Preset configurations use the Biome 2.6.3 schema, and the CLI bundles the matching Biome engine.
 
-The CLI uses native Effect commands and executes Biome through its WASM SDK in the same Node.js process. It loads plugins into an isolated memory filesystem. The `check` command leaves the project's configuration unchanged and supports the `core`, `web`, `ts-type`, and `full` presets.
+### Features
 
-### Rule changes
+* enforce declarative Effect control flow ([f7ed5d9](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/f7ed5d9c390c2b950699a19e337a26511da05522))
+* enforce declarative Effect control flow ([5074a78](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/5074a78ce434a48fcb148d5d626fe54a938adc11))
 
-The release removes `no-effect-fn-generator` and `no-wrapgraphql-catchall`. The full preset now includes `no-inline-runtime-provide`. The new `no-layer-this-reference` rule reports implicit class references in static service layer declarations.
+## [0.1.0-dev.4](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.3...v0.1.0-dev.4) (2026-10-29)
 
-Staging checks recognize constructor references passed to either form of `Layer.effect` or to `Context.Service` through `make`. Scope regressions cover intermediate local declarations and shadowed names.
+### Fixture documentation and validation
 
-The call-tower rule exempts `Effect.when`, `Effect.acquireRelease`, `Effect.acquireUseRelease`, and `Effect.scoped`. It checks nested transformations inside their arguments. The `Effect.all` sequencing rule matches arrays of known side-effect operations and exempts result-mode collections.
+All 158 rule fixtures now include documentation. The examples define their dependencies and explain the composition choices. Fixture loading rejects source files without a documentation comment.
 
-Branching checks have exemptions for `Effect.gen`, Effect function constructors, and `Effect.suspend` bodies. Staging and side-effect diagnostics recommend `Effect.flatMap` or `Effect.andThen` for dependent sequencing.
+The test suite passes all 208 tests. Strict typechecking passes for the 157 ordinary fixtures. One migration fixture deliberately uses the obsolete Effect.async API.
 
-### Validation and diagnostics
-
-Callback-return checks exempt `Schema.makeFilter`, `Schema.refine`, and `Schema.declare` predicates. Manual-channel checks have exceptions for service declarations, interfaces, and type aliases. Atom-wrapper checks distinguish v4 module operations from synchronous registry methods.
-
-Fixture snapshots retain complete Biome diagnostics, including severity and source spans. Regression examples cover v4 service construction, conditional work, and scoped resources. The CLI's SDK diagnostics also have native Biome parity checks.
-
-### Performance
-
-The model-cast and Vanilla Extract alias rules avoid repeated module scans on unrelated declarations. FlatMap-ladder and console-wrapper checks start from call expressions.
+The packaged rules and CLI are unchanged from 0.1.0-dev.3.
 
 ## [0.1.0-dev.3](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0-dev.2...v0.1.0-dev.3) (2026-10-29)
 

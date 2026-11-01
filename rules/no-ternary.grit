@@ -1,19 +1,9 @@
-file($body) where {
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    $body <: contains `$cond ? $then : $else` as $ternary,
-    $cond <: not within or {
-        `Effect.gen($ownerArgs)`,
-        `Effect.fn($ownerArgs)`,
-        `Effect.fn($ownerName)($ownerBody)`,
-        `Effect.fnUntraced($ownerArgs)`,
-        `Effect.fnUntracedEager($ownerArgs)`,
-        `Effect.suspend($ownerArgs)`
-    },
+language js(typescript, jsx)
+
+JsConditionalExpression() as $ternary where {
     register_diagnostic(
-        span = $cond,
-        message = "Use Match.value, Option.match, or Result.match for decisions in value pipelines. Separate branch bodies split the operation's sequence. Keep the selected value and dependent steps together. Effect.gen, Effect.fn, and Effect.suspend bodies support ordinary JavaScript control flow.",
+        span = $ternary,
+        message = "Replace this ternary with Match.value, Option.match, or Result.match. Keep the selected value and its dependent steps together.",
         severity = "error"
     )
 }

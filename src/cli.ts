@@ -14,6 +14,7 @@ import {
   Path,
   Schema,
   String as Str,
+  Stream,
 } from "effect";
 
 import { Argument, Command, Flag } from "effect/cli";
@@ -35,6 +36,12 @@ type PresetName = typeof PresetName.Type;
 class CheckFailed extends Schema.TaggedError<CheckFailed>()("CheckFailed", {
   message: Schema.String,
 }) {}
+
+/** File size validation prevents the engine from silently skipping a target. */
+class FileTooLarge extends Schema.TaggedError<FileTooLarge>()(
+  "FileTooLarge",
+  {},
+) {}
 
 /** Renders SDK byte spans as one-based Unicode positions for terminal output. */
 const formatDiagnostic = (
@@ -96,127 +103,160 @@ export class ProjectChecks extends Context.Service<ProjectChecks>()(
         print: boolean,
       ) {
         const file = path.join(packageRoot, "docs", "linting.md");
-        if (print) {
-          yield* fs.readFileString(file).pipe(Effect.flatMap(Console.log));
-        } else {
-          yield* Console.log(file);
-        }
+        yield* Match.value(print).pipe(
+          Match.when(true, () => fs.readFileString(file)),
+          Match.orElse(() => Effect.succeed(file)),
+          Effect.flatMap(Console.log),
+        );
       });
 
-      /** Lists supported files and skips dependency folders and directory links. */
-      const discoverFiles = Effect.fn("ProjectChecks.discoverFiles")(function* (
-        targets: ReadonlyArray<string>,
+      /** Inspects one path without following directory links or dependency trees. */
+      const inspectFile = Effect.fn("ProjectChecks.inspectFile")(function* (
+        file: string,
       ) {
-        let pending = Arr.map(targets, (target) => path.resolve(target));
-        let visited = HashSet.empty<string>();
-        let files = Arr.empty<{
-          readonly file: string;
-          readonly size: ByteSize.ByteSize;
-        }>();
-
-        while (pending.length > 0) {
-          const [file, ...remaining] = pending;
-          pending = remaining;
-          if (HashSet.has(visited, file)) {
-            continue;
-          }
-          visited = HashSet.add(visited, file);
-          let info = yield* fs.lstat(file);
-          if (info.type === "SymbolicLink") {
-            info = yield* fs.stat(file);
-            if (info.type === "Directory") {
-              continue;
-            }
-          }
-          if (info.type === "Directory") {
-            if (
+        const entry = yield* fs.lstat(file);
+        const info = yield* Match.value(entry.type).pipe(
+          Match.when("SymbolicLink", () => fs.stat(file)),
+          Match.orElse(() => Effect.succeed(entry)),
+        );
+        const children = yield* fs
+          .readDirectory(file)
+          .pipe(
+            Effect.map(Arr.sort(Str.Order)),
+            Effect.when(
+              Effect.succeed(
+                info.type === "Directory" &&
+                  entry.type !== "SymbolicLink" &&
+                  !Arr.contains(
+                    [".git", ".hg", ".svn", "node_modules"],
+                    path.basename(file),
+                  ),
+              ),
+            ),
+            Effect.map(Option.getOrElse(() => Arr.empty<string>())),
+            Effect.map(Arr.map((child) => path.join(file, child))),
+          );
+        const supported = Option.some({ file, size: info.size }).pipe(
+          Option.filter(
+            () =>
+              info.type === "File" &&
               Arr.contains(
-                [".git", ".hg", ".svn", "node_modules"],
-                path.basename(file),
-              )
-            ) {
-              continue;
-            }
-            const children = yield* fs
-              .readDirectory(file)
-              .pipe(Effect.map(Arr.sort(Str.Order)));
-            pending = Arr.appendAll(
-              pending,
-              Arr.map(children, (child) => path.join(file, child)),
-            );
-            continue;
-          }
-          if (
-            info.type !== "File" ||
-            !Arr.contains(
-              [
-                ".ts",
-                ".tsx",
-                ".js",
-                ".jsx",
-                ".mjs",
-                ".cjs",
-                ".mts",
-                ".cts",
-                ".json",
-                ".jsonc",
-                ".css",
-                ".vue",
-                ".svelte",
-                ".html",
-                ".astro",
-              ],
-              path.extname(file),
-            )
-          ) {
-            continue;
-          }
-          files = Arr.append(files, { file, size: info.size });
-        }
-
-        return files;
+                [
+                  ".ts",
+                  ".tsx",
+                  ".js",
+                  ".jsx",
+                  ".mjs",
+                  ".cjs",
+                  ".mts",
+                  ".cts",
+                  ".json",
+                  ".jsonc",
+                  ".css",
+                  ".vue",
+                  ".svelte",
+                  ".html",
+                  ".astro",
+                ],
+                path.extname(file),
+              ),
+          ),
+        );
+        return { children, file: supported };
       });
+
+      /** Traverses paths in breadth-first order and checks each path once. */
+      const discoverFiles = Effect.fn("ProjectChecks.discoverFiles")(
+        (targets: ReadonlyArray<string>) =>
+          Stream.unfold(
+            {
+              pending: Arr.map(targets, (target) => path.resolve(target)),
+              visited: HashSet.empty<string>(),
+            },
+            ({ pending, visited }) =>
+              Option.match(Arr.head(pending), {
+                onNone: () => Effect.succeed(undefined),
+                onSome: (file) =>
+                  inspectFile(file).pipe(
+                    Effect.when(Effect.succeed(!HashSet.has(visited, file))),
+                    Effect.map(
+                      (inspection) =>
+                        [
+                          Option.flatMap(inspection, (entry) => entry.file),
+                          {
+                            pending: Arr.appendAll(
+                              Arr.drop(pending, 1),
+                              Option.match(inspection, {
+                                onNone: () => Arr.empty<string>(),
+                                onSome: (entry) => entry.children,
+                              }),
+                            ),
+                            visited: HashSet.add(visited, file),
+                          },
+                        ] as const,
+                    ),
+                  ),
+              }),
+          ).pipe(
+            Stream.filter(Option.isSome),
+            Stream.map((entry) => entry.value),
+            Stream.runCollect,
+          ),
+      );
 
       /** Prints file diagnostics and returns the counts used by the command summary. */
-      const checkFile = Effect.fn("ProjectChecks.checkFile")(function* (
-        file: { readonly file: string; readonly size: ByteSize.ByteSize },
-        plugins: ReadonlyArray<{
-          readonly path: string;
-          readonly content: string;
-        }>,
-      ) {
-        const root = path.resolve();
-        const relative = path.relative(root, file.file);
-        if (ByteSize.toBigInt(file.size) > 1048576n) {
-          yield* Console.error(
-            `${relative} error File exceeds Biome's maximum file size.`,
-          );
-          return { checked: 0, diagnostics: 1, errors: 1 };
-        }
-
-        const source = yield* fs.readFileString(file.file);
-        const result = yield* biome.lint({
-          root,
-          file: file.file,
-          source,
-          plugins,
-          configuration: {
-            linter: { rules: { preset: "none" } },
-            assist: { enabled: false },
-          },
-        });
-        yield* Effect.forEach(
-          result.diagnostics,
-          (diagnostic) =>
-            Console.error(formatDiagnostic(diagnostic, source, relative)),
-          { discard: true },
-        );
-        return {
-          checked: 1,
-          diagnostics: result.diagnostics.length,
-          errors: result.errors + result.parseErrors,
-        };
-      });
+      const checkFile = Effect.fn("ProjectChecks.checkFile")(
+        (
+          file: { readonly file: string; readonly size: ByteSize.ByteSize },
+          plugins: ReadonlyArray<{
+            readonly path: string;
+            readonly content: string;
+          }>,
+        ) =>
+          Effect.succeed(file).pipe(
+            Effect.filterOrFail(
+              (entry) => ByteSize.toBigInt(entry.size) <= 1048576n,
+              () => new FileTooLarge(),
+            ),
+            Effect.flatMap(
+              Effect.fnUntraced(function* (entry) {
+                const root = path.resolve();
+                const relative = path.relative(root, entry.file);
+                const source = yield* fs.readFileString(entry.file);
+                const result = yield* biome.lint({
+                  root,
+                  file: entry.file,
+                  source,
+                  plugins,
+                  configuration: {
+                    linter: { rules: { preset: "none" } },
+                    assist: { enabled: false },
+                  },
+                });
+                yield* Effect.forEach(
+                  result.diagnostics,
+                  (diagnostic) =>
+                    Console.error(
+                      formatDiagnostic(diagnostic, source, relative),
+                    ),
+                  { discard: true },
+                );
+                return {
+                  checked: 1,
+                  diagnostics: result.diagnostics.length,
+                  errors: result.errors + result.parseErrors,
+                };
+              }),
+            ),
+            Effect.catchTag("FileTooLarge", () =>
+              Console.error(
+                `${path.relative(path.resolve(), file.file)} error File exceeds Biome's maximum file size.`,
+              ).pipe(
+                Effect.map(() => ({ checked: 0, diagnostics: 1, errors: 1 })),
+              ),
+            ),
+          ),
+      );
 
       /** Checks the requested targets and prints the summary and optional consumer guide. */
       const check = Effect.fn("ProjectChecks.check")(function* (request: {
@@ -228,9 +268,7 @@ export class ProjectChecks extends Context.Service<ProjectChecks>()(
         const plugins = yield* loadPreset(request.preset);
         const files = yield* discoverFiles(request.targets);
 
-        if (request.guide) {
-          yield* guide(true);
-        }
+        yield* guide(true).pipe(Effect.when(Effect.succeed(request.guide)));
 
         const { checked, diagnostics, errors } = yield* Effect.reduce(
           files,
@@ -245,11 +283,11 @@ export class ProjectChecks extends Context.Service<ProjectChecks>()(
           }),
         );
 
-        if (checked === 0 && diagnostics === 0) {
-          return yield* new CheckFailed({
+        yield* Effect.fail(
+          new CheckFailed({
             message: "No supported files were found in the requested targets.",
-          });
-        }
+          }),
+        ).pipe(Effect.when(Effect.succeed(checked === 0 && diagnostics === 0)));
         const fileWord = Match.value(checked).pipe(
           Match.when(1, () => "file"),
           Match.orElse(() => "files"),
@@ -261,9 +299,13 @@ export class ProjectChecks extends Context.Service<ProjectChecks>()(
         yield* Console.log(
           `Checked ${checked} ${fileWord}. Found ${diagnostics} ${diagnosticWord}.`,
         );
-        if (request.guideOnLinting && !request.guide && diagnostics > 0) {
-          yield* guide(true);
-        }
+        yield* guide(true).pipe(
+          Effect.when(
+            Effect.succeed(
+              request.guideOnLinting && !request.guide && diagnostics > 0,
+            ),
+          ),
+        );
         return errors;
       });
 
@@ -294,9 +336,9 @@ export const command = Command.make("linteffect").pipe(
       Effect.fn("check")(function* (request) {
         const checks = yield* ProjectChecks;
         const errors = yield* checks.check(request);
-        if (errors > 0) {
-          return yield* new CheckFailed({ message: "Lint errors were found." });
-        }
+        yield* Effect.fail(
+          new CheckFailed({ message: "Lint errors were found." }),
+        ).pipe(Effect.when(Effect.succeed(errors > 0)));
       }),
     ),
     Command.make(

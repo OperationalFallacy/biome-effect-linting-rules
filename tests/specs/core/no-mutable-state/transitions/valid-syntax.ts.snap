@@ -1,0 +1,11 @@
+{
+  "input": "/**\n * Effect state services are useful for values that change across executions.\n * This description is a fresh value derived from a readonly input, so it can\n * remain a pure function.\n */\nexport const describe = (input: { readonly value: number }) => ({\n  let: \"let value = 1\",\n  var: \"var value = 1\",\n  text: \"if for while switch try throw ++\",\n  equal: input.value === 1,\n  different: input.value !== 0,\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

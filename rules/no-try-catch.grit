@@ -1,14 +1,9 @@
 language js(typescript, jsx)
 
-or {
-    `try { $tryBlock } catch ($err) { $catchBlock }` as $try,
-    `try { $tryBlock } catch { $catchBlock }` as $try,
-    `try { $tryBlock } catch ($err) { $catchBlock } finally { $finallyBlock }` as $try,
-    `try { $tryBlock } catch { $catchBlock } finally { $finallyBlock }` as $try
-} where {
+or { JsTryStatement(), JsTryFinallyStatement() } as $violation where {
     register_diagnostic(
-        span = $try,
-        message = "Represent recoverable failures in the Effect error type instead of a try/catch block. The block handles thrown exceptions separately from the operation's typed errors. Handle those errors through Effect error combinators in the pipeline and preserve the original recovery behavior. Keep resource cleanup attached to the operation.",
+        span = $violation,
+        message = "Compose failure recovery and cleanup through Effect. Preserve the original failure behavior and finalizers.",
         severity = "error"
     )
 }
