@@ -49,9 +49,9 @@ const run = Effect.fn("run")(function* (
 }, Effect.scoped);
 
 describe("Effect CLI", () => {
-  it.each(["core", "web", "ts-type", "full"])(
+  it.for(["core", "web", "ts-type", "full"])(
     "It allows clean source with the %s preset and preserves project files",
-    (preset) =>
+    (preset, { signal }) =>
       runtime.runPromise(
         Effect.gen(function* () {
           const fs = yield* FileSystem.FileSystem;
@@ -79,10 +79,11 @@ describe("Effect CLI", () => {
             yield* fs.readFileString(path.join(directory, "biome.json")),
           ).toBe('{"linter":{"enabled":false}}');
         }).pipe(Effect.scoped),
+        { signal },
       ),
   );
 
-  it.each([
+  it.for([
     {
       fixture: "invalid.ts",
       status: 1,
@@ -97,7 +98,7 @@ describe("Effect CLI", () => {
     },
   ])(
     "It catches diagnostics from $fixture with the expected exit status",
-    (entry) =>
+    (entry, { signal }) =>
       runtime.runPromise(
         Effect.gen(function* () {
           const fs = yield* FileSystem.FileSystem;
@@ -115,10 +116,13 @@ describe("Effect CLI", () => {
           expect(result.stderr).toContain(entry.diagnostic);
           expect(result.stdout).toContain("# Fix lint diagnostics");
         }).pipe(Effect.scoped),
+        { signal },
       ),
   );
 
-  it("It allows recursive targets without duplicate checks or dependency files", () =>
+  it("It allows recursive targets without duplicate checks or dependency files", ({
+    signal,
+  }) =>
     runtime.runPromise(
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
@@ -147,9 +151,10 @@ describe("Effect CLI", () => {
         expect(result.status, result.stderr).toBe(0);
         expect(result.stdout).toBe("Checked 2 files. Found 0 diagnostics.\n");
       }).pipe(Effect.scoped),
+      { signal },
     ));
 
-  it("It allows file symlinks and skips directory symlinks", () =>
+  it("It allows file symlinks and skips directory symlinks", ({ signal }) =>
     runtime.runPromise(
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
@@ -167,9 +172,10 @@ describe("Effect CLI", () => {
         expect(result.status, result.stderr).toBe(0);
         expect(result.stdout).toBe("Checked 2 files. Found 0 diagnostics.\n");
       }).pipe(Effect.scoped),
+      { signal },
     ));
 
-  it("It catches file errors in breadth-first traversal order", () =>
+  it("It catches file errors in breadth-first traversal order", ({ signal }) =>
     runtime.runPromise(
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
@@ -194,9 +200,10 @@ describe("Effect CLI", () => {
           result.stderr.indexOf("src/a/child.ts"),
         );
       }).pipe(Effect.scoped),
+      { signal },
     ));
 
-  it("It catches files larger than the engine limit", () =>
+  it("It catches files larger than the engine limit", ({ signal }) =>
     runtime.runPromise(
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
@@ -216,16 +223,17 @@ describe("Effect CLI", () => {
         );
         expect(result.stdout).toBe("Checked 0 files. Found 1 diagnostic.\n");
       }).pipe(Effect.scoped),
+      { signal },
     ));
 
-  it.each([
+  it.for([
     { name: "missing targets", args: ["check", "missing.ts"] },
     {
       name: "unknown presets",
       args: ["check", "input.ts", "--preset=unknown"],
     },
     { name: "unknown flags", args: ["check", "input.ts", "--unknown"] },
-  ])("It catches $name", ({ args }) =>
+  ])("It catches $name", ({ args }, { signal }) =>
     runtime.runPromise(
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
@@ -234,22 +242,26 @@ describe("Effect CLI", () => {
         expect(result.status).not.toBe(0);
         expect(result.stderr).not.toBe("");
       }).pipe(Effect.scoped),
+      { signal },
     ),
   );
 
-  it.each([
+  it.for([
     { args: ["--help"], output: "SUBCOMMANDS" },
     { args: ["guide", "--print"], output: "# Fix lint diagnostics" },
     { args: ["guide"], output: "docs/linting.md" },
-  ])("It allows $args without a source target", ({ args, output }) =>
-    runtime.runPromise(
-      Effect.gen(function* () {
-        const fs = yield* FileSystem.FileSystem;
-        const directory = yield* fs.makeTempDirectoryScoped();
-        const result = yield* run(args, directory);
-        expect(result.status, result.stderr).toBe(0);
-        expect(result.stdout).toContain(output);
-      }).pipe(Effect.scoped),
-    ),
+  ])(
+    "It allows $args without a source target",
+    ({ args, output }, { signal }) =>
+      runtime.runPromise(
+        Effect.gen(function* () {
+          const fs = yield* FileSystem.FileSystem;
+          const directory = yield* fs.makeTempDirectoryScoped();
+          const result = yield* run(args, directory);
+          expect(result.status, result.stderr).toBe(0);
+          expect(result.stdout).toContain(output);
+        }).pipe(Effect.scoped),
+        { signal },
+      ),
   );
 });

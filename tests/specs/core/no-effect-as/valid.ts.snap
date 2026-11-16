@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\nimport { HttpClient } from \"effect/http\";\n\n/**\n * isListening checks for a running HTTP service.\n * Any response means true, even a 503. A failed request means false.\n */\nexport const isListening = (endpoint: string) =>\n  HttpClient.get(`${endpoint}/status`).pipe(\n    // The function returns true after the server responds.\n    Effect.map(() => true),\n    Effect.orElseSucceed(() => false),\n  );\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

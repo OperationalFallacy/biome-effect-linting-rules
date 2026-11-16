@@ -1,0 +1,70 @@
+{
+  "input": "import { Effect, FileSystem, Schema } from \"effect\";\n\nconst CheckIn = Schema.Struct({\n  guestId: Schema.NonEmptyString,\n  displayName: Schema.NonEmptyString,\n});\n\nconst SavedCheckIn = Schema.fromJsonString(CheckIn);\n\nconst CheckInReceipt = Schema.Struct({\n  guestId: Schema.NonEmptyString,\n  confirmationPath: Schema.NonEmptyString,\n});\n\n/**\n * The confirmCheckIn function unnecessarily nests dependent steps in\n * Effect.flatMap callbacks. Those callback scopes obscure the order of\n * validation, encoding, and the file write.\n */\nexport const confirmCheckIn = Effect.fn(\"confirmCheckIn\")(function* (\n  input: unknown,\n  confirmationPath: string,\n) {\n  const fs = yield* FileSystem.FileSystem;\n\n  // The nested callbacks obscure the order of the check-in steps.\n  return yield* Effect.flatMap(\n    Schema.decodeUnknownEffect(CheckIn)(input),\n    (guest) =>\n      Effect.flatMap(Schema.encodeEffect(SavedCheckIn)(guest), (contents) =>\n        Effect.flatMap(fs.writeFileString(confirmationPath, contents), () =>\n          Effect.succeed(\n            CheckInReceipt.make({ guestId: guest.guestId, confirmationPath }),\n          ),\n        ),\n      ),\n  );\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use one pipeline or Effect.gen for these dependent steps. Nested Effect.flatMap callbacks obscure their order. Use Effect.all only to collect independent results.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use one pipeline or Effect.gen for these dependent steps. Nested Effect.flatMap callbacks obscure their order. Use Effect.all only to collect independent results."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-flatmap-ladder/invalid.ts"
+          },
+          "span": [
+            780,
+            1154
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Use one pipeline or Effect.gen for these dependent steps. Nested Effect.flatMap callbacks obscure their order. Use Effect.all only to collect independent results.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use one pipeline or Effect.gen for these dependent steps. Nested Effect.flatMap callbacks obscure their order. Use Effect.all only to collect independent results."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-flatmap-ladder/invalid.ts"
+          },
+          "span": [
+            865,
+            1149
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 2,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

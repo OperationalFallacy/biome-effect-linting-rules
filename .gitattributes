@@ -25,4 +25,5 @@
 /LICENSE linguist-generated
 /package.json linguist-generated
 /tests/runtime/native-parity/unicode-crlf.ts -text whitespace=cr-at-eol
+/tsconfig.fixtures.json linguist-generated
 /yarn.lock linguist-generated

@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * The rejection correctly uses Effect.fail for an expected error. The failure\n * is part of the operation's error channel, where callers can compose their\n * recovery without handling a defect.\n */\n// Effect.fail correctly exposes the expected rejection to the caller's recovery.\nexport const reject = Effect.fail(new Error(\"Rejected\"));\n\n/**\n * handled correctly recovers the expected rejection with Effect.catch.\n * The expected failure reaches ordinary recovery, which returns an explicit\n * rejection outcome for the caller.\n */\nexport const handled = reject.pipe(\n  // This recovery correctly receives the expected rejection failure.\n  Effect.catch(() => Effect.succeed({ rejected: true })),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

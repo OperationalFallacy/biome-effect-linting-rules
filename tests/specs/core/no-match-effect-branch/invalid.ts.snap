@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, FileSystem, Match, Schema } from \"effect\";\n\nconst ReportRequest = Schema.Struct({\n  format: Schema.Literals([\"compact\", \"indented\"]),\n  report: Schema.Struct({ title: Schema.NonEmptyString, total: Schema.Finite }),\n});\nconst CompactReport = Schema.fromJsonString(ReportRequest.fields.report);\nconst IndentedReport = Schema.fromJsonString(ReportRequest.fields.report, {\n  space: 2,\n});\nconst ReportReceipt = Schema.Struct({ filePath: Schema.NonEmptyString });\n\n/**\n * exportReport writes a report in the requested JSON format and returns its\n * file path after the write succeeds. Each branch encodes only its own format,\n * but repeats the encoding, write, and receipt sequence. The preset requires\n * the format decision to select an encoder before that shared sequence.\n */\nexport const exportReport = Effect.fn(\"exportReport\")(function* (\n  input: unknown,\n  filePath: string,\n) {\n  const request = yield* Schema.decodeUnknownEffect(ReportRequest)(input);\n  const fs = yield* FileSystem.FileSystem;\n\n  // It incorrectly builds the complete Effect sequence in each format branch.\n  return yield* Match.value(request.format).pipe(\n    Match.when(\"compact\", () =>\n      Schema.encodeEffect(CompactReport)(request.report).pipe(\n        Effect.flatMap((contents) => fs.writeFileString(filePath, contents)),\n        Effect.map(() => ReportReceipt.make({ filePath })),\n      ),\n    ),\n    Match.orElse(() =>\n      Schema.encodeEffect(IndentedReport)(request.report).pipe(\n        Effect.flatMap((contents) => fs.writeFileString(filePath, contents)),\n        Effect.map(() => ReportReceipt.make({ filePath })),\n      ),\n    ),\n  );\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Move multi-step Effect sequences out of Match branches. Separate case bodies make the operation's execution order harder to follow. Select the required value with Match, then sequence dependent work in one Effect pipeline. Keep skip decisions explicit. Do not disguise a branch as Option.toArray followed by collection traversal.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Move multi-step Effect sequences out of Match branches. Separate case bodies make the operation's execution order harder to follow. Select the required value with Match, then sequence dependent work in one Effect pipeline. Keep skip decisions explicit. Do not disguise a branch as Option.toArray followed by collection traversal."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-match-effect-branch/invalid.ts"
+          },
+          "span": [
+            1115,
+            1642
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

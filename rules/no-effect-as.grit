@@ -1,9 +1,6 @@
-file($body) where {
-    $body <: contains bubble JsCallExpression(callee = `Effect.as`) as $call where {
-        register_diagnostic(
-            span = $call,
-            message = "Use Effect.map to produce the result instead of Effect.as. This rule requires a callback that states how the operation produces its final value. Use Effect.asVoid to discard the result. Preserve the earlier Effect steps and their execution order.",
-            severity = "error"
-        )
-    }
+language js(typescript, jsx)
+
+// This rule reports Effect.as in both forms, including inline updates and logs.
+JsCallExpression(callee=`Effect.as`) as $call where {
+  register_diagnostic(span=$call, message="Use Effect.map(() => result) to return a replacement value. This preset requires an explicit callback. Keep earlier steps in the same order. Use Effect.asVoid to discard the result.", severity="error")
 }

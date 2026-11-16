@@ -1,20 +1,43 @@
-file($body) where {
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    $body <: contains bubble `($fn)($args)` as $call where {
-        or {
-            $fn <: `($params) => $expr`,
-            $fn <: `($params) => { $block }`,
-            $fn <: `$param => $expr`,
-            $fn <: `$param => { $block }`,
-            $fn <: `function ($params) { $block }`,
-            $fn <: `function $name($params) { $block }`
-        },
-        register_diagnostic(
-            span = $call,
-            message = "Remove the immediately invoked function and express its work directly in the operation. The extra function body makes the decision and execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue in one pipeline.",
-            severity = "error"
-        )
+language js(typescript, jsx)
+
+// The no-iife-wrapper rule keeps a value calculation in the operation that
+// consumes it. Consecutive arrow calls receive the arrow-ladder diagnostic.
+JsCallExpression() as $call where {
+  $call <: `($fn)($args)`,
+  not ladder_member(call=$call),
+  $call <: within JsModule() as $body,
+  $body <: contains JsModuleSource() as $moduleSource where {
+    $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
+  },
+  or {
+    $fn <: `($params) => $expr`,
+    $fn <: `($params) => { $block }`,
+    $fn <: `$param => $expr`,
+    $fn <: `$param => { $block }`,
+    $fn <: `function ($params) { $block }`,
+    $fn <: `function $name($params) { $block }`
+  },
+  register_diagnostic(span=$call, message="Remove the immediately invoked function and express its work directly in the operation. The extra function body makes the decision and execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue in one pipeline.", severity="error")
+}
+
+// The specialized arrow rule owns each call in a consecutive arrow chain.
+// This exception requires direct body membership, so unrelated callbacks in
+// the surrounding operation still receive their own wrapper diagnostic.
+predicate ladder_member($call) {
+  or {
+    $call <: arrow_ladder(),
+    $call <: within arrow_ladder() as $outer where {
+      $outer <: `(($parameter) => $body)($argument)`,
+      $body <: $call
     }
+  }
+}
+
+// An arrow_iife identifies an immediately called arrow function.
+pattern arrow_iife() { `(($parameter) => $body)($argument)` }
+
+// An arrow_ladder passes directly into another immediately invoked arrow.
+// Other calls inside a callback remain independently checked as wrappers.
+pattern arrow_ladder() {
+  `(($parameter) => $body)($argument)` where { $body <: arrow_iife() }
 }

@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\ninterface CounterStore {\n  readonly update: () => Effect.Effect<number>;\n}\n\n/**\n * The operation correctly returns the store's update Effect directly.\n * There is no synchronous wrapper that turns the update into an unexecuted\n * success value.\n */\nexport const increment = Effect.fn(\"increment\")((store: CounterStore) =>\n  // Returning store.update directly correctly makes the increment executable.\n  store.update(),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

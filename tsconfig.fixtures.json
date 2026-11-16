@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "plugins": [],
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "moduleDetection": "force"
+  },
+  "include": [
+    "tests/specs/**/*.ts",
+    "tests/specs/**/*.tsx",
+    "tests/composition/**/*.ts"
+  ]
+}

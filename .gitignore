@@ -50,6 +50,7 @@ jspm_packages/
 /refs/
 /.local/
 /lib/
+!/tsconfig.fixtures.json
 !/biome.base.jsonc
 !/biome.jsonc
 !/biome.local.jsonc

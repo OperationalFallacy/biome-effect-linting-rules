@@ -1,14 +1,34 @@
 language js(typescript, jsx)
 
-JsCallExpression(callee = $callee, arguments = JsCallArguments(args = $args)) where {
-    $args <: [..., JsArrowFunctionExpression(body = JsFunctionBody(statements = [`return $value` as $ret])), ...],
-    $callee <: not or {
-        `Schema.makeFilter`, `Schema.refine`, `Schema.declare`,
-        `S.makeFilter`, `S.refine`, `S.declare`
-    },
-    register_diagnostic(
-        span = $ret,
-        message = "Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps.",
-        severity = "info"
-    )
+// This rule asks consumers to remove return-only arrow callback bodies.
+// Blocks remain useful for local work, and Schema predicates retain their form.
+JsCallExpression(callee=$callee, arguments=JsCallArguments(args=$args)) where {
+  $args <: [
+    ...,
+    JsArrowFunctionExpression(body=JsFunctionBody(statements=[
+      `return $value` as $ret
+    ])),
+    ...
+  ],
+  $callee <: not or {
+    `Schema.makeFilter`,
+    `Schema.refine`,
+    `Schema.declare`,
+    `S.makeFilter`,
+    `S.refine`,
+    `S.declare`
+  },
+  // The Atom rule removes this sync wrapper and its return-only callback together.
+  not and {
+    $callee <: `Effect.sync`,
+    $value <: JsCallExpression(callee=`Atom.$method`),
+    $method <: or {
+      `get`,
+      `set`,
+      `update`,
+      `modify`,
+      `refresh`
+    }
+  },
+  register_diagnostic(span=$ret, message="Use an expression callback for this single transformation. The body contains only a return statement. Keep blocks that declare local values or perform several steps.", severity="info")
 }

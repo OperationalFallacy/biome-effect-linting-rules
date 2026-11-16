@@ -1,13 +1,18 @@
 language js(typescript, jsx)
 
-JsCallExpression(callee = `Effect.bind`) as $effectBind where {
-    $effectBind <: within JsModule() as $body,
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    register_diagnostic(
-        span = $effectBind,
-        message = "Replace Effect.bind with a pipeline or direct yields in one Effect.gen. Effect.bind accumulates named fields, so the reader must track an intermediate object to understand each step's inputs. Pass results directly to dependent steps and keep the sequence together in the operation.",
-        severity = "error"
-    )
+// The no-effect-bind rule keeps dependent values in the complete operation
+// instead of accumulating an intermediate record. Other APIs named bind remain valid.
+JsCallExpression(callee=`Effect.bind`) as $effectBind where {
+  $effectBind <: within effect_module(),
+  register_diagnostic(span=$effectBind, message="This preset requires dependent values in one pipeline or generator instead of Effect.bind's intermediate record. Read values directly with Effect.flatMap or generator yields, then construct the result once. Preserve the order and failure behavior of the earlier steps.", severity="error")
+}
+
+// Effect package dependencies enable this convention. A local builder or
+// Function.bind imported from another package has a different contract.
+pattern effect_module() {
+  JsModule() as $module where {
+    $module <: contains JsModuleSource() as $source where {
+      $source <: r".(?:effect(?:/.*)?|@effect/atom-react)."
+    }
+  }
 }

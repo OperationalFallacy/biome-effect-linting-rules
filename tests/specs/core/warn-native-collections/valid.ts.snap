@@ -1,0 +1,11 @@
+{
+  "input": "import { HashMap, Option } from \"effect\";\nimport * as Value from \"effect/Data\";\n\nclass Cell extends Value.Class<{\n  readonly row: number;\n  readonly column: number;\n}> {}\n\n/**\n * findCell retrieves the label stored at a coordinate, or undefined when the\n * coordinate is absent. HashMap compares Cell keys by value, so a newly\n * constructed Cell for row 0, column 1 retrieves occupied.\n */\n// It correctly uses value equality for coordinate keys.\nexport const cells = HashMap.make([\n  new Cell({ row: 0, column: 1 }),\n  \"occupied\",\n]);\n\nexport const findCell = (row: number, column: number) =>\n  HashMap.get(cells, new Cell({ row, column })).pipe(Option.getOrUndefined);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

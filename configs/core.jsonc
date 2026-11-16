@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.6.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
   "plugins": [
     "./node_modules/@catenarycloud/linteffect/rules/no-layer-this-reference.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-if-statement.grit",
@@ -9,7 +9,6 @@
     "./node_modules/@catenarycloud/linteffect/rules/no-mutable-state.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-throw-statement.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-return-null.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-pipe-ladder.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-flatmap-ladder.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-ladder.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-nested-effect-call.grit",
@@ -22,10 +21,6 @@
     "./node_modules/@catenarycloud/linteffect/rules/no-iife-wrapper.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-return-in-arrow.grit",
     "./node_modules/@catenarycloud/linteffect/rules/warn-native-collections.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-effect-never.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-effect-async.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-effect-sync-console.grit",
-    "./node_modules/@catenarycloud/linteffect/rules/no-effect-do.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-effect-bind.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-nested-effect-gen.grit",
     "./node_modules/@catenarycloud/linteffect/rules/no-runtime-runfork.grit",

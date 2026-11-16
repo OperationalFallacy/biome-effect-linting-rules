@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * readCount decodes input as an integer and returns it with the label \"Counter\".\n * A decoding failure remains an Effect failure for the caller to handle.\n * Effect.bind carries a label record through a decoder that only needs input.\n * The preset requires the operation to decode input directly and build\n * the result afterward.\n */\nexport const readCount = Effect.fn(\"readCount\")((input: unknown) =>\n  Effect.succeed({ label: \"Counter\" }).pipe(\n    // It incorrectly accumulates the result through Effect.bind.\n    Effect.bind(\"count\", () => Schema.decodeUnknownEffect(Schema.Int)(input)),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires dependent values in one pipeline or generator instead of Effect.bind's intermediate record. Read values directly with Effect.flatMap or generator yields, then construct the result once. Preserve the order and failure behavior of the earlier steps.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires dependent values in one pipeline or generator instead of Effect.bind's intermediate record. Read values directly with Effect.flatMap or generator yields, then construct the result once. Preserve the order and failure behavior of the earlier steps."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-bind/invalid.ts"
+          },
+          "span": [
+            565,
+            638
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

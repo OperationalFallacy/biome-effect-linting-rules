@@ -1,0 +1,11 @@
+{
+  "input": "import { Schema } from \"effect\";\n\nconst User = Schema.Struct({ id: Schema.String, active: Schema.Boolean });\n\n/**\n * The User schema correctly keeps the expected structure and its validation\n * together. Schema.is supplies the synchronous isUser predicate.\n * The predicate still returns false for rejected input, so callers keep the\n * same boolean decision about whether the value describes a user.\n */\n// It correctly derives the model predicate from its schema.\nexport const isUser = Schema.is(User);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

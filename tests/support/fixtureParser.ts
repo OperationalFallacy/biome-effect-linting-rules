@@ -5,28 +5,18 @@ const DirectoryName = Schema.String.check(
   Schema.isPattern(/^[a-z0-9]+(-[a-z0-9]+)*$/i),
 );
 
-/**
- * Fixtures follow <group>/<rule>/<scenario directories>/<filename>.
- * Scenario directories use lowercase names and can span several levels.
- */
-const TestPath = Schema.Struct({
-  group: Schema.Literals(["core", "web", "ts-type", "full"]),
-  rule: DirectoryName,
-  scenario: Schema.NonEmptyArray(DirectoryName.check(Schema.isLowercased())),
-  filename: Schema.NonEmptyString,
-});
+/** Fixtures follow <group>/<rule>/<filename>. */
+const TestPath = Schema.Tuple([
+  Schema.Literals(["core", "web", "ts-type", "full"]),
+  DirectoryName,
+  Schema.NonEmptyString,
+]);
 
 /** Filenames contain a case name followed by .ts or .tsx. */
 const FixtureFilename = Schema.Tuple([
-  Schema.NonEmptyString,
+  Schema.Literals(["valid", "invalid"]),
   Schema.Literals(["ts", "tsx"]),
 ]);
-
-/** Case names declare valid or invalid, with variants such as valid-no-imports. */
-const FixtureName = Schema.TupleWithRest(
-  Schema.Tuple([Schema.Literals(["valid", "invalid"])]),
-  [DirectoryName.check(Schema.isLowercased())],
-);
 
 /**
  * FixtureParser extracts the rule and expected outcome from a fixture's path.
@@ -44,29 +34,19 @@ export class FixtureParser extends Context.Service<FixtureParser>()(
       const parseTestPath = Effect.fn("FixtureParser.parseTestPath")(function* (
         relativePath: string,
       ) {
-        const directories = relativePath.split("/");
+        const [group, rule, filename] = yield* Schema.decodeUnknownEffect(
+          TestPath,
+        )(relativePath.split("/"));
 
-        const path = yield* Schema.decodeUnknownEffect(TestPath)({
-          group: directories[0],
-          rule: directories[1],
-          scenario: directories.slice(2, -1),
-          filename: directories.at(-1),
-        });
-
-        const [name] = yield* Schema.decodeUnknownEffect(FixtureFilename)(
-          path.filename.split("."),
-        );
-
-        const [expectation] = yield* Schema.decodeUnknownEffect(FixtureName)(
-          name.split("-"),
-        );
+        const [expectation] = yield* Schema.decodeUnknownEffect(
+          FixtureFilename,
+        )(filename.split("."));
 
         return {
-          group: path.group,
-          rule: path.rule,
-          scenario: path.scenario.join("/"),
+          group,
+          rule,
           expectation,
-          filename: path.filename,
+          filename,
           relativePath,
         };
       });

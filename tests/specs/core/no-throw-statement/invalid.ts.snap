@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * The rejection incorrectly throws from Effect.sync. That makes the expected\n * rejection a defect instead of a typed failure that callers can handle with\n * Effect recovery.\n */\nexport const reject = Effect.sync(() => {\n  // throw incorrectly turns this expected rejection into a defect outside ordinary recovery.\n  throw new Error(\"Rejected\");\n});\n\n/**\n * handled cannot recover the expected rejection because reject incorrectly\n * throws it as a defect. Effect.catch never receives that error to select the\n * rejection outcome.\n */\nexport const handled = reject.pipe(\n  // The throw incorrectly bypasses this caller's ordinary error recovery.\n  Effect.catch(() => Effect.succeed({ rejected: true })),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires explicit failures in Effect composition instead of throw statements. Use Effect.fail for expected errors or Effect.die for defects, and wrap external throwing work with Effect.try or Effect.tryPromise so callers can compose recovery.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires explicit failures in Effect composition instead of throw statements. Use Effect.fail for expected errors or Effect.die for defects, and wrap external throwing work with Effect.try or Effect.tryPromise so callers can compose recovery."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-throw-statement/invalid.ts"
+          },
+          "span": [
+            356,
+            384
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

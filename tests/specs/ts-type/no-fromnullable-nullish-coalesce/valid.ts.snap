@@ -1,0 +1,11 @@
+{
+  "input": "import { Data, Effect, Option, Schema } from \"effect\";\n\nconst InvitationRequest = Schema.Struct({\n  workspace: Schema.NonEmptyString,\n  invitationUrl: Schema.NonEmptyString,\n  recipient: Schema.optional(Schema.NullOr(Schema.NonEmptyString)),\n  accountEmail: Schema.optional(Schema.NullOr(Schema.NonEmptyString)),\n});\n\nexport class InvitationRecipientMissing extends Data.TaggedError(\n  \"InvitationRecipientMissing\",\n)<{ readonly workspace: string }> {}\n\n/**\n * The prepareInvitation function passes each address directly to\n * Option.fromNullishOr. It uses the account email when the request has no\n * recipient. It fails when the request contains no address.\n */\nexport const prepareInvitation = Effect.fn(\"prepareInvitation\")(function* (\n  input: unknown,\n) {\n  const request = yield* Schema.decodeUnknownEffect(InvitationRequest)(input);\n\n  // The function uses the account email when the request has no recipient.\n  const recipient = yield* Option.fromNullishOr(request.recipient).pipe(\n    Option.orElse(() => Option.fromNullishOr(request.accountEmail)),\n    Effect.fromOption(\n      () => new InvitationRecipientMissing({ workspace: request.workspace }),\n    ),\n  );\n\n  return {\n    to: recipient,\n    subject: `Invitation to ${request.workspace}`,\n    body: `Join ${request.workspace}: ${request.invitationUrl}`,\n  };\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

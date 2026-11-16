@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, FileSystem, Match, Option } from \"effect\";\n\n/**\n * deliverReport writes a report once and skips an existing delivery. Its two\n * string outcomes identify those paths but omit the delivered file's path.\n * The rule asks for review of string-valued branch outcomes; here tagged\n * delivery results would let deliveryMessage locate the report after either\n * path without reconstructing the writer's file naming convention.\n */\nexport const deliverReport = Effect.fn(\"deliverReport\")(function* (\n  reportId: string,\n  contents: string,\n  deliveryDirectory: string,\n) {\n  const fs = yield* FileSystem.FileSystem;\n\n  yield* fs.makeDirectory(deliveryDirectory, { recursive: true });\n\n  const deliveryId = `${deliveryDirectory}/${encodeURIComponent(reportId)}.txt`;\n  const exists = yield* fs.exists(deliveryId);\n\n  const written = yield* fs\n    .writeFileString(deliveryId, contents, { flag: \"wx\" })\n    .pipe(Effect.when(Effect.succeed(!exists)));\n\n  // It incorrectly returns delivery statuses without their result data.\n  return yield* Option.match(written, {\n    onSome: () => Effect.succeed(\"sent\"),\n    onNone: () => Effect.succeed(\"already-sent\"),\n  });\n});\n\n/**\n * deliveryMessage tells the user whether a report was written or already\n * existed and includes its location. The string result forces this caller\n * to repeat the writer's path construction to provide that location.\n */\nexport const deliveryMessage = Effect.fn(\"deliveryMessage\")(\n  (reportId: string, contents: string, deliveryDirectory: string) =>\n    deliverReport(reportId, contents, deliveryDirectory).pipe(\n      Effect.map((result) =>\n        Match.value(result).pipe(\n          Match.when(\n            \"sent\",\n            () =>\n              `Report written to ${deliveryDirectory}/${encodeURIComponent(reportId)}.txt`,\n          ),\n          Match.orElse(\n            () =>\n              `Report already exists at ${deliveryDirectory}/${encodeURIComponent(reportId)}.txt`,\n          ),\n        ),\n      ),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Review these string-valued branch outcomes. If they represent operation statuses, return tagged domain outcomes so callers can handle each case and its data. Keep ordinary display text and other string data as strings.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Review these string-valued branch outcomes. If they represent operation statuses, return tagged domain outcomes so callers can handle each case and its data. Keep ordinary display text and other string data as strings."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-string-sentinel-return/invalid.ts"
+          },
+          "span": [
+            1050,
+            1170
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 1,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

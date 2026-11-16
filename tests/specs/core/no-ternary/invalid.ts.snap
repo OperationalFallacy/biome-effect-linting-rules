@@ -1,0 +1,41 @@
+{
+  "input": "/**\n * quoteArgument quotes text as one argument for a POSIX shell so spaces and\n * shell syntax in the text do not change the command the caller intends to run.\n * A ternary chooses between text that is safe without quotes and text that\n * needs quotes. The preset requires Match.value branches for this choice.\n */\nexport const quoteArgument = (argument: string): string =>\n  // It incorrectly uses a ternary for conditional value selection.\n  /^[\\w@%+=:,./-]+$/.test(argument)\n    ? argument\n    : `'${argument.replaceAll(\"'\", `'\\\\''`)}'`;\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "lintEffect's no-ternary rule requires explicit branches for value selection. Replace this ternary with Match.value, Option.match, or Result.match.",
+        "message": [
+          {
+            "elements": [],
+            "content": "lintEffect's no-ternary rule requires explicit branches for value selection. Replace this ternary with Match.value, Option.match, or Result.match."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-ternary/invalid.ts"
+          },
+          "span": [
+            446,
+            541
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

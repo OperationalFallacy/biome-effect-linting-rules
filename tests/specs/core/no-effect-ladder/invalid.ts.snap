@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * The formatLineTotal operation incorrectly nests formatting around the\n * calculation and input collection. The reader must trace inward to find\n * quantity and unitPrice, then outward to follow their formatted total.\n */\nexport const formatLineTotal = Effect.fn(\"formatLineTotal\")(function* (\n  quantity: unknown,\n  unitPrice: unknown,\n) {\n  // The nested maps incorrectly require an inward lookup to connect quantity and unitPrice to their total.\n  return yield* Effect.map(\n    Effect.map(\n      Effect.all({\n        quantity: Schema.decodeUnknownEffect(Schema.Int)(quantity),\n        unitPrice: Schema.decodeUnknownEffect(Schema.Finite)(unitPrice),\n      }),\n      (item) => item.quantity * item.unitPrice,\n    ),\n    (total) => `$${total.toFixed(2)}`,\n  );\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires a returned or assigned Effect chain to read in execution order. Nested combinators force the reader to reconstruct that order from inner arguments. Return or assign one pipeline. Collect independent results with Effect.all and connect dependent steps with Effect.flatMap or Effect.andThen.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires a returned or assigned Effect chain to read in execution order. Nested combinators force the reader to reconstruct that order from inner arguments. Return or assign one pipeline. Collect independent results with Effect.all and connect dependent steps with Effect.flatMap or Effect.andThen."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-ladder/invalid.ts"
+          },
+          "span": [
+            499,
+            809
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

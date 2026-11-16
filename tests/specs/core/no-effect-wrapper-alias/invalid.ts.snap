@@ -1,0 +1,70 @@
+{
+  "input": "import { Effect } from \"effect\";\n\ninterface SessionStore {\n  readonly read: Effect.Effect<string>;\n}\n\n/**\n * loadSession incorrectly hides its read and trim inside the local normalize\n * function. That helper only forwards the Effect, so the complete session\n * query is separated from the body that returns it.\n */\nexport const loadSession = Effect.fn(\"loadSession\")((store: SessionStore) => {\n  // normalize incorrectly separates the session read and trim from loadSession.\n  const normalize = () => Effect.map(store.read, (session) => session.trim());\n\n  return normalize();\n});\n\n/**\n * fromForwarder incorrectly adds a second call around the Effect returned by\n * loadSessionDirect. The extra function separates the public session query\n * from the read and normalization that define it.\n */\n// loadSessionDirect incorrectly adds a forwarding lookup for fromForwarder.\nfunction loadSessionDirect(store: SessionStore) {\n  return Effect.map(store.read, (session) => session.trim());\n}\nexport const fromForwarder = (store: SessionStore) => loadSessionDirect(store);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline this intermediate Effect wrapper into its operation. The extra declaration makes the reader inspect another name to understand the steps. Define complete reusable operations with Effect.fn or Effect.fnUntraced, or expose them through the service's returned API. Keep intermediate fragments inside each operation. A new wrapper around the same fragment leaves the extra lookup in place.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline this intermediate Effect wrapper into its operation. The extra declaration makes the reader inspect another name to understand the steps. Define complete reusable operations with Effect.fn or Effect.fnUntraced, or expose them through the service's returned API. Keep intermediate fragments inside each operation. A new wrapper around the same fragment leaves the extra lookup in place."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-wrapper-alias/invalid.ts"
+          },
+          "span": [
+            478,
+            554
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline this intermediate Effect wrapper into its operation. The extra declaration makes the reader inspect another name to understand the steps. Define complete reusable operations with Effect.fn or Effect.fnUntraced, or expose them through the service's returned API. Keep intermediate fragments inside each operation. A new wrapper around the same fragment leaves the extra lookup in place.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline this intermediate Effect wrapper into its operation. The extra declaration makes the reader inspect another name to understand the steps. Define complete reusable operations with Effect.fn or Effect.fnUntraced, or expose them through the service's returned API. Keep intermediate fragments inside each operation. A new wrapper around the same fragment leaves the extra lookup in place."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-wrapper-alias/invalid.ts"
+          },
+          "span": [
+            873,
+            986
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

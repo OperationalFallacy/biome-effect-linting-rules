@@ -1,26 +1,32 @@
 language js(typescript, jsx)
 
+// This rule asks consumers to simplify a return-only function callback when
+// its receiver and invocation semantics do not require a function expression.
 or {
-    `$callee(function $name($params) { $block })`,
-    `$callee($before, function $name($params) { $block })`,
-    `$callee($before, function $name($params) { $block }, $after)`
+  `$callee(function $name($params) { $block })`,
+  `$callee($before, function $name($params) { $block })`,
+  `$callee($before, function $name($params) { $block }, $after)`
 } where {
-    $block <: [`return $value` as $ret],
-    $block <: not contains or {
-        JsThisExpression(),
-        JsNewTargetExpression(),
-        JsIdentifierExpression(name = `arguments`)
-    },
-    $callee <: or {
-        `pipe`,
-        `flow`,
-        `$_.$method` where {
-            $method <: or { `map`, `flatMap`, `filter`, `filterMap`, `tap`, `reduce`, `forEach` }
-        }
-    },
-    register_diagnostic(
-        span = $ret,
-        message = "Use an expression callback for this single transformation. The callback contains only a return statement. Keep function expressions when callers require constructor semantics, dynamic this, or arguments. Keep block callbacks for local bindings and multiple steps.",
-        severity = "info"
-    )
+  $block <: [`return $value` as $ret],
+  $block <: not contains or {
+    JsThisExpression(),
+    JsNewTargetExpression(),
+    JsIdentifierExpression(name=`arguments`)
+  },
+  $callee <: or {
+    `pipe`,
+    `flow`,
+    `$_.$method` where {
+      $method <: or {
+        `map`,
+        `flatMap`,
+        `filter`,
+        `filterMap`,
+        `tap`,
+        `reduce`,
+        `forEach`
+      }
+    }
+  },
+  register_diagnostic(span=$ret, message="Use an expression callback for this single transformation. The callback contains only a return statement. Keep function expressions when callers require constructor semantics, dynamic this, or arguments. Keep block callbacks for local bindings and multiple steps.", severity="info")
 }

@@ -1,0 +1,41 @@
+{
+  "input": "import { Deferred, Effect } from \"effect\";\n\ninterface BackgroundWork {\n  readonly run: Effect.Effect<void>;\n  readonly stopRequested: Deferred.Deferred<void>;\n}\n\n/**\n * observe runs background work until stopRequested completes. This runtime\n * launch creates an independent fiber, so the work can continue after the\n * observer finishes. Fork the work in the observer's scope to stop it there.\n */\nexport const observe = Effect.fn(\"observe\")(function* (work: BackgroundWork) {\n  // It incorrectly starts a detached runtime fiber inside the operation.\n  Effect.runFork(work.run);\n  yield* Deferred.await(work.stopRequested);\n});\n\n/**\n * startApplication starts work at the external integration entry point and\n * returns its fiber. The external caller controls cancellation and cleanup.\n */\nexport const startApplication = (work: BackgroundWork) =>\n  // It correctly returns the startup fiber to its external caller.\n  Effect.runFork(work.run);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.forkChild or Effect.forkScoped for work started inside an Effect operation. Effect.runFork and Effect.runForkWith start independent runtime fibers and leave cancellation and cleanup to the caller. Keep service work attached to its parent fiber or Scope. Reserve the run functions for application startup and external integrations.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.forkChild or Effect.forkScoped for work started inside an Effect operation. Effect.runFork and Effect.runForkWith start independent runtime fibers and leave cancellation and cleanup to the caller. Keep service work attached to its parent fiber or Scope. Reserve the run functions for application startup and external integrations."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-runtime-runfork/invalid.ts"
+          },
+          "span": [
+            554,
+            578
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

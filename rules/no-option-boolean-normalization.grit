@@ -1,14 +1,12 @@
-file($body) where {
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    or {
-        $body <: contains `Option.match($input, { onSome: ($value) => $value === true, onNone: () => false })` as $call,
-        $body <: contains `Option.match($input, { onSome: ($value: $type) => $value === true, onNone: () => false })` as $call
-    },
-    register_diagnostic(
-        span = $call,
-        message = "Define this boolean's default in its Schema. Repeated Option.match conversions inside services spread the default policy across operations. Decode the input once and use the decoded boolean. Keep Some(true) as true, Some(false) as false, and None as false.",
-        severity = "error"
-    )
+language js(typescript, jsx)
+
+or {
+  `Option.match($input, { onSome: ($value) => $value === true, onNone: () => false })` as $call,
+  `Option.match($input, { onSome: ($value: $type) => $value === true, onNone: () => false })` as $call
+} where {
+  $call <: within JsModule() as $body,
+  $body <: contains JsModuleSource() as $moduleSource where {
+    $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
+  },
+  register_diagnostic(span=$call, message="Define this boolean's default in its Schema. Repeated Option.match conversions inside services spread the default policy across operations. Decode the input once and use the decoded boolean. Keep Some(true) as true, Some(false) as false, and None as false.", severity="error")
 }

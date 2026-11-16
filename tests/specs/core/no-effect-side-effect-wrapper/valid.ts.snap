@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\ninterface StateActions {\n  readonly invalidate: (keys: ReadonlyArray<string>) => Effect.Effect<void>;\n  readonly next: Effect.Effect<string>;\n  readonly setState: (state: { readonly ready: boolean }) => void;\n  readonly setReady: Effect.Effect<void>;\n}\n\n/**\n * continueAfterInvalidate invalidates the catalog before it runs next.\n * The pipeline starts with invalidation, as the preset requires, and runs\n * next only after invalidation succeeds.\n */\nexport const continueAfterInvalidate = Effect.fn(\"continueAfterInvalidate\")(\n  ({ invalidate, next }: StateActions) =>\n    // It correctly starts the pipeline with invalidation.\n    invalidate([\"catalog\"]).pipe(Effect.andThen(() => next)),\n);\n\n/**\n * markReady defers the native ready update until its Effect runs, then runs\n * setReady. The deferred update starts the pipeline, as the preset requires,\n * and setReady follows it as the next step.\n */\nexport const markReady = Effect.fn(\"markReady\")(\n  ({ setState, setReady }: StateActions) =>\n    // It correctly starts the pipeline with the deferred update.\n    Effect.sync(() => setState({ ready: true })).pipe(\n      Effect.andThen(() => setReady),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

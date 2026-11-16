@@ -1,0 +1,11 @@
+{
+  "input": "import { Data, Effect, FileSystem, Match, Schema } from \"effect\";\n\nconst SavedSession = Schema.fromJsonString(\n  Schema.Struct({\n    sessionId: Schema.NonEmptyString,\n    expiresAt: Schema.Finite,\n  }),\n);\n\ntype SessionCleanup = Data.TaggedEnum<{\n  Removed: { readonly sessionId: string };\n  Retained: { readonly sessionId: string; readonly expiresAt: number };\n}>;\nconst SessionCleanup = Data.taggedEnum<SessionCleanup>();\n\n/**\n * The removeExpiredSession function applies the expiry check to file removal\n * with Effect.when. The result confirms deletion or tells the caller when\n * the retained session expires.\n */\nexport const removeExpiredSession = Effect.fn(\"removeExpiredSession\")(\n  function* (sessionPath: string, now: number) {\n    const fs = yield* FileSystem.FileSystem;\n\n    const session = yield* fs\n      .readFileString(sessionPath)\n      .pipe(Effect.flatMap(Schema.decodeUnknownEffect(SavedSession)));\n\n    const expired = session.expiresAt <= now;\n\n    yield* fs.remove(sessionPath).pipe(\n      // Effect.when keeps the file in place for a live session.\n      Effect.when(Effect.succeed(expired)),\n      Effect.asVoid,\n    );\n\n    return Match.value(expired).pipe(\n      Match.when(true, () =>\n        SessionCleanup.Removed({ sessionId: session.sessionId }),\n      ),\n      Match.orElse(() =>\n        SessionCleanup.Retained({\n          sessionId: session.sessionId,\n          expiresAt: session.expiresAt,\n        }),\n      ),\n    );\n  },\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

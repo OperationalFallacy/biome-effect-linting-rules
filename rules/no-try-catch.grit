@@ -1,9 +1,10 @@
 language js(typescript, jsx)
 
-or { JsTryStatement(), JsTryFinallyStatement() } as $violation where {
-    register_diagnostic(
-        span = $violation,
-        message = "Compose failure recovery and cleanup through Effect. Preserve the original failure behavior and finalizers.",
-        severity = "error"
-    )
+// The no-try-catch rule requires Result or Effect calls in place of try/catch
+// and Effect finalizers in place of finally, as a lintEffect style convention.
+or {
+  JsTryStatement(),
+  JsTryFinallyStatement()
+} as $violation where {
+  register_diagnostic(span=$violation, message="lintEffect's no-try-catch rule requires exception handling and cleanup in Result or Effect expressions. Use Result.try for synchronous exceptions. In Effect code, capture external exceptions with Effect.try or Effect.tryPromise and recover with Effect.catch. Replace finally with Effect.ensuring or scoped resource management. Keep the original result, failure handling, and cleanup behavior.", severity="error")
 }

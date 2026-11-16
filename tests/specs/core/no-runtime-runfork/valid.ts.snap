@@ -1,0 +1,11 @@
+{
+  "input": "import { Context, Deferred, Effect } from \"effect\";\n\ninterface BackgroundWork {\n  readonly run: Effect.Effect<void>;\n  readonly stopRequested: Deferred.Deferred<void>;\n}\n\n/**\n * observe runs background work until stopRequested completes. Its scope closes\n * at that point and interrupts the child, so the background work cannot outlive\n * the observer. Interruption of the observer closes the same scope.\n */\nexport const observe = Effect.fn(\"observe\")(function* (work: BackgroundWork) {\n  // It correctly attaches the background work to the observer's scope.\n  yield* Effect.forkScoped(work.run);\n  yield* Deferred.await(work.stopRequested);\n}, Effect.scoped);\n\n/**\n * startApplication starts work at the external integration entry point and\n * returns its fiber. The external caller controls cancellation and cleanup.\n */\nexport const startApplication = (work: BackgroundWork) =>\n  // It correctly returns the startup fiber to its external caller.\n  Effect.runFork(work.run);\n\nexport class BackgroundWorker extends Context.Service<\n  BackgroundWorker,\n  BackgroundWork\n>()(\"example/BackgroundWorker\") {}\n\n/**\n * prepareApplicationStart resolves the worker service and returns a callback\n * for an external host to start it later. The operation does not launch work.\n * The host owns the fiber returned when it invokes that startup callback.\n */\nexport const prepareApplicationStart = Effect.fn(\"prepareApplicationStart\")(\n  function* () {\n    const worker = yield* BackgroundWorker;\n\n    // It correctly returns a startup callback without launching its work.\n    return () => Effect.runFork(worker.run);\n  },\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

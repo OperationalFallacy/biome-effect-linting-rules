@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, FileSystem, Schema, Struct } from \"effect\";\n\nconst Guest = Schema.fromJsonString(\n  Schema.Struct({ name: Schema.NonEmptyString }),\n);\n\n/**\n * readGuestName reads a guest JSON file and returns the decoded name. It retries\n * the file read twice; malformed JSON or an invalid name fails without a retry.\n * The pipeline applies retry to the read before decoding begins, as the preset\n * requires for this sequence of dependent steps.\n */\nexport const readGuestName = Effect.fn(\"readGuestName\")(function* (\n  filePath: string,\n) {\n  const fs = yield* FileSystem.FileSystem;\n\n  // It correctly composes the retried read and decoder in one pipeline.\n  return yield* fs\n    .readFileString(filePath)\n    .pipe(\n      Effect.retry({ times: 2 }),\n      Effect.flatMap(Schema.decodeUnknownEffect(Guest)),\n      Effect.map(Struct.get(\"name\")),\n    );\n});\n\n/**\n * reportDecodedName logs a successful guest-file read and decode. A read or\n * decoding failure prevents the log. The pipeline places the log after the\n * complete read operation, as the preset requires.\n */\nexport const reportDecodedName = Effect.fn(\"reportDecodedName\")(\n  (filePath: string) =>\n    // It correctly puts the log after the read operation in the pipeline.\n    readGuestName(filePath).pipe(\n      Effect.andThen(() => Effect.logInfo(\"Decoded guest name\")),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

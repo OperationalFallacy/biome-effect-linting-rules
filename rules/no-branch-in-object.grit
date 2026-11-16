@@ -1,42 +1,38 @@
 language js(typescript, jsx)
 
 or {
-    JsPropertyObjectMember(value = $value) as $branch where {
-        $value <: `Match.value($_).pipe($_)`
-    },
-    JsPropertyObjectMember(value = $value) as $branch where {
-        $value <: `Option.match($_, $_)`
-    },
-    JsPropertyObjectMember(value = $value) as $branch where {
-        $value <: `Result.match($_, $_)`
-    },
-    `(($param) => ({ $props }))($arg)` as $branch where {
-        or {
-            $arg <: contains `Match.value($_).pipe($_)`,
-            $arg <: contains `Option.match($_, $_)`,
-            $arg <: contains `Result.match($_, $_)`
-        }
-    },
-    `(($param) => { $block })($arg)` as $branch where {
-        $block <: contains `return { $props }`,
-        or {
-            $arg <: contains `Match.value($_).pipe($_)`,
-            $arg <: contains `Option.match($_, $_)`,
-            $arg <: contains `Result.match($_, $_)`
-        }
-    },
-    `(function($param) { $block })($arg)` as $branch where {
-        $block <: contains `return { $props }`,
-        or {
-            $arg <: contains `Match.value($_).pipe($_)`,
-            $arg <: contains `Option.match($_, $_)`,
-            $arg <: contains `Result.match($_, $_)`
-        }
+  JsPropertyObjectMember(value=$value) as $branch where {
+    $value <: `Match.value($_).pipe($_)`
+  },
+  JsPropertyObjectMember(value=$value) as $branch where {
+    $value <: `Option.match($_, $_)`
+  },
+  JsPropertyObjectMember(value=$value) as $branch where {
+    $value <: `Result.match($_, $_)`
+  },
+  `(($param) => ({ $props }))($arg)` as $branch where {
+    or {
+      $arg <: contains `Match.value($_).pipe($_)`,
+      $arg <: contains `Option.match($_, $_)`,
+      $arg <: contains `Result.match($_, $_)`
     }
+  },
+  `(($param) => { $block })($arg)` as $branch where {
+    $block <: contains `return { $props }`,
+    or {
+      $arg <: contains `Match.value($_).pipe($_)`,
+      $arg <: contains `Option.match($_, $_)`,
+      $arg <: contains `Result.match($_, $_)`
+    }
+  },
+  `(function($param) { $block })($arg)` as $branch where {
+    $block <: contains `return { $props }`,
+    or {
+      $arg <: contains `Match.value($_).pipe($_)`,
+      $arg <: contains `Option.match($_, $_)`,
+      $arg <: contains `Result.match($_, $_)`
+    }
+  }
 } where {
-    register_diagnostic(
-        span = $branch,
-        message = "Select field values, then construct the object. Match, Option, or Result decisions inside field definitions mix value selection with the result's structure. Compute the decision once, then construct the object from named values. An immediately invoked function around the construction leaves the same problem in place.",
-        severity = "error"
-    )
+  register_diagnostic(span=$branch, message="Select field values, then construct the object. Match, Option, or Result decisions inside field definitions mix value selection with the result's structure. Compute the decision once, then construct the object from named values. An immediately invoked function around the construction leaves the same problem in place.", severity="error")
 }

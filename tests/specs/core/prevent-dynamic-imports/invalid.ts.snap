@@ -1,0 +1,41 @@
+{
+  "input": "import { Buffer } from \"node:buffer\";\n\nimport { Effect } from \"effect\";\n\n/**\n * encodeState converts a value to V8 binary data and then base64 text for a\n * text storage column. The caller runs the returned Effect to obtain the text;\n * a serialization exception remains an Effect defect. This version loads the\n * fixed node:v8 dependency inside the operation. The preset requires a static\n * import so the module dependency is declared before the operation.\n */\nexport const encodeState = (value: unknown) =>\n  Effect.promise(async () => {\n    // It incorrectly loads the fixed node:v8 dependency with a dynamic import.\n    const binary = await import(\"node:v8\");\n    return Buffer.from(binary.serialize(value)).toString(\"base64\");\n  });\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This code loads a module dynamically. Declare the dependency with a static import.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This code loads a module dynamically. Declare the dependency with a static import."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/prevent-dynamic-imports/invalid.ts"
+          },
+          "span": [
+            647,
+            664
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

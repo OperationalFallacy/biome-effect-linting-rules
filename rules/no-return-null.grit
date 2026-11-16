@@ -1,11 +1,9 @@
-file($body) where {
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    $body <: contains `return null` as $ret,
-    register_diagnostic(
-        span = $ret,
-        message = "Return Option.none for absence or Effect.fail for an error instead of null. Each caller must interpret a null sentinel before it uses the value. Express the outcome in the return type and update callers to handle it explicitly.",
-        severity = "error"
-    )
+language js(typescript, jsx)
+
+`return null` as $ret where {
+  $ret <: within JsModule() as $body,
+  $body <: contains JsModuleSource() as $moduleSource where {
+    $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
+  },
+  register_diagnostic(span=$ret, message="Return Option.none for absence or Effect.fail for an error instead of null. Each caller must interpret a null sentinel before it uses the value. Express the outcome in the return type and update callers to handle it explicitly.", severity="error")
 }

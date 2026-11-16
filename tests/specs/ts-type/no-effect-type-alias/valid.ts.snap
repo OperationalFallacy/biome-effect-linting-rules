@@ -1,0 +1,11 @@
+{
+  "input": "import { Ref } from \"effect\";\n\n/**\n * The count operation correctly keeps its implementation and inferred\n * channels together. There is no separate alias to inspect or maintain when\n * the returned Effect changes.\n */\n// It correctly infers the function contract from the counter read.\nexport const readCount = (counter: Ref.Ref<number>) => Ref.get(counter);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

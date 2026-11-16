@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * The formatLineTotal operation correctly collects its inputs before\n * calculation and formatting in one pipeline. The reader can follow quantity\n * and unitPrice into their formatted total in execution order.\n */\nexport const formatLineTotal = Effect.fn(\"formatLineTotal\")(function* (\n  quantity: unknown,\n  unitPrice: unknown,\n) {\n  // The pipeline correctly connects decoded quantity and unitPrice to calculation and formatting of their total.\n  return yield* Effect.all({\n    quantity: Schema.decodeUnknownEffect(Schema.Int)(quantity),\n    unitPrice: Schema.decodeUnknownEffect(Schema.Finite)(unitPrice),\n  }).pipe(\n    Effect.map((item) => item.quantity * item.unitPrice),\n    Effect.map((total) => `$${total.toFixed(2)}`),\n  );\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

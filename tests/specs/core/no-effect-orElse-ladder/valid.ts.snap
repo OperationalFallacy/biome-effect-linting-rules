@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, FileSystem, Schema } from \"effect\";\n\nconst CatalogView = Schema.Struct({\n  pageSize: Schema.Int.check(Schema.isBetween({ minimum: 1, maximum: 100 })),\n  showArchived: Schema.Boolean,\n});\n\nconst SavedCatalogView = Schema.fromJsonString(CatalogView);\n\n/**\n * The readCatalogView function places its fallback in the same pipeline as\n * the file read and the decoder. The fallback handles a read failure or a\n * decode failure because recovery follows both operations.\n */\nexport const readCatalogView = Effect.fn(\"readCatalogView\")(function* (\n  filePath: string,\n) {\n  const fs = yield* FileSystem.FileSystem;\n\n  return yield* fs.readFileString(filePath).pipe(\n    Effect.flatMap(Schema.decodeUnknownEffect(SavedCatalogView)),\n    // The function returns the default view after a read or decode failure.\n    Effect.catch(() =>\n      Effect.succeed(CatalogView.make({ pageSize: 20, showArchived: false })),\n    ),\n  );\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

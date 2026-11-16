@@ -117,6 +117,14 @@
         }
       ]
     },
+    "format": {
+      "name": "format",
+      "steps": [
+        {
+          "exec": "biome format --config-path=biome.base.jsonc --write .projenrc.ts bin scripts src rules configs examples tests vitest.config.mts"
+        }
+      ]
+    },
     "install": {
       "name": "install",
       "description": "Install project dependencies and update lockfile (non-frozen)",
@@ -235,13 +243,33 @@
       "description": "Run tests",
       "steps": [
         {
+          "exec": "yarn lint"
+        },
+        {
           "spawn": "compile"
+        },
+        {
+          "exec": "vitest run"
+        },
+        {
+          "exec": "yarn typecheck"
+        }
+      ]
+    },
+    "test:update": {
+      "name": "test:update",
+      "steps": [
+        {
+          "spawn": "format"
         },
         {
           "exec": "yarn lint"
         },
         {
-          "exec": "vitest run"
+          "spawn": "compile"
+        },
+        {
+          "exec": "vitest run --update"
         },
         {
           "exec": "yarn typecheck"
@@ -256,6 +284,17 @@
         },
         {
           "exec": "tsc --project tsconfig.json"
+        },
+        {
+          "spawn": "typecheck:fixtures"
+        }
+      ]
+    },
+    "typecheck:fixtures": {
+      "name": "typecheck:fixtures",
+      "steps": [
+        {
+          "exec": "tsc --project tsconfig.fixtures.json"
         }
       ]
     },
@@ -291,7 +330,7 @@
           "exec": "yarn install"
         },
         {
-          "exec": "yarn up @biomejs/biome @catenarycloud/linteffect @effect/language-service @types/node commit-and-tag-version constructs projen tsx typescript vite vitest @biomejs/wasm-nodejs @effect/platform-node-shared effect"
+          "exec": "yarn up @biomejs/biome @catenarycloud/linteffect @effect/atom-react @effect/language-service @types/node @types/react @vanilla-extract/css commit-and-tag-version constructs projen react scheduler tsx typescript vite vitest @biomejs/wasm-nodejs @effect/platform-node-shared effect"
         },
         {
           "exec": "npx projen"

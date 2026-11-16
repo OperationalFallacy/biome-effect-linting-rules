@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, FileSystem } from \"effect\";\n\ninterface TextFile {\n  readonly path: string;\n  readonly content: string;\n}\n\n/**\n * writeFiles incorrectly expresses file traversal with a statement loop.\n * Writes must stay in input order so later contents win when paths repeat,\n * but traversal is separate from the operation's Effect composition.\n */\nexport const writeFiles = Effect.fn(\"writeFiles\")(function* (\n  files: ReadonlyArray<TextFile>,\n) {\n  const fs = yield* FileSystem.FileSystem;\n  // The for loop incorrectly separates file traversal from the composed writes.\n  for (const file of files) {\n    yield* fs.writeFileString(file.path, file.content);\n  }\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires iteration through collection or Effect combinators instead of loop statements. Keep traversal and its work together while preserving execution order, termination, failures, and cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires iteration through collection or Effect combinators instead of loop statements. Keep traversal and its work together while preserving execution order, termination, failures, and cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-loop-statement/invalid.ts"
+          },
+          "span": [
+            577,
+            664
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

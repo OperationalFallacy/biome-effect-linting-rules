@@ -1,32 +1,29 @@
 language js(typescript, jsx)
 
-or {
-    `Effect.as($first, $second)` as $call where {
-        or {
-            $first <: contains `setState($_)`,
-            $first <: contains `Atom.set($_)`,
-            $first <: contains `invalidate($_)`,
-            $first <: contains `Effect.log$_`,
-            $first <: contains `console.$method($_)`
-        },
-        register_diagnostic(
-            span = $call,
-            message = "Replace this Effect.as wrapper with an explicit pipeline step for the update or log. The wrapper combines the operation with a replacement result and obscures their relationship. Sequence dependent work with Effect.andThen or Effect.flatMap, and produce the required result explicitly.",
-            severity = "error"
-        )
-    },
-    `Effect.andThen($first, $second)` as $call where {
-        or {
-            $first <: contains `setState($_)`,
-            $first <: contains `Atom.set($_)`,
-            $first <: contains `invalidate($_)`,
-            $first <: contains `Effect.log$_`,
-            $first <: contains `console.$method($_)`
-        },
-        register_diagnostic(
-            span = $call,
-            message = "Put the update or log in an explicit pipeline step. A data-first Effect.andThen call contains that operation inside its arguments and makes its role harder to follow. Start the pipeline with that operation and use Effect.andThen or Effect.flatMap to continue. Preserve the result the caller needs.",
-            severity = "error"
-        )
+// This rule gives the first action in Effect.andThen its own pipeline step.
+// The no-effect-as rule reports result replacement independently of that action.
+`Effect.andThen($first, $second)` as $call where {
+  $first <: inline_side_effect(),
+  register_diagnostic(span=$call, message="This preset requires an inline update or log to occupy its own pipeline step. Start the pipeline with that action and use Effect.andThen or Effect.flatMap to continue. Preserve its deferred execution, failure behavior, and the result the caller needs.", severity="error")
+}
+
+// An inline side effect is the input operation itself. A log inside a nested
+// callback does not make the enclosing operation a side-effect wrapper.
+pattern inline_side_effect() {
+  or {
+    native_update(),
+    JsCallExpression(callee=`Effect.log$_`),
+    `Effect.sync($fn)` where {
+      $fn <: JsArrowFunctionExpression(body=native_update())
     }
+  }
+}
+
+pattern native_update() {
+  or {
+    `setState($_)`,
+    `Atom.set($_)`,
+    `invalidate($_)`,
+    `console.$method($_)`
+  }
 }

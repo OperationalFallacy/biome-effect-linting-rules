@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\nimport { HttpClient } from \"effect/http\";\n\n/**\n * isListening checks for a running HTTP service.\n * Any response means true, even a 503. A failed request means false.\n */\nexport const isListening = (endpoint: string) =>\n  HttpClient.get(`${endpoint}/status`).pipe(\n    // Effect.as passes true directly. The preset requires a function here.\n    Effect.as(true),\n    Effect.orElseSucceed(() => false),\n  );\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.map(() => result) to return a replacement value. This preset requires an explicit callback. Keep earlier steps in the same order. Use Effect.asVoid to discard the result.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.map(() => result) to return a replacement value. This preset requires an explicit callback. Keep earlier steps in the same order. Use Effect.asVoid to discard the result."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-as/invalid.ts"
+          },
+          "span": [
+            378,
+            393
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

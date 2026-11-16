@@ -1,0 +1,11 @@
+{
+  "input": "const names = [\" Mira \", \"Owen\"];\n\n/**\n * trimmed correctly uses an expression callback for each name's trim.\n * The transformation needs no local declarations or dynamic receiver.\n */\nexport const trimmed = names.map(\n  // The expression correctly states the complete trim without a return-only body.\n  (name) => name.trim(),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

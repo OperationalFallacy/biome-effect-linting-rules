@@ -1,0 +1,157 @@
+{
+  "input": "import { Atom } from \"effect/reactivity\";\nimport { Effect } from \"effect\";\n\nexport const counter = Atom.make(0);\n\n/**\n * The counter API reads the count, sets it to 1, increments it, returns the old\n * count during an increment, and requests a refresh. Each Atom operation\n * already returns an Effect. Effect.sync returns that Effect as a success\n * value, so a caller runs the wrapper without performing the requested work.\n * Compose the Atom Effects directly.\n */\n// It incorrectly wraps Atom.get in Effect.sync.\nexport const readCount = Effect.sync(() => Atom.get(counter));\n\n// It incorrectly wraps Atom.set in Effect.sync.\nexport const setCount = Effect.sync(() => Atom.set(counter, 1));\n\n// It incorrectly wraps Atom.update in Effect.sync.\nexport const increment = Effect.sync(() =>\n  Atom.update(counter, (count) => count + 1),\n);\n\n// It incorrectly wraps Atom.modify in Effect.sync.\nexport const takeAndIncrement = Effect.sync(() =>\n  Atom.modify(counter, (count) => [count, count + 1]),\n);\n\n// It incorrectly wraps Atom.refresh in Effect.sync.\nexport const refresh = Effect.sync(() => Atom.refresh(counter));\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Compose this Atom operation directly. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync succeeds with that Effect as its value and leaves the atom operation unexecuted. Yield or return the Atom Effect, and preserve any earlier callback work in the sequence. Keep synchronous registry instance methods deferred with Effect.sync.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Compose this Atom operation directly. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync succeeds with that Effect as its value and leaves the atom operation unexecuted. Yield or return the Atom Effect, and preserve any earlier callback work in the sequence. Keep synchronous registry instance methods deferred with Effect.sync."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/invalid.ts"
+          },
+          "span": [
+            560,
+            577
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Compose this Atom operation directly. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync succeeds with that Effect as its value and leaves the atom operation unexecuted. Yield or return the Atom Effect, and preserve any earlier callback work in the sequence. Keep synchronous registry instance methods deferred with Effect.sync.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Compose this Atom operation directly. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync succeeds with that Effect as its value and leaves the atom operation unexecuted. Yield or return the Atom Effect, and preserve any earlier callback work in the sequence. Keep synchronous registry instance methods deferred with Effect.sync."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/invalid.ts"
+          },
+          "span": [
+            672,
+            692
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Compose this Atom operation directly. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync succeeds with that Effect as its value and leaves the atom operation unexecuted. Yield or return the Atom Effect, and preserve any earlier callback work in the sequence. Keep synchronous registry instance methods deferred with Effect.sync.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Compose this Atom operation directly. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync succeeds with that Effect as its value and leaves the atom operation unexecuted. Yield or return the Atom Effect, and preserve any earlier callback work in the sequence. Keep synchronous registry instance methods deferred with Effect.sync."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/invalid.ts"
+          },
+          "span": [
+            793,
+            835
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Compose this Atom operation directly. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync succeeds with that Effect as its value and leaves the atom operation unexecuted. Yield or return the Atom Effect, and preserve any earlier callback work in the sequence. Keep synchronous registry instance methods deferred with Effect.sync.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Compose this Atom operation directly. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync succeeds with that Effect as its value and leaves the atom operation unexecuted. Yield or return the Atom Effect, and preserve any earlier callback work in the sequence. Keep synchronous registry instance methods deferred with Effect.sync."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/invalid.ts"
+          },
+          "span": [
+            945,
+            996
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Compose this Atom operation directly. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync succeeds with that Effect as its value and leaves the atom operation unexecuted. Yield or return the Atom Effect, and preserve any earlier callback work in the sequence. Keep synchronous registry instance methods deferred with Effect.sync.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Compose this Atom operation directly. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync succeeds with that Effect as its value and leaves the atom operation unexecuted. Yield or return the Atom Effect, and preserve any earlier callback work in the sequence. Keep synchronous registry instance methods deferred with Effect.sync."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-atom-registry-effect-sync/invalid.ts"
+          },
+          "span": [
+            1096,
+            1117
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 5,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

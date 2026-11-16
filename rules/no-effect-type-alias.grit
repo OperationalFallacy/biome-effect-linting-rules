@@ -1,13 +1,12 @@
-file($body) where {
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    $body <: contains `type $name = $value` where {
-        $value <: contains `Effect.Effect` as $effect,
-    register_diagnostic(
-        span = $effect,
-        message = "Put the Effect type directly on the service method or function signature instead of a separate alias. The alias requires another lookup to inspect the operation's result, errors, and dependencies. Keep that contract beside the operation, or inline the type at its use.",
-        severity = "error"
-    )
-}
+language js(typescript, jsx)
+
+// The no-effect-type-alias rule keeps implemented channels inferred and
+// required public contracts at their service or interface operation.
+`Effect.Effect` as $effect where {
+  $effect <: within `type $name = $value`,
+  $effect <: within JsModule() as $body,
+  $body <: contains JsModuleSource() as $moduleSource where {
+    $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
+  },
+  register_diagnostic(span=$effect, message="This preset keeps Effect channels beside their operation instead of in a separate alias. The alias adds another lookup to inspect the result, errors, and dependencies. Infer channels from the implementation, or declare a required public contract on Context.Service or an interface.", severity="error")
 }

@@ -1,0 +1,41 @@
+{
+  "input": "const names = [\" Mira \", \"Owen\"];\n\n/**\n * trimmed incorrectly uses a named function and block for one trim expression.\n * The callback needs no local values or dynamic receiver, so its extra scope\n * adds no work to the name transformation.\n */\nexport const trimmed = names.map(function trim(name) {\n  // This block incorrectly adds a return-only scope around the name trim.\n  return name.trim();\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "information",
+        "description": "Use an expression callback for this single transformation. The callback contains only a return statement. Keep function expressions when callers require constructor semantics, dynamic this, or arguments. Keep block callbacks for local bindings and multiple steps.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use an expression callback for this single transformation. The callback contains only a return statement. Keep function expressions when callers require constructor semantics, dynamic this, or arguments. Keep block callbacks for local bindings and multiple steps."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-in-callback/invalid.ts"
+          },
+          "span": [
+            377,
+            396
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 1,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

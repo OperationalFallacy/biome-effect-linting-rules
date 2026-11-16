@@ -1,0 +1,11 @@
+{
+  "input": "import { Match } from \"effect\";\n\ntype LabelProps = {\n  readonly ready: boolean;\n  readonly onReport: (message: string) => void;\n};\n\n/**\n * Label displays whether the action is ready and reports \"Ready\" when the\n * user clicks its enabled button. The render only selects the display label.\n * A nested event handler uses Match for the command; it runs after the click,\n * so its statement is not a render side effect.\n */\nexport function Label({ ready, onReport }: LabelProps) {\n  function reportReady() {\n    // It correctly reports readiness from the event handler.\n    Match.value(ready).pipe(\n      Match.when(true, () => onReport(\"Ready\")),\n      Match.orElse(() => undefined),\n    );\n  }\n\n  const label = Match.value(ready).pipe(\n    Match.when(true, () => \"Ready\"),\n    Match.orElse(() => \"Waiting\"),\n  );\n  return (\n    <button type=\"button\" disabled={!ready} onClick={reportReady}>\n      {label}\n    </button>\n  );\n}\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

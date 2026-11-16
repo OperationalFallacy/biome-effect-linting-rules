@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "diagnosticSeverity": {
+          "effectDoNotation": "error",
+          "globalConsoleInEffect": "error",
+          "unnecessaryPipeChain": "error"
+        }
+      }
+    ]
+  },
+  "include": [
+    "src"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "input": "/**\n * The pure description incorrectly spreads its label selection across switch\n * cases and function returns. The decision concerns one value, even without\n * an Effect operation around it.\n */\nexport const describePhase = (phase: \"ready\" | \"loading\" | \"failed\") => {\n  // Case returns incorrectly split describePhase's single label decision.\n  switch (phase) {\n    case \"ready\":\n      return \"Ready\";\n    case \"loading\":\n      return \"Loading\";\n    default:\n      return \"Failed\";\n  }\n};\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires value decisions in Match.value, Option.match, or Result.match. A switch statement spreads the decision across separate case exits. Keep the selected result and dependent work in one composition.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires value decisions in Match.value, Option.match, or Result.match. A switch statement spreads the decision across separate case exits. Keep the selected result and dependent work in one composition."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-switch-statement/invalid.ts"
+          },
+          "span": [
+            348,
+            488
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

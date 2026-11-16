@@ -1,0 +1,11 @@
+{
+  "input": "import { Array as Arr, Effect, Option, Schema } from \"effect\";\n\nconst DownloadAccess = Schema.Struct({\n  permissions: Schema.Array(Schema.String),\n  downloadUrl: Schema.NonEmptyString,\n});\n\nconst DownloadLink = Schema.Struct({ url: Schema.NonEmptyString });\n\n/**\n * The download lookup selects its fixed link in an Option.map callback as\n * the repository convention requires. It constructs the link before the\n * permission lookup in both forms. The callback returns that existing link\n * only for a matching permission; an absent permission still returns None.\n */\nexport const resolveDownload = Effect.fn(\"resolveDownload\")(function* (\n  input: unknown,\n) {\n  const access = yield* Schema.decodeUnknownEffect(DownloadAccess)(input);\n  const link = DownloadLink.make({ url: access.downloadUrl });\n\n  return Arr.findFirst(\n    access.permissions,\n    (permission) => permission === \"download\",\n  ).pipe(\n    // It correctly selects the existing link through a callback.\n    Option.map(() => link),\n  );\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

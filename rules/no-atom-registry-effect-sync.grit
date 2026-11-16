@@ -1,23 +1,23 @@
 language js(typescript, jsx)
 
-or {
-    `Effect.sync($callback)`,
-    `Effect.sync<$types>($callback)`
-} where {
-    or {
-        $callback <: `() => { $statements }` where {
-            $statements <: [..., `return $operation`, ...]
-        },
-        $callback <: `() => $operation`
-    },
-    or {
-        $operation <: `Atom.$method($args)` as $atomCall,
-        $operation <: `Atom.$method<$types>($args)` as $atomCall
-    },
-    $method <: or { `get`, `set`, `update`, `modify`, `refresh` },
-    register_diagnostic(
-        span = $atomCall,
-        message = "Use the Atom operation directly in the Effect sequence. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync returns that Effect as a value and leaves the atom operation unexecuted. Yield the Atom operation or compose it with flatMap or andThen. Keep Effect.sync around synchronous registry instance methods such as atomRegistry.get or atomRegistry.set.",
-        severity = "error"
-    )
+// The Atom rule reports the unexecuted operation returned by Effect.sync.
+// Synchronous registry instance methods perform their work inside the callback.
+JsCallExpression(callee=`Effect.sync`, arguments=JsCallArguments(args=[
+  $callback
+])) where {
+  or {
+    $callback <: JsArrowFunctionExpression(body=JsFunctionBody(statements=[
+      ..., `return $operation`, ...
+    ])),
+    $callback <: JsArrowFunctionExpression(body=$operation)
+  },
+  $operation <: JsCallExpression(callee=`Atom.$method`) as $atomCall,
+  $method <: or {
+    `get`,
+    `set`,
+    `update`,
+    `modify`,
+    `refresh`
+  },
+  register_diagnostic(span=$atomCall, message="Compose this Atom operation directly. Atom.get, set, update, modify, and refresh already return Effects. Effect.sync succeeds with that Effect as its value and leaves the atom operation unexecuted. Yield or return the Atom Effect, and preserve any earlier callback work in the sequence. Keep synchronous registry instance methods deferred with Effect.sync.", severity="error")
 }

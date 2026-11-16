@@ -1,53 +1,280 @@
 language js(typescript, jsx)
 
+// The warn-native-collections rule asks consumers to review object-key identity.
+// Key factories and Data classes must belong to the reference's lexical scope.
 JsNewExpression() as $collection where {
-    $collection <: within JsModule() as $body,
-    or {
-        $body <: contains JsImportNamedClause(source = `"effect"`),
-        $body <: contains JsImportNamespaceClause(source = $moduleSource) where {
-            $moduleSource <: r".effect/.*"
-        }
+  $collection <: within JsModule() as $module,
+  $module <: contains or {
+    JsImportNamedClause(source=`"effect"`),
+    JsImportNamespaceClause(source=$source) where {
+      $source <: r".effect(?:/.*)?."
+    }
+  },
+  or {
+    $collection <: `new Map<$key, $value>($args)` where {
+      $collection <: not within runtime_binding_scope(name=`Map`)
     },
-    or {
-        $collection <: `new Map<$key, $value>($args)` where {
-            $body <: not contains JsIdentifierBinding() as $binding where { $binding <: r"Map" }
-        },
-        $collection <: `new Set<$key>($args)` where {
-            $body <: not contains JsIdentifierBinding() as $binding where { $binding <: r"Set" }
-        },
-        $collection <: `new globalThis.Map<$key, $value>($args)` where {
-            $body <: not contains JsIdentifierBinding() as $binding where { $binding <: r"globalThis" }
-        },
-        $collection <: `new globalThis.Set<$key>($args)` where {
-            $body <: not contains JsIdentifierBinding() as $binding where { $binding <: r"globalThis" }
-        }
+    $collection <: `new Set<$key>($args)` where {
+      $collection <: not within runtime_binding_scope(name=`Set`)
     },
-    or {
-        $key <: TsReferenceType(name = `ReturnType`, type_arguments = $keyArgs) where {
-            $keyArgs <: contains TsTypeofType(expression_name = $factory),
-            $body <: contains `const $factory = $fn`,
-            $fn <: JsArrowFunctionExpression(body = $result),
-            $result <: or { `({ $fields })`, `[$items]`, `({ $fields } as const)`, `[$items] as const` }
-        },
-        $key <: or { TsObjectType(), TsTupleType(), TsArrayType() },
-        $body <: contains JsClassDeclaration(id = $key, extends_clause = $extends) where {
-            or {
-                $body <: contains JsImportNamedClause(source = `"effect"`, named_specifiers = $imports) where {
-                    or {
-                        $imports <: contains JsShorthandNamedImportSpecifier(local_name = $data) where { $data <: `Data` },
-                        $imports <: contains JsNamedImportSpecifier(name = $imported, local_name = $data) where { $imported <: r"Data" }
-                    }
-                },
-                $body <: contains JsImportNamespaceClause(source = `"effect/Data"`, namespace_specifier = JsNamespaceImportSpecifier(local_name = $data))
-            },
-            $body <: not contains JsFormalParameter(binding = $data),
-            $body <: not contains JsVariableDeclarator(id = $data),
-            $extends <: contains `$data.Class`
-        }
+    $collection <: `new globalThis.Map<$key, $value>($args)` where {
+      $collection <: not within runtime_binding_scope(name=`globalThis`)
     },
-    register_diagnostic(
-        span = $collection,
-        message = "Use HashMap or HashSet for keys that require structural equality. Effect compares plain objects and arrays by value, while native Map and Set compare object keys by reference. A newly constructed equal key therefore misses the native collection's stored entry. Keep native collections for deliberate instance identity. Values created with Equal.byReference retain that identity behavior.",
-        severity = "warn"
-    )
+    $collection <: `new globalThis.Set<$key>($args)` where {
+      $collection <: not within runtime_binding_scope(name=`globalThis`)
+    }
+  },
+  or {
+    $key <: or {
+      TsObjectType(),
+      TsTupleType(),
+      TsArrayType()
+    },
+    factory_key(collection=$collection, key=$key),
+    data_class_key(collection=$collection, key=$key)
+  },
+  register_diagnostic(span=$collection, message="Review these native object keys. Use HashMap or HashSet when reconstructed keys must match by value. Native Map and Set compare object keys by reference, so a newly constructed equal key misses the stored entry. Keep native collections for deliberate instance identity; Equal.byReference retains that identity behavior.", severity="warn")
+}
+
+// A ReturnType key identifies a local factory that returns a record or array.
+// Declarations in other functions cannot establish the referenced factory.
+predicate factory_key($collection, $key) {
+  $key <: TsReferenceType(name=`ReturnType`, type_arguments=$arguments),
+  $collection <: not within type_declaration_scope(name=`ReturnType`),
+  $arguments <: contains TsTypeofType(expression_name=$factory),
+  $collection <: within statement_scope(statements=$items) as $scope where {
+    $items <: contains `const $factory = $fn` until scope_boundary(),
+    $fn <: JsArrowFunctionExpression(body=$result),
+    $result <: or {
+      `({ $fields })`,
+      `[$elements]`,
+      `({ $fields } as const)`,
+      `[$elements] as const`
+    },
+    not value_shadow_between(reference=$collection, name=$factory, scope=$scope)
+  }
+}
+
+// A named key uses its visible Data.Class declaration. A nearer type alias,
+// interface, or type parameter identifies another key type and stops this proof.
+predicate data_class_key($collection, $key) {
+  $key <: TsReferenceType(name=$name),
+  $collection <: within statement_scope(statements=$items) as $scope where {
+    $items <: contains or {
+      JsClassDeclaration(id=$name),
+      JsClassExportDefaultDeclaration(id=$name)
+    } as $declaration until scope_boundary(),
+    data_class(declaration=$declaration),
+    not type_shadow_between(reference=$collection, name=$name, scope=$scope, declaration=$declaration)
+  }
+}
+
+// Data.Class must come from the imported Effect API at the class declaration.
+// A Data parameter elsewhere in the file does not change that declaration.
+predicate data_class($declaration) {
+  $declaration <: or {
+    JsClassDeclaration(extends_clause=$extends),
+    JsClassExportDefaultDeclaration(extends_clause=$extends)
+  },
+  $declaration <: within JsModule() as $module,
+  or {
+    $extends <: contains `$data.Class` where {
+      $module <: contains data_import(name=$data),
+      $declaration <: not within local_value_binding_scope(name=$data)
+    },
+    $extends <: contains `$effect.Data.Class` where {
+      $module <: contains JsImportNamespaceClause(source=`"effect"`, namespace_specifier=JsNamespaceImportSpecifier(local_name=$effect)),
+      $declaration <: not within local_value_binding_scope(name=$effect)
+    }
+  }
+}
+
+pattern data_import($name) {
+  or {
+    JsImportNamedClause(source=`"effect"`, named_specifiers=contains or {
+      JsShorthandNamedImportSpecifier(local_name=$name) where {
+        $name <: `Data`
+      },
+      JsNamedImportSpecifier(name=r"^Data$", local_name=$name)
+    }),
+    JsImportNamespaceClause(source=`"effect/Data"`, namespace_specifier=JsNamespaceImportSpecifier(local_name=$name))
+  }
+}
+
+// These scopes own their direct declarations. Searches stop before entering
+// another operation, class, block, or namespace.
+pattern statement_scope($statements) {
+  or {
+    JsModule(items=$statements),
+    JsFunctionBody(statements=$statements),
+    JsBlockStatement(statements=$statements),
+    TsModuleBlock(items=$statements)
+  }
+}
+
+pattern scope_boundary() {
+  or {
+    JsFunctionBody(),
+    JsBlockStatement(),
+    JsArrowFunctionExpression(),
+    JsFunctionExpression(),
+    JsFunctionDeclaration(),
+    JsFunctionExportDefaultDeclaration(),
+    JsClassDeclaration(),
+    JsClassExpression(),
+    JsClassExportDefaultDeclaration(),
+    TsModuleDeclaration()
+  }
+}
+
+// Binding patterns introduce their own identifiers, including destructuring.
+// Default expressions and nested functions do not add bindings to that pattern.
+predicate binds_name($bindings, $name) {
+  or {
+    $bindings <: $name,
+    $bindings <: contains JsIdentifierBinding() as $binding where {
+      $binding <: $name
+    } until or {
+      JsInitializerClause(),
+      scope_boundary()
+    }
+  }
+}
+
+// Parameter contracts carry bindings separately from default expressions and
+// callback types. Only each parameter's binding contributes to the scope.
+pattern parameter_scope($name) {
+  or {
+    JsArrowFunctionExpression(parameters=$parameters),
+    JsFunctionExpression(parameters=$parameters),
+    JsFunctionDeclaration(parameters=$parameters),
+    JsFunctionExportDefaultDeclaration(parameters=$parameters),
+    JsMethodClassMember(parameters=$parameters),
+    JsMethodObjectMember(parameters=$parameters),
+    JsConstructorClassMember(parameters=$parameters)
+  } where {
+    $parameters <: or {
+      JsParameters(items=$items),
+      JsConstructorParameters(parameters=$items)
+    },
+    $items <: [
+      ...,
+      or {
+        JsFormalParameter(binding=$bindings),
+        JsRestParameter(binding=$bindings),
+        TsPropertyParameter(formal_parameter=JsFormalParameter(binding=$bindings))
+      },
+      ...
+    ],
+    binds_name(bindings=$bindings, name=$name)
+  }
+}
+
+// Local value bindings change which constructor or namespace a reference uses.
+// Imported namespaces are checked separately so their own import is not a shadow.
+pattern local_value_binding_scope($name) {
+  or {
+    parameter_scope(name=$name),
+    or {
+      JsSetterClassMember(parameter=JsFormalParameter(binding=$bindings)),
+      JsSetterObjectMember(parameter=JsFormalParameter(binding=$bindings)),
+      JsCatchClause(declaration=JsCatchDeclaration(binding=$bindings))
+    } where { binds_name(bindings=$bindings, name=$name) },
+    or {
+      JsFunctionExpression(id=$name),
+      JsClassDeclaration(id=$name),
+      JsClassExpression(id=$name),
+      JsClassExportDefaultDeclaration(id=$name)
+    },
+    statement_scope(statements=$items) where {
+      $items <: contains or {
+        JsVariableDeclarator(id=$bindings) where {
+          binds_name(bindings=$bindings, name=$name)
+        },
+        JsFunctionDeclaration(id=$name),
+        JsFunctionExportDefaultDeclaration(id=$name),
+        JsClassDeclaration(id=$name),
+        JsClassExportDefaultDeclaration(id=$name),
+        TsEnumDeclaration(id=$name),
+        TsImportEqualsDeclaration(id=$name)
+      } until scope_boundary()
+    }
+  }
+}
+
+pattern imported_binding($name) {
+  or {
+    JsShorthandNamedImportSpecifier(local_name=$name),
+    JsNamedImportSpecifier(local_name=$name),
+    JsDefaultImportSpecifier(local_name=$name),
+    JsNamespaceImportSpecifier(local_name=$name)
+  }
+}
+
+pattern runtime_binding_scope($name) {
+  or {
+    local_value_binding_scope(name=$name),
+    statement_scope(statements=$items) where {
+      $items <: contains imported_binding(name=$name) until scope_boundary()
+    }
+  }
+}
+
+// Type bindings are distinct from value parameters. A parameter named Key
+// does not change the type of a class Key; a type alias or generic Key does.
+pattern type_parameter_scope($name) {
+  or {
+    JsArrowFunctionExpression(type_parameters=$parameters),
+    JsFunctionExpression(type_parameters=$parameters),
+    JsFunctionDeclaration(type_parameters=$parameters),
+    JsFunctionExportDefaultDeclaration(type_parameters=$parameters),
+    JsClassDeclaration(type_parameters=$parameters),
+    JsClassExpression(type_parameters=$parameters),
+    JsClassExportDefaultDeclaration(type_parameters=$parameters),
+    JsMethodClassMember(type_parameters=$parameters),
+    JsMethodObjectMember(type_parameters=$parameters)
+  } where {
+    $parameters <: TsTypeParameters(items=[
+      ..., TsTypeParameter(name=$name), ...
+    ])
+  }
+}
+
+pattern type_declaration_scope($name) {
+  or {
+    JsClassDeclaration(id=$name),
+    JsClassExpression(id=$name),
+    JsClassExportDefaultDeclaration(id=$name),
+    statement_scope(statements=$items) where {
+      $items <: contains or {
+        JsClassDeclaration(id=$name),
+        JsClassExportDefaultDeclaration(id=$name),
+        TsTypeAliasDeclaration(binding_identifier=$name),
+        TsInterfaceDeclaration(id=$name),
+        TsEnumDeclaration(id=$name),
+        TsImportEqualsDeclaration(id=$name),
+        imported_binding(name=$name)
+      } until scope_boundary()
+    }
+  }
+}
+
+predicate value_shadow_between($reference, $name, $scope) {
+  $reference <: within runtime_binding_scope(name=$name) as $inner where {
+    $inner <: not $scope,
+    $inner <: within $scope
+  }
+}
+
+predicate type_shadow_between($reference, $name, $scope, $declaration) {
+  or {
+    $reference <: within type_parameter_scope(name=$name) as $inner where {
+      $inner <: within $scope
+    },
+    $reference <: within type_declaration_scope(name=$name) as $inner where {
+      $inner <: not $scope,
+      $inner <: not $declaration,
+      $inner <: within $scope
+    }
+  }
 }

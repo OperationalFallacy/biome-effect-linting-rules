@@ -1,0 +1,41 @@
+{
+  "input": "import { Array as Arr, Option } from \"effect\";\n\nconst profiles = [{ id: \"guest-1\", name: \"Mira\" }];\n\n/**\n * findProfile searches guest profiles by id. profileName displays the stored\n * name or \"Guest\" when no profile matches. The lookup converts Option.none\n * to null, so its consumer must restore the Option before display selection.\n * The preset requires Option for absent results.\n */\nexport const findProfile = (id: string) => {\n  function absentProfile() {\n    // It incorrectly returns null for a missing profile.\n    return null;\n  }\n\n  return Arr.findFirst(profiles, (profile) => profile.id === id).pipe(\n    Option.getOrElse(absentProfile),\n  );\n};\n\nexport const profileName = (id: string) =>\n  Option.fromNullishOr(findProfile(id)).pipe(\n    Option.map((profile) => profile.name),\n    Option.getOrElse(() => \"Guest\"),\n  );\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Return Option.none for absence or Effect.fail for an error instead of null. Each caller must interpret a null sentinel before it uses the value. Express the outcome in the return type and update callers to handle it explicitly.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Return Option.none for absence or Effect.fail for an error instead of null. Each caller must interpret a null sentinel before it uses the value. Express the outcome in the return type and update callers to handle it explicitly."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-return-null/invalid.ts"
+          },
+          "span": [
+            527,
+            539
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,15 +1,13 @@
-file($body) where {
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    or {
-        $body <: contains `Match.when(true, () => Effect.void)` as $branch,
-        $body <: contains `Match.when(false, () => Effect.void)` as $branch,
-        $body <: contains `Match.orElse(() => Effect.void)` as $branch
-    },
-    register_diagnostic(
-        span = $branch,
-        message = "Express optional Effect work with a conditional yield inside Effect.gen or Effect.fn. A Match branch that returns Effect.void represents skipped work rather than a selected value. Keep the condition and the dependent work inside the same operation so they run at the original time. Use Match for pure value selection.",
-        severity = "error"
-    )
+language js(typescript, jsx)
+
+or {
+  `Match.when(true, () => Effect.void)` as $branch,
+  `Match.when(false, () => Effect.void)` as $branch,
+  `Match.orElse(() => Effect.void)` as $branch
+} where {
+  $branch <: within JsModule() as $body,
+  $body <: contains JsModuleSource() as $moduleSource where {
+    $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
+  },
+  register_diagnostic(span=$branch, message="Use Effect.when for optional Effect work. Pass the condition as an Effect so it runs before the operation, and preserve its failures. Use Effect.asVoid when callers need no result from the conditional operation. Keep Match for pure value selection.", severity="error")
 }

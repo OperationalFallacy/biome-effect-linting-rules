@@ -1,0 +1,70 @@
+{
+  "input": "import { style } from \"@vanilla-extract/css\";\n\n/**\n * The exported aliases incorrectly give generated classes additional names.\n * The panel alias requires another declaration to find its styles, and the\n * heading exports expose two public names for the same class.\n */\nconst panelBase = style({ width: \"100%\" });\nexport const panel = panelBase;\n\nexport const headingBase = style({ fontWeight: 600 });\nexport const heading = headingBase;\n\n/**\n * The compact class correctly composes additional styles with the base class.\n * It produces a new styled class instead of another exported name for the\n * same one.\n */\nexport const compactPanel = style([panelBase, { minWidth: 0 }]);\n\n/**\n * The metadata correctly remains a text value describing the panel.\n * It does not create an additional public name for a generated CSS class.\n */\nexport const metadata = \"panel\";\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Export the generated class under one name that describes its role. A second exported name lets consumers refer to the same styles through different names. Remove the alias and update consumers to use the chosen name. Define variants in the Vanilla Extract declaration.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Export the generated class under one name that describes its role. A second exported name lets consumers refer to the same styles through different names. Remove the alias and update consumers to use the chosen name. Define variants in the Vanilla Extract declaration."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-vanilla-extract-export-alias/invalid.ts"
+          },
+          "span": [
+            315,
+            346
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Export the generated class under one name that describes its role. A second exported name lets consumers refer to the same styles through different names. Remove the alias and update consumers to use the chosen name. Define variants in the Vanilla Extract declaration.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Export the generated class under one name that describes its role. A second exported name lets consumers refer to the same styles through different names. Remove the alias and update consumers to use the chosen name. Define variants in the Vanilla Extract declaration."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-vanilla-extract-export-alias/invalid.ts"
+          },
+          "span": [
+            403,
+            438
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

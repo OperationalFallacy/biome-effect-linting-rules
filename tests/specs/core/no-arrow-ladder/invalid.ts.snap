@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\nimport { HttpClient, HttpClientResponse } from \"effect/http\";\n\nconst PageQuery = Schema.Struct({\n  page: Schema.NumberFromString.check(\n    Schema.isInt(),\n    Schema.isGreaterThan(0),\n  ).pipe(Schema.withDecodingDefaultKey(Effect.succeed(\"1\"))),\n  pageSize: Schema.NumberFromString.check(\n    Schema.isInt(),\n    Schema.isBetween({\n      minimum: 1,\n      maximum: 100,\n    }),\n  ).pipe(Schema.withDecodingDefaultKey(Effect.succeed(\"20\"))),\n});\nconst PageResult = Schema.Struct({\n  items: Schema.Array(\n    Schema.Struct({\n      id: Schema.String,\n      title: Schema.String,\n    }),\n  ),\n  total: Schema.Int,\n});\n\n/**\n * The nested arrow calls incorrectly introduce separate scopes for the decoded\n * query and its offset. The reader must follow each invocation back to its\n * argument to connect the request parameters with the returned page range.\n */\nexport const loadPage = Effect.fn(\"Catalog.loadPage\")(function* (\n  queryParams: unknown,\n  catalogUrl: string,\n) {\n  // These invoked arrows incorrectly split query decoding from offset and request construction.\n  return yield* ((query: typeof PageQuery.Type) =>\n    ((offset: number) =>\n      HttpClient.get(catalogUrl, {\n        urlParams: {\n          offset,\n          limit: query.pageSize,\n        },\n      }).pipe(\n        Effect.flatMap(HttpClientResponse.filterStatusOk),\n        Effect.flatMap(HttpClientResponse.schemaBodyJson(PageResult)),\n        Effect.map((result) => ({\n          items: result.items,\n          total: result.total,\n          offset,\n          limit: query.pageSize,\n        })),\n      ))((query.page - 1) * query.pageSize))(\n    yield* Schema.decodeUnknownEffect(PageQuery)(queryParams),\n  );\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires local values instead of consecutive immediately invoked arrow functions. The nested bodies split dependent calculations across scopes. Bind intermediate values with const and keep the remaining work in the operation's pipeline.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires local values instead of consecutive immediately invoked arrow functions. The nested bodies split dependent calculations across scopes. Bind intermediate values with const and keep the remaining work in the operation's pipeline."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-arrow-ladder/invalid.ts"
+          },
+          "span": [
+            1126,
+            1721
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

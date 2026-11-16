@@ -1,0 +1,563 @@
+{
+  "input": "import * as React from \"react\";\nimport ReactDefault, {\n  createElement,\n  useId,\n  // It incorrectly imports a React effect as the subscription lifecycle.\n  useLayoutEffect as useSubscription,\n  useMemo as memoize,\n  // It incorrectly imports useState under the name useLocalState.\n  useState as useLocalState,\n} from \"react\";\n\n/**\n * ViewportSize displays the browser viewport dimensions and updates after\n * a resize. It requires a browser. React state stores the dimensions, layout\n * effects manage listeners, and memo hooks cache the label. React supports\n * these APIs, but the preset requires service-managed subscriptions and a\n * derived atom for the label so the component only reads its prepared value.\n */\nexport function ViewportSize() {\n  const outputId = useId();\n  // It incorrectly keeps the browser-read callback in React.useCallback.\n  const readWidth = ReactDefault.useCallback(() => window.innerWidth, []);\n  const [width, setWidth] = useLocalState(readWidth);\n  // It incorrectly stores viewport height in React.useState.\n  const [height, setHeight] = React.useState<number>(window.innerHeight);\n\n  useSubscription(() => {\n    const updateWidth = () => setWidth(readWidth());\n    window.addEventListener(\"resize\", updateWidth);\n    updateWidth();\n\n    return () => window.removeEventListener(\"resize\", updateWidth);\n  }, [readWidth]);\n\n  // It incorrectly accesses the subscription hook through the React namespace.\n  React.useLayoutEffect(() => {\n    const updateHeight = () => setHeight(window.innerHeight);\n    window.addEventListener(\"resize\", updateHeight);\n    updateHeight();\n\n    return () => window.removeEventListener(\"resize\", updateHeight);\n  }, []);\n\n  // It incorrectly derives the label through a React memo hook.\n  const label = memoize(() => `${width} × ${height}`, [width, height]);\n\n  return createElement(\"output\", { id: outputId }, label);\n}\n\n/**\n * The viewport module re-exports React state and synchronization APIs.\n * The preset requires consumers to use atom hooks, so these implementation\n * APIs must remain inside the adapter.\n */\n// It incorrectly re-exports React APIs for application state and synchronization.\nexport {\n  createContext,\n  createRef,\n  use,\n  useActionState,\n  useContext,\n  useEffect,\n  useEffectEvent,\n  useImperativeHandle,\n  useInsertionEffect,\n  useOptimistic,\n  useReducer,\n  useRef,\n  useSyncExternalStore,\n} from \"react\";\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            157,
+            191
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            195,
+            213
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            284,
+            309
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            873,
+            897
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            1074,
+            1088
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            1440,
+            1461
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2177,
+            2190
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2194,
+            2203
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2207,
+            2210
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2214,
+            2228
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2232,
+            2242
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2246,
+            2255
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2259,
+            2273
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2277,
+            2296
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2300,
+            2318
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2322,
+            2335
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2339,
+            2349
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2353,
+            2359
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-react-state/invalid.ts"
+          },
+          "span": [
+            2363,
+            2383
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 19,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

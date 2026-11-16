@@ -1,5 +1,9 @@
 # Roadmap
 
+## Effect Language Service
+
+TypeScript and Effect Language Service now cover four checks previously supplied by Biome rules. The [consumer guide](docs/linting.md#enable-the-replacement-effect-checks) explains their configuration.
+
 ## Current package
 
 One npm package contains the Biome rules, presets, and CLI. The package root and `/recommended` export the full preset. Smaller presets are available at `/core`, `/web`, and `/ts-type`.

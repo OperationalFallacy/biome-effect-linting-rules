@@ -1,12 +1,27 @@
-file($body) where {
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    $body <: contains `typeof $value === "boolean"` as $call,
-    $body <: contains `Match.orElse(() => null)`,
-    register_diagnostic(
-        span = $call,
-        message = "Decode boolean input with Schema before service logic uses it. Local type checks spread coercion and optionality policy across operations. Define the boolean's optionality in the schema, decode the input once, and read the typed result in the Effect pipeline. Preserve the accepted input values and the treatment of absence.",
-        severity = "error"
-    )
+language js(typescript, jsx)
+
+// An identity boolean branch and its null fallback must belong to the same
+// Match. Type checks in other operations do not normalize this input.
+`Match.value($input).pipe($cases)` as $decision where {
+  $decision <: within JsModule() as $module,
+  $module <: contains JsModuleSource() as $source where {
+    $source <: r".(?:effect(?:/.*)?|@effect/atom-react)."
+  },
+  $cases <: [
+    ..., `Match.when($predicate, $onBoolean)`, ..., `Match.orElse(() => null)`,
+    ...
+  ],
+  $onBoolean <: `($flag) => $flag`,
+  $predicate <: JsArrowFunctionExpression(parameters=$parameters, body=$body),
+  $parameters <: or {
+    JsIdentifierBinding() as $value,
+    JsParameters(items=[JsFormalParameter(binding=$value)])
+  },
+  or {
+    $body <: `typeof $value === "boolean"` as $check,
+    $body <: JsFunctionBody(statements=[
+      JsReturnStatement(argument=`typeof $value === "boolean"` as $check)
+    ])
+  },
+  register_diagnostic(span=$check, message="Do not convert malformed boolean input to absence. This Match returns null for non-booleans, so callers cannot distinguish an invalid flag from an omitted one. Decode the optional boolean with Schema and use the decoded value in the service operation.", severity="error")
 }

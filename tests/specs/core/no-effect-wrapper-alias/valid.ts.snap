@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect } from \"effect\";\n\ninterface SessionStore {\n  readonly read: Effect.Effect<string>;\n}\n\n/**\n * loadSession correctly keeps the read and normalization in its named\n * Effect function. The pipeline defines the complete session query, so a\n * forwarding helper is unnecessary.\n */\nexport const loadSession = Effect.fn(\"loadSession\")((store: SessionStore) =>\n  // This pipeline correctly keeps the session read and trim inside loadSession.\n  store.read.pipe(Effect.map((session) => session.trim())),\n);\n// fromForwarder correctly reuses the complete operation without a wrapper.\nexport const fromForwarder = loadSession;\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "input": "import { Effect, Match, Schema } from \"effect\";\n\nconst Reservation = Schema.Struct({\n  itemId: Schema.NonEmptyString,\n  quantity: Schema.Int.check(Schema.isGreaterThan(0)),\n  available: Schema.Int.check(Schema.isGreaterThanOrEqualTo(0)),\n});\n\n/**\n * The reservation decision incorrectly identifies its branches with string\n * constants. The status field widens to string, so callers cannot use it to\n * narrow the quantities available on each branch. reservationMessage must\n * check quantity again before it can report an approved reservation.\n */\nexport const planReservation = Effect.fn(\"planReservation\")(function* (\n  input: unknown,\n) {\n  const request = yield* Schema.decodeUnknownEffect(Reservation)(input);\n\n  // It incorrectly declares a string token for the reservation choice.\n  const status = \"reserve\";\n  const rejectionStatus = \"insufficient-stock\";\n\n  return Match.value(request.available >= request.quantity).pipe(\n    Match.when(true, () => ({\n      status,\n      itemId: request.itemId,\n      quantity: request.quantity,\n    })),\n    Match.orElse(() => ({\n      status: rejectionStatus,\n      itemId: request.itemId,\n      requested: request.quantity,\n      available: request.available,\n    })),\n  );\n});\n\n/**\n * reservationMessage displays the reserved quantity or explains the stock\n * shortage. The widened status cannot prove that quantity exists, so the\n * approval pattern repeats that field's numeric check.\n */\nexport const reservationMessage = Effect.fn(\"reservationMessage\")(\n  (input: unknown) =>\n    planReservation(input).pipe(\n      Effect.map((decision) =>\n        Match.value(decision).pipe(\n          Match.when(\n            { status: \"reserve\", quantity: Match.number },\n            ({ quantity }) => `Reserved ${quantity} items`,\n          ),\n          Match.when(\n            {\n              status: \"insufficient-stock\",\n              requested: Match.number,\n              available: Match.number,\n            },\n            ({ requested, available }) =>\n              `Requested ${requested} items; ${available} available`,\n          ),\n          Match.orElse(() => \"Reservation data unavailable\"),\n        ),\n      ),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-string-sentinel-const/invalid.ts"
+          },
+          "span": [
+            797,
+            815
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Represent status choices with domain values instead of string tokens. This constant's name identifies a status, state, phase, or outcome. Use a domain result, tagged union, Option, or Result so callers handle the choices explicitly. Ordinary text constants are outside this rule. Resolve the representation at its definition and callers; renaming the same token does not fix the model."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-string-sentinel-const/invalid.ts"
+          },
+          "span": [
+            825,
+            863
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

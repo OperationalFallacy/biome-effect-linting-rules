@@ -1,9 +1,7 @@
-file($body) where {
-    $body <: contains bubble `import($module)` as $dynamicImport where {
-        register_diagnostic(
-            span = $dynamicImport,
-            message = "Replace the dynamic import with a static import. A module load inside the operation forces the reader to inspect the execution path to identify the dependency. Declare the dependency with the file's other imports and update its uses.",
-            severity = "error"
-        )
-    }
+language js(typescript, jsx)
+
+// The prevent-dynamic-imports rule reports every runtime import expression.
+// Static imports declare module dependencies alongside the file's other imports.
+JsImportCallExpression() as $load where {
+  register_diagnostic(span=$load, message="This code loads a module dynamically. Declare the dependency with a static import.", severity="error")
 }

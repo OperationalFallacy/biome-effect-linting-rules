@@ -14,6 +14,7 @@
     "default": "npx projen default",
     "effect:diagnostics": "npx projen effect:diagnostics",
     "eject": "npx projen eject",
+    "format": "npx projen format",
     "lint": "npx projen lint",
     "lint:dev": "npx projen lint:dev",
     "lint:local": "npx projen lint:local",
@@ -25,7 +26,9 @@
     "refresh:biome-grammars": "npx projen refresh:biome-grammars",
     "release": "npx projen release",
     "test": "npx projen test",
+    "test:update": "npx projen test:update",
     "typecheck": "npx projen typecheck",
+    "typecheck:fixtures": "npx projen typecheck:fixtures",
     "unbump": "npx projen unbump",
     "upgrade": "npx projen upgrade",
     "projen": "npx projen"
@@ -36,20 +39,25 @@
     "organization": false
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.3",
-    "@catenarycloud/linteffect": "dev",
+    "@biomejs/biome": "2.6.6",
+    "@catenarycloud/linteffect": "latest",
+    "@effect/atom-react": "4.1.0",
     "@effect/language-service": "0.87.5",
     "@types/node": "^24",
+    "@types/react": "19.3.0",
+    "@vanilla-extract/css": "1.21.3",
     "commit-and-tag-version": "^12",
     "constructs": "^10.0.0",
     "projen": "^0.98.34",
+    "react": "19.2.9",
+    "scheduler": "0.28.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vite": "^8",
     "vitest": "^5.0.5"
   },
   "dependencies": {
-    "@biomejs/wasm-nodejs": "2.6.3",
+    "@biomejs/wasm-nodejs": "2.6.6",
     "@effect/platform-node-shared": "4.1.0",
     "effect": "4.1.0"
   },

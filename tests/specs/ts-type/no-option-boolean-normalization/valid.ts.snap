@@ -1,0 +1,11 @@
+{
+  "input": "import { randomUUID } from \"node:crypto\";\n\nimport { Data, Effect, FileSystem, Option, Schema } from \"effect\";\n\nconst ReminderRequest = Schema.Struct({\n  recipient: Schema.NonEmptyString,\n  // The decoder supplies false when enabled is missing or undefined.\n  enabled: Schema.Boolean.pipe(\n    Schema.withDecodingDefault(Effect.succeed(false)),\n  ),\n});\n\nconst QueuedReminder = Schema.fromJsonString(\n  Schema.Struct({ recipient: Schema.NonEmptyString }),\n);\n\ntype ReminderOutcome = Data.TaggedEnum<{\n  Scheduled: { readonly recipient: string; readonly notificationId: string };\n  Disabled: { readonly recipient: string };\n}>;\nconst ReminderOutcome = Data.taggedEnum<ReminderOutcome>();\n\n/**\n * The reminder request correctly supplies its false default during decoding.\n * Only an explicitly enabled request creates a notification file, and its\n * outcome includes the id of that queued notification.\n */\nexport const scheduleReminder = Effect.fn(\"scheduleReminder\")(function* (\n  input: unknown,\n  queueDirectory: string,\n) {\n  const request = yield* Schema.decodeUnknownEffect(ReminderRequest)(input);\n\n  const fs = yield* FileSystem.FileSystem;\n\n  const notificationId = yield* Effect.sync(randomUUID);\n\n  const contents = yield* Schema.encodeEffect(QueuedReminder)({\n    recipient: request.recipient,\n  });\n\n  const queued = yield* fs\n    .makeDirectory(queueDirectory, { recursive: true })\n    .pipe(\n      Effect.andThen(() =>\n        fs.writeFileString(\n          `${queueDirectory}/${notificationId}.json`,\n          contents,\n          { flag: \"wx\" },\n        ),\n      ),\n      // A false flag skips directory creation and the notification write.\n      Effect.when(Effect.succeed(request.enabled)),\n    );\n\n  return Option.match(queued, {\n    onSome: () =>\n      ReminderOutcome.Scheduled({\n        recipient: request.recipient,\n        notificationId,\n      }),\n    onNone: () => ReminderOutcome.Disabled({ recipient: request.recipient }),\n  });\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

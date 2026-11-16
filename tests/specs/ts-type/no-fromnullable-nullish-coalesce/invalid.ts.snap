@@ -1,0 +1,70 @@
+{
+  "input": "import { Data, Effect, Option, Schema } from \"effect\";\n\nconst InvitationRequest = Schema.Struct({\n  workspace: Schema.NonEmptyString,\n  invitationUrl: Schema.NonEmptyString,\n  recipient: Schema.optional(Schema.NullOr(Schema.NonEmptyString)),\n  accountEmail: Schema.optional(Schema.NullOr(Schema.NonEmptyString)),\n});\n\nexport class InvitationRecipientMissing extends Data.TaggedError(\n  \"InvitationRecipientMissing\",\n)<{ readonly workspace: string }> {}\n\n/**\n * The prepareInvitation function replaces null or undefined before\n * Option.fromNullishOr handles those values again. The extra fallbacks\n * leave the chosen recipient unchanged.\n */\nexport const prepareInvitation = Effect.fn(\"prepareInvitation\")(function* (\n  input: unknown,\n) {\n  const request = yield* Schema.decodeUnknownEffect(InvitationRequest)(input);\n\n  // Neither fallback changes which address receives the invitation.\n  const recipient = yield* Option.fromNullishOr(request.recipient ?? null).pipe(\n    Option.orElse(() =>\n      Option.fromNullishOr(request.accountEmail ?? undefined),\n    ),\n    Effect.fromOption(\n      () => new InvitationRecipientMissing({ workspace: request.workspace }),\n    ),\n  );\n\n  return {\n    to: recipient,\n    subject: `Invitation to ${request.workspace}`,\n    body: `Join ${request.workspace}: ${request.invitationUrl}`,\n  };\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Remove the nullish fallback passed to Option.fromNullishOr. The function already converts both null and undefined to None. The fallback duplicates that conversion. Pass the nullable source directly.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Remove the nullish fallback passed to Option.fromNullishOr. The function already converts both null and undefined to None. The fallback duplicates that conversion. Pass the nullable source directly."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-fromnullable-nullish-coalesce/invalid.ts"
+          },
+          "span": [
+            917,
+            964
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Remove the nullish fallback passed to Option.fromNullishOr. The function already converts both null and undefined to None. The fallback duplicates that conversion. Pass the nullable source directly.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Remove the nullish fallback passed to Option.fromNullishOr. The function already converts both null and undefined to None. The fallback duplicates that conversion. Pass the nullable source directly."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-fromnullable-nullish-coalesce/invalid.ts"
+          },
+          "span": [
+            1001,
+            1056
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

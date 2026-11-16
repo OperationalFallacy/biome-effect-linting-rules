@@ -1,0 +1,11 @@
+{
+  "input": "import { Data, Effect, Match, Schema } from \"effect\";\n\nconst RepairQuote = Schema.Struct({\n  deviceId: Schema.NonEmptyString,\n  repairCost: Schema.Finite.check(Schema.isGreaterThanOrEqualTo(0)),\n  replacementCost: Schema.Finite.check(Schema.isGreaterThan(0)),\n});\n\ntype RepairDecision = Data.TaggedEnum<{\n  ApproveRepair: {\n    readonly deviceId: string;\n    readonly cost: number;\n    readonly savings: number;\n  };\n  ReplaceDevice: { readonly deviceId: string; readonly cost: number };\n}>;\nconst RepairDecision = Data.taggedEnum<RepairDecision>();\n\n/**\n * The repair decision correctly validates the quote before comparing its costs.\n * Malformed costs fail decoding before an approval can be returned.\n */\nexport const assessRepair = Effect.fn(\"assessRepair\")(function* (\n  input: unknown,\n) {\n  const quote = yield* Schema.decodeUnknownEffect(RepairQuote)(input);\n\n  return Match.value(quote.repairCost >= quote.replacementCost).pipe(\n    Match.when(true, () =>\n      RepairDecision.ReplaceDevice({\n        deviceId: quote.deviceId,\n        cost: quote.replacementCost,\n      }),\n    ),\n    Match.orElse(() =>\n      RepairDecision.ApproveRepair({\n        deviceId: quote.deviceId,\n        cost: quote.repairCost,\n        savings: quote.replacementCost - quote.repairCost,\n      }),\n    ),\n  );\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "input": "import { style } from \"@vanilla-extract/css\";\nimport { createElement } from \"react\";\n\n/**\n * renderHeading displays a title with the browser's heading styles. The empty\n * heading class adds no styles, and the preset requires removal of that\n * unused declaration together with its className use. The panel's separate\n * margin reset remains in place.\n */\n// It incorrectly exports an empty class used by renderHeading.\nexport const heading = style({});\n\nexport const panel = style({ margin: 0 });\n\nexport const renderHeading = (title: string) =>\n  createElement(\"h2\", { className: heading }, title);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Define the element's styles or remove the empty style declaration and its className use. An empty generated class lets consumers depend on a style name before the styles exist. Complete the style definition with the project's design tokens, then export the class.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Define the element's styles or remove the empty style declaration and its className use. An empty generated class lets consumers depend on a style name before the styles exist. Complete the style definition with the project's design tokens, then export the class."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-empty-vanilla-extract-style/invalid.ts"
+          },
+          "span": [
+            443,
+            452
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

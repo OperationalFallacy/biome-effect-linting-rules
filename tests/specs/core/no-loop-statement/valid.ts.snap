@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, FileSystem } from \"effect\";\n\ninterface TextFile {\n  readonly path: string;\n  readonly content: string;\n}\n\n/**\n * writeFiles correctly expresses file writes in one Effect.forEach traversal.\n * Sequential execution preserves later writes to repeated paths, and discarded\n * results keep the operation's result void.\n */\nexport const writeFiles = Effect.fn(\"writeFiles\")(function* (\n  files: ReadonlyArray<TextFile>,\n) {\n  const fs = yield* FileSystem.FileSystem;\n  // This traversal correctly writes in input order, including repeated file paths.\n  return yield* Effect.forEach(\n    files,\n    (file) => fs.writeFileString(file.path, file.content),\n    {\n      concurrency: 1,\n      discard: true,\n    },\n  );\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

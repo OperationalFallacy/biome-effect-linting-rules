@@ -1,9 +1,7 @@
 language js(typescript, jsx)
 
+// The no-throw-statement rule reports explicit throw statements. Its diagnostic
+// asks consumers to choose Effect.fail for expected errors and Effect.die for defects.
 JsThrowStatement() as $violation where {
-    register_diagnostic(
-        span = $violation,
-        message = "Represent this failure in the Effect error channel so callers can compose recovery.",
-        severity = "error"
-    )
+  register_diagnostic(span=$violation, message="This preset requires explicit failures in Effect composition instead of throw statements. Use Effect.fail for expected errors or Effect.die for defects, and wrap external throwing work with Effect.try or Effect.tryPromise so callers can compose recovery.", severity="error")
 }

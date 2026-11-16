@@ -52,7 +52,7 @@ const cases = [
   {
     name: "plugin errors",
     rule: "no-effect-as",
-    file: "../../specs/core/no-effect-as/result-selection/invalid.ts",
+    file: "../../specs/core/no-effect-as/invalid.ts",
   },
   {
     name: "Unicode and CRLF byte spans",
@@ -65,12 +65,12 @@ const cases = [
   {
     name: "warnings",
     rule: "no-flatmap-ladder",
-    file: "../../specs/core/no-flatmap-ladder/composition/invalid.ts",
+    file: "../../specs/core/no-flatmap-ladder/invalid.ts",
   },
   {
     name: "information",
     rule: "no-return-in-arrow",
-    file: "../../specs/core/no-return-in-arrow/callback-bodies/invalid.ts",
+    file: "../../specs/core/no-return-in-arrow/invalid.ts",
   },
 ];
 

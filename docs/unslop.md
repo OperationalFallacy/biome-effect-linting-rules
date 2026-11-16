@@ -6,7 +6,13 @@ Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 
 ### Content
 
-3. **Gerund subjects and trailing -ing clauses.** Give each sentence a concrete subject and a finite verb. Replace "Staging steps in constants makes the reader reconstruct the operation" with "The reader must follow separate constant declarations to reconstruct the operation." Replace "Continue the pipeline, preserving the result" with "Continue the pipeline. Preserve the result." Replace "Returning an API member does not exempt its implementation" with "The rule still checks the API member's implementation." Remove empty clauses such as "highlighting...", "ensuring...", "reflecting...", "showcasing...", and "fostering...", or state the concrete fact they imply. Preserve API identifiers and established technical terms.
+3. **Gerund subjects, action fragments, and trailing -ing clauses.** Name who acts and give that subject a direct verb. This requirement applies to documentation, diagnostics, implementation comments, fixture comments, and test descriptions. Do not make an action ending in `-ing` the subject of an explanation, use it as a fragment in place of a sentence, or attach it as a trailing explanation. Those forms often omit who acts, why the action matters, or what follows from it.
+
+   Replace "Checking the full preset catches conflicts" with "The fixture runner checks the full preset and rejects unrelated diagnostics." Replace "Reading the count through an atom" with "The component reads the count through an atom." An inline fixture marker also states the judgment: "It correctly reads the count through an atom."
+
+   Replace "Continue the pipeline, preserving the result" with "Continue the pipeline. Preserve the result." Replace "The decoder checks the input, ensuring safe writes" with "The decoder rejects an invalid record before the service writes it."
+
+   Rewrite the whole affected explanation so the actor, action, conditions, and consequence remain connected. A noun substitution such as "validation ensures safety" leaves the same omissions. Do not repair the sentence through a mechanical word swap or remove the reason just to shorten it. Keep API identifiers and established technical terms intact. A search for `-ing` can locate candidates for review; it cannot determine whether a sentence violates this rule.
 5. **Vague attributions.** "Experts believe", "Industry reports suggest", "Some critics argue". Name the source or delete.
 
 ### Language
@@ -21,9 +27,9 @@ Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 ### Style
 
 13. **Em dash overuse.** Avoid em dashes entirely. Use periods or commas only (no parentheses, no en dashes, no hyphen-as-dash substitutes). If a thought needs separation, end the sentence or use a comma.
-14. **Colon overuse.** Colons are fine before a list or example, not as mid-sentence connectors. "If you're coming from traditional automation: instead of registering event handlers, you describe conditions" uses a colon as a crutch. State the instruction directly. "Describe when the scheduler should fire in plain English." Preserve the instruction and omit the comparison.
+14. **Colon overuse.** Use colons before a list or example. Connect clauses within a sentence with the appropriate conjunction. "If you're coming from traditional automation: instead of registering event handlers, you describe conditions" uses a colon as a crutch. State the instruction directly. "Describe when the scheduler should fire in plain English." Preserve the instruction and omit the comparison.
 15. **Boldface overuse.** Don't bold every proper noun or acronym.
-16. **Inline-header lists.** The tell is a bold label and colon that restates the line: "**Performance:** Performance improved...". Convert those to prose. A bold lead-in that ends in a period, names the item, and is followed by genuinely new detail ("**Schema in TypeScript.** Tables live in one file.") is fine, not a tell.
+16. **Inline-header lists.** The tell is a bold label and colon that restates the line: "**Performance:** Performance improved...". Convert those to prose. A bold lead-in that ends in a period, names the item, and is followed by genuinely new detail ("**Schema in TypeScript.** Tables live in one file.") can help the reader identify the subject.
 17. **Title case headings.** Use sentence case.
 18. **Decorative emojis.** Remove from headings and bullets.
 19. **Curly quotes.** Use straight quotes.
@@ -45,7 +51,7 @@ Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 
 ### Plain speech
 
-27. **Say what it does, not how it feels.** "the database stays close at hand", "SQL you can read", "types that follow your schema" name a feeling. The fix names the mechanism or a number: "`.toSQL()` returns the exact string sent to the database", "a column rename fails the build". Ask what the sentence tells the reader to do or know, then write that. If you can't restate it as a concrete instruction, fact, or number, cut it. One more check: if the sentence could appear unchanged in another project's docs, it says nothing about this one. Cut it.
+27. **Describe concrete behavior.** "the database stays close at hand", "SQL you can read", "types that follow your schema" name a feeling. The fix names the mechanism or a number: "`.toSQL()` returns the exact string sent to the database", "a column rename fails the build". Ask what the sentence tells the reader to do or know, then write that. If you can't restate it as a concrete instruction, fact, or number, cut it. One more check: if the sentence could appear unchanged in another project's docs, it says nothing about this one. Cut it.
 28. **Shorten or split dense sentences.** If the reader has to backtrack to parse a sentence, break it in two or drop clauses. One idea per sentence.
 29. **Active voice.** Prefer it. Catch "is/are/was/were + past participle" and name the actor: "queries are validated" becomes "the compiler validates queries", "the file is parsed by the loader" becomes "the loader parses the file". Passive is fine only when the actor is unknown or genuinely doesn't matter.
 30. **Cut adverbs, or use a stronger verb.** "runs quickly" becomes "is fast" or the number, and "significantly improves" becomes the measured delta. Replace a weak verb that relies on an adverb with a precise verb.
@@ -54,3 +60,7 @@ Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 33. **Over-compression.** Dropped articles, verbless fragments, symbol-speak, and abbreviations that make the reader decode instead of read. "Parser rejects bad date → exit 2, no write" becomes "The parser rejects a bad date, exits with code 2, and writes nothing." Write whole sentences with their articles and verbs, and spell out arrows and abbreviations.
 
 34. **Vague ownership and boundaries.** Name the service, operation, or configuration involved. Use "own" and "boundary" only when they explain a concrete relationship.
+
+35. **Noun chains.** Replace stacked nouns with complete phrases that state the relationship. Replace "provider field access" with "the helper reads a field from the provider." Use articles, verbs, and prepositions so the reader does not have to guess how the nouns relate. Preserve API identifiers and established technical terms.
+
+36. **Subject and action first.** Name who acts, then state what that subject does. Put the purpose, conditions, and consequences after the action they concern. Rewrite the whole sentence if its opening leaves the actor or action implicit. Do not make the reader work backward through the sentence to find its main point.

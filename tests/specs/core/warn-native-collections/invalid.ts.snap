@@ -1,0 +1,41 @@
+{
+  "input": "import * as Value from \"effect/Data\";\n\nclass Cell extends Value.Class<{\n  readonly row: number;\n  readonly column: number;\n}> {}\n\n/**\n * findCell should retrieve the label stored at a coordinate, or undefined\n * when that coordinate is absent. The native Map compares Cell keys by\n * reference. The new key for row 0, column 1 therefore misses occupied even\n * though it represents the stored coordinate.\n */\n// It incorrectly uses reference equality for coordinate keys.\nexport const cells = new Map<Cell, string>([\n  [new Cell({ row: 0, column: 1 }), \"occupied\"],\n]);\n\nexport const findCell = (row: number, column: number) =>\n  cells.get(new Cell({ row, column }));\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Review these native object keys. Use HashMap or HashSet when reconstructed keys must match by value. Native Map and Set compare object keys by reference, so a newly constructed equal key misses the stored entry. Keep native collections for deliberate instance identity; Equal.byReference retains that identity behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Review these native object keys. Use HashMap or HashSet when reconstructed keys must match by value. Native Map and Set compare object keys by reference, so a newly constructed equal key misses the stored entry. Keep native collections for deliberate instance identity; Equal.byReference retains that identity behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-native-collections/invalid.ts"
+          },
+          "span": [
+            493,
+            568
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 1,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

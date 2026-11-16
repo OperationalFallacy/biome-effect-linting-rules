@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, FileSystem, Schema } from \"effect\";\n\nconst CheckIn = Schema.Struct({\n  guestId: Schema.NonEmptyString,\n  displayName: Schema.NonEmptyString,\n});\n\nconst SavedCheckIn = Schema.fromJsonString(CheckIn);\n\nconst CheckInReceipt = Schema.Struct({\n  guestId: Schema.NonEmptyString,\n  confirmationPath: Schema.NonEmptyString,\n});\n\n/**\n * The confirmCheckIn function expresses the dependent steps in one Effect\n * generator. Each step must succeed before the next begins, so the sequence\n * needs no nested callbacks to carry earlier results forward.\n */\nexport const confirmCheckIn = Effect.fn(\"confirmCheckIn\")(function* (\n  input: unknown,\n  confirmationPath: string,\n) {\n  const fs = yield* FileSystem.FileSystem;\n\n  const guest = yield* Schema.decodeUnknownEffect(CheckIn)(input);\n\n  const contents = yield* Schema.encodeEffect(SavedCheckIn)(guest);\n\n  yield* fs.writeFileString(confirmationPath, contents);\n\n  // The function returns the receipt only after the file write succeeds.\n  return CheckInReceipt.make({ guestId: guest.guestId, confirmationPath });\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

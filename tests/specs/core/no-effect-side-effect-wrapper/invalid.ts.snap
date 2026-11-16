@@ -1,0 +1,70 @@
+{
+  "input": "import { Effect } from \"effect\";\n\ninterface StateActions {\n  readonly invalidate: (keys: ReadonlyArray<string>) => Effect.Effect<void>;\n  readonly next: Effect.Effect<string>;\n  readonly setState: (state: { readonly ready: boolean }) => void;\n  readonly setReady: Effect.Effect<void>;\n}\n\n/**\n * continueAfterInvalidate invalidates the catalog before it runs next.\n * A failed invalidation must prevent next from running. The data-first\n * Effect.andThen nests invalidation in its arguments; the preset requires\n * invalidation to start the pipeline so both actions appear in execution order.\n */\nexport const continueAfterInvalidate = Effect.fn(\"continueAfterInvalidate\")(\n  ({ invalidate, next }: StateActions) =>\n    // It incorrectly nests invalidation inside Effect.andThen.\n    Effect.andThen(invalidate([\"catalog\"]), next),\n);\n\n/**\n * markReady defers the native ready update until its Effect runs, then runs\n * setReady. Effect.andThen nests the deferred update in its arguments.\n * The preset requires that update to start the pipeline so the two actions\n * appear in execution order.\n */\nexport const markReady = Effect.fn(\"markReady\")(\n  ({ setState, setReady }: StateActions) =>\n    // It incorrectly nests the deferred update inside Effect.andThen.\n    Effect.andThen(\n      Effect.sync(() => setState({ ready: true })),\n      setReady,\n    ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires an inline update or log to occupy its own pipeline step. Start the pipeline with that action and use Effect.andThen or Effect.flatMap to continue. Preserve its deferred execution, failure behavior, and the result the caller needs.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires an inline update or log to occupy its own pipeline step. Start the pipeline with that action and use Effect.andThen or Effect.flatMap to continue. Preserve its deferred execution, failure behavior, and the result the caller needs."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-side-effect-wrapper/invalid.ts"
+          },
+          "span": [
+            783,
+            828
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires an inline update or log to occupy its own pipeline step. Start the pipeline with that action and use Effect.andThen or Effect.flatMap to continue. Preserve its deferred execution, failure behavior, and the result the caller needs.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires an inline update or log to occupy its own pipeline step. Start the pipeline with that action and use Effect.andThen or Effect.flatMap to continue. Preserve its deferred execution, failure behavior, and the result the caller needs."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-side-effect-wrapper/invalid.ts"
+          },
+          "span": [
+            1265,
+            1354
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

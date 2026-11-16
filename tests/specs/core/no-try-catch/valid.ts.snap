@@ -1,0 +1,11 @@
+{
+  "input": "import { createHash } from \"node:crypto\";\nimport { readFileSync } from \"node:fs\";\n\nimport { Result } from \"effect\";\n\n/**\n * fingerprintFile returns a file's content hash so a watcher can compare it\n * with the previous hash to detect a change. The caller receives undefined if\n * the file cannot be read or hashed. Result.try captures those exceptions,\n * and Result.getOrUndefined converts a failure to undefined. The hash attempt\n * and its fallback form one Result expression, as the preset requires.\n */\nexport const fingerprintFile = (file: string): string | undefined =>\n  // It correctly handles synchronous exceptions with Result.try.\n  Result.try(() =>\n    createHash(\"sha256\").update(readFileSync(file)).digest(\"base64url\"),\n  ).pipe(Result.getOrUndefined);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

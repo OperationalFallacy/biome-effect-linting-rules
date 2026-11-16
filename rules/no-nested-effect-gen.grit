@@ -1,26 +1,57 @@
-file($body) where {
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    $body <: contains bubble `Effect.gen(function* () { $outer })` where {
-        $outer <: contains `Effect.gen($_)` as $nested until JsFunctionExpression(),
-        $nested <: not within or {
-            `const $name = $nested;` as $statement,
-            `const $name: $type = $nested;` as $statement
-        } where {
-            $statement <: within JsFunctionBody(statements = $statements) where {
-                $statements <: [..., $statement, ...],
-                $statements <: [..., `return { $members }`, ...],
-                $members <: [..., or {
-                    JsShorthandPropertyObjectMember(name = $name),
-                    JsPropertyObjectMember(value = $name)
-                }, ...]
-            } until or { JsFunctionBody(), JsBlockStatement() }
-        },
-        register_diagnostic(
-            span = $nested,
-            message = "Combine nested generators into one Effect.gen per method or one pipeline. Separate generator bodies split one operation's sequence and make its execution order harder to follow. Keep the yields together. Preserve dependencies, error propagation and recovery, and resource cleanup.",
-            severity = "error"
-        )
+language js(typescript, jsx)
+
+// The no-nested-effect-gen rule reports a generator inside another operation.
+// A named generator returned as a direct API member is a complete operation.
+JsCallExpression() as $generator where {
+  $generator <: `Effect.gen(function* () { $outer })`,
+  $generator <: within effect_module(),
+  // A callback defines a separate operation. Its own generator still receives
+  // a check, without making that callback part of its enclosing generator.
+  $outer <: contains `Effect.gen($_)` as $nested until or {
+    JsFunctionExpression(),
+    JsArrowFunctionExpression()
+  },
+  not returned_generator(nested=$nested),
+  register_diagnostic(span=$nested, message="This preset requires one generator or pipeline for each operation. Nested generator bodies split the sequence across scopes and make its execution order harder to follow. Keep the dependent yields together while preserving failure handling and resource cleanup.", severity="error")
+}
+
+// The effect_module pattern checks module dependencies for Effect or atom-react.
+// An ordinary string containing a package name does not enable this rule.
+pattern effect_module() {
+  JsModule() as $module where {
+    $module <: contains JsModuleSource() as $moduleSource where {
+      $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
     }
+  }
+}
+
+// The returned_generator predicate requires the generator to initialize the
+// named operation directly. A return of its containing operation does not
+// exempt intermediate generators inside that operation.
+predicate returned_generator($nested) {
+  $nested <: within or {
+    `const $name = $nested;` as $statement,
+    `const $name: $type = $nested;` as $statement
+  } where { returned_operation(statement=$statement, name=$name) }
+}
+
+// The returned_operation predicate recognizes a direct object member returned
+// by the declaration's function. A return in another function or block, or a
+// reference inside a nested object, cannot establish that relationship.
+predicate returned_operation($statement, $name) {
+  $statement <: within JsFunctionBody(statements=$statements) where {
+    $statements <: [..., $statement, ...],
+    $statements <: [..., `return { $members }`, ...],
+    $members <: [
+      ...,
+      or {
+        JsShorthandPropertyObjectMember(name=$name),
+        JsPropertyObjectMember(value=$name)
+      },
+      ...
+    ]
+  } until or {
+    JsFunctionBody(),
+    JsBlockStatement()
+  }
 }

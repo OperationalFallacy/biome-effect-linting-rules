@@ -1,0 +1,41 @@
+{
+  "input": "import { Data, Effect, Match, Schema } from \"effect\";\n\nconst RepairQuote = Schema.Struct({\n  deviceId: Schema.NonEmptyString,\n  repairCost: Schema.Finite.check(Schema.isGreaterThanOrEqualTo(0)),\n  replacementCost: Schema.Finite.check(Schema.isGreaterThan(0)),\n});\n\ntype RepairQuote = typeof RepairQuote.Type;\n\ntype RepairDecision = Data.TaggedEnum<{\n  ApproveRepair: {\n    readonly deviceId: string;\n    readonly cost: number;\n    readonly savings: number;\n  };\n  ReplaceDevice: { readonly deviceId: string; readonly cost: number };\n}>;\nconst RepairDecision = Data.taggedEnum<RepairDecision>();\n\n/**\n * The repair decision incorrectly treats an assertion as validation of the quote.\n * A string-valued repair cost can enter the comparison and produce an approval\n * with an unusable cost and savings.\n */\nexport const assessRepair = Effect.fn(\"assessRepair\")(function* (\n  input: unknown,\n) {\n  const quote = <RepairQuote>input;\n\n  return Match.value(quote.repairCost >= quote.replacementCost).pipe(\n    Match.when(true, () =>\n      RepairDecision.ReplaceDevice({\n        deviceId: quote.deviceId,\n        cost: quote.replacementCost,\n      }),\n    ),\n    Match.orElse(() =>\n      RepairDecision.ApproveRepair({\n        deviceId: quote.deviceId,\n        cost: quote.repairCost,\n        savings: quote.replacementCost - quote.repairCost,\n      }),\n    ),\n  );\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This type assertion supplies a type without validating the value. Decode unknown input with Schema.decodeUnknownEffect, use Schema.fromJsonString for JSON text, and continue with the decoded value. Construct trusted model values with their schema constructors. Preserve decoding failures in the Effect.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This type assertion supplies a type without validating the value. Decode unknown input with Schema.decodeUnknownEffect, use Schema.fromJsonString for JSON text, and continue with the decoded value. Construct trusted model values with their schema constructors. Preserve decoding failures in the Effect."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-model-overlay-cast/invalid.ts"
+          },
+          "span": [
+            909,
+            927
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

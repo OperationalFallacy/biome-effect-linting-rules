@@ -1,0 +1,99 @@
+{
+  "input": "import { Clock, Effect } from \"effect\";\n\n/**\n * makeTimeOperations incorrectly separates clock reads and Date construction\n * from ISO formatting in local Effects. The reader must follow staged into\n * load and read into formatted to reconstruct the complete time queries.\n */\nexport const makeTimeOperations = () =>\n  Effect.gen(function* () {\n    const clock = yield* Clock.Clock;\n\n    // staged incorrectly separates load's clock read and Date from ISO formatting.\n    const staged = clock.currentTimeMillis.pipe(\n      Effect.map((time) => new Date(time)),\n    );\n\n    const run = Effect.gen(function* () {\n      // read incorrectly separates run's clock read and Date from ISO formatting.\n      const read = clock.currentTimeMillis.pipe(\n        Effect.map((time) => new Date(time)),\n      );\n\n      // formatted incorrectly adds another Effect binding used only by the next yield.\n      const formatted = read.pipe(Effect.map((time) => time.toISOString()));\n\n      return yield* formatted;\n    });\n\n    const load = staged.pipe(Effect.map((time) => time.toISOString()));\n\n    return { run, load };\n  });\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/invalid.ts"
+          },
+          "span": [
+            472,
+            567
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/invalid.ts"
+          },
+          "span": [
+            700,
+            797
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Inline intermediate Effect steps into the operation's pipeline. The reader must follow separate constant declarations to reconstruct validation, decisions, and dependent work. Use Effect.flatMap or Effect.andThen to connect dependent steps. Keep complete service constructors and operations exposed through the service's returned API. Exported Effect values and functions defined with Effect.fn or Effect.fnUntraced are valid API operations. Local constants for final domain values remain valid."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-step-const-staging/invalid.ts"
+          },
+          "span": [
+            893,
+            963
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 3,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

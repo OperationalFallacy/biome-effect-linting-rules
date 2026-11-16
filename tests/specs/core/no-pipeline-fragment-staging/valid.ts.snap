@@ -1,0 +1,11 @@
+{
+  "input": "import { Option, pipe, Schema, String as Str } from \"effect\";\n\nconst BookCode = Schema.String.check(Schema.isPattern(/^[A-Za-z0-9-]+$/));\nconst QueryCode = Schema.Trim.pipe(\n  Schema.check(Schema.isPattern(/^[A-Za-z0-9-]+$/)),\n);\n\n/**\n * resolveBookCode returns an uppercase book code. A valid trimmed query takes\n * precedence over the code in a /books/<code> path. The result is None when\n * both sources lack a valid code.\n * One pipeline keeps query decoding, fallback, and normalization together,\n * as the preset requires.\n */\nexport function resolveBookCode(query: unknown, path: string) {\n  // It correctly completes the lookup in one pipeline.\n  return pipe(\n    query,\n    Schema.decodeUnknownOption(QueryCode),\n    Option.orElse(() =>\n      Schema.decodeUnknownOption(BookCode)(\n        path.match(/^\\/books\\/([A-Za-z0-9-]+)$/)?.[1],\n      ),\n    ),\n    Option.map(Str.toUpperCase),\n  );\n}\n\n/**\n * makeBookCodeOperations exposes separate query decoding and code formatting\n * operations. The decoder's local candidate and the formatter's candidate\n * parameter belong to different functions. The shared spelling does not split\n * a pipeline between their bodies.\n */\nexport function makeBookCodeOperations() {\n  function decode(query: unknown) {\n    // It correctly keeps this candidate within the decoder's scope.\n    const candidate = pipe(query, Schema.decodeUnknownOption(QueryCode));\n\n    return candidate;\n  }\n\n  function format(candidate: Option.Option<string>) {\n    return pipe(candidate, Option.map(Str.toUpperCase));\n  }\n\n  return { decode, format };\n}\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

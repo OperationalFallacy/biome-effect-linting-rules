@@ -1,16 +1,12 @@
 language js(typescript, jsx)
 
 or {
-    `Option.fromNullishOr($value ?? null)` as $call,
-    `Option.fromNullishOr($value ?? undefined)` as $call
+  `Option.fromNullishOr($value ?? null)` as $call,
+  `Option.fromNullishOr($value ?? undefined)` as $call
 } where {
-    $call <: within JsModule() as $body,
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    register_diagnostic(
-        span = $call,
-        message = "Remove the nullish fallback passed to Option.fromNullishOr. The function already converts both null and undefined to None. The fallback duplicates that conversion. Pass the nullable source directly.",
-        severity = "error"
-    )
+  $call <: within JsModule() as $body,
+  $body <: contains bubble JsModuleSource() as $moduleSource where {
+    $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
+  },
+  register_diagnostic(span=$call, message="Remove the nullish fallback passed to Option.fromNullishOr. The function already converts both null and undefined to None. The fallback duplicates that conversion. Pass the nullable source directly.", severity="error")
 }

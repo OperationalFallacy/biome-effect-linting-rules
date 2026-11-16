@@ -4,32 +4,32 @@ language js(typescript, jsx)
 // typically 5-10% over the same Biome run without this plugin. Rebenchmark
 // before you add more whole-function `within` or `contains` traversals.
 or {
-	TsPredicateReturnType() as $predicate where {
-		$predicate <: within JsArrowFunctionExpression() as $function
-	},
-	TsPredicateReturnType() as $predicate where {
-		$predicate <: within JsFunctionExpression() as $function
-	},
-	TsPredicateReturnType() as $predicate where {
-		$predicate <: within JsFunctionDeclaration() as $function
-	},
-	TsPredicateReturnType() as $predicate where {
-		$predicate <: within JsFunctionExportDefaultDeclaration() as $function
-	},
-	TsPredicateReturnType() as $predicate where {
-		$predicate <: within JsMethodObjectMember() as $function
-	},
-	TsPredicateReturnType() as $predicate where {
-		$predicate <: within JsMethodClassMember() as $function
-	}
+  TsPredicateReturnType() as $predicate where {
+    $predicate <: within JsArrowFunctionExpression() as $function
+  },
+  TsPredicateReturnType() as $predicate where {
+    $predicate <: within JsFunctionExpression() as $function
+  },
+  TsPredicateReturnType() as $predicate where {
+    $predicate <: within JsFunctionDeclaration() as $function
+  },
+  TsPredicateReturnType() as $predicate where {
+    $predicate <: within JsFunctionExportDefaultDeclaration() as $function
+  },
+  TsPredicateReturnType() as $predicate where {
+    $predicate <: within JsMethodObjectMember() as $function
+  },
+  TsPredicateReturnType() as $predicate where {
+    $predicate <: within JsMethodClassMember() as $function
+  }
 } where {
-	$function <: contains JsFormalParameter() as $parameter,
-	$parameter <: contains JsIdentifierBinding() as $name,
-	$parameter <: contains or {
-		TsUnknownType(),
-		TsAnyType()
-	},
-	$predicate <: contains JsReferenceIdentifier() as $name,
-	$function <: not contains JsInstanceofExpression(),
-	register_diagnostic(span=$predicate, message="Decode unknown input with the model's Schema instead of a hand-written type predicate. TypeScript trusts the predicate's declared type. It does not verify those tests against the model. Use the decoded value in service logic and typed Match patterns for subsequent decisions. Predicates over known typed unions and nominal class identity checks remain valid.", severity="error")
+  $function <: contains JsFormalParameter() as $parameter,
+  $parameter <: contains JsIdentifierBinding() as $name,
+  $parameter <: contains or {
+    TsUnknownType(),
+    TsAnyType()
+  },
+  $predicate <: contains JsReferenceIdentifier() as $name,
+  $function <: not contains JsInstanceofExpression(),
+  register_diagnostic(span=$predicate, message="Decode unknown input with the model's Schema instead of a hand-written type predicate. TypeScript trusts the predicate's declared type. It does not verify those tests against the model. Use the decoded value in service logic and typed Match patterns for subsequent decisions. Predicates over known typed unions and nominal class identity checks remain valid.", severity="error")
 }

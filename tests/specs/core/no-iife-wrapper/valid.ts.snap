@@ -1,0 +1,11 @@
+{
+  "input": "import { Array as Arr, Effect, Schema } from \"effect\";\nimport { HttpClient, HttpClientResponse } from \"effect/http\";\n\nconst InventoryRows = Schema.Array(\n  Schema.Struct({\n    id: Schema.String,\n    quantity: Schema.Int,\n    archived: Schema.Boolean,\n  }),\n);\n\n/**\n * prepareExport correctly calculates the active rows and their total in the\n * Effect.map callback that constructs the export. Both values remain\n * available when the callback builds the payload, so the field needs no\n * immediately invoked function.\n */\nexport const prepareExport = Effect.fn(\"Inventory.prepareExport\")(\n  (title: string, inventoryUrl: string) =>\n    HttpClient.get(inventoryUrl).pipe(\n      Effect.flatMap(HttpClientResponse.filterStatusOk),\n      Effect.flatMap(HttpClientResponse.schemaBodyJson(InventoryRows)),\n      Effect.map((rows) => {\n        const active = Arr.filter(rows, (row) => !row.archived);\n        const totalQuantity = Arr.reduce(\n          active,\n          0,\n          (total, row) => total + row.quantity,\n        );\n\n        return {\n          title,\n          // payload correctly uses active and totalQuantity from the export callback's scope.\n          payload: {\n            rowCount: active.length,\n            totalQuantity,\n            rows: Arr.map(active, ({ id, quantity }) => ({\n              id,\n              quantity,\n            })),\n          },\n        };\n      }),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

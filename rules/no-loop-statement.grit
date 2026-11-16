@@ -1,15 +1,13 @@
 language js(typescript, jsx)
 
+// This rule keeps traversal in collection and Effect composition. Each loop
+// statement receives its own diagnostic, including ordinary TypeScript code.
 or {
-    JsForStatement(),
-    JsForInStatement(),
-    JsForOfStatement(),
-    JsWhileStatement(),
-    JsDoWhileStatement()
+  JsForStatement(),
+  JsForInStatement(),
+  JsForOfStatement(),
+  JsWhileStatement(),
+  JsDoWhileStatement()
 } as $violation where {
-    register_diagnostic(
-        span = $violation,
-        message = "Express iteration with collection or Effect combinators. Preserve execution order, termination, failures, and cleanup.",
-        severity = "error"
-    )
+  register_diagnostic(span=$violation, message="This preset requires iteration through collection or Effect combinators instead of loop statements. Keep traversal and its work together while preserving execution order, termination, failures, and cleanup.", severity="error")
 }

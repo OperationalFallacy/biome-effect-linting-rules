@@ -1,0 +1,41 @@
+{
+  "input": "import { type Effect, Ref } from \"effect\";\n\n/**\n * The return annotation incorrectly repeats the Effect type already determined\n * by Ref.get. The body and its handwritten channel declaration become two\n * places to maintain the same operation contract.\n */\nexport function readCounter(counter: Ref.Ref<number>): Effect.Effect<number> {\n  // This handwritten return type incorrectly duplicates Ref.get's inferred channels.\n  return Ref.get(counter);\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Let TypeScript infer the Effect or Layer type from the composed operation. Manual result, error, and dependency annotations duplicate a contract that the operation already defines. Remove the explicit Effect.Effect or Layer.Layer annotation and return the operation directly. Keep explicit input contracts and public contracts in Context.Service, interfaces, and domain type declarations.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Let TypeScript infer the Effect or Layer type from the composed operation. Manual result, error, and dependency annotations duplicate a contract that the operation already defines. Remove the explicit Effect.Effect or Layer.Layer annotation and return the operation directly. Keep explicit input contracts and public contracts in Context.Service, interfaces, and domain type declarations."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-manual-effect-channels/invalid.ts"
+          },
+          "span": [
+            313,
+            334
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

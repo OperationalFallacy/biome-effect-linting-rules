@@ -1,18 +1,119 @@
-file($body) where {
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    $body <: contains `Match.value($cond).pipe($args);` as $call where {
-        or {
-            $args <: contains `Match.when($_, () => $effect)` as $branch,
-            $args <: contains `Match.when($_, () => void $effect)` as $branch,
-            $args <: contains `Match.orElse(() => $effect)` as $branch,
-            $args <: contains `Match.orElse(() => void $effect)` as $branch
-        },
-    register_diagnostic(
-        span = $call,
-        message = "Return the Match result as an expression and move updates or other work out of render. A Match used as a statement runs its selected callback immediately. A render function executes that callback as part of render. Keep render expressions pure and perform the work through an Effect runtime action or event handler.",
-        severity = "error"
-    )
+language js(typescript, jsx)
+
+`Match.value($cond).pipe($args);` as $call where {
+  $call <: within JsModule() as $module,
+  $module <: contains JsModuleSource() as $source where {
+    $source <: r".(?:effect(?:/.*)?|@effect/atom-react)."
+  },
+  $call <: within JsFunctionBody(statements=$statements),
+  $statements <: contains $call until function_boundary(),
+  $statements <: contains JsReturnStatement(argument=$output) until function_boundary(),
+  $output <: contains render_element() until function_boundary(),
+  or {
+    $args <: contains `Match.when($_, () => $effect)`,
+    $args <: contains `Match.when($_, () => void $effect)`,
+    $args <: contains `Match.orElse(() => $effect)`,
+    $args <: contains `Match.orElse(() => void $effect)`
+  },
+  register_diagnostic(span=$call, message="Move this Match statement out of render. Its selected callback runs during each render and can repeat an update without a user action. Return a pure display value and invoke commands from an event handler or the atom runtime.", severity="error")
 }
+
+// A render operation visibly returns JSX or an element made by React. A JSX
+// callback or handler nested in that operation has its own execution context.
+pattern render_element() {
+  or {
+    JsxTagExpression(),
+    JsCallExpression(callee=$factory) as $element where {
+      $element <: within JsModule() as $module,
+      or {
+        $factory <: JsIdentifierExpression() where {
+          $module <: contains react_element_import(local=$factory),
+          $element <: not within shadows_import(name=$factory)
+        },
+        $factory <: JsStaticMemberExpression(object=$react, member=`createElement`) where {
+          $module <: contains react_namespace_import(local=$react),
+          $element <: not within shadows_import(name=$react)
+        }
+      }
+    }
+  }
+}
+
+pattern react_element_import($local) {
+  or {
+    JsShorthandNamedImportSpecifier(local_name=$local) where {
+      $local <: `createElement`
+    },
+    JsNamedImportSpecifier(name=r"^createElement$", local_name=$local)
+  } as $specifier where {
+    $specifier <: within or {
+      JsImportNamedClause(source=`"react"`),
+      JsImportCombinedClause(source=`"react"`)
+    }
+  }
+}
+
+pattern react_namespace_import($local) {
+  or {
+    JsImportDefaultClause(source=`"react"`, default_specifier=JsDefaultImportSpecifier(local_name=$local)),
+    JsImportNamespaceClause(source=`"react"`, namespace_specifier=JsNamespaceImportSpecifier(local_name=$local)),
+    JsImportCombinedClause(source=`"react"`, default_specifier=JsDefaultImportSpecifier(local_name=$local)),
+    JsImportCombinedClause(source=`"react"`, specifier=JsNamespaceImportSpecifier(local_name=$local))
+  }
+}
+
+pattern function_boundary() {
+  or {
+    JsArrowFunctionExpression(),
+    JsFunctionExpression(),
+    JsFunctionDeclaration(),
+    JsFunctionExportDefaultDeclaration(),
+    JsMethodObjectMember(),
+    JsMethodClassMember()
+  }
+}
+
+// Local parameters and declarations can shadow an element factory. Searches
+// stop at nested blocks and functions so sibling bindings do not affect a read.
+pattern shadows_import($name) {
+  or {
+    or {
+      JsArrowFunctionExpression(parameters=$parameters),
+      JsFunctionExpression(parameters=$parameters),
+      JsFunctionDeclaration(parameters=$parameters),
+      JsFunctionExportDefaultDeclaration(parameters=$parameters),
+      JsMethodObjectMember(parameters=$parameters),
+      JsMethodClassMember(parameters=$parameters)
+    } where {
+      or {
+        $parameters <: JsIdentifierBinding() where { $parameters <: $name },
+        $parameters <: JsParameters(items=$items) where {
+          $items <: [
+            ...,
+            or {
+              JsFormalParameter(binding=$bindings),
+              JsRestParameter(binding=$bindings)
+            },
+            ...
+          ],
+          $bindings <: contains JsIdentifierBinding() as $binding where {
+            $binding <: $name
+          } until JsInitializerClause()
+        }
+      }
+    },
+    JsFunctionExpression(id=$name),
+    or {
+      JsFunctionBody(statements=$items),
+      JsBlockStatement(statements=$items)
+    } where {
+      $items <: contains or {
+        JsVariableDeclarator(id=$name),
+        JsFunctionDeclaration(id=$name)
+      } until or {
+        function_boundary(),
+        JsBlockStatement()
+      }
+    }
+  }
 }

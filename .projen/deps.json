@@ -2,12 +2,17 @@
   "dependencies": [
     {
       "name": "@biomejs/biome",
-      "version": "2.6.3",
+      "version": "2.6.6",
       "type": "build"
     },
     {
       "name": "@catenarycloud/linteffect",
-      "version": "dev",
+      "version": "latest",
+      "type": "build"
+    },
+    {
+      "name": "@effect/atom-react",
+      "version": "4.1.0",
       "type": "build"
     },
     {
@@ -18,6 +23,16 @@
     {
       "name": "@types/node",
       "version": "^24",
+      "type": "build"
+    },
+    {
+      "name": "@types/react",
+      "version": "19.3.0",
+      "type": "build"
+    },
+    {
+      "name": "@vanilla-extract/css",
+      "version": "1.21.3",
       "type": "build"
     },
     {
@@ -32,6 +47,16 @@
     },
     {
       "name": "projen",
+      "type": "build"
+    },
+    {
+      "name": "react",
+      "version": "19.2.9",
+      "type": "build"
+    },
+    {
+      "name": "scheduler",
+      "version": "0.28.0",
       "type": "build"
     },
     {
@@ -56,7 +81,7 @@
     },
     {
       "name": "@biomejs/wasm-nodejs",
-      "version": "2.6.3",
+      "version": "2.6.6",
       "type": "runtime"
     },
     {

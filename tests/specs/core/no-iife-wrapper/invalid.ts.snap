@@ -1,0 +1,41 @@
+{
+  "input": "import { Array as Arr, Effect, Schema } from \"effect\";\nimport { HttpClient, HttpClientResponse } from \"effect/http\";\n\nconst InventoryRows = Schema.Array(\n  Schema.Struct({\n    id: Schema.String,\n    quantity: Schema.Int,\n    archived: Schema.Boolean,\n  }),\n);\n\n/**\n * prepareExport incorrectly introduces another function body just to\n * calculate the payload field. The extra scope separates the active rows and\n * their total from the construction of the export that uses them.\n */\nexport const prepareExport = Effect.fn(\"Inventory.prepareExport\")(\n  (title: string, inventoryUrl: string) =>\n    HttpClient.get(inventoryUrl).pipe(\n      Effect.flatMap(HttpClientResponse.filterStatusOk),\n      Effect.flatMap(HttpClientResponse.schemaBodyJson(InventoryRows)),\n      Effect.map((rows) => ({\n        title,\n        // payload incorrectly isolates active rows and totalQuantity in an invoked function.\n        payload: (() => {\n          const active = Arr.filter(rows, (row) => !row.archived);\n          const totalQuantity = Arr.reduce(\n            active,\n            0,\n            (total, row) => total + row.quantity,\n          );\n\n          return {\n            rowCount: active.length,\n            totalQuantity,\n            rows: Arr.map(active, ({ id, quantity }) => ({\n              id,\n              quantity,\n            })),\n          };\n        })(),\n      })),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Remove the immediately invoked function and express its work directly in the operation. The extra function body makes the decision and execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue in one pipeline.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Remove the immediately invoked function and express its work directly in the operation. The extra function body makes the decision and execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue in one pipeline."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-iife-wrapper/invalid.ts"
+          },
+          "span": [
+            918,
+            1363
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,4 +1,6 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.6.3/schema.json",
-  "extends": ["@catenarycloud/linteffect"]
+  "$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
+  "extends": [
+    "@catenarycloud/linteffect"
+  ]
 }

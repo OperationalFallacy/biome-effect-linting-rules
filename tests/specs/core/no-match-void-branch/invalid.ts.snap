@@ -1,0 +1,41 @@
+{
+  "input": "import { Data, Effect, FileSystem, Match, Schema } from \"effect\";\n\nconst SavedSession = Schema.fromJsonString(\n  Schema.Struct({\n    sessionId: Schema.NonEmptyString,\n    expiresAt: Schema.Finite,\n  }),\n);\n\ntype SessionCleanup = Data.TaggedEnum<{\n  Removed: { readonly sessionId: string };\n  Retained: { readonly sessionId: string; readonly expiresAt: number };\n}>;\nconst SessionCleanup = Data.taggedEnum<SessionCleanup>();\n\n/**\n * The removeExpiredSession function adds an empty Effect.void branch for a\n * live session. This makes optional removal look like a choice between two\n * operations.\n */\nexport const removeExpiredSession = Effect.fn(\"removeExpiredSession\")(\n  function* (sessionPath: string, now: number) {\n    const fs = yield* FileSystem.FileSystem;\n\n    const session = yield* fs\n      .readFileString(sessionPath)\n      .pipe(Effect.flatMap(Schema.decodeUnknownEffect(SavedSession)));\n\n    const expired = session.expiresAt <= now;\n\n    // The function uses a separate empty branch just to keep a live session.\n    yield* Match.value(expired).pipe(\n      Match.when(false, () => Effect.void),\n      Match.orElse(() => fs.remove(sessionPath)),\n    );\n\n    return Match.value(expired).pipe(\n      Match.when(true, () =>\n        SessionCleanup.Removed({ sessionId: session.sessionId }),\n      ),\n      Match.orElse(() =>\n        SessionCleanup.Retained({\n          sessionId: session.sessionId,\n          expiresAt: session.expiresAt,\n        }),\n      ),\n    );\n  },\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Effect.when for optional Effect work. Pass the condition as an Effect so it runs before the operation, and preserve its failures. Use Effect.asVoid when callers need no result from the conditional operation. Keep Match for pure value selection.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Effect.when for optional Effect work. Pass the condition as an Effect so it runs before the operation, and preserve its failures. Use Effect.asVoid when callers need no result from the conditional operation. Keep Match for pure value selection."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-match-void-branch/invalid.ts"
+          },
+          "span": [
+            1072,
+            1108
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

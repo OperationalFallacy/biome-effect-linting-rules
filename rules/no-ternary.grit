@@ -1,9 +1,7 @@
 language js(typescript, jsx)
 
+// The no-ternary rule reports conditional expressions in TypeScript and JSX.
+// lintEffect uses Match, Option, or Result branches for value selection.
 JsConditionalExpression() as $ternary where {
-    register_diagnostic(
-        span = $ternary,
-        message = "Replace this ternary with Match.value, Option.match, or Result.match. Keep the selected value and its dependent steps together.",
-        severity = "error"
-    )
+  register_diagnostic(span=$ternary, message="lintEffect's no-ternary rule requires explicit branches for value selection. Replace this ternary with Match.value, Option.match, or Result.match.", severity="error")
 }

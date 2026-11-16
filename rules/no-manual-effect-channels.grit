@@ -1,17 +1,26 @@
 language js(typescript, jsx)
 
+// This rule keeps implemented Effect and Layer channels inferred. Input types
+// declare work supplied by the caller and have no local implementation to infer.
 or {
-    `Effect.Effect<$channels>` as $match,
-    `Layer.Layer<$channels>` as $match
+  `Effect.Effect<$channels>` as $match,
+  `Layer.Layer<$channels>` as $match
 } where {
-    $match <: not within or {
-        `Context.Service<$self, $contract>()`,
-        TsInterfaceDeclaration(),
-        TsTypeAliasDeclaration()
-    },
-    register_diagnostic(
-        span = $match,
-        message = "Let TypeScript infer the Effect or Layer type from the composed operation. Manual result, error, and dependency annotations duplicate a contract that the operation already defines. Remove the explicit Effect.Effect or Layer.Layer annotation and return the operation directly. Keep explicit public contracts in Context.Service, interfaces, and domain type declarations.",
-        severity = "error"
-    )
+  $match <: not within or {
+    `Context.Service<$self, $contract>()`,
+    TsInterfaceDeclaration(),
+    TsTypeAliasDeclaration()
+  },
+  not input_contract(match=$match),
+  register_diagnostic(span=$match, message="Let TypeScript infer the Effect or Layer type from the composed operation. Manual result, error, and dependency annotations duplicate a contract that the operation already defines. Remove the explicit Effect.Effect or Layer.Layer annotation and return the operation directly. Keep explicit input contracts and public contracts in Context.Service, interfaces, and domain type declarations.", severity="error")
+}
+
+// Only the parameter's own type annotation is a caller-supplied contract.
+// An implemented function in its default initializer still needs inferred output.
+predicate input_contract($match) {
+  $match <: within or {
+    JsFormalParameter(type_annotation=$annotation),
+    JsRestParameter(type_annotation=$annotation),
+    TsThisParameter(type_annotation=$annotation)
+  } where { $annotation <: contains $match } until JsInitializerClause()
 }

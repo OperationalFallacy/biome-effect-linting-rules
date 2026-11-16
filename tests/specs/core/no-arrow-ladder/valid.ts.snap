@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\nimport { HttpClient, HttpClientResponse } from \"effect/http\";\n\nconst PageQuery = Schema.Struct({\n  page: Schema.NumberFromString.check(\n    Schema.isInt(),\n    Schema.isGreaterThan(0),\n  ).pipe(Schema.withDecodingDefaultKey(Effect.succeed(\"1\"))),\n  pageSize: Schema.NumberFromString.check(\n    Schema.isInt(),\n    Schema.isBetween({\n      minimum: 1,\n      maximum: 100,\n    }),\n  ).pipe(Schema.withDecodingDefaultKey(Effect.succeed(\"20\"))),\n});\nconst PageResult = Schema.Struct({\n  items: Schema.Array(\n    Schema.Struct({\n      id: Schema.String,\n      title: Schema.String,\n    }),\n  ),\n  total: Schema.Int,\n});\n\n/**\n * The local query and offset correctly expose the values used by the request\n * and its result. Both remain in the generator's scope, so the page range can\n * be followed without tracing immediately invoked callbacks.\n */\nexport const loadPage = Effect.fn(\"Catalog.loadPage\")(function* (\n  queryParams: unknown,\n  catalogUrl: string,\n) {\n  // Local query and offset values correctly keep the request parameters in this operation.\n  const query = yield* Schema.decodeUnknownEffect(PageQuery)(queryParams);\n  const offset = (query.page - 1) * query.pageSize;\n  return yield* HttpClient.get(catalogUrl, {\n    urlParams: {\n      offset,\n      limit: query.pageSize,\n    },\n  }).pipe(\n    Effect.flatMap(HttpClientResponse.filterStatusOk),\n    Effect.flatMap(HttpClientResponse.schemaBodyJson(PageResult)),\n    Effect.map((result) => ({\n      items: result.items,\n      total: result.total,\n      offset,\n      limit: query.pageSize,\n    })),\n  );\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,17 +1,167 @@
-file($body) where {
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
+language js(typescript, jsx)
+
+// The warn-effect-sync-wrapper rule asks consumers to review a call returned
+// from Effect.sync. Syntax cannot establish its return type. Returning another
+// Effect leaves that work unexecuted, while native operations need deferral.
+JsCallExpression(callee=`Effect.sync`, arguments=JsCallArguments(args=[
+  $fn
+])) as $call where {
+  $fn <: `() => $expr`,
+  $expr <: `$callee($args)` as $sideEffect,
+  not $expr <: `console.$method($_)`,
+  not atom_operation(operation=$expr),
+  not native_registry_call(call=$call, operation=$expr),
+  not release_operation(call=$call),
+  not native_update_step(call=$call),
+  not side_effect_wrapper(call=$call),
+  $call <: within JsModule() as $body,
+  $body <: contains JsModuleSource() as $moduleSource where {
+    $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
+  },
+  register_diagnostic(span=$call, message="Review the call returned by this Effect.sync callback. If it returns an Effect, return or yield that Effect directly; Effect.sync otherwise succeeds with the unexecuted Effect as its value. Keep native operations deferred and give them an explicit pipeline step.", severity="warn")
+}
+
+// A synchronous native cleanup needs an Effect when it supplies the release
+// operation to a resource lifetime. The call must be the complete release body;
+// an unrelated cleanup callback elsewhere cannot exempt a wrapped operation.
+predicate release_operation($call) {
+  $call <: within or {
+    `Effect.acquireRelease($acquire, $release)`,
+    `Effect.acquireUseRelease($acquire, $use, $release)`
+  } where {
+    $release <: or {
+      JsArrowFunctionExpression(body=$call),
+      JsArrowFunctionExpression(body=JsFunctionBody(statements=[
+        `return $call;`
+      ])),
+      JsFunctionExpression(body=JsFunctionBody(statements=[`return $call;`]))
+    }
+  }
+}
+
+// A deferred native update that starts a pipeline already has its own step.
+// Other wrappers remain checked, including callbacks that return another Effect.
+predicate native_update_step($call) {
+  $call <: `Effect.sync($fn)`,
+  $fn <: JsArrowFunctionExpression(body=native_update()),
+  $call <: within `$call.pipe($steps)`
+}
+
+// The side-effect rule reports a deferred native update when it is the complete
+// first input to a data-first wrapper. An additional warning repeats that repair.
+predicate side_effect_wrapper($call) {
+  $call <: `Effect.sync($fn)`,
+  $fn <: JsArrowFunctionExpression(body=native_update()),
+  $call <: within or {
+    `Effect.as($call, $result)`,
+    `Effect.andThen($call, $next)`
+  }
+}
+
+pattern native_update() {
+  or {
+    `setState($_)`,
+    `Atom.set($_)`,
+    `invalidate($_)`,
+    `console.$method($_)`
+  }
+}
+
+// The Atom rule supplies the direct composition repair for these same wrappers.
+predicate atom_operation($operation) {
+  $operation <: JsCallExpression(callee=`Atom.$method`) where {
+    $method <: or {
+      `get`,
+      `set`,
+      `update`,
+      `modify`,
+      `refresh`
+    }
+  }
+}
+
+// A visible const registry created by AtomRegistry.make has synchronous methods.
+// Other receiver names and nearer bindings still receive the generic review.
+predicate native_registry_call($call, $operation) {
+  $operation <: JsCallExpression(callee=`$registry.$method`),
+  $registry <: JsIdentifierExpression(),
+  $method <: or {
+    `get`,
+    `set`,
+    `update`,
+    `modify`,
+    `refresh`,
+    `dispose`,
+    `reset`,
+    `mount`,
+    `subscribe`,
+    `getNodes`,
+    `ensureNode`,
+    `setSerializable`
+  },
+  $call <: within JsModule() as $module,
+  $module <: contains or {
+    JsImportNamedClause(source=`"effect/reactivity"`, named_specifiers=contains JsShorthandNamedImportSpecifier(local_name=`AtomRegistry`)),
+    JsImportNamespaceClause(source=`"effect/reactivity/AtomRegistry"`, namespace_specifier=JsNamespaceImportSpecifier(local_name=`AtomRegistry`))
+  },
+  $call <: within registry_scope(statements=$items) as $scope where {
+    $items <: contains `const $registry = AtomRegistry.make($args)` as $declaration until registry_boundary(),
+    not nearer_binding(reference=$call, name=$registry, scope=$scope),
+    not nearer_binding(reference=$declaration, name=`AtomRegistry`, scope=$module)
+  }
+}
+
+pattern registry_scope($statements) {
+  or {
+    JsModule(items=$statements),
+    JsFunctionBody(statements=$statements),
+    JsBlockStatement(statements=$statements)
+  }
+}
+
+pattern registry_boundary() {
+  or {
+    JsFunctionBody(),
+    JsBlockStatement(),
+    JsArrowFunctionExpression(),
+    JsFunctionExpression(),
+    JsFunctionDeclaration(),
+    JsClassDeclaration(),
+    JsClassExpression()
+  }
+}
+
+pattern registry_parameter($name) {
+  or {
+    JsArrowFunctionExpression(parameters=$parameters),
+    JsFunctionExpression(parameters=$parameters),
+    JsFunctionDeclaration(parameters=$parameters),
+    JsMethodObjectMember(parameters=$parameters),
+    JsMethodClassMember(parameters=$parameters)
+  } where {
     or {
-        $body <: contains `Effect.sync($fn)` as $call,
-        $body <: contains `Effect.sync<$types>($fn)` as $call
-    },
-    $fn <: `() => $expr`,
-    $expr <: `$callee($args)` as $sideEffect,
-    not $expr <: `console.$method($_)`,
-    register_diagnostic(
-        span = $call,
-        message = "Make the wrapped operation explicit in the Effect pipeline. A generic Effect.sync callback hides the call's role among the other steps. Use Effect log functions for logs and give updates or other operations a clear pipeline step. Preserve deferred execution and failure behavior through the rewrite.",
-        severity = "warn"
-    )
+      $parameters <: JsIdentifierBinding() where { $parameters <: $name },
+      $parameters <: JsParameters(items=[
+        ...,
+        or {
+          JsFormalParameter(binding=$bindings),
+          JsRestParameter(binding=$bindings)
+        },
+        ...
+      ]) where {
+        $bindings <: contains JsIdentifierBinding() as $binding where {
+          $binding <: $name
+        }
+      }
+    }
+  }
+}
+
+predicate nearer_binding($reference, $name, $scope) {
+  $reference <: within or {
+    registry_parameter(name=$name),
+    registry_scope(statements=$items) where {
+      $items <: contains JsVariableDeclarator(id=$name) until registry_boundary()
+    }
+  } as $inner where { $inner <: not $scope, $inner <: within $scope }
 }

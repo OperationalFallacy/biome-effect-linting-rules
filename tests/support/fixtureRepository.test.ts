@@ -23,11 +23,11 @@ describe("FixtureRepository.discoverFixtures", () => {
         const directory = yield* fs.makeTempDirectoryScoped();
         yield* Effect.forEach(
           [
-            "core/no-effect-bind/calls/valid.ts",
-            "core/no-effect-bind/calls/invalid.ts",
-            "core/no-effect-bind/calls/invalid.ts.snap",
-            "core/no-effect-bind/calls/README.md",
-            "web/no-react-state/hooks/valid-custom-hook.tsx",
+            "core/no-effect-bind/valid.ts",
+            "core/no-effect-bind/invalid.ts",
+            "core/no-effect-bind/invalid.ts.snap",
+            "core/no-effect-bind/README.md",
+            "web/no-react-state/valid.tsx",
           ],
           (file) =>
             fs
@@ -44,22 +44,18 @@ describe("FixtureRepository.discoverFixtures", () => {
 
         const fixtures = yield* repository.discoverFixtures(directory);
         expect(fixtures.map((fixture) => fixture.relativePath)).toEqual([
-          "core/no-effect-bind/calls/invalid.ts",
-          "core/no-effect-bind/calls/valid.ts",
-          "web/no-react-state/hooks/valid-custom-hook.tsx",
+          "core/no-effect-bind/invalid.ts",
+          "core/no-effect-bind/valid.ts",
+          "web/no-react-state/valid.tsx",
         ]);
         expect(fixtures[0]).toEqual({
           group: "core",
           rule: "no-effect-bind",
-          scenario: "calls",
           expectation: "invalid",
           filename: "invalid.ts",
-          relativePath: "core/no-effect-bind/calls/invalid.ts",
-          file: path.join(directory, "core/no-effect-bind/calls/invalid.ts"),
-          snapshot: path.join(
-            directory,
-            "core/no-effect-bind/calls/invalid.ts.snap",
-          ),
+          relativePath: "core/no-effect-bind/invalid.ts",
+          file: path.join(directory, "core/no-effect-bind/invalid.ts"),
+          snapshot: path.join(directory, "core/no-effect-bind/invalid.ts.snap"),
         });
       }).pipe(Effect.scoped),
     ));
@@ -68,15 +64,15 @@ describe("FixtureRepository.discoverFixtures", () => {
     { name: "an empty corpus", files: [] },
     {
       name: "a corpus with only snapshots",
-      files: ["core/no-effect-bind/calls/invalid.ts.snap"],
+      files: ["core/no-effect-bind/invalid.ts.snap"],
     },
     {
-      name: "a malformed fixture path",
-      files: ["core/no-effect-bind/invalid.ts"],
+      name: "a nested fixture path",
+      files: ["core/no-effect-bind/calls/invalid.ts"],
     },
     {
       name: "a rule outside its selected preset",
-      files: ["web/no-effect-bind/calls/invalid.ts"],
+      files: ["web/no-effect-bind/invalid.ts"],
     },
   ])("It catches $name", ({ files }) =>
     runtime.runPromise(

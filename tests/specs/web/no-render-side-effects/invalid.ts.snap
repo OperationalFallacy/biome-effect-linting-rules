@@ -1,0 +1,41 @@
+{
+  "input": "import { Match } from \"effect\";\nimport { createElement } from \"react\";\n\ntype LabelProps = {\n  readonly ready: boolean;\n  readonly onReport: (message: string) => void;\n};\n\n/**\n * Label displays whether the action is ready and must report \"Ready\" when\n * the user clicks its enabled button. This Match reports during render, which\n * React may repeat without a click, and the button has no click handler.\n */\nexport function Label({ ready, onReport }: LabelProps) {\n  // It incorrectly reports readiness during render.\n  Match.value(ready).pipe(\n    Match.when(true, () => onReport(\"Ready\")),\n    Match.orElse(() => undefined),\n  );\n  const label = Match.value(ready).pipe(\n    Match.when(true, () => \"Ready\"),\n    Match.orElse(() => \"Waiting\"),\n  );\n  return createElement(\"button\", { type: \"button\", disabled: !ready }, label);\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Move this Match statement out of render. Its selected callback runs during each render and can repeat an update without a user action. Return a pure display value and invoke commands from an event handler or the atom runtime.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Move this Match statement out of render. Its selected callback runs during each render and can repeat an update without a user action. Return a pure display value and invoke commands from an event handler or the atom runtime."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/web/no-render-side-effects/invalid.ts"
+          },
+          "span": [
+            519,
+            630
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

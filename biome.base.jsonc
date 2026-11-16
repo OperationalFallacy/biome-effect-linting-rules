@@ -58,8 +58,14 @@
       "bin/**",
       "scripts/**",
       "src/**",
+      "rules/*.grit",
+      "configs/*.jsonc",
+      "examples/*.jsonc",
       "tests/**/*.test.ts",
       "tests/support/**",
+      "tests/specs/**/*.ts",
+      "tests/specs/**/*.tsx",
+      "tests/composition/**/*.ts",
       "vitest.config.mts",
       "!!refs",
       "!!.local",
@@ -79,6 +85,20 @@
       }
     }
   },
+  "overrides": [
+    {
+      "includes": [
+        "tests/specs/**",
+        "tests/composition/**"
+      ],
+      "linter": {
+        "enabled": false
+      },
+      "assist": {
+        "enabled": false
+      }
+    }
+  ],
   "vcs": {
     "clientKind": "git",
     "enabled": true,

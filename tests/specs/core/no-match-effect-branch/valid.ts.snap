@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, FileSystem, Match, Schema } from \"effect\";\n\nconst ReportRequest = Schema.Struct({\n  format: Schema.Literals([\"compact\", \"indented\"]),\n  report: Schema.Struct({ title: Schema.NonEmptyString, total: Schema.Finite }),\n});\nconst CompactReport = Schema.fromJsonString(ReportRequest.fields.report);\nconst IndentedReport = Schema.fromJsonString(ReportRequest.fields.report, {\n  space: 2,\n});\nconst ReportReceipt = Schema.Struct({ filePath: Schema.NonEmptyString });\n\n/**\n * exportReport writes a report in the requested JSON format and returns its\n * file path after the write succeeds. Match selects the encoder, then one\n * sequence encodes the report once and writes it. Input, encoding, and write\n * failures remain Effect failures; no receipt is returned after a failed write.\n */\nexport const exportReport = Effect.fn(\"exportReport\")(function* (\n  input: unknown,\n  filePath: string,\n) {\n  const request = yield* Schema.decodeUnknownEffect(ReportRequest)(input);\n  const fs = yield* FileSystem.FileSystem;\n\n  // It correctly selects the encoder before the Effect sequence.\n  const encodeReport = Match.value(request.format).pipe(\n    Match.when(\"compact\", () => Schema.encodeEffect(CompactReport)),\n    Match.orElse(() => Schema.encodeEffect(IndentedReport)),\n  );\n  const contents = yield* encodeReport(request.report);\n\n  yield* fs.writeFileString(filePath, contents);\n\n  return ReportReceipt.make({ filePath });\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "input": "import { Clock, Effect } from \"effect\";\n\n/**\n * makeTimeOperations correctly keeps each clock read, Date construction,\n * and ISO formatting in one pipeline. The run and load declarations define complete time\n * queries, so the reader can follow each without intermediate Effect lookups.\n */\nexport const makeTimeOperations = () =>\n  Effect.gen(function* () {\n    const clock = yield* Clock.Clock;\n\n    const run = Effect.gen(function* () {\n      // The direct yield correctly keeps run's clock read and ISO formatting together.\n      return yield* clock.currentTimeMillis.pipe(\n        Effect.map((time) => new Date(time)),\n        Effect.map((time) => time.toISOString()),\n      );\n    });\n\n    // load correctly names the complete clock read and ISO formatting pipeline.\n    const load = clock.currentTimeMillis.pipe(\n      Effect.map((time) => new Date(time)),\n      Effect.map((time) => time.toISOString()),\n    );\n\n    return { run, load };\n  });\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

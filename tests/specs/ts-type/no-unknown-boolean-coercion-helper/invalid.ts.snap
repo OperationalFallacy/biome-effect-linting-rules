@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, FileSystem, Match, Option, Schema } from \"effect\";\n\nconst PreferenceChange = Schema.Struct({\n  enabled: Schema.optional(Schema.Unknown),\n});\n\nconst DigestPreferences = Schema.Struct({\n  recipient: Schema.NonEmptyString,\n  enabled: Schema.Boolean,\n});\n\nconst SavedPreferences = Schema.fromJsonString(DigestPreferences);\n\n/**\n * The updateDigestPreference function treats \"true\" as though the request\n * supplied no flag. The caller receives a successful result with the old\n * preference because the function ignores the malformed value.\n */\nexport const updateDigestPreference = Effect.fn(\"updateDigestPreference\")(\n  function* (input: unknown, preferencesPath: string) {\n    const change = yield* Schema.decodeUnknownEffect(PreferenceChange)(input);\n\n    // It incorrectly converts malformed flags to absence in the Match.\n    const enabled = Match.value(change.enabled).pipe(\n      Match.when(\n        (value: unknown) => typeof value === \"boolean\",\n        (value) => value,\n      ),\n      Match.orElse(() => null),\n    );\n\n    const requested = Option.fromNullishOr(enabled);\n\n    const fs = yield* FileSystem.FileSystem;\n    const preferences = yield* fs\n      .readFileString(preferencesPath)\n      .pipe(Effect.flatMap(Schema.decodeUnknownEffect(SavedPreferences)));\n\n    const updated = DigestPreferences.make({\n      recipient: preferences.recipient,\n      enabled: Option.getOrElse(requested, () => preferences.enabled),\n    });\n\n    const contents = yield* Schema.encodeEffect(SavedPreferences)(updated);\n\n    yield* fs\n      .writeFileString(preferencesPath, contents)\n      .pipe(Effect.when(Effect.succeed(Option.isSome(requested))));\n\n    return updated;\n  },\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Do not convert malformed boolean input to absence. This Match returns null for non-booleans, so callers cannot distinguish an invalid flag from an omitted one. Decode the optional boolean with Schema and use the decoded value in the service operation.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Do not convert malformed boolean input to absence. This Match returns null for non-booleans, so callers cannot distinguish an invalid flag from an omitted one. Decode the optional boolean with Schema and use the decoded value in the service operation."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-unknown-boolean-coercion-helper/invalid.ts"
+          },
+          "span": [
+            941,
+            967
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

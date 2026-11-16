@@ -1,34 +1,30 @@
 language js(typescript, jsx)
 
 or {
-    `Effect.all($steps, $options)` as $call where {
-        $options <: contains `concurrency: 1`,
-        $steps <: JsArrayExpression(elements = $entries),
-        $entries <: [$_, $_, ...],
-        $entries <: every or {
-            `Ref.set($_, $_)`,
-            `Atom.set($_, $_)`,
-            `SubscriptionRef.set($_, $_)`,
-            `Reactivity.invalidate($_)`,
-            `Fiber.interrupt($_)`,
-            JsCallExpression(callee = `Effect.log$_`)
-        },
-        $options <: not contains `mode: "result"`
+  `Effect.all($steps, $options)` as $call where {
+    $options <: contains `concurrency: 1`,
+    $steps <: JsArrayExpression(elements=$entries),
+    $entries <: [$_, $_, ...],
+    $entries <: every or {
+      `Ref.set($_, $_)`,
+      `Atom.set($_, $_)`,
+      `SubscriptionRef.set($_, $_)`,
+      `Reactivity.invalidate($_)`,
+      `Fiber.interrupt($_)`,
+      JsCallExpression(callee=`Effect.log$_`)
     },
-    `Effect.all($steps).pipe(Effect.asVoid)` as $call where {
-        or {
-            $steps <: contains `Ref.set($_, $_)`,
-            $steps <: contains `Atom.set($_, $_)`,
-            $steps <: contains `SubscriptionRef.set($_, $_)`,
-            $steps <: contains `Reactivity.invalidate($_)`,
-            $steps <: contains `Fiber.interrupt($_)`,
-            $steps <: contains `Effect.log$_`
-        }
+    $options <: not contains `mode: "result"`
+  },
+  `Effect.all($steps).pipe(Effect.asVoid)` as $call where {
+    or {
+      $steps <: contains `Ref.set($_, $_)`,
+      $steps <: contains `Atom.set($_, $_)`,
+      $steps <: contains `SubscriptionRef.set($_, $_)`,
+      $steps <: contains `Reactivity.invalidate($_)`,
+      $steps <: contains `Fiber.interrupt($_)`,
+      $steps <: contains `Effect.log$_`
     }
+  }
 } where {
-    register_diagnostic(
-        span = $call,
-        message = "Sequence these steps with Effect.gen, Effect.andThen, or Effect.flatMap. Preserve their order and failure behavior. Use Effect.all to collect independent results, including per-item successes and failures with mode: result.",
-        severity = "error"
-    )
+  register_diagnostic(span=$call, message="Sequence these steps with Effect.gen, Effect.andThen, or Effect.flatMap. Preserve their order and failure behavior. Use Effect.all to collect independent results, including per-item successes and failures with mode: result.", severity="error")
 }

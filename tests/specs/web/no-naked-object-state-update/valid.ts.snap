@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, pipe, Ref, Schema, Struct } from \"effect\";\n\nconst Book = Schema.Struct({ title: Schema.String });\nconst CopyHistory = Schema.Struct({ completed: Schema.Int });\nconst BookJson = Schema.fromJsonString(Book);\nconst encodeBook = Schema.encodeEffect(BookJson);\ninterface Storage {\n  readonly write: (payload: string) => Effect.Effect<void>;\n  readonly read: Effect.Effect<string>;\n}\n\n/**\n * copyBook writes the supplied book, reads a stored payload, and copies that\n * payload back. The Book JSON schema checks externally edited data before\n * the second write and copies only Book fields. Malformed books now fail\n * through the decoding channel. Valid books retain the same write, read,\n * and write sequence.\n * A successful copy increments the completed count and returns that history.\n * Struct.evolve and CopyHistory.make perform the state update as the preset\n * requires. A failed read, decode, or write leaves the history unchanged.\n */\nexport const copyBook = Effect.fn(\"copyBook\")(\n  (\n    book: typeof Book.Type,\n    storage: Storage,\n    history: Ref.Ref<typeof CopyHistory.Type>,\n  ) =>\n    Effect.gen(function* () {\n      // It correctly encodes the model through its JSON schema.\n      yield* encodeBook(book).pipe(\n        Effect.flatMap((payload) => storage.write(payload)),\n      );\n      const raw = yield* storage.read;\n      const decoded = yield* decodeBook(raw);\n      yield* encodeBook(decoded).pipe(\n        Effect.flatMap((payload) => storage.write(payload)),\n      );\n\n      // It correctly updates the field and reconstructs copy history.\n      yield* Ref.update(history, (current) =>\n        pipe(\n          current,\n          Struct.evolve({ completed: (count) => count + 1 }),\n          CopyHistory.make,\n        ),\n      );\n\n      return yield* Ref.get(history);\n    }),\n);\n\n/**\n * The decoder correctly establishes the whole Book model from serialized input.\n * Parsing and model validation share the same typed failure channel.\n */\nexport const decodeBook = Schema.decodeUnknownEffect(BookJson);\nexport const decodeCheckedBook = decodeBook;\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

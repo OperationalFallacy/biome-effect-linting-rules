@@ -19,6 +19,16 @@ export type BiomeDiagnostic = ReturnType<
   Workspace["pullDiagnostics"]
 >["diagnostics"][number];
 
+/** Repository checks and fixture acceptance use the same built-in lint rules. */
+export const builtinLinter = {
+  enabled: true,
+  rules: {
+    preset: "recommended",
+    style: { useConst: "error" },
+    complexity: { useArrowFunction: "off" },
+  },
+} satisfies BiomeInput["configuration"]["linter"];
+
 /** Plugin setup must succeed before source analysis starts. */
 const PluginSettings = Schema.Struct({
   diagnostics: Schema.Array(Schema.Unknown).check(Schema.isMaxLength(0)),

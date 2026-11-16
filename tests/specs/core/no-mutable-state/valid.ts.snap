@@ -1,0 +1,11 @@
+{
+  "input": "import { Array as Arr } from \"effect\";\n\ninterface InvoiceLine {\n  readonly quantity: number;\n  readonly unitPriceCents: number;\n}\n\n/**\n * invoiceTotal returns the invoice total in cents, or zero for an empty invoice.\n * Each unit price is already in cents. Arr.reduce passes the subtotal into\n * each line calculation and uses its result as the next subtotal without\n * a callback mutating an outer variable.\n */\nexport const invoiceTotal = (lines: ReadonlyArray<InvoiceLine>) =>\n  // It correctly returns each subtotal through Arr.reduce.\n  Arr.reduce(\n    lines,\n    0,\n    (totalCents, line) => totalCents + line.quantity * line.unitPriceCents,\n  );\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

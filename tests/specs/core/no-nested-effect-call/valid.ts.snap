@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, FileSystem, Schema } from \"effect\";\n\nconst Configuration = Schema.fromJsonString(\n  Schema.Struct({ endpoint: Schema.NonEmptyString }),\n);\n\n/**\n * The loadEndpoint operation correctly puts the file read and retry before\n * decoding and endpoint selection in the callback's pipeline. The retry\n * applies only to the read before decoding begins.\n */\nexport const loadEndpoint = Effect.fn(\"loadEndpoint\")((path: string) =>\n  Effect.flatMap(FileSystem.FileSystem, (fs) =>\n    // The pipeline correctly limits retry to fs.readFileString before configuration decoding and endpoint selection.\n    fs.readFileString(path).pipe(\n      Effect.retry({ times: 2 }),\n      Effect.flatMap(Schema.decodeUnknownEffect(Configuration)),\n      Effect.map((configuration) => configuration.endpoint),\n    ),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

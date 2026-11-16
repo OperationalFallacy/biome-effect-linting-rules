@@ -1,95 +1,87 @@
 language js(typescript, jsx)
 
 or {
-    `Match.value($value).pipe($args)` as $matchCall where {
+  `Match.value($value).pipe($args)` as $matchCall where {
+    or {
+      $args <: contains `Match.when($cond, () => $branch)` where {
+        $branch <: contains `Effect.$fn($_)`,
         or {
-            $args <: contains `Match.when($cond, () => $branch)` where {
-                $branch <: contains `Effect.$fn($_)`,
-                or {
-                    $branch <: contains `Effect.flatMap($_)`,
-                    $branch <: contains `Effect.map($_)`,
-                    $branch <: contains `Effect.andThen($_)`,
-                    $branch <: contains `Effect.tap($_)`,
-                    $branch <: contains `pipe($_)`,
-                    $branch <: contains `Stream.$method($_)`
-                }
-            },
-            $args <: contains `Match.when($cond, () => { $block })` where {
-                $block <: contains `Effect.$fn($_)`,
-                or {
-                    $block <: contains `Effect.flatMap($_)`,
-                    $block <: contains `Effect.map($_)`,
-                    $block <: contains `Effect.andThen($_)`,
-                    $block <: contains `Effect.tap($_)`,
-                    $block <: contains `pipe($_)`,
-                    $block <: contains `Stream.$method($_)`
-                }
-            },
-            $args <: contains `Match.orElse(() => $branch)` where {
-                $branch <: contains `Effect.$fn($_)`,
-                or {
-                    $branch <: contains `Effect.flatMap($_)`,
-                    $branch <: contains `Effect.map($_)`,
-                    $branch <: contains `Effect.andThen($_)`,
-                    $branch <: contains `Effect.tap($_)`,
-                    $branch <: contains `pipe($_)`,
-                    $branch <: contains `Stream.$method($_)`
-                }
-            },
-            $args <: contains `Match.orElse(() => { $block })` where {
-                $block <: contains `Effect.$fn($_)`,
-                or {
-                    $block <: contains `Effect.flatMap($_)`,
-                    $block <: contains `Effect.map($_)`,
-                    $block <: contains `Effect.andThen($_)`,
-                    $block <: contains `Effect.tap($_)`,
-                    $block <: contains `pipe($_)`,
-                    $block <: contains `Stream.$method($_)`
-                }
-            },
-            $args <: contains `Match.when($cond, () => void $branch)` where {
-                $branch <: contains `Effect.$fn($_)`,
-                or {
-                    $branch <: contains `Effect.flatMap($_)`,
-                    $branch <: contains `Effect.map($_)`,
-                    $branch <: contains `Effect.andThen($_)`,
-                    $branch <: contains `Effect.tap($_)`,
-                    $branch <: contains `pipe($_)`,
-                    $branch <: contains `Stream.$method($_)`
-                }
-            },
-            $args <: contains `Match.orElse(() => void $branch)` where {
-                $branch <: contains `Effect.$fn($_)`,
-                or {
-                    $branch <: contains `Effect.flatMap($_)`,
-                    $branch <: contains `Effect.map($_)`,
-                    $branch <: contains `Effect.andThen($_)`,
-                    $branch <: contains `Effect.tap($_)`,
-                    $branch <: contains `pipe($_)`,
-                    $branch <: contains `Stream.$method($_)`
-                }
-            }
-        },
-        register_diagnostic(
-            span = $matchCall,
-            message = "Move multi-step Effect sequences out of Match branches. Separate case bodies make the operation's execution order harder to follow. Select the required value with Match, then sequence dependent work in one Effect pipeline. Keep skip decisions explicit. Do not disguise a branch as Option.toArray followed by collection traversal.",
-            severity = "error"
-        )
+          $branch <: contains `Effect.flatMap($_)`,
+          $branch <: contains `Effect.map($_)`,
+          $branch <: contains `Effect.andThen($_)`,
+          $branch <: contains `Effect.tap($_)`,
+          $branch <: contains `pipe($_)`,
+          $branch <: contains `Stream.$method($_)`
+        }
+      },
+      $args <: contains `Match.when($cond, () => { $block })` where {
+        $block <: contains `Effect.$fn($_)`,
+        or {
+          $block <: contains `Effect.flatMap($_)`,
+          $block <: contains `Effect.map($_)`,
+          $block <: contains `Effect.andThen($_)`,
+          $block <: contains `Effect.tap($_)`,
+          $block <: contains `pipe($_)`,
+          $block <: contains `Stream.$method($_)`
+        }
+      },
+      $args <: contains `Match.orElse(() => $branch)` where {
+        $branch <: contains `Effect.$fn($_)`,
+        or {
+          $branch <: contains `Effect.flatMap($_)`,
+          $branch <: contains `Effect.map($_)`,
+          $branch <: contains `Effect.andThen($_)`,
+          $branch <: contains `Effect.tap($_)`,
+          $branch <: contains `pipe($_)`,
+          $branch <: contains `Stream.$method($_)`
+        }
+      },
+      $args <: contains `Match.orElse(() => { $block })` where {
+        $block <: contains `Effect.$fn($_)`,
+        or {
+          $block <: contains `Effect.flatMap($_)`,
+          $block <: contains `Effect.map($_)`,
+          $block <: contains `Effect.andThen($_)`,
+          $block <: contains `Effect.tap($_)`,
+          $block <: contains `pipe($_)`,
+          $block <: contains `Stream.$method($_)`
+        }
+      },
+      $args <: contains `Match.when($cond, () => void $branch)` where {
+        $branch <: contains `Effect.$fn($_)`,
+        or {
+          $branch <: contains `Effect.flatMap($_)`,
+          $branch <: contains `Effect.map($_)`,
+          $branch <: contains `Effect.andThen($_)`,
+          $branch <: contains `Effect.tap($_)`,
+          $branch <: contains `pipe($_)`,
+          $branch <: contains `Stream.$method($_)`
+        }
+      },
+      $args <: contains `Match.orElse(() => void $branch)` where {
+        $branch <: contains `Effect.$fn($_)`,
+        or {
+          $branch <: contains `Effect.flatMap($_)`,
+          $branch <: contains `Effect.map($_)`,
+          $branch <: contains `Effect.andThen($_)`,
+          $branch <: contains `Effect.tap($_)`,
+          $branch <: contains `pipe($_)`,
+          $branch <: contains `Stream.$method($_)`
+        }
+      }
     },
-    `Option.match($value, { $cases })` as $call where {
-        $cases <: contains `Effect.$fn($_)`,
-        or {
-            $cases <: contains `Effect.flatMap($_)`,
-            $cases <: contains `Effect.map($_)`,
-            $cases <: contains `Effect.andThen($_)`,
-            $cases <: contains `Effect.tap($_)`,
-            $cases <: contains `pipe($_)`,
-            $cases <: contains `Stream.$method($_)`
-        },
-        register_diagnostic(
-            span = $call,
-            message = "Separate value selection from multi-step Effect work in Option.match. Branch-local sequences make the operation's execution order harder to follow. Select the value first, then continue in one Effect pipeline. Short, linear branches with useful local bindings remain valid.",
-            severity = "info"
-        )
-    }
+    register_diagnostic(span=$matchCall, message="Move multi-step Effect sequences out of Match branches. Separate case bodies make the operation's execution order harder to follow. Select the required value with Match, then sequence dependent work in one Effect pipeline. Keep skip decisions explicit. Do not disguise a branch as Option.toArray followed by collection traversal.", severity="error")
+  },
+  `Option.match($value, { $cases })` as $call where {
+    $cases <: contains `Effect.$fn($_)`,
+    or {
+      $cases <: contains `Effect.flatMap($_)`,
+      $cases <: contains `Effect.map($_)`,
+      $cases <: contains `Effect.andThen($_)`,
+      $cases <: contains `Effect.tap($_)`,
+      $cases <: contains `pipe($_)`,
+      $cases <: contains `Stream.$method($_)`
+    },
+    register_diagnostic(span=$call, message="Separate value selection from multi-step Effect work in Option.match. Branch-local sequences make the operation's execution order harder to follow. Select the value first, then continue in one Effect pipeline. Short, linear branches with useful local bindings remain valid.", severity="info")
+  }
 }

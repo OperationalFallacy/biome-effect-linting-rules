@@ -1,0 +1,11 @@
+{
+  "input": "import { Array as Arr, Option } from \"effect\";\n\nconst profiles = [{ id: \"guest-1\", name: \"Mira\" }];\n\n/**\n * findProfile searches guest profiles by id. profileName displays the stored\n * name or \"Guest\" when no profile matches. The lookup preserves Option.none\n * for absence, as the preset requires, so its consumer can compose name\n * selection and the fallback directly.\n */\nexport const findProfile = (id: string) =>\n  // It correctly preserves absence as Option.none.\n  Arr.findFirst(profiles, (profile) => profile.id === id);\n\nexport const profileName = (id: string) =>\n  findProfile(id).pipe(\n    Option.map((profile) => profile.name),\n    Option.getOrElse(() => \"Guest\"),\n  );\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

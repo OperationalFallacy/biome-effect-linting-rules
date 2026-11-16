@@ -1,0 +1,11 @@
+{
+  "input": "import { Atom } from \"effect/reactivity\";\n\nexport const counter = Atom.make(0);\n\n/**\n * The counter API reads the count, sets it to 1, increments it, returns the old\n * count during an increment, and requests a refresh. Each exported value is\n * the Atom operation itself, so its Effect performs the requested work and\n * returns that operation's result when the caller runs it.\n */\n// It correctly exposes Atom.get directly.\nexport const readCount = Atom.get(counter);\n\n// It correctly exposes Atom.set directly.\nexport const setCount = Atom.set(counter, 1);\n\n// It correctly exposes Atom.update directly.\nexport const increment = Atom.update(counter, (count) => count + 1);\n\n// It correctly exposes Atom.modify directly.\nexport const takeAndIncrement = Atom.modify(counter, (count) => [\n  count,\n  count + 1,\n]);\n\n// It correctly exposes Atom.refresh directly.\nexport const refresh = Atom.refresh(counter);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

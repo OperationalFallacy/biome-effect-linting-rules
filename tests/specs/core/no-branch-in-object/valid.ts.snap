@@ -1,0 +1,11 @@
+{
+  "input": "import { Result } from \"effect\";\n\n/**\n * The summarize function resolves the Result before it constructs the summary\n * object. The count field receives the selected value, so the object\n * declaration no longer contains a decision.\n */\nexport const summarize = (result: Result.Result<number, string>) => {\n  const count = Result.match(result, {\n    onSuccess: (count) => count,\n    onFailure: () => 0,\n  });\n\n  // A failure still produces a summary with a zero count.\n  return { count };\n};\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

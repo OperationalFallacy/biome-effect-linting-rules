@@ -1,0 +1,70 @@
+{
+  "input": "import { Effect } from \"effect\";\n\n/**\n * selectLabel returns \"Enabled\" when enabled is true and \"Disabled\" otherwise.\n * The if statement separates the alternatives across returns. The preset\n * requires one Match expression for conditional value selection.\n */\nexport function selectLabel(enabled: boolean) {\n  // It incorrectly uses an if statement for value selection.\n  if (enabled) {\n    return \"Enabled\";\n  }\n  return \"Disabled\";\n}\n\n/**\n * logWhenEnabled logs \"Enabled\" once when enabled is true and skips it otherwise.\n * The if statement keeps the condition outside the log Effect. The preset\n * requires Effect.when so optional work carries its execution condition.\n */\nexport const logWhenEnabled = Effect.fn(\"logWhenEnabled\")(function* (\n  enabled: boolean,\n) {\n  // It incorrectly uses an if statement for optional Effect work.\n  if (enabled) {\n    yield* Effect.logInfo(\"Enabled\");\n  }\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires value decisions in Match.value, Option.match, or Result.match. An if statement spreads the selected value and dependent work across control-flow branches. Use Effect.when for optional Effect work and keep its condition effectful.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires value decisions in Match.value, Option.match, or Result.match. An if statement spreads the selected value and dependent work across control-flow branches. Use Effect.when for optional Effect work and keep its condition effectful."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-if-statement/invalid.ts"
+          },
+          "span": [
+            374,
+            414
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires value decisions in Match.value, Option.match, or Result.match. An if statement spreads the selected value and dependent work across control-flow branches. Use Effect.when for optional Effect work and keep its condition effectful.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires value decisions in Match.value, Option.match, or Result.match. An if statement spreads the selected value and dependent work across control-flow branches. Use Effect.when for optional Effect work and keep its condition effectful."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-if-statement/invalid.ts"
+          },
+          "span": [
+            842,
+            898
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "input": "import { Schema } from \"effect\";\n\nconst decodeCount = Schema.decodeUnknownEffect(Schema.Int);\n\n/**\n * readCount correctly returns the decoding Effect as its complete operation.\n * The input and decoder stay together without an extra generator scope.\n */\n// It correctly returns the decoding Effect without another generator.\nexport const readCount = (input: unknown) => decodeCount(input);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

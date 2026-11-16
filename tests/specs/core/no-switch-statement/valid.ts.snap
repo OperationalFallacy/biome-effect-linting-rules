@@ -1,0 +1,11 @@
+{
+  "input": "import { Match } from \"effect\";\n\n/**\n * describePhase correctly selects its label in one Match expression. Its pure\n * decision returns one value without separate switch exits.\n */\nexport const describePhase = (phase: \"ready\" | \"loading\" | \"failed\") =>\n  // Match correctly keeps the ready, loading, and fallback labels together.\n  Match.value(phase).pipe(\n    Match.when(\"ready\", () => \"Ready\"),\n    Match.when(\"loading\", () => \"Loading\"),\n    Match.orElse(() => \"Failed\"),\n  );\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

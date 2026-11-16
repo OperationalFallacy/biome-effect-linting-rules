@@ -64,7 +64,7 @@ Static service layer declarations must name the class explicitly:
 static readonly layer = Layer.effect(Counter, Counter.make);
 ```
 
-Use that form inside dependency-composition pipelines too. `no-layer-this-reference` applies to static layer fields in `Context.Service` classes, not ordinary instance methods. This is the package's readability convention. Effect supports `Layer.effect(this, this.make)`.
+Use that form inside dependency-composition pipelines too. If the layer uses an external constructor, preserve that argument and replace the `this` service key with the class name. `no-layer-this-reference` applies only to static layer fields in `Context.Service` classes. Ordinary instance methods are allowed. This is the package's readability convention. Effect supports `Layer.effect(this, this.make)`.
 
 ### Data and state
 
@@ -72,13 +72,19 @@ Decode external data with Schema and use the decoded values in services. Define 
 
 `no-string-sentinel-const` checks string constants named `status`, `state`, `phase`, or `outcome`, including camelCase and snake_case suffixes. It cannot infer the role of every string from syntax. Paths, versions, schedules, and display text are allowed. Review the domain representation rather than rename a status token to evade the rule.
 
+`no-string-sentinel-return` requests review when Option, Result, or Match branches return different literal strings through `Effect.succeed`. Syntax cannot establish whether those alternatives are statuses, so the diagnostic is a warning. Use tagged outcomes for status choices and keep ordinary text as string data.
+
 Use `Record` operations inside `Struct.evolve` for state updates. Reconstruct validated models with their schema constructors, such as `Model.make`. Decode serialized input with `Schema.decodeUnknownEffect` and encode output with `Schema.encodeEffect`. Apply `Schema.fromJsonString` to the model schema for JSON input and output.
 
-The web preset uses atoms for React state and subscriptions. Keep canonical state changes in Effect services, with atoms responsible for reads and commands. An atom action that reads state, copies it with object spread, and writes it back spreads a state transition across separate calls. Give that transition a service operation with an explicit result.
+### React state and synchronization
+
+`no-react-state` prohibits React APIs that manage application values, cache callbacks, or synchronize external systems, including `useState`, `useMemo`, `useCallback`, and `useEffect`. These APIs make components coordinate updates through state setters, dependency arrays, and effect callbacks. Declare values and transforms as atoms, where reads establish dependencies. Define transitions and resource cleanup in Effect services. Components read prepared values and invoke commands through `@effect/atom-react`. Keep render free of side effects and keep the adapter's internal React hooks inside the adapter.
+
+An atom command that reads state, copies it with object spread, and writes it back spreads a domain transition across separate calls. Give that transition a service operation with an explicit result.
 
 The `Atom` operations `get`, `set`, `update`, `modify`, and `refresh` return Effects. Yield them or compose them directly. Registry instance methods, such as `registry.get` and `registry.set`, execute synchronously. Keep `Effect.sync` around those methods when an Effect must defer their execution.
 
-Keyed row atoms read keyed sources; list projections read collections. Provide dependencies on services or exported operations and reuse that runtime for their work.
+Provide dependencies on services or exported operations and reuse that runtime for their work.
 
 ## Related fields
 
@@ -120,6 +126,14 @@ Effect compares ordinary objects and arrays structurally through its equality AP
 For an empty style declaration, add the required styles or remove the declaration and its `className` use. Export each generated class under one name and update consumers to use it. Compose private base classes through `style`, `styleVariants`, or recipes.
 
 ## Verify changes
+
+### Enable the replacement Effect checks
+
+Effect Language Service now checks `Effect.Do`, native console calls inside Effects, and directly chained pipes. The Biome presets no longer include `no-effect-do`, `no-effect-sync-console`, or `no-pipe-ladder`.
+
+Enable `effectDoNotation`, `globalConsoleInEffect`, and `unnecessaryPipeChain` at error severity in `compilerOptions.plugins`. Merge the [TypeScript configuration example](../examples/tsconfig.effect.jsonc) into your project and apply the compiler patch with the [setup commands](../README.md#enable-the-effect-language-service-checks).
+
+Run the patched project typecheck as well as Biome. The standalone `linteffect check` command runs Biome and does not execute these LSP checks. TypeScript itself rejects the removed `Effect.async` API, which replaces the old `no-effect-async` diagnostic.
 
 ### Check the assigned files
 

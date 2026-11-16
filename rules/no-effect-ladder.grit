@@ -1,17 +1,83 @@
 language js(typescript, jsx)
 
+// The no-effect-ladder rule reports a declaration or return whose value is a
+// chain of dependent Effect calls. The statement receives the diagnostic so
+// the reader can replace the complete expression with a pipeline. A generator's
+// return yield* receives the same check as a direct return. The rule recognizes
+// calls spelled Effect and does not resolve namespace aliases.
 or {
-    `const $name = $call` as $statement,
-    `const $name: $type = $call` as $statement,
-    `return $call` as $statement
+  `const $name = $call` as $statement,
+  `const $name: $type = $call` as $statement,
+  JsReturnStatement(argument=JsCallExpression() as $call) as $statement,
+  JsReturnStatement(argument=JsYieldExpression(argument=JsYieldArgument(expression=$call))) as $statement
 } where {
-    $call <: JsCallExpression(callee = `Effect.$outer`, arguments = JsCallArguments(args = [$first, ...])),
-    $first <: JsCallExpression(callee = `Effect.$inner`, arguments = JsCallArguments(args = [$deep, ...])),
-    $deep <: JsCallExpression(callee = `Effect.$method`),
-    $outer <: not or { `runPromise`, `runPromiseWith`, `runPromiseExit`, `runPromiseExitWith`, `runSync`, `runSyncWith`, `runSyncExit`, `runSyncExitWith`, `runFork`, `runForkWith` },
-    register_diagnostic(
-        span = $statement,
-        message = "Put nested Effect combinators in one pipeline. The reader must work from the inner call outward to reconstruct execution order. Build shared inputs once with Effect.all or Effect.map, then sequence the dependent steps in the pipeline. Preserve dependencies between steps and the operation's failure behavior.",
-        severity = "error"
-    )
+  $call <: JsCallExpression(callee=`Effect.$outer`, arguments=JsCallArguments(args=[
+    $first, ...
+  ])),
+  $first <: effect_input_call(),
+  not direct_effect_input(call=$call),
+  not inside_dependent_chain(call=$call),
+  register_diagnostic(span=$statement, message="This preset requires a returned or assigned Effect chain to read in execution order. Nested combinators force the reader to reconstruct that order from inner arguments. Return or assign one pipeline. Collect independent results with Effect.all and connect dependent steps with Effect.flatMap or Effect.andThen.", severity="error")
+}
+
+// The effect_input_call pattern identifies an Effect call whose first
+// argument is another Effect call. Callback bodies and later arguments do not
+// establish this dependency chain.
+pattern effect_input_call() {
+  JsCallExpression(callee=`Effect.$method`, arguments=JsCallArguments(args=[
+    JsCallExpression(callee=`Effect.$input`), ...
+  ]))
+}
+
+// The direct_effect_input predicate keeps an operation's definition, condition,
+// resource lifetime, or execution together with its input, as Effect v4 permits.
+// The exemption applies to the matched call. It grants no exemption to an
+// enclosing function or callback. Context-provided runners take their context
+// before a separate curried invocation and do not belong in this list.
+predicate direct_effect_input($call) {
+  $call <: JsCallExpression(callee=`Effect.$method`),
+  $method <: or {
+    `fn`,
+    `fnUntraced`,
+    `fnUntracedEager`,
+    `when`,
+    `acquireRelease`,
+    `acquireUseRelease`,
+    `scoped`,
+    `ensuring`,
+    `runSync`,
+    `runSyncExit`,
+    `runPromise`,
+    `runPromiseExit`,
+    `runFork`
+  }
+}
+
+// A dependent_chain contains at least three Effect calls along first arguments.
+// Calls that define operations, conditions, resource lifetimes, or runners stay valid.
+pattern dependent_chain() {
+  JsCallExpression(callee=`Effect.$method`, arguments=JsCallArguments(args=[
+    $first, ...
+  ])) as $chain where {
+    $first <: effect_input_call(),
+    not direct_effect_input(call=$chain)
+  }
+}
+
+// Only the outer call of one dependent chain receives a diagnostic. Searches
+// stop at function bodies and arrows so callbacks and methods retain their checks.
+predicate inside_dependent_chain($call) {
+  $call <: within dependent_chain() as $chain where {
+    $chain <: not $call,
+    $chain <: JsCallExpression(arguments=JsCallArguments(args=[$first, ...])),
+    $first <: contains $call until or {
+      JsFunctionBody(),
+      JsFunctionExpression(),
+      JsArrowFunctionExpression()
+    }
+  } until or {
+    JsFunctionBody(),
+    JsFunctionExpression(),
+    JsArrowFunctionExpression()
+  }
 }

@@ -1,0 +1,11 @@
+{
+  "input": "import { Buffer } from \"node:buffer\";\n// It correctly declares the fixed node:v8 dependency with a static import.\nimport { serialize } from \"node:v8\";\n\nimport { Effect } from \"effect\";\n\n/**\n * encodeState converts a value to V8 binary data and then base64 text for a\n * text storage column. The caller runs the returned Effect to obtain the text;\n * a serialization exception remains an Effect defect. A static import declares\n * the fixed node:v8 dependency before the operation, as the preset requires.\n * Effect.sync still defers serialization until the caller runs the Effect.\n */\nexport const encodeState = (value: unknown) =>\n  Effect.sync(() => {\n    const bytes = serialize(value);\n    return Buffer.from(bytes).toString(\"base64\");\n  });\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

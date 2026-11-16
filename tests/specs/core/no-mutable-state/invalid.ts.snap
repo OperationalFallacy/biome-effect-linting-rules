@@ -1,0 +1,70 @@
+{
+  "input": "interface InvoiceLine {\n  readonly quantity: number;\n  readonly unitPriceCents: number;\n}\n\n/**\n * invoiceTotal returns the invoice total in cents, or zero for an empty invoice.\n * Each unit price is already in cents. The callback mutates an outer total,\n * which the preset prohibits. Use a reducer so each calculation receives\n * its subtotal and returns the next one.\n */\nexport function invoiceTotal(lines: ReadonlyArray<InvoiceLine>) {\n  // It incorrectly declares a mutable running total.\n  let totalCents = 0;\n  lines.forEach((line) => {\n    // It incorrectly mutates the total from the callback.\n    totalCents += line.quantity * line.unitPriceCents;\n  });\n  return totalCents;\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires immutable values or Effect state operations instead of variable reassignment and direct mutation. Return the next state explicitly so callers can follow the transition.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires immutable values or Effect state operations instead of variable reassignment and direct mutation. Return the next state explicitly so callers can follow the transition."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-mutable-state/invalid.ts"
+          },
+          "span": [
+            496,
+            514
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires immutable values or Effect state operations instead of variable reassignment and direct mutation. Return the next state explicitly so callers can follow the transition.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires immutable values or Effect state operations instead of variable reassignment and direct mutation. Return the next state explicitly so callers can follow the transition."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-mutable-state/invalid.ts"
+          },
+          "span": [
+            607,
+            656
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

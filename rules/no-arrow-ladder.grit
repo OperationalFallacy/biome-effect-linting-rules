@@ -1,13 +1,29 @@
-file($body) where {
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    $body <: contains `(($param) => $inner)($arg)` where {
-        $inner <: contains `(($param2) => $_)($_)` as $nested
-    },
-    register_diagnostic(
-        span = $nested,
-        message = "Replace nested immediately invoked functions with local values and one pipeline. The nested function bodies make the operation's execution order harder to follow. Bind intermediate values with const, select the result with Match or Option, and continue the operation after that decision.",
-        severity = "error"
-    )
+language js(typescript, jsx)
+
+// The no-arrow-ladder rule reports a consecutive chain of invoked arrow scopes
+// once, at its outer call. Local values keep the dependencies in the operation.
+JsCallExpression() as $call where {
+  $call <: arrow_ladder(),
+  $call <: not within `(($parameter) => $call)($argument)`,
+  $call <: within effect_module(),
+  register_diagnostic(span=$call, message="This preset requires local values instead of consecutive immediately invoked arrow functions. The nested bodies split dependent calculations across scopes. Bind intermediate values with const and keep the remaining work in the operation's pipeline.", severity="error")
+}
+
+// An arrow_iife identifies an immediately called arrow function.
+pattern arrow_iife() { `(($parameter) => $body)($argument)` }
+
+// An arrow_ladder passes directly into another immediately invoked arrow.
+// Other calls inside a callback remain independently checked as wrappers.
+pattern arrow_ladder() {
+  `(($parameter) => $body)($argument)` where { $body <: arrow_iife() }
+}
+
+// Module dependencies enable the Effect composition convention. An ordinary
+// string mentioning an Effect package does not enable the rule.
+pattern effect_module() {
+  JsModule() as $module where {
+    $module <: contains JsModuleSource() as $source where {
+      $source <: r".(?:effect(?:/.*)?|@effect/atom-react)."
+    }
+  }
 }

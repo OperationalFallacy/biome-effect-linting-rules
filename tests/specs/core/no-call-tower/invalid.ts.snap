@@ -1,0 +1,70 @@
+{
+  "input": "import { Effect, FileSystem, Schema, Struct } from \"effect\";\n\nconst Guest = Schema.fromJsonString(\n  Schema.Struct({ name: Schema.NonEmptyString }),\n);\n\n/**\n * readGuestName reads a guest JSON file and returns the decoded name. It retries\n * the file read twice; malformed JSON or an invalid name fails without a retry.\n * The nested retry call separates the read from its decoder. The preset requires\n * a pipeline so the dependent steps appear in execution order.\n */\nexport const readGuestName = Effect.fn(\"readGuestName\")(function* (\n  filePath: string,\n) {\n  const fs = yield* FileSystem.FileSystem;\n\n  // It incorrectly nests the retried read inside the decoding call.\n  return yield* Effect.flatMap(\n    Effect.retry(fs.readFileString(filePath), { times: 2 }),\n    Schema.decodeUnknownEffect(Guest),\n  ).pipe(Effect.map(Struct.get(\"name\")));\n});\n\n/**\n * reportDecodedName logs a successful guest-file read and decode. A read or\n * decoding failure prevents the log. Effect.andThen nests the log in its\n * arguments; the preset requires a pipeline for that continuation.\n */\nexport const reportDecodedName = Effect.fn(\"reportDecodedName\")(\n  (filePath: string) =>\n    // It incorrectly nests the log inside Effect.andThen.\n    Effect.andThen(\n      readGuestName(filePath),\n      Effect.logInfo(\"Decoded guest name\"),\n    ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires dependent Effect steps in a pipeline. Nested Effect arguments make the reader trace the operation from inner calls outward. Start with the input Effect, then use Effect.flatMap or Effect.andThen for dependent work. Keep effectful conditions, resource lifetimes, and finalizers intact.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires dependent Effect steps in a pipeline. Nested Effect arguments make the reader trace the operation from inner calls outward. Start with the input Effect, then use Effect.flatMap or Effect.andThen for dependent work. Keep effectful conditions, resource lifetimes, and finalizers intact."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-call-tower/invalid.ts"
+          },
+          "span": [
+            691,
+            810
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires dependent Effect steps in a pipeline. Nested Effect arguments make the reader trace the operation from inner calls outward. Start with the input Effect, then use Effect.flatMap or Effect.andThen for dependent work. Keep effectful conditions, resource lifetimes, and finalizers intact.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires dependent Effect steps in a pipeline. Nested Effect arguments make the reader trace the operation from inner calls outward. Start with the input Effect, then use Effect.flatMap or Effect.andThen for dependent work. Keep effectful conditions, resource lifetimes, and finalizers intact."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-call-tower/invalid.ts"
+          },
+          "span": [
+            1233,
+            1329
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 2,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

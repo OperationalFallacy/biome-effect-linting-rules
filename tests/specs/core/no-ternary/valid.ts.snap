@@ -1,0 +1,11 @@
+{
+  "input": "import { Match } from \"effect\";\n\n/**\n * quoteArgument quotes text as one argument for a POSIX shell so spaces and\n * shell syntax in the text do not change the command the caller intends to run.\n * Match.value selects text that is safe without quotes or produces a quoted\n * form in explicit branches, as the preset requires.\n */\nexport const quoteArgument = (argument: string): string =>\n  // It correctly uses Match.value for conditional value selection.\n  Match.value(/^[\\w@%+=:,./-]+$/.test(argument)).pipe(\n    Match.when(true, () => argument),\n    Match.orElse(() => `'${argument.replaceAll(\"'\", `'\\\\''`)}'`),\n  );\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "input": "import { Ref } from \"effect\";\n\n/**\n * readCounter returns the current counter value. It correctly leaves its\n * channels to inference from Ref.get.\n * The implementation determines the return type without a second annotation\n * that can diverge from the composed work.\n */\n// It correctly infers the return type from Ref.get.\nexport function readCounter(counter: Ref.Ref<number>) {\n  return Ref.get(counter);\n}\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

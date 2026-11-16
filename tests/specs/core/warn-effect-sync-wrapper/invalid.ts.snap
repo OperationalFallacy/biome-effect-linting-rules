@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect } from \"effect\";\n\ninterface CounterStore {\n  readonly update: () => Effect.Effect<number>;\n}\n\n/**\n * The update incorrectly sits inside Effect.sync even though it already\n * returns an Effect. The outer callback constructs the update as its result,\n * adding an unexecuted Effect instead of performing the increment.\n */\nexport const increment = Effect.fn(\"increment\")((store: CounterStore) =>\n  // Effect.sync incorrectly returns store.update's Effect without running it.\n  Effect.sync(() => store.update()),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "warning",
+        "description": "Review the call returned by this Effect.sync callback. If it returns an Effect, return or yield that Effect directly; Effect.sync otherwise succeeds with the unexecuted Effect as its value. Keep native operations deferred and give them an explicit pipeline step.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Review the call returned by this Effect.sync callback. If it returns an Effect, return or yield that Effect directly; Effect.sync otherwise succeeds with the unexecuted Effect as its value. Keep native operations deferred and give them an explicit pipeline step."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/warn-effect-sync-wrapper/invalid.ts"
+          },
+          "span": [
+            491,
+            524
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 0,
+    "warnings": 1,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

@@ -1,10 +1,100 @@
 language js(typescript, jsx)
 
-`Effect.succeed($value)` as $sentinel where {
-    $value <: JsStringLiteralExpression(),
-    register_diagnostic(
-        span = $sentinel,
-        message = "Return an explicit domain outcome instead of a string status through Effect.succeed. String status tokens make callers interpret text to determine what happened. Use the operation's domain result, Option, Result, or a tagged union so callers handle each outcome explicitly. Keep actual text results distinct from status tokens.",
-        severity = "error"
-    )
+// String alternatives can describe an operation's outcome, but syntax cannot
+// prove their domain role. Review those branches; ordinary text stays valid.
+JsCallExpression() as $choice where {
+  $choice <: string_outcome_choice(),
+  $choice <: not within schema_default(),
+  register_diagnostic(span=$choice, message="Review these string-valued branch outcomes. If they represent operation statuses, return tagged domain outcomes so callers can handle each case and its data. Keep ordinary display text and other string data as strings.", severity="warn")
+}
+
+pattern string_outcome_choice() {
+  or {
+    or {
+      `Option.match($_, { $members })`,
+      `Result.match($_, { $members })`
+    } where {
+      $members <: [
+        ..., JsPropertyObjectMember(value=literal_effect_branch(value=$first)),
+        ..., JsPropertyObjectMember(value=literal_effect_branch(value=$second)),
+        ...
+      ],
+      $second <: not $first
+    },
+    `Match.value($_).pipe($cases)` where {
+      $cases <: [
+        ..., `Match.when($_, $branch)`, ..., `Match.orElse($fallback)`, ...
+      ],
+      $branch <: literal_effect_branch(value=$first),
+      $fallback <: literal_effect_branch(value=$second),
+      $second <: not $first
+    }
+  }
+}
+
+pattern literal_effect_branch($value) {
+  JsArrowFunctionExpression(body=`Effect.succeed($value)`) where {
+    $value <: JsStringLiteralExpression()
+  }
+}
+
+// The schema_default pattern recognizes model data supplied through an
+// imported Schema API, including composed default Effects. A local declaration
+// with the same name identifies another API and keeps the diagnostic active.
+pattern schema_default() {
+  `$schema.$method($default)` as $call where {
+    $method <: or {
+      `withDecodingDefault`,
+      `withDecodingDefaultKey`,
+      `withDecodingDefaultType`,
+      `withDecodingDefaultTypeKey`
+    },
+    $call <: within JsModule() as $module,
+    $module <: contains schema_import(schema=$schema),
+    $call <: not within shadows_name(name=$schema)
+  }
+}
+
+pattern schema_import($schema) {
+  or {
+    JsImportNamedClause(source=`"effect"`, named_specifiers=contains or {
+      JsShorthandNamedImportSpecifier(local_name=$schema) where {
+        $schema <: `Schema`
+      },
+      JsNamedImportSpecifier(name=r"^Schema$", local_name=$schema)
+    }),
+    JsImportNamespaceClause(source=`"effect/Schema"`, namespace_specifier=JsNamespaceImportSpecifier(local_name=$schema))
+  }
+}
+
+// The shadows_name pattern identifies a function or block that redeclares a
+// selected import. Its search stops at nested scopes so declarations in sibling
+// functions keep their own scope.
+pattern shadows_name($name) {
+  or {
+    or {
+      JsArrowFunctionExpression(parameters=$parameters),
+      JsFunctionExpression(parameters=$parameters),
+      JsFunctionDeclaration(parameters=$parameters)
+    } where {
+      $parameters <: contains JsIdentifierBinding() as $binding where {
+        $binding <: $name
+      }
+    },
+    or {
+      JsFunctionBody(statements=$statements),
+      JsBlockStatement(statements=$statements)
+    } where {
+      $statements <: contains or {
+        JsVariableDeclarator(id=$name),
+        JsFunctionDeclaration(id=$name)
+      } until or {
+        JsFunctionBody(),
+        JsBlockStatement(),
+        JsArrowFunctionExpression(),
+        JsFunctionExpression(),
+        JsFunctionDeclaration()
+      }
+    }
+  }
 }

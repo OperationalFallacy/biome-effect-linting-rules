@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, FileSystem, Schema } from \"effect\";\n\nconst CatalogView = Schema.Struct({\n  pageSize: Schema.Int.check(Schema.isBetween({ minimum: 1, maximum: 100 })),\n  showArchived: Schema.Boolean,\n});\n\nconst SavedCatalogView = Schema.fromJsonString(CatalogView);\n\n/**\n * The readCatalogView function puts its fallback outside the pipeline that\n * reads and decodes the file. The nested recovery call obscures which\n * failures return the default view.\n */\nexport const readCatalogView = Effect.fn(\"readCatalogView\")(function* (\n  filePath: string,\n) {\n  const fs = yield* FileSystem.FileSystem;\n\n  // The fallback is outside the pipeline whose failures it handles.\n  return yield* Effect.catch(\n    fs\n      .readFileString(filePath)\n      .pipe(Effect.flatMap(Schema.decodeUnknownEffect(SavedCatalogView))),\n    () =>\n      Effect.succeed(CatalogView.make({ pageSize: 20, showArchived: false })),\n  );\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Put the Effect sequence and its recovery in one pipeline. Effect.catch around a nested chain makes the reader inspect the inner operation to determine which failures it handles. Sequence the work first and place recovery at the end. Preserve the failures that recovery covers and the result it returns.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Put the Effect sequence and its recovery in one pipeline. Effect.catch around a nested chain makes the reader inspect the inner operation to determine which failures it handles. Sequence the work first and place recovery at the end. Preserve the failures that recovery covers and the result it returns."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-effect-orElse-ladder/invalid.ts"
+          },
+          "span": [
+            684,
+            904
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

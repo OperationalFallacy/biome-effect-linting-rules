@@ -1,6 +1,8 @@
 import { Array as Arr, Context, Effect, Layer, Schema } from "effect";
+import { expect } from "vitest";
 
-import { Biome } from "../../src/biome";
+import { Biome, builtinLinter } from "../../src/biome";
+import { ProjectChecks } from "../../src/cli";
 import { type Fixture, FixtureRepository } from "./fixtureRepository";
 
 /** Analysis must include every diagnostic from parseable source. */
@@ -16,15 +18,17 @@ const ExpectedDiagnostics = {
   invalid: Schema.NonEmptyArray(Schema.Unknown),
 };
 
-/** FixtureRunner checks each case's expected outcome against Biome's original diagnostics. */
+/** FixtureRunner accepts examples only when their selected rule and combined checks agree. */
 export class FixtureRunner extends Context.Service<FixtureRunner>()(
   "@catenarycloud/linteffect/tests/support/fixtureRunner",
   {
     make: Effect.gen(function* () {
       const repository = yield* FixtureRepository;
       const biome = yield* Biome;
+      const checks = yield* ProjectChecks;
+      const plugins = yield* checks.loadPreset("full");
 
-      /** Loads the selected rule and verifies complete diagnostics for one case. */
+      /** Checks one example in isolation and with all rules, returning its original result for snapshots. */
       const runFixture = Effect.fn("FixtureRunner.runFixture")(function* (
         fixture: Fixture,
       ) {
@@ -43,18 +47,38 @@ export class FixtureRunner extends Context.Service<FixtureRunner>()(
           },
         });
 
-        yield* Schema.decodeUnknownEffect(CompleteAnalysis)({
-          parseErrors: result.parseErrors,
-          skippedDiagnostics: result.skippedDiagnostics,
-          categories: Arr.map(
-            result.diagnostics,
-            (diagnostic) => diagnostic.category,
-          ),
+        const combined = yield* biome.lint({
+          root: "/project",
+          file: `/project/${fixture.relativePath}`,
+          source,
+          plugins,
+          configuration: {
+            linter: builtinLinter,
+            assist: { enabled: false },
+          },
         });
+
+        yield* Effect.forEach([result, combined], (analysis) =>
+          Schema.decodeUnknownEffect(CompleteAnalysis)({
+            parseErrors: analysis.parseErrors,
+            skippedDiagnostics: analysis.skippedDiagnostics,
+            categories: Arr.map(
+              analysis.diagnostics,
+              (diagnostic) => diagnostic.category,
+            ),
+          }),
+        );
 
         yield* Schema.decodeUnknownEffect(
           ExpectedDiagnostics[fixture.expectation],
         )(result.diagnostics);
+
+        yield* Effect.try(() =>
+          expect(
+            combined.diagnostics,
+            `${fixture.relativePath}: combined checks must report only the selected rule's diagnostics`,
+          ).toEqual(result.diagnostics),
+        );
 
         return { source, result };
       });
@@ -64,6 +88,8 @@ export class FixtureRunner extends Context.Service<FixtureRunner>()(
   },
 ) {
   static readonly layer = Layer.effect(FixtureRunner, FixtureRunner.make).pipe(
-    Layer.provide(Layer.mergeAll(FixtureRepository.layer, Biome.layer)),
+    Layer.provide(
+      Layer.mergeAll(FixtureRepository.layer, Biome.layer, ProjectChecks.layer),
+    ),
   );
 }

@@ -1,0 +1,128 @@
+{
+  "input": "import { Context, Effect, Layer } from \"effect\";\n\ninterface CounterApi {\n  readonly read: Effect.Effect<number>;\n}\nexport class Seed extends Context.Service<Seed, { readonly initial: number }>()(\n  \"example/Seed\",\n) {}\nexport const dependencies = Layer.succeed(Seed, { initial: 3 });\nconst makeCounter = Effect.gen(function* () {\n  const seed = yield* Seed;\n  return { read: Effect.succeed(seed.initial) };\n});\n\n/**\n * Counter and its variants expose a read of the configured seed value.\n * Their static layers use this for the service key, constructor, or both.\n * The preset requires explicit class references where this names the service\n * or its constructor. ProvidedCounter must retain its external factory and\n * seed dependency when its service key changes to the class name.\n */\nexport class Counter extends Context.Service<Counter, CounterApi>()(\n  \"example/Counter\",\n  { make: makeCounter },\n) {\n  // It incorrectly uses this for the service and constructor.\n  static readonly layer = Layer.effect(this, this.make);\n}\n\nexport class CounterByMake extends Context.Service<CounterByMake, CounterApi>()(\n  \"example/CounterByMake\",\n  { make: makeCounter },\n) {\n  // It incorrectly uses this.make for the constructor.\n  static readonly layer = Layer.effect(CounterByMake, this.make);\n}\n\nexport class CounterByKey extends Context.Service<CounterByKey, CounterApi>()(\n  \"example/CounterByKey\",\n  { make: makeCounter },\n) {\n  // It incorrectly uses this for the service key.\n  static readonly layer = Layer.effect(this, CounterByKey.make);\n}\n\nexport class ProvidedCounter extends Context.Service<\n  ProvidedCounter,\n  CounterApi\n>()(\"example/ProvidedCounter\") {\n  // It incorrectly uses this for the service key beside an external factory.\n  static readonly layer = Layer.effect(this, makeCounter).pipe(\n    Layer.provide(dependencies),\n  );\n}\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Layer.effect(Counter, Counter.make) in this static declaration. This package requires explicit class references so the service key and constructor are visible. Preserve the factory and layer dependencies.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Layer.effect(Counter, Counter.make) in this static declaration. This package requires explicit class references so the service key and constructor are visible. Preserve the factory and layer dependencies."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-layer-this-reference/invalid.ts"
+          },
+          "span": [
+            996,
+            1025
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Layer.effect(CounterByMake, CounterByMake.make) in this static declaration. This package requires explicit class references so the service key and constructor are visible. Preserve the factory and layer dependencies.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Layer.effect(CounterByMake, CounterByMake.make) in this static declaration. This package requires explicit class references so the service key and constructor are visible. Preserve the factory and layer dependencies."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-layer-this-reference/invalid.ts"
+          },
+          "span": [
+            1249,
+            1287
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Layer.effect(CounterByKey, CounterByKey.make) in this static declaration. This package requires explicit class references so the service key and constructor are visible. Preserve the factory and layer dependencies.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Layer.effect(CounterByKey, CounterByKey.make) in this static declaration. This package requires explicit class references so the service key and constructor are visible. Preserve the factory and layer dependencies."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-layer-this-reference/invalid.ts"
+          },
+          "span": [
+            1503,
+            1540
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      },
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Use Layer.effect(ProvidedCounter, makeCounter) in this static declaration. This package requires explicit class references so the service key and constructor are visible. Preserve the factory and layer dependencies.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Use Layer.effect(ProvidedCounter, makeCounter) in this static declaration. This package requires explicit class references so the service key and constructor are visible. Preserve the factory and layer dependencies."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-layer-this-reference/invalid.ts"
+          },
+          "span": [
+            1768,
+            1799
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 4,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

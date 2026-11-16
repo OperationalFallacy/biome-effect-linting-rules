@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\n/**\n * readCount decodes input as an integer and returns it with the label \"Counter\".\n * A decoding failure remains an Effect failure for the caller to handle.\n * The generator reads the count without an intermediate label record.\n * It constructs the result after decoding, as the preset requires.\n */\nexport const readCount = Effect.fn(\"readCount\")(function* (input: unknown) {\n  // It correctly reads the count directly with a generator yield.\n  const count = yield* Schema.decodeUnknownEffect(Schema.Int)(input);\n  return { label: \"Counter\", count };\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

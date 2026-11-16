@@ -1,62 +1,48 @@
+language js(typescript, jsx)
+
+// Reject direct React state and synchronization APIs, including renamed imports
+// and re-exports. Member access must refer to a React default or namespace import.
 or {
-    `$fn($args)` where {
-        or {
-            $fn <: `useState`,
-            $fn <: `useReducer`,
-            $fn <: `useContext`,
-            $fn <: `useCallback`,
-            $fn <: `useEffect`,
-            $fn <: `useSyncExternalStore`
-        },
-        register_diagnostic(
-            span = $fn,
-            message = "Use @effect/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
-            severity = "error"
-        )
-    },
-    `$fn<$types>($args)` where {
-        or {
-            $fn <: `useState`,
-            $fn <: `useReducer`,
-            $fn <: `useContext`,
-            $fn <: `useCallback`,
-            $fn <: `useEffect`,
-            $fn <: `useSyncExternalStore`
-        },
-        register_diagnostic(
-            span = $fn,
-            message = "Use @effect/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
-            severity = "error"
-        )
-    },
-    `$receiver.$fn($args)` where {
-        or {
-            $fn <: `useState`,
-            $fn <: `useReducer`,
-            $fn <: `useContext`,
-            $fn <: `useCallback`,
-            $fn <: `useEffect`,
-            $fn <: `useSyncExternalStore`
-        },
-        register_diagnostic(
-            span = $fn,
-            message = "Use @effect/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
-            severity = "error"
-        )
-    },
-    `$receiver.$fn<$types>($args)` where {
-        or {
-            $fn <: `useState`,
-            $fn <: `useReducer`,
-            $fn <: `useContext`,
-            $fn <: `useCallback`,
-            $fn <: `useEffect`,
-            $fn <: `useSyncExternalStore`
-        },
-        register_diagnostic(
-            span = $fn,
-            message = "Use @effect/atom-react for state and subscriptions instead of the React hooks flagged here. This preset uses the atom runtime to keep state, context, callbacks, effects, and subscriptions in one application model. Move canonical state changes into Effect services and expose reads and commands through atoms.",
-            severity = "error"
-        )
+  or {
+    JsShorthandNamedImportSpecifier(local_name=$api),
+    JsNamedImportSpecifier(name=$api)
+  } as $use where {
+    $api <: react_application_api(),
+    $use <: within or {
+      JsImportNamedClause(source=`"react"`),
+      JsImportCombinedClause(source=`"react"`)
     }
+  },
+  JsExportNamedFromSpecifier(source_name=$api) as $use where {
+    $api <: react_application_api(),
+    $use <: within JsExportNamedFromClause(source=`"react"`)
+  },
+  or {
+    JsStaticMemberExpression(object=$react, member=$api),
+    JsComputedMemberExpression(object=$react, member=$api) where {
+      $api <: JsStringLiteralExpression()
+    }
+  } as $use where {
+    $api <: react_application_api(),
+    $use <: within JsModule() as $module,
+    $module <: contains react_import(local=$react)
+  }
+} where {
+  register_diagnostic(span=$use, message="Do not manage application values, callback caches, or synchronization through React APIs. State setters, dependency arrays, and effect callbacks make components coordinate application updates. Declare values and transforms as atoms, define transitions and cleanup in Effect services, and use @effect/atom-react for component reads and commands.", severity="error")
+}
+
+// Context, refs, and effects can bypass service operations and atom reads even
+// though React categorizes them separately from state hooks.
+pattern react_application_api() {
+  r"^['\"]?(?:use(?:State|Reducer|ActionState|Optimistic|Context|Ref|ImperativeHandle|Effect|LayoutEffect|InsertionEffect|EffectEvent|SyncExternalStore|Memo|Callback)?|createContext|createRef)['\"]?$"
+}
+
+pattern react_import($local) {
+  or {
+    JsImportDefaultClause(source=`"react"`, default_specifier=JsDefaultImportSpecifier(local_name=$local)),
+    JsImportNamespaceClause(source=`"react"`, namespace_specifier=JsNamespaceImportSpecifier(local_name=$local)),
+    JsImportCombinedClause(source=`"react"`, default_specifier=JsDefaultImportSpecifier(local_name=$local)),
+    JsImportCombinedClause(source=`"react"`, specifier=JsNamespaceImportSpecifier(local_name=$local)),
+    JsImportNamedClause(source=`"react"`, named_specifiers=contains JsNamedImportSpecifier(name=r"^default$", local_name=$local))
+  }
 }

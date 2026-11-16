@@ -1,38 +1,58 @@
 language js(typescript, jsx)
 
+// The no-effect-wrapper-alias rule reports forwarding declarations that split
+// an operation across names. A direct member of the function's returned API
+// represents a complete operation and remains valid.
 or {
-    `const $name = $value;` as $statement,
-    `const $name: $type = $value;` as $statement,
-    `function $name($params) { return $value; }` as $statement,
-    `function $name($params): $type { return $value; }` as $statement
+  `const $name = $value;` as $statement,
+  `const $name: $type = $value;` as $statement,
+  `function $name($params) { return $value; }` as $statement,
+  `function $name($params): $type { return $value; }` as $statement
 } where {
-    or {
-        $statement <: JsFunctionDeclaration() where {
-            $value <: `Effect.$method($args)`
-        },
-        $value <: `pipe($source, $steps)` where {
-            $source <: `Effect.$method($args)`
-        },
-        $value <: JsArrowFunctionExpression(body = $operation) where {
-            or {
-                $operation <: `Effect.$method($args)`,
-                $operation <: `pipe($source, $steps)` where {
-                    $source <: `Effect.$method($args)`
-                }
-            }
-        }
+  effect_wrapper(statement=$statement, value=$value),
+  not returned_operation(statement=$statement, name=$name),
+  register_diagnostic(span=$statement, message="Inline this intermediate Effect wrapper into its operation. The extra declaration makes the reader inspect another name to understand the steps. Define complete reusable operations with Effect.fn or Effect.fnUntraced, or expose them through the service's returned API. Keep intermediate fragments inside each operation. A new wrapper around the same fragment leaves the extra lookup in place.", severity="error")
+}
+
+// The effect_wrapper predicate recognizes the existing declaration forms.
+// Function declarations forward a direct Effect call. Constants may hold a
+// pipeline or an arrow function that forwards either form. Pure helpers stay clear.
+predicate effect_wrapper($statement, $value) {
+  or {
+    $statement <: JsFunctionDeclaration() where {
+      $value <: `Effect.$method($args)`
     },
-    $statement <: not within JsFunctionBody(statements = $statements) where {
-        $statements <: [..., $statement, ...],
-        $statements <: [..., `return { $members }`, ...],
-        $members <: [..., or {
-            JsShorthandPropertyObjectMember(name = $name),
-            JsPropertyObjectMember(value = $name)
-        }, ...]
-    } until or { JsFunctionBody(), JsBlockStatement() },
-    register_diagnostic(
-        span = $statement,
-        message = "Inline this intermediate Effect wrapper into its operation. The extra declaration makes the reader inspect another name to understand the steps. Define complete reusable operations with Effect.fn or Effect.fnUntraced, or expose them through the service's returned API. Keep intermediate fragments inside each operation. A new wrapper around the same fragment leaves the extra lookup in place.",
-        severity = "error"
-    )
+    $value <: `pipe($source, $steps)` where {
+      $source <: `Effect.$method($args)`
+    },
+    $value <: JsArrowFunctionExpression(body=$operation) where {
+      or {
+        $operation <: `Effect.$method($args)`,
+        $operation <: `pipe($source, $steps)` where {
+          $source <: `Effect.$method($args)`
+        }
+      }
+    }
+  }
+}
+
+// The returned_operation predicate requires the declaration and the direct
+// object return in the same function body. A nested function, block, or object
+// cannot establish API membership for a declaration in an outer scope.
+predicate returned_operation($statement, $name) {
+  $statement <: within JsFunctionBody(statements=$statements) where {
+    $statements <: [..., $statement, ...],
+    $statements <: [..., `return { $members }`, ...],
+    $members <: [
+      ...,
+      or {
+        JsShorthandPropertyObjectMember(name=$name),
+        JsPropertyObjectMember(value=$name)
+      },
+      ...
+    ]
+  } until or {
+    JsFunctionBody(),
+    JsBlockStatement()
+  }
 }

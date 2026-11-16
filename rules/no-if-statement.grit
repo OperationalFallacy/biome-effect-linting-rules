@@ -1,9 +1,7 @@
 language js(typescript, jsx)
 
+// This rule requires explicit value selection as a preset convention.
+// The diagnostic applies to each decision, including ordinary TypeScript code.
 JsIfStatement() as $violation where {
-    register_diagnostic(
-        span = $violation,
-        message = "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together.",
-        severity = "error"
-    )
+  register_diagnostic(span=$violation, message="This preset requires value decisions in Match.value, Option.match, or Result.match. An if statement spreads the selected value and dependent work across control-flow branches. Use Effect.when for optional Effect work and keep its condition effectful.", severity="error")
 }

@@ -1,0 +1,11 @@
+{
+  "input": "import { Array as Arr, String as Str } from \"effect\";\n\nconst names = [\"Ada\", \"Grace\"];\n\n/**\n * searchTerms converts display names to lowercase search terms.\n * Arr.map accepts Str.toLowerCase directly, so the operation needs no\n * wrapper callback.\n */\nexport const searchTerms = Arr.map(\n  names,\n  // It correctly passes Str.toLowerCase directly to Arr.map.\n  Str.toLowerCase,\n);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

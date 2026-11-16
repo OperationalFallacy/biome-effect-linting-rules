@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, FileSystem, Schema } from \"effect\";\n\nconst Configuration = Schema.fromJsonString(\n  Schema.Struct({ endpoint: Schema.NonEmptyString }),\n);\n\n/**\n * The loadEndpoint operation incorrectly nests endpoint selection around\n * decoding and retry inside the callback. The reader must trace inward to\n * find the file read and determine which part retries.\n */\nexport const loadEndpoint = Effect.fn(\"loadEndpoint\")((path: string) =>\n  Effect.flatMap(FileSystem.FileSystem, (fs) =>\n    // The nested map incorrectly hides fs.readFileString and its retry inside endpoint selection.\n    Effect.map(\n      Effect.flatMap(\n        Effect.retry(fs.readFileString(path), { times: 2 }),\n        Schema.decodeUnknownEffect(Configuration),\n      ),\n      (configuration) => configuration.endpoint,\n    ),\n  ),\n);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires dependent Effect calls in one pipeline. Nested arguments hide the input and make the reader reconstruct the sequence. Start with the input Effect and apply the dependent steps in execution order.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires dependent Effect calls in one pipeline. Nested arguments hide the input and make the reader reconstruct the sequence. Start with the input Effect and apply the dependent steps in execution order."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-nested-effect-call/invalid.ts"
+          },
+          "span": [
+            593,
+            802
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

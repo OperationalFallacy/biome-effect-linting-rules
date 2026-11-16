@@ -1,0 +1,41 @@
+{
+  "input": "import { type Effect, Ref } from \"effect\";\n\n/**\n * The ReadCount alias incorrectly separates the operation from its Effect\n * channels. The reader must follow another type declaration to inspect a\n * contract that Ref.get already determines.\n */\n// ReadCount incorrectly adds a type lookup for the channels already inferred from Ref.get.\ntype ReadCount = (counter: Ref.Ref<number>) => Effect.Effect<number>;\nexport const readCount: ReadCount = (counter) => Ref.get(counter);\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset keeps Effect channels beside their operation instead of in a separate alias. The alias adds another lookup to inspect the result, errors, and dependencies. Infer channels from the implementation, or declare a required public contract on Context.Service or an interface.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset keeps Effect channels beside their operation instead of in a separate alias. The alias adds another lookup to inspect the result, errors, and dependencies. Infer channels from the implementation, or declare a required public contract on Context.Service or an interface."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-effect-type-alias/invalid.ts"
+          },
+          "span": [
+            385,
+            398
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

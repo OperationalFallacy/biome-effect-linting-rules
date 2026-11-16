@@ -1,0 +1,11 @@
+{
+  "input": "import { style } from \"@vanilla-extract/css\";\nimport { createElement } from \"react\";\n\n/**\n * renderHeading displays a title with the browser's heading styles. It omits\n * the empty class and its declaration as the preset requires. The heading's\n * styles stay the same, and the panel retains its separate margin reset.\n */\nexport const panel = style({ margin: 0 });\n\n// It correctly renders the heading without an empty generated class.\nexport const renderHeading = (title: string) => createElement(\"h2\", {}, title);\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

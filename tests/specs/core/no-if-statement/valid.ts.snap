@@ -1,0 +1,11 @@
+{
+  "input": "import { Effect, Match } from \"effect\";\n\n/**\n * selectLabel returns \"Enabled\" when enabled is true and \"Disabled\" otherwise.\n * Match selects both alternatives in one expression, as the preset requires.\n */\nexport const selectLabel = (enabled: boolean) =>\n  // It correctly uses Match.value for conditional value selection.\n  Match.value(enabled).pipe(\n    Match.when(true, () => \"Enabled\"),\n    Match.orElse(() => \"Disabled\"),\n  );\n\n/**\n * logWhenEnabled logs \"Enabled\" once when enabled is true and skips it otherwise.\n * Effect.when attaches the condition to the log Effect, as the preset requires.\n */\nexport const logWhenEnabled = Effect.fn(\"logWhenEnabled\")(function* (\n  enabled: boolean,\n) {\n  // It correctly uses Effect.when for optional Effect work.\n  yield* Effect.logInfo(\"Enabled\").pipe(Effect.when(Effect.succeed(enabled)));\n});\n",
+  "result": {
+    "diagnostics": [],
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

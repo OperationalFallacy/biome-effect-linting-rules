@@ -1,0 +1,41 @@
+{
+  "input": "import { Effect, Schema } from \"effect\";\n\nconst decodeCount = Schema.decodeUnknownEffect(Schema.Int);\n\n/**\n * readCount incorrectly wraps count decoding in two generator bodies. The\n * outer body only yields the inner decoding operation, adding a scope without\n * another step in the task.\n */\nexport const readCount = (input: unknown) =>\n  Effect.gen(function* () {\n    // This inner generator incorrectly adds a second scope around count decoding.\n    return yield* Effect.gen(function* () {\n      return yield* decodeCount(input);\n    });\n  });\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "This preset requires one generator or pipeline for each operation. Nested generator bodies split the sequence across scopes and make its execution order harder to follow. Keep the dependent yields together while preserving failure handling and resource cleanup.",
+        "message": [
+          {
+            "elements": [],
+            "content": "This preset requires one generator or pipeline for each operation. Nested generator bodies split the sequence across scopes and make its execution order harder to follow. Keep the dependent yields together while preserving failure handling and resource cleanup."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-nested-effect-gen/invalid.ts"
+          },
+          "span": [
+            468,
+            540
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

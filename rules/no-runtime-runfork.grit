@@ -1,20 +1,41 @@
 language js(typescript, jsx)
 
-or { `Effect.runFork($args)` as $runFork, `Effect.runForkWith($args)` as $runFork } where {
-    $runFork <: within JsModule() as $body,
-    $body <: contains bubble JsModuleSource() as $moduleSource where {
-        $moduleSource <: r".(?:effect(?:/.*)?|@effect/atom-react)."
-    },
-    $runFork <: within or {
-        `Effect.gen($ownerArgs)`,
-        `Effect.fn($ownerArgs)`,
-        `Effect.fn($ownerName)($ownerBody)`,
-        `Effect.fnUntraced($ownerArgs)`,
-        `Effect.fnUntracedEager($ownerArgs)`
-    },
-    register_diagnostic(
-        span = $runFork,
-        message = "Use Effect.forkChild or Effect.forkScoped for work started inside an Effect operation. Effect.runFork and Effect.runForkWith start independent runtime fibers and leave cancellation and cleanup to the caller. Keep service work attached to its parent fiber or Scope. Reserve the run functions for application startup and external integrations.",
-        severity = "error"
-    )
+or {
+  `Effect.runFork($args)` as $runFork,
+  `Effect.runForkWith($context)($args)` as $runFork
+} where {
+  $runFork <: within JsModule() as $module,
+  $module <: contains JsModuleSource() as $source where {
+    $source <: r".(?:effect(?:/.*)?|@effect/atom-react)."
+  },
+  $runFork <: within or {
+    `Effect.gen($ownerArgs)`,
+    `Effect.fn($ownerArgs)`,
+    `Effect.fn($ownerName)($ownerBody)`,
+    `Effect.fnUntraced($ownerArgs)`,
+    `Effect.fnUntracedEager($ownerArgs)`
+  } as $owner,
+  not returned_startup_callback(call=$runFork, owner=$owner),
+  register_diagnostic(span=$runFork, message="Use Effect.forkChild or Effect.forkScoped for work started inside an Effect operation. Effect.runFork and Effect.runForkWith start independent runtime fibers and leave cancellation and cleanup to the caller. Keep service work attached to its parent fiber or Scope. Reserve the run functions for application startup and external integrations.", severity="error")
+}
+
+// An operation may return a startup callback for its external caller. That
+// callback does not run when the operation constructs it. An inner Effect
+// operation still owns launches in its own body.
+predicate returned_startup_callback($call, $owner) {
+  $call <: within or {
+    JsArrowFunctionExpression(),
+    JsFunctionExpression()
+  } as $callback,
+  $callback <: within $owner,
+  or {
+    $callback <: within JsReturnStatement(argument=$callback),
+    $callback <: within `Effect.succeed($callback)` as $result where {
+      or {
+        $result <: within JsArrowFunctionExpression(body=$result),
+        $result <: within JsReturnStatement(argument=$result),
+        $result <: within JsReturnStatement(argument=JsYieldExpression(argument=JsYieldArgument(expression=$result)))
+      }
+    }
+  }
 }

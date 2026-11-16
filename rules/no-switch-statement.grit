@@ -1,9 +1,7 @@
 language js(typescript, jsx)
 
+// This rule requires explicit value selection as a preset convention.
+// The diagnostic applies to each decision, including ordinary TypeScript code.
 JsSwitchStatement() as $violation where {
-    register_diagnostic(
-        span = $violation,
-        message = "Express this decision with Match.value, Option.match, or Result.match. Keep the selected result and dependent work together.",
-        severity = "error"
-    )
+  register_diagnostic(span=$violation, message="This preset requires value decisions in Match.value, Option.match, or Result.match. A switch statement spreads the decision across separate case exits. Keep the selected result and dependent work in one composition.", severity="error")
 }

@@ -1,0 +1,41 @@
+{
+  "input": "import { randomUUID } from \"node:crypto\";\n\nimport { Data, Effect, FileSystem, Option, Schema } from \"effect\";\n\nconst ReminderRequest = Schema.Struct({\n  recipient: Schema.NonEmptyString,\n  enabled: Schema.optional(Schema.Boolean),\n});\n\nconst QueuedReminder = Schema.fromJsonString(\n  Schema.Struct({ recipient: Schema.NonEmptyString }),\n);\n\ntype ReminderOutcome = Data.TaggedEnum<{\n  Scheduled: { readonly recipient: string; readonly notificationId: string };\n  Disabled: { readonly recipient: string };\n}>;\nconst ReminderOutcome = Data.taggedEnum<ReminderOutcome>();\n\n/**\n * The reminder operation incorrectly supplies a default that belongs in its\n * request schema. Every operation that uses this optional flag must repeat\n * the same absence policy before it can decide whether to queue a notification.\n */\nexport const scheduleReminder = Effect.fn(\"scheduleReminder\")(function* (\n  input: unknown,\n  queueDirectory: string,\n) {\n  const request = yield* Schema.decodeUnknownEffect(ReminderRequest)(input);\n\n  const fs = yield* FileSystem.FileSystem;\n\n  // The schema leaves enabled optional, so scheduling supplies the false default.\n  const enabled = Option.match(Option.fromNullishOr(request.enabled), {\n    onSome: (flag) => flag === true,\n    onNone: () => false,\n  });\n\n  const notificationId = yield* Effect.sync(randomUUID);\n\n  const contents = yield* Schema.encodeEffect(QueuedReminder)({\n    recipient: request.recipient,\n  });\n\n  const queued = yield* fs\n    .makeDirectory(queueDirectory, { recursive: true })\n    .pipe(\n      Effect.andThen(() =>\n        fs.writeFileString(\n          `${queueDirectory}/${notificationId}.json`,\n          contents,\n          { flag: \"wx\" },\n        ),\n      ),\n      // A false flag skips directory creation and the notification write.\n      Effect.when(Effect.succeed(enabled)),\n    );\n\n  return Option.match(queued, {\n    onSome: () =>\n      ReminderOutcome.Scheduled({\n        recipient: request.recipient,\n        notificationId,\n      }),\n    onNone: () => ReminderOutcome.Disabled({ recipient: request.recipient }),\n  });\n});\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "Define this boolean's default in its Schema. Repeated Option.match conversions inside services spread the default policy across operations. Decode the input once and use the decoded boolean. Keep Some(true) as true, Some(false) as false, and None as false.",
+        "message": [
+          {
+            "elements": [],
+            "content": "Define this boolean's default in its Schema. Repeated Option.match conversions inside services spread the default policy across operations. Decode the input once and use the decoded boolean. Keep Some(true) as true, Some(false) as false, and None as false."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/ts-type/no-option-boolean-normalization/invalid.ts"
+          },
+          "span": [
+            1156,
+            1276
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}

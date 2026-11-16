@@ -1,0 +1,41 @@
+{
+  "input": "import { createHash } from \"node:crypto\";\nimport { readFileSync } from \"node:fs\";\n\n/**\n * fingerprintFile returns a file's content hash so a watcher can compare it\n * with the previous hash to detect a change. The caller receives undefined if\n * the file cannot be read or hashed. This version catches those exceptions\n * with try/catch. The preset requires Result.try for synchronous exceptions\n * so the hash attempt and its fallback form one Result expression.\n */\nexport const fingerprintFile = (file: string): string | undefined => {\n  // It incorrectly handles synchronous exceptions with try/catch.\n  try {\n    return createHash(\"sha256\").update(readFileSync(file)).digest(\"base64url\");\n  } catch {\n    return undefined;\n  }\n};\n",
+  "result": {
+    "diagnostics": [
+      {
+        "category": "plugin",
+        "severity": "error",
+        "description": "lintEffect's no-try-catch rule requires exception handling and cleanup in Result or Effect expressions. Use Result.try for synchronous exceptions. In Effect code, capture external exceptions with Effect.try or Effect.tryPromise and recover with Effect.catch. Replace finally with Effect.ensuring or scoped resource management. Keep the original result, failure handling, and cleanup behavior.",
+        "message": [
+          {
+            "elements": [],
+            "content": "lintEffect's no-try-catch rule requires exception handling and cleanup in Result or Effect expressions. Use Result.try for synchronous exceptions. In Effect code, capture external exceptions with Effect.try or Effect.tryPromise and recover with Effect.catch. Replace finally with Effect.ensuring or scoped resource management. Keep the original result, failure handling, and cleanup behavior."
+          }
+        ],
+        "advices": {
+          "advices": []
+        },
+        "verboseAdvices": {
+          "advices": []
+        },
+        "location": {
+          "path": {
+            "file": "/project/core/no-try-catch/invalid.ts"
+          },
+          "span": [
+            608,
+            731
+          ],
+          "sourceCode": null
+        },
+        "tags": [],
+        "source": null
+      }
+    ],
+    "errors": 1,
+    "warnings": 0,
+    "infos": 0,
+    "parseErrors": 0,
+    "skippedDiagnostics": 0
+  }
+}
