@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1-dev](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.1.0...v0.1.1-dev) (2026-11-16)
+
+
+### Bug Fixes
+
+* calibrate Effect rules and complete learning examples ([9f2ad0c](https://github.com/OperationalFallacy/biome-effect-linting-rules/commit/9f2ad0ce65db0e70ab7452d0c2496e028d0e4911))
+
 ## [0.1.0](https://github.com/OperationalFallacy/biome-effect-linting-rules/compare/v0.0.9...v0.1.0) (2026-11-01)
 
 This release targets Effect 4. Version 0.0.9 is the final Effect v3 release.
